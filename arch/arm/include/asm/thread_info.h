@@ -158,6 +158,9 @@ extern int vfp_restore_user_hwstate(struct user_vfp __user *,
 #define TIF_USING_IWMMXT	17
 #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
 #define TIF_RESTORE_SIGMASK	20
+
+#define TIF_MM_RELEASED		24	/* task MM has been released */
+
 #if defined(CONFIG_MT_RT_SCHED)
 #define TIF_NEED_RELEASED	31
 #endif
