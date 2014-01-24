@@ -1,3 +1,4 @@
+
 /*
  * SLUB: A slab allocator that limits cache line use instead of queuing
  * objects in per cpu and per node lists.
@@ -3077,10 +3078,12 @@ static void early_kmem_cache_node_alloc(int node)
 	inc_slabs_node(kmem_cache_node, node, page->objects);
 
 	/*
-	 * No locks need to be taken here as it has just been
-	 * initialized and there is no concurrent access.
+	 * the lock is for lockdep's sake, not for any actual
+	 * race protection
 	 */
-	__add_partial(n, page, DEACTIVATE_TO_HEAD);
+	spin_lock(&n->list_lock);
+	add_partial(n, page, DEACTIVATE_TO_HEAD);
+	spin_unlock(&n->list_lock);
 }
 
 static void free_kmem_cache_nodes(struct kmem_cache *s)
