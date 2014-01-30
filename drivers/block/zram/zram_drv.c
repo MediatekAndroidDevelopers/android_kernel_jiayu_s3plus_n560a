@@ -33,7 +33,7 @@
 #include <linux/string.h>
 #include <linux/vmalloc.h>
 
-#include "zram_drv.h"
+#include <linux/zram_drv.h>
 
 /* Globals */
 static int zram_major;
