@@ -23,7 +23,7 @@
 #endif
 
 #ifdef CONFIG_ZSMALLOC
-#include <zsmalloc.h>
+#include <linux/zsmalloc.h>
 #endif
 
 #ifdef CONFIG_ZRAM
