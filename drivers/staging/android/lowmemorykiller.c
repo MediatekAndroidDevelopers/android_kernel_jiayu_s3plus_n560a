@@ -95,11 +95,8 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	int array_size = ARRAY_SIZE(lowmem_adj);
 	int other_free = global_page_state(NR_FREE_PAGES) - totalreserve_pages;
 	int other_file = global_page_state(NR_FILE_PAGES) -
-						global_page_state(NR_SHMEM);
-
-#ifdef CONFIG_ZRAM
-	other_file -= total_swapcache_pages();
-#endif
+						global_page_state(NR_SHMEM) -
+						total_swapcache_pages();
 
 	if (lowmem_adj_size < array_size)
 		array_size = lowmem_adj_size;
