@@ -540,3 +540,12 @@ config ZBUD
 	  page.  While this design limits storage density, it has simple and
 	  deterministic reclaim properties that make it preferable to a higher
 	  density approach when reclaim will be used.
+
+config BALANCE_ANON_FILE_RECLAIM
+	bool "During reclaim treat anon and file backed pages equally"
+	depends on SWAP
+	help
+	  When performing memory reclaim treat anonymous and file backed pages
+	  equally.
+	  Swapping anonymous pages out to memory can be efficient enough to justify
+	  treating anonymous and file backed pages equally.
