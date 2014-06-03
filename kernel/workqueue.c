@@ -2028,8 +2028,7 @@ restart:
 		if (!need_to_create_worker(pool))
 			break;
 
-		__set_current_state(TASK_INTERRUPTIBLE);
-		schedule_timeout(CREATE_COOLDOWN);
+		schedule_timeout_interruptible(CREATE_COOLDOWN);
 
 		if (!need_to_create_worker(pool))
 			break;
