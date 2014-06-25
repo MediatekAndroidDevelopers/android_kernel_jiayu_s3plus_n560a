@@ -53,6 +53,12 @@
 #include <asm/mmu_context.h>
 #include <asm/processor.h>
 #include <asm/stacktrace.h>
+#ifdef CONFIG_CC_STACKPROTECTOR
+
+#include <linux/stackprotector.h>
+unsigned long __stack_chk_guard __read_mostly;
+EXPORT_SYMBOL(__stack_chk_guard);
+#endif
 
 extern void arch_reset(char mode, const char *cmd);
 
