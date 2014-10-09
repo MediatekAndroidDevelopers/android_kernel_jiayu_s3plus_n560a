@@ -219,7 +219,7 @@ static void *m_start(struct seq_file *m, loff_t *pos)
 	loff_t n = *pos;
 
 	/* pin the task and mm whilst we play with them */
-	priv->task = get_pid_task(priv->pid, PIDTYPE_PID);
+	priv->task = get_proc_task(priv->inode);
 	if (!priv->task)
 		return ERR_PTR(-ESRCH);
 
@@ -280,7 +280,7 @@ static int maps_open(struct inode *inode, struct file *file,
 
 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
 	if (priv) {
-		priv->pid = proc_pid(inode);
+		priv->inode = inode;
 		ret = seq_open(file, ops);
 		if (!ret) {
 			struct seq_file *m = file->private_data;
