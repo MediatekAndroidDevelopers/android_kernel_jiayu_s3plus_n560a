@@ -17,9 +17,13 @@
 #include <linux/cpufeature.h>
 #include <crypto/xts.h>
 
+#include "aes-ce-setkey.h"
+
 #ifdef USE_V8_CRYPTO_EXTENSIONS
 #define MODE			"ce"
 #define PRIO			300
+#define aes_setkey		ce_aes_setkey
+#define aes_expandkey		ce_aes_expandkey
 #define aes_ecb_encrypt		ce_aes_ecb_encrypt
 #define aes_ecb_decrypt		ce_aes_ecb_decrypt
 #define aes_cbc_encrypt		ce_aes_cbc_encrypt
@@ -31,6 +35,8 @@ MODULE_DESCRIPTION("AES-ECB/CBC/CTR/XTS using ARMv8 Crypto Extensions");
 #else
 #define MODE			"neon"
 #define PRIO			200
+#define aes_setkey		crypto_aes_set_key
+#define aes_expandkey		crypto_aes_expand_key
 #define aes_ecb_encrypt		neon_aes_ecb_encrypt
 #define aes_ecb_decrypt		neon_aes_ecb_decrypt
 #define aes_cbc_encrypt		neon_aes_cbc_encrypt
@@ -84,10 +90,10 @@ static int xts_set_key(struct crypto_tfm *tfm, const u8 *in_key,
 	if (ret)
 		return ret;
 
-	ret = crypto_aes_expand_key(&ctx->key1, in_key, key_len / 2);
+	ret = aes_expandkey(&ctx->key1, in_key, key_len / 2);
 	if (!ret)
-		ret = crypto_aes_expand_key(&ctx->key2, &in_key[key_len / 2],
-					    key_len / 2);
+		ret = aes_expandkey(&ctx->key2, &in_key[key_len / 2],
+				    key_len / 2);
 	if (!ret)
 		return 0;
 
@@ -293,7 +299,7 @@ static struct crypto_alg aes_algs[] = { {
 		.min_keysize	= AES_MIN_KEY_SIZE,
 		.max_keysize	= AES_MAX_KEY_SIZE,
 		.ivsize		= 0,
-		.setkey		= crypto_aes_set_key,
+		.setkey		= aes_setkey,
 		.encrypt	= ecb_encrypt,
 		.decrypt	= ecb_decrypt,
 	},
@@ -311,7 +317,7 @@ static struct crypto_alg aes_algs[] = { {
 		.min_keysize	= AES_MIN_KEY_SIZE,
 		.max_keysize	= AES_MAX_KEY_SIZE,
 		.ivsize		= AES_BLOCK_SIZE,
-		.setkey		= crypto_aes_set_key,
+		.setkey		= aes_setkey,
 		.encrypt	= cbc_encrypt,
 		.decrypt	= cbc_decrypt,
 	},
@@ -329,7 +335,7 @@ static struct crypto_alg aes_algs[] = { {
 		.min_keysize	= AES_MIN_KEY_SIZE,
 		.max_keysize	= AES_MAX_KEY_SIZE,
 		.ivsize		= AES_BLOCK_SIZE,
-		.setkey		= crypto_aes_set_key,
+		.setkey		= aes_setkey,
 		.encrypt	= ctr_encrypt,
 		.decrypt	= ctr_encrypt,
 	},
