@@ -239,7 +239,6 @@ if ($arch eq "x86_64") {
     $ld .= " -m elf_i386";
     $objdump .= " -M i386";
     $objcopy .= " -O elf32-i386";
-    $cc .= " -m32";
 
 } elsif ($arch eq "s390" && $bits == 32) {
     $mcount_regex = "^\\s*([0-9a-fA-F]+):\\s*R_390_32\\s+_mcount\$";
