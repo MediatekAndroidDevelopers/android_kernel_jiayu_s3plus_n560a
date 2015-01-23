@@ -257,7 +257,7 @@ int ping_init_sock(struct sock *sk)
 	int i, j, count;
 	kgid_t low, high;
 	int ret = 0;
-	
+
 	inet_get_ping_group_range_net(net, &low, &high);
 	if (gid_lte(low, group) && gid_lte(group, high))
 		return 0;
@@ -966,12 +966,18 @@ void ping_rcv(struct sk_buff *skb)
 
 	sk = ping_lookup(net, skb, ntohs(icmph->un.echo.id));
 	if (sk != NULL) {
-#ifdef CONFIG_MTK_NET_LOGGING  
+#ifdef CONFIG_MTK_NET_LOGGING
 		printk(KERN_INFO "[mtk_net][ping_debug]rcv on sk %p\n", sk);
 #endif
 		ping_queue_rcv_skb(sk, skb_get(skb));
 		/*mtk_net: don't put sock here, do sock_put after free skb*/
 		/* sock_put(sk); */
+		struct sk_buff *skb2 = skb_clone(skb, GFP_ATOMIC);
+
+		pr_debug("rcv on socket %p\n", sk);
+		if (skb2)
+			ping_queue_rcv_skb(sk, skb2);
+		sock_put(sk);
 		return;
 	}
 	pr_info("[mtk_net][ping_debug]no socket, dropping\n");
