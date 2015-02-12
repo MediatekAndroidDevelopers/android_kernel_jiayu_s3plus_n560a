@@ -124,7 +124,7 @@ void hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
 			lx += scnprintf(linebuf + lx, linebuflen - lx,
 					"%s%16.16llx", j ? " " : "",
 					(unsigned long long)*(ptr8 + j));
-		ascii_column = 17 * ngroups + 2;
+		ascii_column = rowsize * 2 + rowsize / 8 + 2;
 		break;
 	}
 
@@ -135,7 +135,7 @@ void hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
 		for (j = 0; j < ngroups; j++)
 			lx += scnprintf(linebuf + lx, linebuflen - lx,
 					"%s%8.8x", j ? " " : "", *(ptr4 + j));
-		ascii_column = 9 * ngroups + 2;
+		ascii_column = rowsize * 2 + rowsize / 4 + 2;
 		break;
 	}
 
@@ -146,7 +146,7 @@ void hex_dump_to_buffer(const void *buf, size_t len, int rowsize,
 		for (j = 0; j < ngroups; j++)
 			lx += scnprintf(linebuf + lx, linebuflen - lx,
 					"%s%4.4x", j ? " " : "", *(ptr2 + j));
-		ascii_column = 5 * ngroups + 2;
+		ascii_column = rowsize * 2 + rowsize / 2 + 2;
 		break;
 	}
 
