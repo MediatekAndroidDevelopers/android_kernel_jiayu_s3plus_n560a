@@ -503,10 +503,10 @@ struct mem_size_stats {
 #endif
 };
 
-#ifdef CONFIG_SWAP 
+#ifdef CONFIG_SWAP
 extern struct swap_info_struct *swap_info_get(swp_entry_t entry);
 extern void swap_info_unlock(struct swap_info_struct *si);
-#endif // CONFIG_SWAP 
+#endif // CONFIG_SWAP
 
 static inline unsigned char swap_count(unsigned char ent)
 {
@@ -1223,7 +1223,8 @@ out:
 
 static int pagemap_open(struct inode *inode, struct file *file)
 {
-	/* do not disclose physical addresses: attack vector */
+	/* do not disclose physical addresses to unprivileged
+	   userspace (closes a rowhammer attack vector) */
 	if (!capable(CAP_SYS_ADMIN))
 		return -EPERM;
 	return 0;
