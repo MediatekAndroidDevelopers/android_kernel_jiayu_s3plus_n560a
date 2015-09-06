@@ -10,7 +10,7 @@
 #ifndef _ZCOMP_LZO_H_
 #define _ZCOMP_LZO_H_
 
-#include <linux/zcomp.h>
+#include "zcomp.h"
 
 extern struct zcomp_backend zcomp_lzo;
 
