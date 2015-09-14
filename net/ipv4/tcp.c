@@ -3634,8 +3634,11 @@ restart:
 			sock_hold(sk);
 			spin_unlock_bh(lock);
 
+			lock_sock(sk);
+			// TODO:
+			// Check for SOCK_DEAD again, it could have changed.
+			// Add a write barrier, see tcp_reset().
 			local_bh_disable();
-			bh_lock_sock(sk);
 			sk->sk_err = ETIMEDOUT;
 			sk->sk_error_report(sk);
 			count++;
@@ -3645,7 +3648,7 @@ restart:
 					printk(KERN_INFO "[mtk_net][tcp]skip ALPS01866438 Google Issue!\n");			 
 				}
 			tcp_done(sk);
-			bh_unlock_sock(sk);
+			release_sock(sk);
 			local_bh_enable();
 			sock_put(sk);
 
