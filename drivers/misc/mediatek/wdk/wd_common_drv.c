@@ -569,7 +569,7 @@ static int wk_cpu_callback(struct notifier_block *nfb, unsigned long action, voi
 		mpcore_wdt_restart(WD_TYPE_NORMAL);
 #endif
 
-		printk("[WDK]cpu %d plug on kick wdt\n", hotcpu);
+		/*printk("[WDK]cpu %d plug on kick wdt\n", hotcpu);*/
 		break;
 #ifdef CONFIG_HOTPLUG_CPU
 #ifdef CONFIG_LOCAL_WDT
@@ -590,7 +590,7 @@ static int wk_cpu_callback(struct notifier_block *nfb, unsigned long action, voi
 		mpcore_wk_wdt_stop();
 #endif
 		wk_cpu_update_bit_flag(hotcpu, 0);
-		printk("[WDK]cpu %d plug off, kick wdt\n", hotcpu);
+		/*printk("[WDK]cpu %d plug off, kick wdt\n", hotcpu);*/
 		break;
 #endif				/* CONFIG_HOTPLUG_CPU */
 	}
