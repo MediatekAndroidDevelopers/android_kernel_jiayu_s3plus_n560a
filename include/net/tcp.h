@@ -1543,15 +1543,6 @@ struct tcp_iter_state {
 	loff_t			last_pos;
 };
 
-/* MTK_NET_CHANGES */
-/*
- * reset tcp connection by uid
- */
-struct uid_err {
-	int appuid;
-	int errNum;
-};
-
 extern int tcp_proc_register(struct net *net, struct tcp_seq_afinfo *afinfo);
 extern void tcp_proc_unregister(struct net *net, struct tcp_seq_afinfo *afinfo);
 
@@ -1571,9 +1562,6 @@ extern int tcp_gro_complete(struct sk_buff *skb);
 extern int tcp4_gro_complete(struct sk_buff *skb);
 
 extern int tcp_nuke_addr(struct net *net, struct sockaddr *addr);
-/* MTK_NET_CHANGES */
-extern void tcp_v4_reset_connections_by_uid(struct uid_err uid_e);
-extern void tcp_v4_handle_retrans_time_by_uid(struct uid_err uid_e);
 
 #ifdef CONFIG_PROC_FS
 extern int tcp4_proc_init(void);
