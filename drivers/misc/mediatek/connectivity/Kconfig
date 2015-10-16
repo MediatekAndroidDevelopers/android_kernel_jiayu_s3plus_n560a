@@ -246,11 +246,6 @@ config MTK_WIFI_MCC_SUPPORT
 	   if it is set to TRUE, wlan will support Multi-Channel Concurrency,
 	   otherwise, only support Single Channel Concurrency
 
-config MTK_DHCPV6C_WIFI
-	bool "MTK_DHCPV6C_WIFI"
-	help
-	  no: disable this feature
-
 config MTK_CONN_LTE_IDC_SUPPORT
 	bool "MediaTek CONN LTE IDC support"
 	select MTK_CONN_MD
