@@ -37,7 +37,7 @@
 
 /* Globals */
 static int zram_major;
-static struct zram *zram_devices;
+struct zram *zram_devices;
 
 /* Module params (documentation at end) */
 static unsigned int num_devices = 1;

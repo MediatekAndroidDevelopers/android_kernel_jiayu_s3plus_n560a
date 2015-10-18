@@ -112,4 +112,6 @@ struct zram {
 
 	struct zram_stats stats;
 };
+
+extern struct zram *zram_devices;
 #endif
