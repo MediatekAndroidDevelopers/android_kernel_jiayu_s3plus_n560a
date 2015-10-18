@@ -23,9 +23,3 @@ config ZRAM_DEBUG
 	help
 	  This option adds additional debugging code to the compressed
 	  RAM block device driver.
-config ZSM
-	bool "Finding and merging same pages support"
-	depends on ZRAM
-	default n
-	help
-	  This option enhance ZRAM by finding and merging same pages in ZRAM.
