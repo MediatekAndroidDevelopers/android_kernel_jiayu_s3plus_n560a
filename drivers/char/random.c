@@ -255,7 +255,10 @@
 #include <linux/fips.h>
 #include <linux/ptrace.h>
 #include <linux/kmemcheck.h>
-#include <linux/irq.h>
+
+#ifdef CONFIG_GENERIC_HARDIRQS
+# include <linux/irq.h>
+#endif
 
 #include <asm/processor.h>
 #include <asm/uaccess.h>

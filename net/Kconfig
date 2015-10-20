@@ -240,7 +240,7 @@ config RPS
 
 config RFS_ACCEL
 	boolean
-	depends on RPS
+	depends on RPS && GENERIC_HARDIRQS
 	select CPU_RMAP
 	default y
 

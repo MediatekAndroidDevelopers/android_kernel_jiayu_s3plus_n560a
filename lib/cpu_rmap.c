@@ -8,7 +8,9 @@
  */
 
 #include <linux/cpu_rmap.h>
+#ifdef CONFIG_GENERIC_HARDIRQS
 #include <linux/interrupt.h>
+#endif
 #include <linux/export.h>
 
 /*
@@ -211,6 +213,8 @@ int cpu_rmap_update(struct cpu_rmap *rmap, u16 index,
 }
 EXPORT_SYMBOL(cpu_rmap_update);
 
+#ifdef CONFIG_GENERIC_HARDIRQS
+
 /* Glue between IRQ affinity notifiers and CPU rmaps */
 
 struct irq_glue {
@@ -305,3 +309,5 @@ int irq_cpu_rmap_add(struct cpu_rmap *rmap, int irq)
 	return rc;
 }
 EXPORT_SYMBOL(irq_cpu_rmap_add);
+
+#endif /* CONFIG_GENERIC_HARDIRQS */
