@@ -976,7 +976,7 @@
 
 #define CFG_SDIO_INTR_ENHANCE                        1	/*!< 1(default): Enable SDIO ISR & TX/RX status enhance mode
 							   0: Disable */
-#define CFG_SDIO_RX_ENHANCE                          0	/*!< 1(default): Enable SDIO ISR & TX/RX status enhance mode
+#define CFG_SDIO_RX_ENHANCE                          1	/*!< 1(default): Enable SDIO ISR & TX/RX status enhance mode
 							   0: Disable */
 #define CFG_SDIO_TX_AGG                              1	/*!< 1: Enable SDIO TX enhance mode(Multiple frames in single BLOCK CMD)
 							   0(default): Disable */
