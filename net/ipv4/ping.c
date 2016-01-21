@@ -969,15 +969,14 @@ void ping_rcv(struct sk_buff *skb)
 #ifdef CONFIG_MTK_NET_LOGGING
 		printk(KERN_INFO "[mtk_net][ping_debug]rcv on sk %p\n", sk);
 #endif
-		ping_queue_rcv_skb(sk, skb_get(skb));
-		/*mtk_net: don't put sock here, do sock_put after free skb*/
-		/* sock_put(sk); */
+		//ping_queue_rcv_skb(sk, skb_get(skb));
 		struct sk_buff *skb2 = skb_clone(skb, GFP_ATOMIC);
 
 		pr_debug("rcv on socket %p\n", sk);
 		if (skb2)
 			ping_queue_rcv_skb(sk, skb2);
-		sock_put(sk);
+		/*mtk_net: don't put sock here, do sock_put after free skb*/
+		/* sock_put(sk); */
 		return;
 	}
 	pr_info("[mtk_net][ping_debug]no socket, dropping\n");
