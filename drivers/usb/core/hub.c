@@ -4617,7 +4617,13 @@ hub_port_init (struct usb_hub *hub, struct usb_device *udev, int port1,
 						r = -EPROTO;
 					break;
 				}
-				if (r == 0)
+				/*
+				 * Some devices time out if they are powered on
+				 * when already connected. They need a second
+				 * reset. But only on the first attempt,
+				 * lest we get into a time out/reset loop
+				 */
+				if (r == 0  || (r == -ETIMEDOUT && j == 0))
 					break;
 #if defined(CONFIG_USBIF_COMPLIANCE)
 #if defined(CONFIG_USB_XHCI_HCD)
