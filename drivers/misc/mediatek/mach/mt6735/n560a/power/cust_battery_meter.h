@@ -37,15 +37,15 @@
 #define FG_METER_RESISTANCE 	0
 
 /* Qmax for battery  */
-#define Q_MAX_POS_50	3060
-#define Q_MAX_POS_25	3040
-#define Q_MAX_POS_0		2750
-#define Q_MAX_NEG_10	2300
+#define Q_MAX_POS_50	3273
+#define Q_MAX_POS_25	3251
+#define Q_MAX_POS_0	3034
+#define Q_MAX_NEG_10	2890
 
-#define Q_MAX_POS_50_H_CURRENT	3012
-#define Q_MAX_POS_25_H_CURRENT	2953
-#define Q_MAX_POS_0_H_CURRENT	2450
-#define Q_MAX_NEG_10_H_CURRENT	1200
+#define Q_MAX_POS_50_H_CURRENT	3221
+#define Q_MAX_POS_25_H_CURRENT	3158
+#define Q_MAX_POS_0_H_CURRENT		2741
+#define Q_MAX_NEG_10_H_CURRENT	1489
 
 
 /* Discharge Percentage */
@@ -55,7 +55,7 @@
 /* battery meter parameter */
 #define CHANGE_TRACKING_POINT
 #define CUST_TRACKING_POINT  15
-#define CUST_R_SENSE         56
+#define CUST_R_SENSE         68
 #define CUST_HW_CC 		    0
 #define AGING_TUNING_VALUE   103
 #define CUST_R_FG_OFFSET    0
@@ -63,7 +63,7 @@
 #define OCV_BOARD_COMPESATE	0 //mV 
 #define R_FG_BOARD_BASE		1000
 #define R_FG_BOARD_SLOPE	1000 //slope
-#define CAR_TUNE_VALUE		100 //1.00
+#define CAR_TUNE_VALUE		101 //1.00
 
 
 /* HW Fuel gague  */
@@ -93,6 +93,5 @@
 
 #define FG_BAT_INT
 #define IS_BATTERY_REMOVE_BY_PMIC
-
 
 #endif	//#ifndef _CUST_BATTERY_METER_H
