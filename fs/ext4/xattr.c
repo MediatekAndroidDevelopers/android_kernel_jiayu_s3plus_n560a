@@ -238,7 +238,7 @@ __xattr_check_inode(struct inode *inode, struct ext4_xattr_ibody_header *header,
 			 void *end, const char *function, unsigned int line)
 {
 	struct ext4_xattr_entry *entry = IFIRST(header);
-	int error = -EIO;
+	int error = -EFSCORRUPTED;
 
 	if (((void *) header >= end) ||
 	    (header->h_magic != le32_to_cpu(EXT4_XATTR_MAGIC)))
