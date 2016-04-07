@@ -341,6 +341,12 @@ config MTK_DITHERING_SUPPORT
 	  avoid contour effect, but side effect is that dithering mechanism
 	  will make some noises
 
+config MTK_VIDEOX_CYNGN_LIVEDISPLAY
+	bool CONFIG_MTK_VIDEOX_CYNGN_LIVEDISPLAY
+	default n
+	help
+		Enable the RGB interface for color calibration.
+
 config MTK_LCM_PHYSICAL_ROTATION
 	string "MTK_LCM_PHYSICAL_ROTATION"
 	help
