@@ -185,7 +185,6 @@ typedef enum
 
 #define DISP_IOCTL_MAGIC        'x'
 
-#define DISP_IOCTL_WRITE_REG       _IOW     (DISP_IOCTL_MAGIC, 1, DISP_WRITE_REG)   // also defined in atci_pq_cmd.h
 #define DISP_IOCTL_READ_REG        _IOWR    (DISP_IOCTL_MAGIC, 2, DISP_READ_REG)    // also defined in atci_pq_cmd.h
 //#define DISP_IOCTL_WAIT_IRQ        _IOR     (DISP_IOCTL_MAGIC, 3, disp_wait_irq_struct)
 #define DISP_IOCTL_DUMP_REG        _IOR     (DISP_IOCTL_MAGIC, 4, int)
