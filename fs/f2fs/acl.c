@@ -213,7 +213,6 @@ static int f2fs_set_acl(struct inode *inode, int type,
 			struct posix_acl *acl, struct page *ipage)
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-	struct f2fs_inode_info *fi = F2FS_I(inode);
 	int name_index;
 	void *value = NULL;
 	size_t size = 0;
@@ -248,7 +247,7 @@ static int f2fs_set_acl(struct inode *inode, int type,
 	if (acl) {
 		value = f2fs_acl_to_disk(acl, &size);
 		if (IS_ERR(value)) {
-			clear_inode_flag(fi, FI_ACL_MODE);
+			clear_inode_flag(inode, FI_ACL_MODE);
 			return (int)PTR_ERR(value);
 		}
 	}
@@ -259,7 +258,7 @@ static int f2fs_set_acl(struct inode *inode, int type,
 	if (!error)
 		set_cached_acl(inode, type, acl);
 
-	clear_inode_flag(fi, FI_ACL_MODE);
+	clear_inode_flag(inode, FI_ACL_MODE);
 	return error;
 }
 
