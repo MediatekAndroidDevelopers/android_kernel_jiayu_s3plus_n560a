@@ -4236,7 +4236,7 @@ wext_support_ioctl (
         }
 
         if (u4ExtraSize != IW_ESSID_MAX_SIZE && u4ExtraSize != IW_ESSID_MAX_SIZE + 1) {
-            DBGLOG(INIT, ERROR, ("[wifi] iwr->u.essid.length: %ld error\n", u4ExtraSize));
+            DBGLOG(INIT, ERROR, ("[wifi] iwr->u.essid.length: %u error\n", u4ExtraSize));
             ret = -E2BIG;   /* let caller try larger buffer */
             break;
         }

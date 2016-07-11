@@ -1943,7 +1943,7 @@ priv_set_struct (
             /* retrieve IE for Probe Request */
             u4CmdLen = prIwReqData->data.length;
             if (u4CmdLen > GLUE_INFO_WSCIE_LENGTH) {
-                DBGLOG(REQ, ERROR, ("Input data length is invalid %ld\n", u4CmdLen));
+                DBGLOG(REQ, ERROR, ("Input data length is invalid %u\n", u4CmdLen));
                 return -EINVAL;
             }
 
@@ -1963,7 +1963,7 @@ priv_set_struct (
     case PRIV_CMD_OID:
         u4CmdLen = prIwReqData->data.length;
         if (u4CmdLen > CMD_OID_BUF_LENGTH) {
-            DBGLOG(REQ, ERROR, ("Input data length is invalid %ld\n", u4CmdLen));
+            DBGLOG(REQ, ERROR, ("Input data length is invalid %u\n", u4CmdLen));
             return -EINVAL;
         }
 
@@ -1996,7 +1996,7 @@ priv_set_struct (
         prNdisReq = (P_NDIS_TRANSPORT_STRUCT) &aucOidBuf[0];
 
         if(u4CmdLen > sizeof(prNdisReq->ndisOidContent)) {
-            DBGLOG(REQ, ERROR, ("Input data length is invalid %ld\n", u4CmdLen));
+            DBGLOG(REQ, ERROR, ("Input data length is invalid %u\n", u4CmdLen));
             return -EINVAL;
         }
 
@@ -2639,11 +2639,11 @@ priv_set_string(
     }
 
     BufLen = prIwReqData->data.length;
-    DBGLOG(REQ, INFO, ("priv_set_string (%ld)\n", BufLen));
+    DBGLOG(REQ, INFO, ("priv_set_string (%u)\n", BufLen));
     GlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
 
     if (BufLen > CMD_OID_BUF_LENGTH) {
-        DBGLOG(REQ, ERROR, ("Input data length is invalid %ld\n", BufLen));
+        DBGLOG(REQ, ERROR, ("Input data length is invalid %u\n", BufLen));
        return -EINVAL;
     }
 
