@@ -166,8 +166,7 @@ static struct i2c_driver LSM6DS0_i2c_driver = {
 static struct i2c_client *LSM6DS0_i2c_client = NULL;
 static struct LSM6DS0_i2c_data *obj_i2c_data = NULL;
 static bool sensor_power = false;
-
-
+static int nDirection = 0;
 
 /*----------------------------------------------------------------------------*/
 #define GYRO_TAG                  "[Gyroscope] "
@@ -460,7 +459,7 @@ static int LSM6DS0_SetSampleRate(struct i2c_client *client, u8 sample_rate)
 static int LSM6DS0_read_byte_sr(struct i2c_client *client, u8 addr, u8 *data, u8 len)
 {
     int ret = 0;
-	unsigned short length = 0;
+    unsigned short length = 0;
 	
     client->addr = (client->addr & I2C_MASK_FLAG) | I2C_WR_FLAG |I2C_RS_FLAG;
     data[0] = addr;
@@ -791,18 +790,50 @@ static ssize_t show_status_value(struct device_driver *ddri, char *buf)
 	}
 	return len;    
 }
+
+static ssize_t show_chip_orientation(struct device_driver *ddri, char *buf)
+{
+    ssize_t          _tLength = 0;
+    struct gyro_hw   *_ptAccelHw = lsm6ds0_get_cust_gyro_hw();
+
+   GYRO_LOG("[%s] default direction: %d\n", __FUNCTION__, _ptAccelHw->direction);
+
+    _tLength = snprintf(buf, PAGE_SIZE, "%d\n", nDirection);
+
+    return (_tLength);
+}
+
+static ssize_t store_chip_orientation(struct device_driver *ddri, const char *buf, size_t tCount)
+{
+    struct LSM6DS0_i2c_data *_pt_i2c_obj = obj_i2c_data;
+
+    if (NULL == _pt_i2c_obj)
+        return (0);
+
+    if (1 == sscanf(buf, "%d", &nDirection))
+    {
+        if (hwmsen_get_convert(nDirection, &_pt_i2c_obj->cvt))
+            GYRO_ERR("ERR: fail to set direction\n");
+    }
+
+    GYRO_LOG("[%s] set direction: %d\n", __FUNCTION__, nDirection);
+
+    return (tCount);
+}
 /*----------------------------------------------------------------------------*/
 
 static DRIVER_ATTR(chipinfo,             S_IRUGO, show_chipinfo_value,      NULL);
 static DRIVER_ATTR(sensordata,           S_IRUGO, show_sensordata_value,    NULL);
 static DRIVER_ATTR(trace,      S_IWUGO | S_IRUGO, show_trace_value,         store_trace_value);
 static DRIVER_ATTR(status,               S_IRUGO, show_status_value,        NULL);
+static DRIVER_ATTR(gyro_orientation, S_IWUSR | S_IRUGO, show_chip_orientation, store_chip_orientation);
 /*----------------------------------------------------------------------------*/
 static struct driver_attribute *LSM6DS0_attr_list[] = {
 	&driver_attr_chipinfo,     /*chip information*/
 	&driver_attr_sensordata,   /*dump sensor data*/	
 	&driver_attr_trace,        /*trace log*/
-	&driver_attr_status,        
+	&driver_attr_status,
+	&driver_attr_gyro_orientation,    
 };
 /*----------------------------------------------------------------------------*/
 static int LSM6DS0_create_attr(struct device_driver *driver) 
@@ -1374,6 +1405,7 @@ static int LSM6DS0_i2c_probe(struct i2c_client *client, const struct i2c_device_
 		GYRO_ERR("invalid direction: %d\n", obj->hw->direction);
 		goto exit;
 	}
+	nDirection = obj->hw->direction;
 
 	obj_i2c_data = obj;
 	obj->client = client;
@@ -1521,7 +1553,7 @@ static int __init LSM6DS0_init(void)
 	struct gyro_hw *hw = lsm6ds0_get_cust_gyro_hw();
 	GYRO_LOG("%s: i2c_number=%d\n", __func__,hw->i2c_num); 
 	i2c_register_board_info(hw->i2c_num, &i2c_LSM6DS0, 1);
-    gyro_driver_add(&LSM6DS0_init_info);
+        gyro_driver_add(&LSM6DS0_init_info);
 
 	return 0;    
 }
