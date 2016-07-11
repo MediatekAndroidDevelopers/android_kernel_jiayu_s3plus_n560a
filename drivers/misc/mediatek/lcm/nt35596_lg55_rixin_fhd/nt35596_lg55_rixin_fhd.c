@@ -795,6 +795,7 @@ static void lcm_get_params(LCM_PARAMS *params)
   // Bit rate calculation
   //1 Every lane speed
   params->dsi.PLL_CLOCK =500;
+  params->dsi.ssc_disable = 1;
 
 }
 
