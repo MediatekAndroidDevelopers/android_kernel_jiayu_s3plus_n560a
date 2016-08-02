@@ -2,9 +2,9 @@
 include $(srctree)/drivers/misc/mediatek/Makefile.custom
 
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:06:42 +0800
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(project_name),)
-custom_kernel_leds:= $(addsuffix /, $(shell echo $(CUSTOM_KERNEL_LEDS)))
+custom_kernel_leds:= $(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_LEDS)))
 $(info "the custom_kernel_leds:$(custom_kernel_leds)")
 ifneq ($(custom_kernel_leds),)
 obj-y += $(custom_kernel_leds)

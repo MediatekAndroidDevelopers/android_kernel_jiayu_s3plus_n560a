@@ -13,7 +13,7 @@ obj-$(CONFIG_MTK_SPI) += spi.o spi-dev.o
 # Vanzo:dingge on: Tue, 21 Apr 2015 15:57:44 +0800
 # add fingerprint framework
 
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(project_name),)
 
 custom_kernel_fingerprint:= $(addprefix fingerprint/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_FINGERPRINT))))

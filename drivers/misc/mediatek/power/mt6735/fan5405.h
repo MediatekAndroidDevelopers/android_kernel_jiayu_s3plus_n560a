@@ -20,7 +20,7 @@
 #ifndef _fan5405_SW_H_
 #define _fan5405_SW_H_
 
-//#define HIGH_BATTERY_VOLTAGE_SUPPORT
+//#define CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT
 
 #define fan5405_CON0      0x00
 #define fan5405_CON1      0x01

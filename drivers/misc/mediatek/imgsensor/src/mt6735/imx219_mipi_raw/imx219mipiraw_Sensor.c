@@ -1207,7 +1207,7 @@ static kal_uint32 open(void)
 
 	/* initail sequence write in  */
 	sensor_init();
-    if(0 == strncmp(VANZO_MAIN_CAM_ROTATION, "180", 3))
+    if(0 == strncmp(CONFIG_VANZO_MAIN_CAM_ROTATION, "180", 3))
     {
       set_mirror_flip(IMAGE_NORMAL);
     }
@@ -1448,8 +1448,8 @@ static kal_uint32 get_info(MSDK_SCENARIO_ID_ENUM scenario_id,
 	sensor_info->SensroInterfaceType = imgsensor_info.sensor_interface_type;
 	sensor_info->MIPIsensorType = imgsensor_info.mipi_sensor_type;
 	sensor_info->SettleDelayMode = imgsensor_info.mipi_settle_delay_mode;
-    if(0 == strncmp(VANZO_MAIN_CAM_ROTATION, "180", 3))
-    {    
+    if(0 == strncmp(CONFIG_VANZO_MAIN_CAM_ROTATION, "180", 3))
+    {
       imgsensor_info.sensor_output_dataformat =SENSOR_OUTPUT_FORMAT_RAW_B;
     }
 	sensor_info->SensorOutputDataFormat = imgsensor_info.sensor_output_dataformat;

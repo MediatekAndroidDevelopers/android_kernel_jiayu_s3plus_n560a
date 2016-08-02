@@ -593,7 +593,7 @@ static int bq24158_driver_probe(struct i2c_client *client, const struct i2c_devi
 
     //---------------------
   //  bq24158_hw_init();
-#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
     bq24158_config_interface_liao(0x06,0x77);
 #else
     bq24158_config_interface_liao(0x06,0x70);

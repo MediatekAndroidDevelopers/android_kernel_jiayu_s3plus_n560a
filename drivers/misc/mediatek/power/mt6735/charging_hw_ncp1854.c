@@ -686,7 +686,7 @@ static void hw_bc11_dump_register(void)
 	kal_uint32 array_size;
 	kal_uint32 set_chr_cv;	
 
-	#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+	#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
 		cv_value = BATTERY_VOLT_04_350000_V;
 	#endif
 
@@ -1086,7 +1086,7 @@ static kal_uint32 charging_set_power_off(void *data)
 	 kal_uint32 status = STATUS_OK;
 	 kal_uint32 increase = *(kal_uint32*)(data);
 	 
-#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
 	 BATTERY_VOLTAGE_ENUM cv_voltage = BATTERY_VOLT_04_350000_V;
 #else
 	 BATTERY_VOLTAGE_ENUM cv_voltage = BATTERY_VOLT_04_200000_V;

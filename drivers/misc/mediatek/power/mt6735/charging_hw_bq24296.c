@@ -256,7 +256,7 @@ static kal_uint32 charging_hw_init(void *data)
 	bq24296_set_iprechg(0x3); //Precharge current 512mA
 	bq24296_set_iterm(0x0); //Termination current 128mA
 
-	#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+	#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
 	bq24296_set_vreg(0x35); //VREG 4.352V
 	#else
 	bq24296_set_vreg(0x2C); //VREG 4.208V
@@ -332,7 +332,7 @@ static kal_uint32 charging_set_cv_voltage(void *data)
 	kal_uint32 cv_value = *(kal_uint32 *)(data);	
 	static kal_int16 pre_register_value = -1;
 
-	#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+	#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
 	if(cv_value >= BATTERY_VOLT_04_340000_V)
 		cv_value = 4304000;
 	#endif
@@ -617,7 +617,7 @@ static kal_uint32 charging_set_ta_current_pattern(void *data)
 	kal_uint32 increase = *(kal_uint32*)(data);
 	kal_uint32 charging_status = KAL_FALSE;
 
-	#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+	#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
 	BATTERY_VOLTAGE_ENUM cv_voltage = BATTERY_VOLT_04_340000_V;
 	#else
 	BATTERY_VOLTAGE_ENUM cv_voltage = BATTERY_VOLT_04_200000_V;

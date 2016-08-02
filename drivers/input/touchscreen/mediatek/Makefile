@@ -12,10 +12,14 @@ obj-y   +=  tpd_misc.o
 obj-y   +=  tpd_setting.o
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:06:42 +0800
 # for compatible the old style ,so use CUSTOM_KERNEL_IMGSENSOR
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(project_name),)
 
-custom_kernel_touchpanel:= $(addsuffix /, $(shell echo $(CUSTOM_KERNEL_TOUCHPANEL)))
+ifneq ($(strip $(CUSTOM_KERNEL_TOUCHPANEL)),)
+CONFIG_CUSTOM_KERNEL_TOUCHPANEL:=$(CUSTOM_KERNEL_TOUCHPANEL)
+endif
+
+custom_kernel_touchpanel:= $(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_TOUCHPANEL)))
 
 $(info "custom_kernel_touchpanel:$(custom_kernel_touchpanel)")
 obj-y += $(custom_kernel_touchpanel)

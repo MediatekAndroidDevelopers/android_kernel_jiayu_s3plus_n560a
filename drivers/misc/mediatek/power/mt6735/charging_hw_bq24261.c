@@ -706,7 +706,7 @@ static kal_uint32 charging_set_ta_current_pattern(void *data)
 {
     kal_uint32 increase = *(kal_uint32*)(data);
     kal_uint32 charging_status = KAL_FALSE;
-    #if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+    #if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
     BATTERY_VOLTAGE_ENUM cv_voltage = BATTERY_VOLT_04_340000_V;
     #else
     BATTERY_VOLTAGE_ENUM cv_voltage = BATTERY_VOLT_04_200000_V;

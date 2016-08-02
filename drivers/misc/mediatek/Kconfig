@@ -115,7 +115,7 @@ config TRUSTONIC_TRUSTED_UI
     depends on MOBICORE_API
 	default n
     ---help---
-      Enable <t-base Trusted User Interface 
+      Enable <t-base Trusted User Interface
 
 config TRUSTONIC_TRUSTED_UI_FB_BLANK
     bool "<t-base TUI with fb_blank"
@@ -190,14 +190,14 @@ config MTK_C2K_SUPPORT
 	default n
 	help
 	  To support C2K modem
-	
+
 config EVDO_DT_SUPPORT
 	bool "EVDO_DT_SUPPORT"
 	depends on MTK_C2K_SUPPORT
 	default n
 	help
 	  To support CDMA+GSM dual talk feature
-	  
+
 config MTK_SVLTE_SUPPORT
 	bool "MTK_SVLTE_SUPPORT"
 	depends on MTK_C2K_SUPPORT
@@ -261,21 +261,36 @@ config MTK_AUTO_DETECT_ALSPS
 	  project and be auto detected by setting this option to yes
 
 # Custom
-config CUSTOM_KERNEL_ACCELEROMETER
-	bool "CUSTOM_KERNEL_ACCELEROMETER"
+config CUST_KERNEL_ACCELEROMETER
+	bool "CUST_KERNEL_ACCELEROMETER"
 	help
 	  accelerometer sensor to detect accelerometer from x y z axis.
 
-config CUSTOM_KERNEL_GYROSCOPE
-	bool "CUSTOM_KERNEL_GYROSCOPE"
+config CUSTOM_KERNEL_ACCELEROMETER_NAME
+	string "CUSTOM_KERNEL_ACCELEROMETER_NAME"
+	help
+	  Name of ALSPS sensor driver to be used
+
+config CUST_KERNEL_GYROSCOPE
+	bool "CUST_KERNEL_GYROSCOPE"
 	help
 	  gyroscope driver
 
-config CUSTOM_KERNEL_ALSPS
-	bool "CUSTOM_KERNEL_ALSPS"
+config CUSTOM_KERNEL_GYROSCOPE_NAME
+	string "CUSTOM_KERNEL_GYROSCOPE_NAME"
+	help
+	  Name of GYROSCOPE sensor driver to be used
+
+config CUST_KERNEL_ALSPS
+	bool "CUST_KERNEL_ALSPS"
 	help
 	  ALSPS sensor driverto detect ambint light and the object is close
 	  or far awary from device
+
+config CUSTOM_KERNEL_ALSPS_NAME
+	string "CUSTOM_KERNEL_ALSPS_NAME"
+	help
+	  Name of ALSPS sensor driver to be used
 
 config CUSTOM_SEC_AUTH_SUPPORT
 	bool "CUSTOM_SEC_AUTH_SUPPORT"
@@ -283,11 +298,16 @@ config CUSTOM_SEC_AUTH_SUPPORT
 	  Support customer to implement and apply their own RSA security
 	  functions
 
-config CUSTOM_KERNEL_MAGNETOMETER
-	bool "CUSTOM_KERNEL_MAGNETOMETER"
+config CUST_KERNEL_MAGNETOMETER
+	bool "CUST_KERNEL_MAGNETOMETER"
 	help
 	  compass driver to detect compass raw data and report orientatino
 	  data
+
+config CUSTOM_KERNEL_MAGNETOMETER_NAME
+	string "CUSTOM_KERNEL_MAGNETOMETER_NAME"
+	help
+	  Name of MAGNETOMETER sensor driver to be used
 
 config CUSTOM_KERNEL_BAROMETER
 	bool "CUSTOM_KERNEL_BAROMETER"
@@ -390,11 +410,38 @@ config CUSTOM_KERNEL_LCM
 	help
 	  To choose kernel LCM driver name
 
-config CUSTOM_KERNEL_FLASHLIGHT
-	string "CUSTOM_KERNEL_FLASHLIGHT"
+config CUSTOM_KERNEL_TOUCHPANEL
+	string "CUSTOM_KERNEL_TOUCHPANEL"
 	help
-	  Kernel space cameara flashlight driver. You can use this driver
-	  choose cameara flashlight type.
+	  To choose kernel TOUCHPANEL driver name
+
+config CUSTOM_KERNEL_HALL
+	string "CUSTOM_KERNEL_HALL"
+	help
+	  To choose kernel HALL driver name
+
+config CUST_KERNEL_FLASHLIGHT
+	string "CUST_KERNEL_FLASHLIGHT"
+	help
+	  Kernel space camera flashlight driver. You can use this driver
+	  choose camera flashlight type.
+
+config CUSTOM_KERNEL_FLASHLIGHT_NAME
+	string "CUSTOM_KERNEL_FLASHLIGHT_NAME"
+	help
+	  Kernel space camera flashlight driver. You can use this driver
+	  choose camera flashlight type.
+
+config CUSTOM_KERNEL_LEDS
+	string "CUSTOM_KERNEL_LEDS"
+	help
+	  To choose kernel LEDS driver name
+
+config CUSTOM_KERNEL_LENS
+	string "CUSTOM_KERNEL_LENS"
+	help
+	  To choose kernel CUSTOM_KERNEL_LENS
+
 config CUSTOM_KERNEL_EXTMD
 	string "CUSTOM_KERNEL_EXTMD"
 	default ""
@@ -412,7 +459,7 @@ config CUSTOM_KERNEL_SSW
 	  combo_fxla2203: external switcher for MT6582+EVDO, MT6592+EVDO
 	  combo_fxla2203_v2: 2 2X2 external switcher for ROME(MT6595 MT6795) DSDA
 	  combo_fxla2203_v3: 1 2X2 external switcher for X2(MT6595 MT6795) DSDA
-	  ssw_single_v2: internel switcher for Denali(1,2,3) 
+	  ssw_single_v2: internel switcher for Denali(1,2,3)
 config MTK_FORCE_CLUSTER1
 	bool "MTK_FORCE_CLUSTER1"
 	help
@@ -449,11 +496,32 @@ config MTK_TC1_FM_AT_SUSPEND
 	bool "MTK_TC1_FM_AT_SUSPEND"
 	default n
 
+config VANZO_KERNEL_BREATHLIGHT_BY_VALUE
+	string "VANZO_KERNEL_BREATHLIGHT_BY_VALUE"
+	help
+	  To choose VANZO_KERNEL_BREATHLIGHT_BY_VALUE
+
+config VANZO_MAIN_CAM_ROTATION
+	string "VANZO_MAIN_CAM_ROTATION"
+	help
+	  To choose VANZO_MAIN_CAM_ROTATION
+
+config VANZO_INNER_PROJECT_NAME
+	string "VANZO_INNER_PROJECT_NAME"
+	help
+	  To choose VANZO_INNER_PROJECT_NAME
+
+config VANZO_TOUCHPANEL_GESTURES_SUPPORT
+	bool "VANZO_TOUCHPANEL_GESTURES_SUPPORT"
+	default n
+	help
+	  This option is used to enable 'SmwartWake' kernel support
+
 source "drivers/misc/mediatek/Kconfig.kernel"
 source "drivers/misc/mediatek/Kconfig.drivers"
 source "drivers/misc/mediatek/smartpa/Kconfig"
 
- 
+
 source "drivers/misc/mediatek/lastpc/Kconfig"
 source "drivers/misc/mediatek/fmradio/Kconfig"
 source "drivers/misc/mediatek/hwmon/Kconfig"

@@ -188,7 +188,7 @@ static kal_uint32 charging_hw_init(void *data)
 	pmic_set_register_value(PMIC_RG_CSDAC_MODE,1);//CSDAC_MODE
 	pmic_set_register_value(PMIC_RG_VBAT_OV_EN,1);//VBAT_OV_EN
 
-#ifdef HIGH_BATTERY_VOLTAGE_SUPPORT
+#ifdef CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT
 	pmic_set_register_value(PMIC_RG_VBAT_OV_VTH,3);//VBAT_OV_VTH, 4.4V,
 #else
 	pmic_set_register_value(PMIC_RG_VBAT_OV_VTH,1);//VBAT_OV_VTH, 4.3V,

@@ -4,10 +4,10 @@ include $(srctree)/drivers/misc/mediatek/Makefile.custom
 
 obj-y   +=  accel.o accel_factory.o
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:06:42 +0800
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
- 
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
+
 ifneq ($(project_name),)
-custom_kernel_accelerometer:= $(addsuffix /, $(shell echo $(CUSTOM_KERNEL_ACCELEROMETER)))
+custom_kernel_accelerometer:= $(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_ACCELEROMETER_NAME)))
 ifneq ($(custom_kernel_accelerometer),)
 obj-y += $(custom_kernel_accelerometer)
 endif

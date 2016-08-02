@@ -3,7 +3,7 @@ MTK_PLATFORM := $(subst ",,$(CONFIG_MTK_PLATFORM))
 ARCH_MTK_PROJECT := $(subst ",,$(CONFIG_ARCH_MTK_PROJECT))
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:08:36 +0800
 # added for aosp management to import our variable
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(strip $(project_name)),)
 -include $(srctree)/../zprojects/$(project_name)/$(project_name).mk
 VANZO_PROJECT_HEADERS:=$(srctree)/../zprojects/$(project_name)/kernel-headers
@@ -121,15 +121,15 @@ else
                         ccflags-y += -I$(MTK_CUSTOM_PATH)/lens/common/inc
                     endif
                 endif
-            endif  
-        endif   
+            endif
+        endif
     endif
 endif
 # Vanzo:wangfei on: Thu, 25 Dec 2014 15:02:51 +0800
-# for compatible the old config usage,so here I use the custom config to replace the kernel config 
+# for compatible the old config usage,so here I use the custom config to replace the kernel config
 ifneq ($(strip $(project_name)),)
-ifneq ($(strip $(CUSTOM_KERNEL_FLASHLIGHT)),)
-CONFIG_CUSTOM_KERNEL_FLASHLIGHT:=$(CUSTOM_KERNEL_FLASHLIGHT)
+ifneq ($(strip $(CONFIG_CUSTOM_KERNEL_FLASHLIGHT_NAME)),)
+CONFIG_CUST_KERNEL_FLASHLIGHT:=$(CONFIG_CUSTOM_KERNEL_FLASHLIGHT_NAME)
 endif
 ifneq ($(strip $(CUSTOM_KERNEL_LCM)),)
 CONFIG_CUSTOM_KERNEL_LCM:=$(CUSTOM_KERNEL_LCM)
@@ -147,7 +147,7 @@ ccflags-y += $(CUSTOM_KERNEL_FLAGS)
 endif
 
 CUSTOM_KERNEL_FLAGS := $(addprefix -D, $(shell echo \
-             $(CONFIG_CUSTOM_KERNEL_FLASHLIGHT) \
+             $(CONFIG_CUST_KERNEL_FLASHLIGHT) \
              $(CONFIG_CUSTOM_KERNEL_LCM) \
              $(CONFIG_CUSTOM_KERNEL_IMGSENSOR) | tr a-z A-Z))
 ccflags-y += $(CUSTOM_KERNEL_FLAGS)
@@ -175,7 +175,7 @@ endif
 # added for aosp management to define some macros
 
 #added by wf
-ifneq ($(strip $(project_name)),) 
+ifneq ($(strip $(project_name)),)
 MTK_INTERNAL_CDEFS := $(foreach t,$(AUTO_ADD_GLOBAL_DEFINE_BY_NAME),$(if $(filter-out no NO none NONE false FALSE,$($(t))),-D$(t)))
 MTK_INTERNAL_CDEFS += $(foreach t,$(AUTO_ADD_GLOBAL_DEFINE_BY_VALUE),$(if $(filter-out no NO none NONE false FALSE,$($(t))),$(foreach v,$(shell echo $($(t)) | tr '[a-z]' '[A-Z]'),-D$(v))))
 MTK_INTERNAL_CDEFS += $(foreach t,$(AUTO_ADD_GLOBAL_DEFINE_BY_NAME_VALUE),$(if $(filter-out no NO none NONE false FALSE,$($(t))),-D$(t)=\"$($(t))\"))

@@ -138,7 +138,7 @@ extern unsigned char gtp_default_FW_fl[];
 #define GTP_DBL_CLK_WAKEUP    0       // double-click wakup, function together with GTP_SLIDE_WAKEUP
 #define HOTKNOT_BLOCK_RW      0
 
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
 #define GTP_GESTURE_WAKEUP  1      // Gesture wakeup by SCP
 #else
 #define GTP_GESTURE_WAKEUP  0      // Gesture wakeup by SCP

@@ -168,7 +168,7 @@
  * The below compile option is used to enable gesture wakeup.
  * By default, this compile option is disabled.
  */
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
 #define CONFIG_ENABLE_GESTURE_WAKEUP
 #endif
 

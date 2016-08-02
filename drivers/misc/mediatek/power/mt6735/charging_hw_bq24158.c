@@ -229,7 +229,7 @@ static void hw_bc11_dump_register(void)
 	battery_xlog_printk(BAT_LOG_FULL, "gpio_number=0x%x,gpio_on_mode=%d,gpio_off_mode=%d\n", gpio_number, gpio_on_mode, gpio_off_mode);
 	
     pmic_set_register_value(PMIC_RG_USBDL_RST,1);//force leave USBDL mode
-#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
 	bq24158_config_interface_liao(0x06,0x77); // ISAFE = 1250mA, VSAFE = 4.34V
 #else
 	bq24158_config_interface_liao(0x06,0x70);

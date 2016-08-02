@@ -73,7 +73,7 @@ endif
 obj-$(CONFIG_MTK_WFD_SUPPORT)  += uibc/
 
 ifneq ($(wildcard $(srctree)/$(src)/met/),)
- 
+
 endif
 
 obj-$(CONFIG_MTK_XHCI)   +=  xhci/
@@ -96,10 +96,10 @@ obj-y	+= lcm/
 
 ifeq ($(CONFIG_MTK_SENSOR_SUPPORT),y)
 obj-$(CONFIG_MTK_HWMON)	    += hwmon/
-obj-$(CONFIG_CUSTOM_KERNEL_ALSPS) += alsps/
-obj-$(CONFIG_CUSTOM_KERNEL_ACCELEROMETER) += accelerometer/
-obj-$(CONFIG_CUSTOM_KERNEL_GYROSCOPE) += gyroscope/
-obj-$(CONFIG_CUSTOM_KERNEL_MAGNETOMETER) += magnetometer/
+obj-$(CONFIG_CUST_KERNEL_ALSPS) += alsps/
+obj-$(CONFIG_CUST_KERNEL_ACCELEROMETER) += accelerometer/
+obj-$(CONFIG_CUST_KERNEL_GYROSCOPE) += gyroscope/
+obj-$(CONFIG_CUST_KERNEL_MAGNETOMETER) += magnetometer/
 obj-$(CONFIG_CUSTOM_KERNEL_BAROMETER) += barometer/
 
 ifneq ($(CONFIG_CUSTOM_KERNEL_SENSORHUB),"")
@@ -145,7 +145,7 @@ endif
 
 #obj-y	+= matv/
 #obj-y	+= touchpanel/
-# 
+#
 
 obj-$(CONFIG_MTK_VOW_SUPPORT)	+= vow/
 
@@ -196,7 +196,7 @@ obj-y	+= ext_disp/
 endif
 
 obj-$(CONFIG_MTK_HIBERNATION) += hibcore/
-ifeq ($(CONFIG_CUSTOM_KERNEL_FLASHLIGHT),"dummy_flashlight")
+ifeq ($(CONFIG_CUST_KERNEL_FLASHLIGHT),"dummy_flashlight")
 #obj-y	+= flashlight/dummy_flashlight/
 endif
 
@@ -324,10 +324,14 @@ endif
 # Vanzo:wangfei on: Tue, 10 Mar 2015 15:57:44 +0800
 # add hall framework
 
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(project_name),)
 
-custom_kernel_hall:= $(addprefix hall/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_HALL))))
+ifneq ($(strip $(CUSTOM_KERNEL_HALL)),)
+CONFIG_CUSTOM_KERNEL_HALL:=$(CUSTOM_KERNEL_HALL)
+endif
+
+custom_kernel_hall:= $(addprefix hall/,$(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_HALL))))
 
 $(info "custom_kernel_hall:$(custom_kernel_hall)")
 obj-y += $(custom_kernel_hall)
@@ -335,4 +339,3 @@ obj-y += $(custom_kernel_hall)
 endif
 
 # End of Vanzo: wangfei
-

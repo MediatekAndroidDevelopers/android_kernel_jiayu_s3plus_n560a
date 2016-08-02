@@ -1381,7 +1381,7 @@ void mt_fixup(struct tag *tags, char **cmdline, struct meminfo *mi)
         //FIX-ME early porting
         //    parse_tag_videofb_fixup(tags);
         }else if (tags->hdr.tag == ATAG_DEVINFO_DATA){
-		
+
 
             parse_tag_devinfo_data_fixup(tags);
         }
@@ -1982,7 +1982,7 @@ static struct platform_device ccci_cldma_device = {
 	.name = "cldma_modem",
 	.id = -1,
 	.dev = {
-		.platform_data = &cldma_md_config, 
+		.platform_data = &cldma_md_config,
 	},
 };
 
@@ -1997,8 +1997,8 @@ static struct platform_device ccci_ccif_device = {
 	.name = "ccif_modem",
 	.id = -1,
 	.dev = {
-		.platform_data = &ccif_md_config, 
-	},	
+		.platform_data = &ccif_md_config,
+	},
 };
 #endif
 #endif
@@ -2410,14 +2410,14 @@ __init int mt_board_init(void)
 	if (retval != 0)
 		return retval;
 
-#if defined(CONFIG_CUSTOM_KERNEL_ACCELEROMETER)
+#if defined(CONFIG_CUST_KERNEL_ACCELEROMETER)
 	retval = platform_device_register(&sensor_gsensor);
     printk("[%s]: sensor_gsensor, retval=%d \n!", __func__, retval);
 	if (retval != 0)
 		return retval;
 #endif
 
-#if defined(CONFIG_CUSTOM_KERNEL_MAGNETOMETER)
+#if defined(CONFIG_CUST_KERNEL_MAGNETOMETER)
 	retval = platform_device_register(&sensor_msensor);
     printk("[%s]: sensor_msensor, retval=%d \n!", __func__, retval);
 	if (retval != 0)
@@ -2430,7 +2430,7 @@ __init int mt_board_init(void)
 
 #endif
 
-#if defined(CONFIG_CUSTOM_KERNEL_GYROSCOPE)
+#if defined(CONFIG_CUST_KERNEL_GYROSCOPE)
 	retval = platform_device_register(&sensor_gyroscope);
     printk("[%s]: sensor_gyroscope, retval=%d \n!", __func__, retval);
 	if (retval != 0)
@@ -2444,7 +2444,7 @@ __init int mt_board_init(void)
 		return retval;
 #endif
 
-#if defined(CONFIG_CUSTOM_KERNEL_ALSPS)
+#if defined(CONFIG_CUST_KERNEL_ALSPS)
 	retval = platform_device_register(&sensor_alsps);
     printk("[%s]: sensor_alsps, retval=%d \n!", __func__, retval);
 	if (retval != 0)
@@ -2916,7 +2916,7 @@ void mt_reserve(void)
 #endif
 
 	mtk_wcn_consys_memory_reserve();
-	
+
 	mrdump_reserve_memory();
 
 #if defined(CONFIG_MTK_RAM_CONSOLE_USING_DRAM)

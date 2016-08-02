@@ -517,7 +517,7 @@ static void hw_bc11_done(void)
        bc11_set_register_value(PMIC_RG_USBDL_RST,0x1);//force leave USBDL mode
 
    
-	#if defined(HIGH_BATTERY_VOLTAGE_SUPPORT)
+	#if defined(CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT)
 	fan5405_reg_config_interface(0x06,0x77); // ISAFE = 1250mA, VSAFE = 4.34V
 	#else
 	fan5405_reg_config_interface(0x06,0x70);

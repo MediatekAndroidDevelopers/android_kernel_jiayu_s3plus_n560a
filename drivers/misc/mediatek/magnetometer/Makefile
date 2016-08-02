@@ -5,10 +5,10 @@ obj-y   +=  mag.o
 obj-y   +=  mag_factory.o
 
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:06:42 +0800
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
- 
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
+
 ifneq ($(project_name),)
-custom_kernel_magnetometer:= $(addsuffix /, $(shell echo $(CUSTOM_KERNEL_MAGNETOMETER)))
+custom_kernel_magnetometer:= $(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_MAGNETOMETER_NAME)))
 ifneq ($(custom_kernel_magnetometer),)
 obj-y += $(custom_kernel_magnetometer)
 endif

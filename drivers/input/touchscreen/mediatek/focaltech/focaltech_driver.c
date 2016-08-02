@@ -32,7 +32,7 @@
 
 //#define FT5X06_GESTRUE_SUPPORT
 
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
 #define GESTURE_LEFT		0x20
 #define GESTURE_RIGHT		0x21
 #define GESTURE_UP		    0x22
@@ -148,7 +148,7 @@ static int tpd_keys_dim_local[TPD_KEY_COUNT][4] = TPD_KEYS_DIM;
 
 static int tpd_keys_local2[TPD_KEY_COUNT] = TPD_KEYS; //TPD_KEYS2 yangzhihong
 #endif
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
 static int tpd_gestrue_keys[] = {KEY_RIGHT,KEY_LEFT,KEY_UP,KEY_DOWN,KEY_U,KEY_O,KEY_W,KEY_M,KEY_E,KEY_C,KEY_V,KEY_S,KEY_Z};
 #define TPD_GESTRUE_KEY_CNT	(sizeof( tpd_gestrue_keys )/sizeof( tpd_gestrue_keys[0] ))
 #endif
@@ -413,7 +413,7 @@ static  void tpd_up(int x, int y) {
 }
 
 
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
 static void check_gesture(int gesture_id)
 {
 	//unsigned char data[8] = {0};
@@ -800,7 +800,7 @@ static int touch_event_handler(void *unused)
 
         set_current_state(TASK_RUNNING);
 
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
  if(get_suspend_state() == PM_SUSPEND_MEM  
 	&& !((FACTORY_BOOT == get_boot_mode()|| RECOVERY_BOOT == get_boot_mode()))
 #ifdef TOUCH_PS
@@ -976,7 +976,7 @@ static ssize_t focaltech_highsensitivity_store(struct device *dev,struct device_
 static DEVICE_ATTR(highsensitivity, 0777, focaltech_highsensitivity_show, focaltech_highsensitivity_store);
 #endif
 
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT 
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT 
 static int _is_open_gesture_mode = 0;
 static ssize_t focaltech_gesture_show(struct device *dev,struct device_attribute *attr,char *buf)
 {
@@ -1056,7 +1056,7 @@ static struct attribute *focaltech_attributes[] = {
 #ifdef TPD_HIGH_SENSITIVITY_SUPPORT
 	&dev_attr_highsensitivity.attr,
 #endif
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
 	&dev_attr_gesture.attr,
 	&dev_attr_coordinate_x.attr,
 	&dev_attr_coordinate_y.attr,
@@ -1137,7 +1137,7 @@ reset_proc:
 
     msleep(400);
 
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
     init_para(TPD_WIDTH,TPD_HEIGHT,86,0,0);
     //fts_write_reg(i2c_client, 0xd0, 0x01);
 	for(i=0; i<TPD_GESTRUE_KEY_CNT; i++)
@@ -1327,7 +1327,7 @@ static void tpd_resume( struct early_suspend *h )
     hwPowerOn(TPD_POWER_SOURCE,VOL_3300,"TP");
 
 #else
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
     if(_is_open_gesture_mode)
     {
       i2c_smbus_write_i2c_block_data(i2c_client, 0xd0, 1, &data2);  //TP enter sleep mode  kaka
@@ -1383,7 +1383,7 @@ static void tpd_suspend( struct early_suspend *h )
 	}
 #endif
 
-#ifdef VANZO_TOUCHPANEL_GESTURES_SUPPORT
+#ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
     if(_is_open_gesture_mode)
     {  
         //	printk("kaka  double click on\n");

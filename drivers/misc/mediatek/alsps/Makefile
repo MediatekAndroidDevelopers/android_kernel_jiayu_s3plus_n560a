@@ -5,10 +5,10 @@ obj-y   +=  alsps.o
 obj-y   +=  alsps_factory.o
 obj-y   +=  aal_control.o
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:06:42 +0800
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
- 
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
+
 ifneq ($(project_name),)
-custom_kernel_alsps:= $(addsuffix /, $(shell echo $(CUSTOM_KERNEL_ALSPS)))
+custom_kernel_alsps:= $(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_ALSPS_NAME)))
 ifneq ($(custom_kernel_alsps),)
 obj-y += $(custom_kernel_alsps)
 endif

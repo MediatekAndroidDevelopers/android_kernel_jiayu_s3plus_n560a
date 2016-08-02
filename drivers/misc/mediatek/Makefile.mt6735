@@ -45,7 +45,7 @@ obj-$(CONFIG_MTK_WFD_SUPPORT)  += uibc/
 obj-$(CONFIG_GATOR_DRIVER)	+= $(call all-subdirs-with-makefile,gator-driver)
 
 ifneq ($(wildcard $(srctree)/$(src)/met/),)
- 
+
 endif
 
 obj-$(CONFIG_MTK_XHCI)   +=  xhci/
@@ -67,10 +67,10 @@ obj-y	+= lcm/
 
 ifeq ($(CONFIG_MTK_SENSOR_SUPPORT),y)
 obj-$(CONFIG_MTK_HWMON)	    += hwmon/
-obj-$(CONFIG_CUSTOM_KERNEL_ALSPS) += alsps/
-obj-$(CONFIG_CUSTOM_KERNEL_ACCELEROMETER) += accelerometer/
-obj-$(CONFIG_CUSTOM_KERNEL_GYROSCOPE) += gyroscope/
-obj-$(CONFIG_CUSTOM_KERNEL_MAGNETOMETER) += magnetometer/
+obj-$(CONFIG_CUST_KERNEL_ALSPS) += alsps/
+obj-$(CONFIG_CUST_KERNEL_ACCELEROMETER) += accelerometer/
+obj-$(CONFIG_CUST_KERNEL_GYROSCOPE) += gyroscope/
+obj-$(CONFIG_CUST_KERNEL_MAGNETOMETER) += magnetometer/
 obj-$(CONFIG_CUSTOM_KERNEL_BAROMETER) += barometer/
 endif
 #obj-y	+= matv/

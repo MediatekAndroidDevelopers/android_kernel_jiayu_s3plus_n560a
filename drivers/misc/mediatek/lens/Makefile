@@ -8,10 +8,15 @@ include $(srctree)/drivers/misc/mediatek/Makefile.custom
 # Vanzo:wangfei on: Tue, 10 Mar 2015 15:57:44 +0800
 # add lens framework
 
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(project_name),)
 platform=$(shell echo $(MTK_PLATFORM) | tr [A-Z] [a-z])
-custom_kernel_lens:= $(addprefix $(platform)/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_LENS))))
+
+ifneq ($(strip $(CUSTOM_KERNEL_LENS)),)
+CONFIG_CUSTOM_KERNEL_LENS:=$(CUSTOM_KERNEL_LENS)
+endif
+
+custom_kernel_lens:= $(addprefix $(platform)/,$(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_LENS))))
 
 $(info "wyl custom_kernel_lens:$(custom_kernel_lens)")
 obj-y += $(custom_kernel_lens)
@@ -19,7 +24,7 @@ obj-y += $(custom_kernel_lens)
 else
 
 # End of Vanzo: wangfei
- 
+
 ifeq ($(CONFIG_ARCH_MT8127),y)
 		obj-$(CONFIG_MTK_LENS_FM50AF_SUPPORT)      += mt8127/fm50af/
 else
@@ -38,7 +43,7 @@ else
 		obj-$(CONFIG_MTK_LENS_DW9718AF_SUPPORT)  +=  mt6592/dw9718af/
 		obj-$(CONFIG_MTK_LENS_AK7345AF_SUPPORT)  +=  mt6592/ak7345af/
 		obj-$(CONFIG_MTK_LENS_SENSORDRIVE_SUPPORT) += mt6592/sensordrive/
-		else 
+		else
 			ifeq ($(CONFIG_ARCH_MT6582),y)
 			obj-$(CONFIG_MTK_LENS_DUMMYLENS_SUPPORT) +=  mt6582/dummy_lens/
 			obj-$(CONFIG_MTK_LENS_FM50AF_SUPPORT)    +=  mt6582/fm50af/
@@ -48,7 +53,7 @@ else
 			obj-$(CONFIG_MTK_LENS_DW9714AF_SUPPORT)  +=  mt6582/dw9714af/
 			obj-$(CONFIG_MTK_LENS_DW9714A_SUPPORT)   +=  mt6582/dw9714a/
 			obj-$(CONFIG_MTK_LENS_DW9718AF_SUPPORT)  +=  mt6582/dw9718af/
-			else 
+			else
 				ifeq ($(CONFIG_ARCH_MT6752),y)
 				obj-$(CONFIG_MTK_LENS_DUMMYLENS_SUPPORT) += mt6752/dummy_lens/
 				obj-$(CONFIG_MTK_LENS_AD5820AF_SUPPORT) += mt6752/ad5820af/
@@ -117,7 +122,7 @@ else
 						obj-$(CONFIG_MTK_LENS_SENSORDRIVE_SUPPORT) += common/sensordrive/
 						obj-$(CONFIG_MTK_LENS_LC898122AF_SUPPORT) += common/lc898122af/
 						obj-$(CONFIG_MTK_LENS_LC898212AF_SUPPORT)    += common/lc898212af/
-						obj-$(CONFIG_MTK_LENS_AK7345AF_SUPPORT)    += common/ak7345af/	                			
+						obj-$(CONFIG_MTK_LENS_AK7345AF_SUPPORT)    += common/ak7345af/
 						endif
 					endif
 				endif
@@ -132,4 +137,3 @@ endif
 # add lens support
 endif
 # End of Vanzo:wangfei
-

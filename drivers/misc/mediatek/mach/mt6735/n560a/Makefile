@@ -22,13 +22,14 @@ obj-y   +=  accdet/
 ifeq ($(CONFIG_MTK_SENSOR_SUPPORT),y)
 
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:06:42 +0800
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(project_name),)
+
 $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
-custom_kernel_alsps:= $(addprefix alsps/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_ALSPS))))
-custom_kernel_accelerometer:= $(addprefix accelerometer/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_ACCELEROMETER))))
-custom_kernel_magnetometer:= $(addprefix magnetometer/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_MAGNETOMETER))))
-custom_kernel_gyroscope:= $(addprefix gyroscope/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_GYROSCOPE))))
+custom_kernel_alsps:= $(addprefix alsps/,$(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_ALSPS_NAME))))
+custom_kernel_accelerometer:= $(addprefix accelerometer/,$(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_ACCELEROMETER_NAME))))
+custom_kernel_magnetometer:= $(addprefix magnetometer/,$(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_MAGNETOMETER_NAME))))
+custom_kernel_gyroscope:= $(addprefix gyroscope/,$(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_GYROSCOPE_NAME))))
 custom_kernel_barometer:= $(addprefix barometer/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_BAROMETER))))
 
 $(info "the  custom_kernel_alsps:$(custom_kernel_alsps),the custom_kernel_accelerometer:$(custom_kernel_accelerometer),the custom_kernel_magnetometer:$(custom_kernel_magnetometer)")
@@ -48,7 +49,7 @@ ifneq ($(custom_kernel_barometer),)
 obj-y += $(custom_kernel_barometer)
 endif
 
-custom_kernel_flashlight:= $(addsuffix /, $(shell echo $(CUSTOM_KERNEL_FLASHLIGHT)))
+custom_kernel_flashlight:= $(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_FLASHLIGHT_NAME)))
 $(info "the custom_kernel_flashlight:$(custom_kernel_flashlight)")
 ifneq ($(custom_kernel_flashlight),)
 obj-y += flashlight/$(custom_kernel_flashlight)
@@ -59,7 +60,7 @@ endif
 # Vanzo:wuzhiyong on: Mar, 13 Fri 2015 14:38 +0800
 # added for new sensor config structure
 
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifneq ($(project_name),)
 custom_kernel_irda:= $(addprefix irda/,$(addsuffix /, $(shell echo $(CUSTOM_KERNEL_IRDA))))
 $(info "custom_kernel_irda:$(custom_kernel_irda)")

@@ -39,6 +39,10 @@
 #include "epl259x.h"
 #include <linux/input/mt.h>
 
+#ifdef CONFIG_ARCH_MT6753
+#define MT6753 1
+#endif
+
 #if defined(MT6575) || defined(MT6571) || defined(MT6589) || defined(MT6582) || defined(MT6592) || defined(MT6735) || defined(MT6752) || defined(MT6753)
 #include <mach/devs.h>
 #include <mach/mt_typedefs.h>
@@ -1373,13 +1377,13 @@ int epl_sensor_read_ps(struct i2c_client *client)
 	if (debug_mode_flag)
 	{
 		epl_sensor.ps.data.ir_data = ((gRawData.raw_bytes[1]<<8) | gRawData.raw_bytes[0]);
-		epl_sensor.ps.data.data = ((gRawData.raw_bytes[3]<<8) | gRawData.raw_bytes[2]);	
+		epl_sensor.ps.data.data = ((gRawData.raw_bytes[3]<<8) | gRawData.raw_bytes[2]);
 	}
 	else
 	{
 		epl_sensor.ps.data.ir_data = ((gRawData.raw_bytes[1]<<8) | gRawData.raw_bytes[0])>>2;
 		epl_sensor.ps.data.data = ((gRawData.raw_bytes[3]<<8) | gRawData.raw_bytes[2])>>2;
-		
+
 		if(epl_sensor.ps.data.data > 1023){
 			epl_sensor.ps.data.data = 1023;
 		}else if(epl_sensor.ps.data.data < 5){
@@ -5376,4 +5380,3 @@ module_exit(epl_sensor_exit);
 MODULE_AUTHOR("renato.pan@eminent-tek.com");
 MODULE_DESCRIPTION("EPL259x ALPsr driver");
 MODULE_LICENSE("GPL");
-

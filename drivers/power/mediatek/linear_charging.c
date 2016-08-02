@@ -446,7 +446,7 @@ static void battery_pump_express_algorithm_start(void)
 	int curr_vbat = 0;
 	int i = 0;
 	int ta_cv_vchr;
-#ifdef HIGH_BATTERY_VOLTAGE_SUPPORT
+#ifdef CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT
 		kal_uint32 cv_voltage = 4350;
 #else
 		kal_uint32 cv_voltage = 4200;
@@ -536,7 +536,7 @@ static BATTERY_VOLTAGE_ENUM select_jeita_cv(void)
 	} else if (g_temp_status == TEMP_POS_45_TO_POS_60) {
 		cv_voltage = JEITA_TEMP_POS_45_TO_POS_60_CV_VOLTAGE;
 	} else if (g_temp_status == TEMP_POS_10_TO_POS_45) {
-#ifdef HIGH_BATTERY_VOLTAGE_SUPPORT
+#ifdef CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT
 		cv_voltage = BATTERY_VOLT_04_350000_V;
 #else
 		cv_voltage = JEITA_TEMP_POS_10_TO_POS_45_CV_VOLTAGE;
@@ -597,7 +597,7 @@ PMU_STATUS do_jeita_state_machine(void)
 					    TEMP_POS_10_THRESHOLD, TEMP_POS_45_THRESHOLD);
 
 			g_temp_status = TEMP_POS_10_TO_POS_45;
-#ifdef HIGH_BATTERY_VOLTAGE_SUPPORT
+#ifdef CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT
 			g_jeita_recharging_voltage = 4200;
 #else
 			g_jeita_recharging_voltage = JEITA_TEMP_POS_10_TO_POS_45_RECHARGE_VOLTAGE;
@@ -1015,7 +1015,7 @@ static void pchr_turn_on_charging(void)
 
 			/* Set CV */
 #if !defined(CONFIG_MTK_JEITA_STANDARD_SUPPORT)
-#ifdef HIGH_BATTERY_VOLTAGE_SUPPORT
+#ifdef CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT
 			cv_voltage = BATTERY_VOLT_04_350000_V;
 #else
 			cv_voltage = BATTERY_VOLT_04_200000_V;
@@ -1115,7 +1115,7 @@ PMU_STATUS BAT_ConstantCurrentModeAction(void)
 PMU_STATUS BAT_TopOffModeAction(void)
 {
 	kal_uint32 charging_enable = KAL_FALSE;
-#ifdef HIGH_BATTERY_VOLTAGE_SUPPORT
+#ifdef CONFIG_HIGH_BATTERY_VOLTAGE_SUPPORT
 	kal_uint32 cv_voltage = 4350;
 #else
 	kal_uint32 cv_voltage = 4200;

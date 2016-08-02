@@ -22,11 +22,11 @@ ifeq ($(wildcard $(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/$(ARCH_MT
 
 
 # Vanzo:wangfei on: Wed, 12 Nov 2014 21:06:42 +0800
-project_name:=$(shell echo $(VANZO_INNER_PROJECT_NAME))
+project_name:=$(shell echo $(CONFIG_VANZO_INNER_PROJECT_NAME))
 ifeq ($(project_name),)
 # End of Vanzo:wangfei
 
-custom_kernel_flashlight := $(addsuffix /, $(shell echo $(CONFIG_CUSTOM_KERNEL_FLASHLIGHT)))
+custom_kernel_flashlight := $(addsuffix /, $(shell echo $(CONFIG_CUST_KERNEL_FLASHLIGHT)))
 
 obj-y += $(custom_kernel_flashlight)
 # Vanzo:wangfei on: Wed, 14 Jan 2015 15:01:47 +0800
@@ -38,5 +38,3 @@ endif
 
 
 endif
-
-
