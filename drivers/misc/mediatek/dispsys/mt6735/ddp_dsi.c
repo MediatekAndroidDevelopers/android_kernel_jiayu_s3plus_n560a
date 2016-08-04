@@ -2386,12 +2386,11 @@ static void lcm_mdelay(UINT32 ms)
 {
 	if(ms < 10)
 	{
-		udelay(ms*1000);
+		udelay(ms*100); //1000 //improve on resume 
 	}
 	else
 	{
-		msleep(ms);
-		//udelay(ms*1000);
+		udelay(ms*200);
 	}
 }
 
