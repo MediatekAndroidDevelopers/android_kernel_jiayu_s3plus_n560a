@@ -64,11 +64,8 @@ config ARM
 	select OLD_SIGSUSPEND3
 	select OLD_SIGACTION
 	select HAVE_CONTEXT_TRACKING
-<<<<<<< HEAD
 	select CRYPTO_AES_ARM if (ARCH_MT6752 || ARCH_MT6735 || ARCH_MT6735M || ARCH_MT6753 || ARCH_MT8163)
-=======
 	select HAVE_VIRT_CPU_ACCOUNTING
->>>>>>> e2d5c33... ARM: Kconfig: allow virt CPU accounting
 	help
 	  The ARM series is a line of low-power-consumption RISC chip designs
 	  licensed by ARM Ltd and targeted at embedded applications and
