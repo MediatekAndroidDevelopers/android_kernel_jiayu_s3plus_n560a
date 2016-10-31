@@ -3,7 +3,7 @@
 ifeq ($(CONFIG_MTK_FM_SUPPORT), y)
 
 subdir-ccflags-y += -D MTK_WCN_REMOVE_KERNEL_MODULE
-subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include
+subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include/mach
 
 #define build_speical_fm_driver
 
@@ -113,9 +113,9 @@ $(warning MT6627_FM)
 	ccflags-y += -DMT6625_FM
 	ccflags-y += -I$(src)/inc \
 					-I$(src)/$(FM_CHIP)/inc \
-					-I$(src)/../connectivity/conn_soc/common/include \
-					-I$(src)/../connectivity/conn_soc/common/linux/include \
-					-I$(src)/../connectivity/common_detect
+					-I$(src)/../connectivity/common/conn_soc/include \
+					-I$(src)/../connectivity/common/conn_soc/linux/include \
+					-I$(src)/../connectivity/common/common_detect
 
 	obj-$(CONFIG_MTK_FM) += mtk_fm_drv.o
 	mt6627-objs	:= core/fm_module.o \
