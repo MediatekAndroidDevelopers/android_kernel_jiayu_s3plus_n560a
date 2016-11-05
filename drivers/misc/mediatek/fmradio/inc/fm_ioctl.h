@@ -87,6 +87,8 @@
 #define FM_IOCTL_SOFT_MUTE_TUNE _IOWR(FM_IOC_MAGIC, 63, struct fm_softmute_tune_t)	/*for soft mute tune */
 #define FM_IOCTL_DESENSE_CHECK   _IOWR(FM_IOC_MAGIC, 64, fm_desense_check_t)
 
+#define COMPAT_FM_IOCTL_GET_AUDIO_INFO _IOWR(FM_IOC_MAGIC, 48, int32_t)
+
 #define FM_IOCTL_DUMP_REG   _IO(FM_IOC_MAGIC, 0xFF)
 
 #endif				/* __FM_IOCTL_H__ */
