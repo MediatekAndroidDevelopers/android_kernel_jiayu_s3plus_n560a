@@ -846,8 +846,11 @@ static int synaptics_rmi4_i2c_write(struct synaptics_rmi4_data *rmi4_data,
 {
     int retval;
     unsigned char retry;
-    unsigned char buf[length + 1];
     unsigned char *buf_va = NULL;
+
+    if (length > 1024)
+        return -ENOMEM;
+
     mutex_lock(&(rmi4_data->rmi4_io_ctrl_mutex));
 
 /* Vanzo:songlixin on: Wed, 11 Mar 2015 14:54:32 +0800
