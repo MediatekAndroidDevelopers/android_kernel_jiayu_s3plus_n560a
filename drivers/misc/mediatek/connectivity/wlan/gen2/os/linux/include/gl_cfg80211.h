@@ -274,7 +274,7 @@ mtk_cfg80211_testmode_get_sta_statistics(IN struct wiphy *wiphy,
 
 int mtk_cfg80211_testmode_get_scan_done(IN struct wiphy *wiphy, IN void *data, IN int len, IN P_GLUE_INFO_T prGlueInfo);
 
-int mtk_cfg80211_testmode_cmd(IN struct wiphy *wiphy, IN struct wireless_dev *wdev, IN void *data, IN int len);
+int mtk_cfg80211_testmode_cmd(IN struct wiphy *wiphy, IN void *data, IN int len);
 
 int mtk_cfg80211_testmode_sw_cmd(IN struct wiphy *wiphy, IN void *data, IN int len);
 #if CFG_SUPPORT_WAPI

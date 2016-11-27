@@ -2445,7 +2445,7 @@ mtk_cfg80211_testmode_set_poorlink_param(IN struct wiphy *wiphy, IN void *data, 
 
 }
 
-int mtk_cfg80211_testmode_cmd(IN struct wiphy *wiphy, IN struct wireless_dev *wdev, IN void *data, IN int len)
+int mtk_cfg80211_testmode_cmd(IN struct wiphy *wiphy, IN void *data, IN int len)
 {
 	P_GLUE_INFO_T prGlueInfo = NULL;
 	P_NL80211_DRIVER_TEST_MODE_PARAMS prParams = (P_NL80211_DRIVER_TEST_MODE_PARAMS) NULL;
@@ -2455,7 +2455,6 @@ int mtk_cfg80211_testmode_cmd(IN struct wiphy *wiphy, IN struct wireless_dev *wd
 #endif
 
 	ASSERT(wiphy);
-	ASSERT(wdev);
 
 	prGlueInfo = (P_GLUE_INFO_T) wiphy_priv(wiphy);
 
