@@ -8,6 +8,7 @@ obj-$(CONFIG_CRYPTO_SHA1_ARM) += sha1-arm.o
 obj-$(CONFIG_CRYPTO_SHA1_ARM_NEON) += sha1-arm-neon.o
 obj-$(CONFIG_CRYPTO_SHA256_ARM) += sha256-arm.o
 obj-$(CONFIG_CRYPTO_SHA512_ARM_NEON) += sha512-arm-neon.o
+obj-$(CONFIG_CRYPTO_CHACHA20_NEON) += chacha20-neon.o
 
 
 ifdef CONFIG_CRYPTO_AES_ARM32_CE
@@ -23,6 +24,7 @@ sha1-arm-neon-y	:= sha1-armv7-neon.o sha1_neon_glue.o
 sha256-arm-neon-$(CONFIG_KERNEL_MODE_NEON) := sha256_neon_glue.o
 sha256-arm-y	:= sha256-core.o sha256_glue.o $(sha256-arm-neon-y)
 sha512-arm-neon-y := sha512-armv7-neon.o sha512_neon_glue.o
+chacha20-neon-y := chacha20-neon-core.o chacha20-neon-glue.o
 
 quiet_cmd_perl = PERL    $@
       cmd_perl = $(PERL) $(<) > $(@)
