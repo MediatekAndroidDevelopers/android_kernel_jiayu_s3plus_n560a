@@ -14,7 +14,7 @@
 #include <linux/wait.h>
 #include <linux/sched.h>
 
-#include "zcomp.h"
+#include <linux/zcomp.h>
 #include "zcomp_lzo.h"
 #ifdef CONFIG_ZRAM_LZ4_COMPRESS
 #include "zcomp_lz4.h"
