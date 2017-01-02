@@ -26,6 +26,10 @@
 #include <linux/of_irq.h>
 #endif
 
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+#include <linux/input/hall.h>
+#endif
+
 #define KPD_NAME	"mtk-kpd"
 #define MTK_KP_WAKESOURCE	/* this is for auto set wake up source */
 
@@ -836,6 +840,10 @@ static int kpd_pdrv_probe(struct platform_device *pdev)
 
 #ifdef KPD_PMIC_RSTKEY_MAP
 	__set_bit(KPD_PMIC_RSTKEY_MAP, kpd_input_dev->keybit);
+#endif
+
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+	hall_setdev(kpd_input_dev);
 #endif
 
 #ifdef KPD_KEY_MAP

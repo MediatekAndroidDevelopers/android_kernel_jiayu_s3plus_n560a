@@ -39,6 +39,11 @@
 #include <mach/mt_gpio.h>
 #include <mach/battery_common.h>
 
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+#include <linux/input.h>
+#include <linux/input/hall.h>
+#endif
+
 //#define GPIO_HALL_EINT_PIN GPIO116	//move to dct
 //#define CUST_EINT_HALL_NUM 11		//move to dct
 
@@ -59,6 +64,9 @@ static struct workqueue_struct * hall_eint_workqueue = NULL;
 static struct work_struct hall_eint_work;
 
 static struct switch_dev hall_data;
+
+static struct input_dev * hall_pwrdev;
+static DEFINE_MUTEX(pwrkeyworklock);
 
 #if defined(VANZO_COMMON_APPLE_CHARGING)
 static struct workqueue_struct * apple_eint_workqueue = NULL;
@@ -295,8 +303,11 @@ static inline int apple_setup_eint(void)
 #endif
 void hall_eint_work_callback(struct work_struct *work)
 {
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+        int key_code = 0;
+#endif
 	HALL_FUNC();
-    mt_eint_mask(CUST_EINT_HALL_NUM);
+        mt_eint_mask(CUST_EINT_HALL_NUM);
 	if(hall_cur_eint_state == HALL_NEAR)
 	{
 		HALL_DEBUG("HALL_NEAR\n");
@@ -309,7 +320,10 @@ void hall_eint_work_callback(struct work_struct *work)
 	apple_set_charging_state(HALL_NERA_EVENT);
 #endif
 #endif
-        switch_set_state((struct switch_dev *)&hall_data, HALL_NEAR);
+                switch_set_state((struct switch_dev *)&hall_data, HALL_NEAR);
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+                key_code = KEY_F2; //doze to display clock
+#endif
 	}
 	else
 	{
@@ -323,9 +337,22 @@ void hall_eint_work_callback(struct work_struct *work)
 	apple_set_charging_state(HALL_FAR_EVENT);
 #endif
 #endif
-        switch_set_state((struct switch_dev *)&hall_data, HALL_FAR);
+                switch_set_state((struct switch_dev *)&hall_data, HALL_FAR);
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+                key_code = KEY_F3; // power on
+#endif
 	}
-    mt_eint_unmask(CUST_EINT_HALL_NUM);
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+        if (mutex_trylock(&pwrkeyworklock) && key_code != 0) {
+    	        input_event(hall_pwrdev, EV_KEY, key_code, 1);
+    	        input_event(hall_pwrdev, EV_SYN, 0, 0);
+    	        msleep(60);
+    	        input_event(hall_pwrdev, EV_KEY, key_code, 0);
+    	        input_event(hall_pwrdev, EV_SYN, 0, 0);
+	        mutex_unlock(&pwrkeyworklock);
+        }
+#endif
+        mt_eint_unmask(CUST_EINT_HALL_NUM);
 }
 
 void hall_eint_func(void)
@@ -403,9 +430,21 @@ static int hall_probe(struct platform_device *dev)
 	INIT_WORK(&apple_eint_work, apple_eint_work_callback);
 	apple_setup_eint();
 #endif
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+	input_set_capability(hall_pwrdev, EV_KEY, KEY_F2);
+	input_set_capability(hall_pwrdev, EV_KEY, KEY_F3);
+#endif
 	
 	return 0;
 }
+
+#ifdef CONFIG_KERNEL_HALL_MAD_SUPPORT
+/* PowerKey setter */
+void hall_setdev(struct input_dev * input_device) {
+	hall_pwrdev = input_device;
+	HALL_DEBUG("set hall_pwrdev: %s\n", hall_pwrdev->name);
+}
+#endif
 
 static int hall_remove(struct platform_device *dev)
 {
