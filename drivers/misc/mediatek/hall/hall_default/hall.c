@@ -39,6 +39,8 @@
 #include <mach/mt_gpio.h>
 #include <mach/battery_common.h>
 
+#include <linux/input.h>
+
 //#define GPIO_HALL_EINT_PIN GPIO116	//move to dct
 //#define CUST_EINT_HALL_NUM 11		//move to dct
 
@@ -58,7 +60,7 @@ extern void mt_eint_print_status(void);
 static struct workqueue_struct * hall_eint_workqueue = NULL;
 static struct work_struct hall_eint_work;
 
-static struct switch_dev hall_data;
+static struct input_dev	*idev;
 
 #if defined(VANZO_COMMON_APPLE_CHARGING)
 static struct workqueue_struct * apple_eint_workqueue = NULL;
@@ -293,39 +295,37 @@ static inline int apple_setup_eint(void)
 	return 0;
 }
 #endif
+
+void hall_setup_switch_dev(void)
+{
+	int ret = 0;
+
+	idev = input_allocate_device();
+	input_set_capability(idev, EV_SW, SW_LID);
+
+	ret = input_register_device(idev);
+	if (ret) {
+		pr_info("[Hall_switch] input registration fails\n");
+		input_free_device(idev);
+		idev = NULL;
+	}
+}
+
 void hall_eint_work_callback(struct work_struct *work)
 {
+	int err = 1;
 	HALL_FUNC();
-    mt_eint_mask(CUST_EINT_HALL_NUM);
-	if(hall_cur_eint_state == HALL_NEAR)
-	{
-		HALL_DEBUG("HALL_NEAR\n");
-#if defined(VANZO_COMMON_APPLE_CHARGING)
-#if defined(VANZO_COMMON_APPLE_CHARGING_NEW_STYLE)
-	apple_dataline_android_connect_dataline_iphone();
-	apple_otg_open();
-#else
-	apple_android_iphone_communication();
-	apple_set_charging_state(HALL_NERA_EVENT);
-#endif
-#endif
-        switch_set_state((struct switch_dev *)&hall_data, HALL_NEAR);
+	mt_eint_mask(CUST_EINT_HALL_NUM);
+
+	if (idev == NULL) {
+		hall_setup_switch_dev();
 	}
-	else
-	{
-		HALL_DEBUG("HALL_FAR\n");
-#if defined(VANZO_COMMON_APPLE_CHARGING)
-#if defined(VANZO_COMMON_APPLE_CHARGING_NEW_STYLE)
-	apple_otg_close();
-	apple_dataline_android_connect_dataline_usb();
-#else
-	apple_android_only();
-	apple_set_charging_state(HALL_FAR_EVENT);
-#endif
-#endif
-        switch_set_state((struct switch_dev *)&hall_data, HALL_FAR);
+
+	if (idev != NULL) {
+		input_report_switch(idev, SW_LID, !hall_cur_eint_state);
+		input_sync(idev);
 	}
-    mt_eint_unmask(CUST_EINT_HALL_NUM);
+	mt_eint_unmask(CUST_EINT_HALL_NUM);
 }
 
 void hall_eint_func(void)
@@ -365,8 +365,6 @@ static inline int hall_setup_eint(void)
 
 static int hall_probe(struct platform_device *dev)
 {
-	int ret = 0;
-	
 	HALL_FUNC();
 
 	bool curr_state;
@@ -377,23 +375,11 @@ static int hall_probe(struct platform_device *dev)
 	printk("%s line %d curr_state %d\n",__func__,__LINE__, curr_state);
 
 	if(!curr_state){
-		hall_data.name = "hall";
-		hall_data.index = 0;
-		hall_data.state = HALL_FAR;
 		hall_cur_eint_state = HALL_FAR;
 	}else{
-		hall_data.name = "hall";
-		hall_data.index = 0;
-		hall_data.state = HALL_NEAR;
 		hall_cur_eint_state = HALL_NEAR;
 	}
-
-	ret = switch_dev_register(&hall_data);
-	if(ret)
-	{
-		HALL_DEBUG("switch_dev_register return %d\n", ret);
-	}
-
+	hall_setup_switch_dev();
 	hall_eint_workqueue = create_singlethread_workqueue("hall_eint");
 	INIT_WORK(&hall_eint_work, hall_eint_work_callback);
 
@@ -403,7 +389,7 @@ static int hall_probe(struct platform_device *dev)
 	INIT_WORK(&apple_eint_work, apple_eint_work_callback);
 	apple_setup_eint();
 #endif
-	
+
 	return 0;
 }
 
@@ -412,7 +398,8 @@ static int hall_remove(struct platform_device *dev)
 	HALL_FUNC();
 
 	destroy_workqueue(hall_eint_workqueue);
-	switch_dev_unregister(&hall_data);
+        input_free_device(idev);
+        idev = NULL;
 
 	return 0;
 }
