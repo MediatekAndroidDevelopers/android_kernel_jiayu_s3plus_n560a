@@ -36,6 +36,7 @@
 #include <linux/export.h>
 #include <linux/jiffies.h>
 #include <linux/random.h>
+#include <linux/timer.h>
 #include <linux/sched.h>
 #include <asm/unaligned.h>
 
