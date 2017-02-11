@@ -209,6 +209,7 @@ int led_classdev_register(struct device *parent, struct led_classdev *led_cdev)
 
 #ifdef CONFIG_LEDS_TRIGGERS
 	led_trigger_set_default(led_cdev);
+	create_timer_files(led_cdev);
 #endif
 
 	dev_dbg(parent, "Registered led device: %s\n",

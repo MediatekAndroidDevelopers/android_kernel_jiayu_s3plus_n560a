@@ -71,35 +71,34 @@ static ssize_t led_delay_off_store(struct device *dev,
 static DEVICE_ATTR(delay_on, 0644, led_delay_on_show, led_delay_on_store);
 static DEVICE_ATTR(delay_off, 0644, led_delay_off_show, led_delay_off_store);
 
-static void timer_trig_activate(struct led_classdev *led_cdev)
+void create_timer_files(struct led_classdev *led_cdev)
 {
 	int rc;
-
-	led_cdev->trigger_data = NULL;
-
 	rc = device_create_file(led_cdev->dev, &dev_attr_delay_on);
 	if (rc)
 		return;
 	rc = device_create_file(led_cdev->dev, &dev_attr_delay_off);
 	if (rc)
 		goto err_out_delayon;
+	return;
+err_out_delayon:
+	device_remove_file(led_cdev->dev, &dev_attr_delay_on);
+}
+EXPORT_SYMBOL_GPL(create_timer_files);
+
+static void timer_trig_activate(struct led_classdev *led_cdev)
+{
+	led_cdev->trigger_data = NULL;
 
 	led_blink_set(led_cdev, &led_cdev->blink_delay_on,
 		      &led_cdev->blink_delay_off);
 	led_cdev->activated = true;
 	kobject_uevent(&led_cdev->dev->kobj,KOBJ_ADD);
-
-	return;
-
-err_out_delayon:
-	device_remove_file(led_cdev->dev, &dev_attr_delay_on);
 }
 
 static void timer_trig_deactivate(struct led_classdev *led_cdev)
 {
 	if (led_cdev->activated) {
-		device_remove_file(led_cdev->dev, &dev_attr_delay_on);
-		device_remove_file(led_cdev->dev, &dev_attr_delay_off);
 		led_cdev->activated = false;
 	}
 
