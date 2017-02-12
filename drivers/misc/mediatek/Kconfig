@@ -419,11 +419,6 @@ config CUSTOM_KERNEL_HALL
 	string "CUSTOM_KERNEL_HALL"
 	help
 	  To choose kernel HALL driver name
-	  
-config KERNEL_HALL_MAD_SUPPORT
-	string "KERNEL_HALL_AOSP_SUPPORT"
-	help
-	  To choose kernel HALL driver on non MAD roms 
 
 config CUST_KERNEL_FLASHLIGHT
 	string "CUST_KERNEL_FLASHLIGHT"
