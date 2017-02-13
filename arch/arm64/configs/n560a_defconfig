@@ -2919,7 +2919,7 @@ CONFIG_NLS_ISO8859_1=y
 CONFIG_NLS_UTF8=y
 # CONFIG_DLM is not set
 # CONFIG_RAWFS_FS is not set
-CONFIG_DYNAMIC_FSYNC=y
+# CONFIG_DYNAMIC_FSYNC is not set
 
 #
 # Kernel hacking
