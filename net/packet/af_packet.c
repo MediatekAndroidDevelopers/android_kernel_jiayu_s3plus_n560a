@@ -1388,11 +1388,10 @@ static struct packet_fanout *fanout_release(struct sock *sk)
 	if (f) {
 		po->fanout = NULL;
 
-		if (atomic_dec_and_test(&f->sk_ref)) {
+		if (atomic_dec_and_test(&f->sk_ref))
 			list_del(&f->list);
-			dev_remove_pack(&f->prot_hook);
-			kfree(f);
-		}
+		else
+			f = NULL;
 	}
 	mutex_unlock(&fanout_mutex);
 
@@ -3430,7 +3429,6 @@ static int packet_notifier(struct notifier_block *this, unsigned long msg, void 
 				}
 				if (msg == NETDEV_UNREGISTER) {
 					packet_cached_dev_reset(po);
-					fanout_release(sk);
 					po->ifindex = -1;
 					if (po->prot_hook.dev)
 						dev_put(po->prot_hook.dev);
