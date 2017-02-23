@@ -78,10 +78,10 @@ void log_wakeup_reason(int irq)
 	struct irq_desc *desc;
 	desc = irq_to_desc(irq);
 	if (desc && desc->action && desc->action->name)
-		printk(KERN_INFO "Resume caused by IRQ %d, %s\n", irq,
+		printk(KERN_DEBUG "Resume caused by IRQ %d, %s\n", irq,
 				desc->action->name);
 	else
-		printk(KERN_INFO "Resume caused by IRQ %d\n", irq);
+		printk(KERN_DEBUG "Resume caused by IRQ %d\n", irq);
 
 	spin_lock(&resume_reason_lock);
 	if (irqcount == MAX_WAKEUP_REASON_IRQS) {
