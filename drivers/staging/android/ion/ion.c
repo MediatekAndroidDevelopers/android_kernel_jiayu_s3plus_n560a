@@ -449,6 +449,15 @@ static void ion_handle_get(struct ion_handle *handle)
 	kref_get(&handle->ref);
 }
 
+/* Must hold the client lock */
+static struct ion_handle *ion_handle_get_check_overflow(struct ion_handle *handle)
+{
+	if (atomic_read(&handle->ref.refcount) + 1 == 0)
+		return ERR_PTR(-EOVERFLOW);
+	ion_handle_get(handle);
+	return handle;
+}
+
 static int ion_handle_put_nolock(struct ion_handle *handle)
 {
 	int ret;
@@ -495,9 +504,9 @@ static struct ion_handle *ion_handle_get_by_id_nolock(struct ion_client *client,
 
 	handle = idr_find(&client->idr, id);
 	if (handle)
-		ion_handle_get(handle);
+		return ion_handle_get_check_overflow(handle);
 
-	return handle ? handle : ERR_PTR(-EINVAL);
+	return ERR_PTR(-EINVAL);
 }
 
 struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
@@ -905,7 +914,7 @@ static int ion_get_client_serial(const struct rb_root *root,
 	return serial + 1;
 }
 
-struct ion_client *__ion_client_create(struct ion_device *dev,
+struct ion_client *ion_client_create(struct ion_device *dev,
 				     const char *name)
 {
 	struct ion_client *client;
@@ -993,23 +1002,6 @@ err_put_task_struct:
 	if (task)
 		put_task_struct(current->group_leader);
 	return ERR_PTR(-ENOMEM);
-}
-
-
-struct ion_client *ion_client_create(struct ion_device *dev,
-				     const char *name)
-{
-    struct ion_client *client;
-
-    client = __ion_client_create(dev, name);
-    if(IS_ERR_OR_NULL(client)) {
-        IONMSG("%s client is error or null 0x%pK.\n", __func__, client);
-	return client;
-    }
-
-    ion_debug_kern_rec(client, NULL, NULL, ION_FUNCTION_CREATE_CLIENT, 0, 0, 0, 0);
-
-    return client;
 }
 EXPORT_SYMBOL(ion_client_create);
 
@@ -1399,7 +1391,7 @@ struct ion_handle *__ion_import_dma_buf(struct ion_client *client, int fd, int f
 	/* if a handle exists for this buffer just take a reference to it */
 	handle = ion_handle_lookup(client, buffer);
 	if (!IS_ERR(handle)) {
-		ion_handle_get(handle);
+		handle = ion_handle_get_check_overflow(handle);
 		mutex_unlock(&client->lock);
 		goto end;
 	}
@@ -1629,7 +1621,7 @@ static int ion_open(struct inode *inode, struct file *file)
 
 	pr_debug("%s: %d\n", __func__, __LINE__);
 	snprintf(debug_name, 64, "%u", task_pid_nr(current->group_leader));
-	client = __ion_client_create(dev, debug_name);
+	client = ion_client_create(dev, debug_name);
 	if (IS_ERR(client)) {
                 IONMSG("%s ion client create failed 0x%pK.\n", __func__, client);
 		return PTR_ERR(client);
