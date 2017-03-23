@@ -400,9 +400,6 @@ static inline int xfrm_replay_verify_len(struct xfrm_replay_state_esn *replay_es
 	if (up->replay_window > up->bmp_len * sizeof(__u32) * 8)
 		return -EINVAL;
 
-	if (up->replay_window > up->bmp_len * sizeof(__u32) * 8)
-		return -EINVAL;
-
 	return 0;
 }
 
@@ -3063,4 +3060,3 @@ module_init(xfrm_user_init);
 module_exit(xfrm_user_exit);
 MODULE_LICENSE("GPL");
 MODULE_ALIAS_NET_PF_PROTO(PF_NETLINK, NETLINK_XFRM);
-
