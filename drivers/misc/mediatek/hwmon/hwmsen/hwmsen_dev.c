@@ -602,7 +602,7 @@ static int hwmsen_enable(struct hwmdev_object *obj, int sensor, int enable)
 
 	sensor_type = 1 << sensor;
 
-	if (sensor > MAX_ANDROID_SENSOR_NUM) {
+	if (sensor > MAX_ANDROID_SENSOR_NUM || sensor < 0) {
 	    HWM_ERR("handle %d!\n", sensor);
 	    return -EINVAL;
 	}
@@ -728,7 +728,7 @@ static int hwmsen_enable_nodata(struct hwmdev_object *obj, int sensor, int enabl
 	HWM_FUN(f);
 	sensor_type = 1 << sensor;
 
-	if (sensor > MAX_ANDROID_SENSOR_NUM) {
+	if (sensor > MAX_ANDROID_SENSOR_NUM || sensor < 0) {
 	    HWM_ERR("handle %d!\n", sensor);
 	    return -EINVAL;
 	}
