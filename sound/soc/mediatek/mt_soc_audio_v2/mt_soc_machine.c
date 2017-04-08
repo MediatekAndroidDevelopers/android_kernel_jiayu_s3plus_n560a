@@ -551,6 +551,10 @@ static ssize_t mt_soc_debug_write(struct file *f, const char __user *buf,
     long unsigned int regvalue = 0;
     char delim[] = " ,";
     memset((void *)InputString, 0, 256);
+
+    if (count > 256)
+        count = 256;
+
     if (copy_from_user((InputString), buf, count))
     {
         printk("copy_from_user mt_soc_debug_write count = %zu temp = %s\n", count, InputString);
@@ -970,5 +974,3 @@ MODULE_DESCRIPTION("ALSA SoC driver ");
 
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:mt-snd-card");
-
-
