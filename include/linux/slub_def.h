@@ -110,7 +110,7 @@ struct kmem_cache {
 };
 
 void *kmem_cache_alloc(struct kmem_cache *, gfp_t);
-void *__kmalloc(size_t size, gfp_t flags);
+void *__kmalloc(size_t size, gfp_t flags) __attribute__((alloc_size(1)));
 
 static __always_inline void *
 kmalloc_order(size_t size, gfp_t flags, unsigned int order)
@@ -147,7 +147,7 @@ static __always_inline void *kmalloc_large(size_t size, gfp_t flags)
 	return kmalloc_order_trace(size, flags, order);
 }
 
-static __always_inline void *kmalloc(size_t size, gfp_t flags)
+static __always_inline __attribute__((alloc_size(1))) void *kmalloc(size_t size, gfp_t flags)
 {
 	if (__builtin_constant_p(size)) {
 		if (size > KMALLOC_MAX_CACHE_SIZE)
@@ -167,7 +167,7 @@ static __always_inline void *kmalloc(size_t size, gfp_t flags)
 }
 
 #ifdef CONFIG_NUMA
-void *__kmalloc_node(size_t size, gfp_t flags, int node);
+void *__kmalloc_node(size_t size, gfp_t flags, int node) __attribute__((alloc_size(1)));
 void *kmem_cache_alloc_node(struct kmem_cache *, gfp_t flags, int node);
 
 #ifdef CONFIG_TRACING
