@@ -57,13 +57,16 @@ static short lowmem_adj[6] = {
 	6,
 	12,
 };
+
 static int lowmem_adj_size = 4;
+
 static int lowmem_minfree[6] = {
 	3 * 512,	/* 6MB */
 	2 * 1024,	/* 8MB */
 	4 * 1024,	/* 16MB */
 	16 * 1024,	/* 64MB */
 };
+
 static int lowmem_minfree_size = 4;
 
 static unsigned long lowmem_deathpending_timeout;
@@ -73,7 +76,6 @@ static unsigned long lowmem_deathpending_timeout;
 		if (lowmem_debug_level >= (level))	\
 			pr_info(x);			\
 	} while (0)
-
 
 #ifdef CONFIG_ANDROID_LMK_ADJ_RBTREE
 static struct task_struct *pick_next_from_adj_tree(struct task_struct *task);
@@ -115,8 +117,8 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 
 	if (sc->nr_to_scan > 0)
 		lowmem_print(3, "lowmem_shrink %lu, %x, ofree %d %d, ma %hd\n",
-				sc->nr_to_scan, sc->gfp_mask, other_free,
-				other_file, min_score_adj);
+			     sc->nr_to_scan, sc->gfp_mask, other_free,
+			     other_file, min_score_adj);
 	rem = global_page_state(NR_ACTIVE_ANON) +
 		global_page_state(NR_ACTIVE_FILE) +
 		global_page_state(NR_INACTIVE_ANON) +
@@ -154,11 +156,14 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			rcu_read_unlock();
 			return 0;
 		}
-
-		p = find_lock_task_mm(tsk);
-		if (!p)
+	#if 0
+		if (p->state & TASK_UNINTERRUPTIBLE) {
+			lowmem_print(1, "lowmem_shrink filter process: %d (%s) state:0x%lx\n",
+				     p->pid, p->comm, p->state);
+			task_unlock(p);
 			continue;
-
+		}
+	#endif
 		oom_score_adj = p->signal->oom_score_adj;
 
 		if (oom_score_adj < min_score_adj) {
@@ -169,13 +174,12 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			continue;
 #endif
 		}
-		
 
 		tasksize = get_mm_rss(p->mm);
 		task_unlock(p);
 		if (tasksize <= 0)
 			continue;
-		
+
 		if (selected) {
 			if (oom_score_adj < selected_oom_score_adj)
 #ifdef CONFIG_ANDROID_LMK_ADJ_RBTREE
@@ -186,7 +190,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			if (oom_score_adj == selected_oom_score_adj &&
 			    tasksize <= selected_tasksize)
 				continue;
-		}		
+		}
 		selected = p;
 		selected_tasksize = tasksize;
 		selected_oom_score_adj = oom_score_adj;
@@ -378,6 +382,7 @@ static struct task_struct *pick_first_task(void)
 
 	return rb_entry(left, struct task_struct, adj_node);
 }
+
 static struct task_struct *pick_last_task(void)
 {
 	struct rb_node *right;
@@ -393,21 +398,20 @@ static struct task_struct *pick_last_task(void)
 }
 #endif
 
-
-module_param_named(cost, lowmem_shrinker.seeks, int, S_IRUGO | S_IWUSR);
+module_param_named(cost, lowmem_shrinker.seeks, int, 0644);
 #ifdef CONFIG_ANDROID_LOW_MEMORY_KILLER_AUTODETECT_OOM_ADJ_VALUES
 __module_param_call(MODULE_PARAM_PREFIX, adj,
 		    &lowmem_adj_array_ops,
 		    .arr = &__param_arr_adj,
-		    S_IRUGO | S_IWUSR, -1);
+		    0644, -1);
 __MODULE_PARM_TYPE(adj, "array of short");
 #else
 module_param_array_named(adj, lowmem_adj, short, &lowmem_adj_size,
-			 S_IRUGO | S_IWUSR);
+			 0644);
 #endif
 module_param_array_named(minfree, lowmem_minfree, uint, &lowmem_minfree_size,
-			 S_IRUGO | S_IWUSR);
-module_param_named(debug_level, lowmem_debug_level, uint, S_IRUGO | S_IWUSR);
+			 0644);
+module_param_named(debug_level, lowmem_debug_level, uint, 0644);
 
 module_init(lowmem_init);
 module_exit(lowmem_exit);
