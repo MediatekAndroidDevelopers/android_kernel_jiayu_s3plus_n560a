@@ -131,11 +131,11 @@ int sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
     if(ret != NETDEV_TX_OK ){
     	if(qdisc_qlen(q) < 16){
     		if(4 == (qdisc_qlen(q)) % 16)
-    			printk(KERN_INFO "[mtk_net][sched]dev_hard_start_xmit ret = %d(%s), txq state = %lu\n", 
+    			pr_debug("[mtk_net][sched]dev_hard_start_xmit ret = %d(%s), txq state = %lu\n", 
     				ret, dev->name, txq->state);
     	} else {
     		if(64 == (qdisc_qlen(q)) % 128)
-    			printk(KERN_INFO "[mtk_net][sched]warning: dev_hard_start_xmit ret = %d(%s), txq state = %lu\n", 
+    			pr_debug("[mtk_net][sched]warning: dev_hard_start_xmit ret = %d(%s), txq state = %lu\n", 
     				ret, dev->name, txq->state);    		
     	}
     }
@@ -780,7 +780,7 @@ void dev_activate(struct net_device *dev)
 	   virtual interfaces
 	 */
 	 
-	printk(KERN_INFO "[mtk_net][sched]dev_activate dev = %s \n", dev->name);
+	pr_debug("[mtk_net][sched]dev_activate dev = %s \n", dev->name);
 
 	if (dev->qdisc == &noop_qdisc)
 		attach_default_qdiscs(dev);
@@ -836,7 +836,7 @@ static bool some_qdisc_is_busy(struct net_device *dev)
 		q = dev_queue->qdisc_sleeping;
 		/*MTK_NET_CHANGES*/
 		if(q == NULL){
-			printk(KERN_WARNING "some_qdisc_is_busy dev=%p, i=%d, dev_q=%p",
+			pr_debug("some_qdisc_is_busy dev=%p, i=%d, dev_q=%p",
 			       dev, i, dev_queue);
 			BUG_ON(q == NULL);
 		}
@@ -896,7 +896,7 @@ void dev_deactivate(struct net_device *dev)
 	LIST_HEAD(single);
 
 	list_add(&dev->unreg_list, &single);
-	printk(KERN_INFO "[mtk_net][sched]dev_deactivate dev = %s \n", dev->name);
+	pr_debug("[mtk_net][sched]dev_deactivate dev = %s \n", dev->name);
 	dev_deactivate_many(&single);
 	list_del(&single);
 }

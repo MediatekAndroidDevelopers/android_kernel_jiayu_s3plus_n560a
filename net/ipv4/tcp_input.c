@@ -1887,7 +1887,7 @@ void tcp_enter_loss(struct sock *sk, int how)
 	if (icsk->icsk_MMSRB == 1)
 	{
 		#ifdef CONFIG_MTK_NET_LOGGING 
-	    printk("[mtk_net][mmspb] tcp_enter_loss snd_cwnd=%u, snd_cwnd_cnt=%u\n", tp->snd_cwnd, tp->snd_cwnd_cnt);
+	    pr_debug("[mtk_net][mmspb] tcp_enter_loss snd_cwnd=%u, snd_cwnd_cnt=%u\n", tp->snd_cwnd, tp->snd_cwnd_cnt);
         #endif
             if (tp->mss_cache != 0)
                 tp->snd_cwnd = (tp->rcv_wnd / tp->mss_cache);
@@ -1905,11 +1905,11 @@ void tcp_enter_loss(struct sock *sk, int how)
                 tp->snd_cwnd = tp->snd_ssthresh / 2 + 4;
             }
             #ifdef CONFIG_MTK_NET_LOGGING 
-            printk("[mtk_net][mmspb] tcp_enter_loss update snd_cwnd=%u\n", tp->snd_cwnd);
+            pr_debug("[mtk_net][mmspb] tcp_enter_loss update snd_cwnd=%u\n", tp->snd_cwnd);
             #endif
             icsk1->icsk_MMSRB = 0;
             #ifdef CONFIG_MTK_NET_LOGGING 
-            printk("[mtk_net][mmspb] tcp_enter_loss set icsk_MMSRB=0\n");
+            pr_debug("[mtk_net][mmspb] tcp_enter_loss set icsk_MMSRB=0\n");
             #endif
 	}
         else
@@ -5330,7 +5330,7 @@ slow_path:
 	if (len < (th->doff << 2) || tcp_checksum_complete_user(sk, skb))
 		goto csum_error;
 
-	if (!th->ack && !th->rst)
+	if (!th->ack && !th->rst && !th->syn)
 		goto discard;
 
 	/*
@@ -5746,7 +5746,7 @@ int tcp_rcv_state_process(struct sock *sk, struct sk_buff *skb,
 			goto discard;
 	}
 
-	if (!th->ack && !th->rst)
+	if (!th->ack && !th->rst && !th->syn)
 		goto discard;
 
 	if (!tcp_validate_incoming(sk, skb, th, 0))

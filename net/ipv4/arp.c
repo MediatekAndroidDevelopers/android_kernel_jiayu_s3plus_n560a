@@ -157,7 +157,6 @@ static const struct neigh_ops arp_broken_ops = {
 	.connected_output =	neigh_compat_output,
 };
 
-/* MTK_NET_CHANGES */
 struct neigh_table arp_tbl = {
 	.family		= AF_INET,
 	.key_len	= 4,
@@ -705,7 +704,7 @@ void arp_send(int type, int ptype, __be32 dest_ip,
 	if (dev->flags&IFF_NOARP)
 		return;
 	#ifdef CONFIG_MTK_NET_LOGGING  	
-    printk(KERN_INFO "[mtk_net][arp]arp_send type = %d, dev = %s\n", type, dev->name);
+    pr_debug(KERN_INFO "[mtk_net][arp]arp_send type = %d, dev = %s\n", type, dev->name);
     #endif
 	skb = arp_create(type, ptype, dest_ip, dev, src_ip,
 			 dest_hw, src_hw, target_hw);

@@ -423,7 +423,7 @@ void tcp_retransmit_timer(struct sock *sk)
 	if (icsk->icsk_MMSRB == 1)
 	{
 	    	#ifdef CONFIG_MTK_NET_LOGGING  
-	        printk(KERN_DEBUG "[mtk_net][mmspb] tcp_retransmit_timer enter loss\n");
+	        pr_debug(KERN_DEBUG "[mtk_net][mmspb] tcp_retransmit_timer enter loss\n");
 	        #endif
 	}
 	tcp_enter_loss(sk, 0);

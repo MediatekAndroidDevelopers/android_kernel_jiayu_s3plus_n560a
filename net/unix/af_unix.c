@@ -147,7 +147,6 @@ static struct hlist_head *unix_sockets_unbound(void *addr)
 
 //for aee interface start
 #define __UNIX_SOCKET_OUTPUT_BUF_SIZE__   3500
-static struct proc_dir_entry *gunix_socket_track_aee_entry = NULL;
 #define UNIX_SOCK_TRACK_AEE_PROCNAME "driver/usktrk_aee"
 #define UNIX_SOCK_TRACK_PROC_AEE_SIZE 3072
 
@@ -498,7 +497,7 @@ static void unix_sock_destructor(struct sock *sk)
 	WARN_ON(sk->sk_socket);
 	if (!sock_flag(sk, SOCK_DEAD)) {
 		#ifdef CONFIG_MTK_NET_LOGGING 
-		printk(KERN_INFO "[mtk_net][unix]Attempt to release alive unix socket: %p\n", sk);
+		pr_debug(KERN_INFO "[mtk_net][unix]Attempt to release alive unix socket: %p\n", sk);
 		#endif
 		return;
 	}
@@ -511,7 +510,7 @@ static void unix_sock_destructor(struct sock *sk)
 	sock_prot_inuse_add(sock_net(sk), sk->sk_prot, -1);
 	local_bh_enable();
     #ifdef UNIX_REFCNT_DEBUG
-	printk(KERN_DEBUG "[mtk_net][unix]UNIX %p is destroyed, %ld are still alive.\n", sk,
+	pr_debug(KERN_DEBUG "[mtk_net][unix]UNIX %p is destroyed, %ld are still alive.\n", sk,
 		atomic_long_read(&unix_nr_socks));
     #endif
 }
@@ -1174,7 +1173,7 @@ restart:
 #ifdef CONFIG_MTK_NET_LOGGING 
     if((SOCK_INODE(sock)!= NULL) && (sunaddr != NULL) && (other->sk_socket != NULL) && (SOCK_INODE(other->sk_socket) != NULL))
     {
-	       printk(KERN_INFO "[mtk_net][socket]unix_dgram_connect[%lu]:connect [%s] other[%lu]\n",SOCK_INODE(sock)->i_ino,sunaddr->sun_path,SOCK_INODE(other->sk_socket)->i_ino);
+	       pr_debug(KERN_INFO "[mtk_net][socket]unix_dgram_connect[%lu]:connect [%s] other[%lu]\n",SOCK_INODE(sock)->i_ino,sunaddr->sun_path,SOCK_INODE(other->sk_socket)->i_ino);
 	  }
 #endif 
             
@@ -1371,7 +1370,7 @@ restart:
 	#ifdef CONFIG_MTK_NET_LOGGING 
 	if((SOCK_INODE(sock)!= NULL) && (sunaddr != NULL) && (other->sk_socket != NULL) && (SOCK_INODE(other->sk_socket) != NULL))
   {
-	  printk(KERN_INFO "[mtk_net][socket]unix_stream_connect[%lu ]: connect [%s] other[%lu] \n",SOCK_INODE(sock)->i_ino,sunaddr->sun_path,SOCK_INODE(other->sk_socket)->i_ino);
+	  pr_debug(KERN_INFO "[mtk_net][socket]unix_stream_connect[%lu ]: connect [%s] other[%lu] \n",SOCK_INODE(sock)->i_ino,sunaddr->sun_path,SOCK_INODE(other->sk_socket)->i_ino);
 	}
   #endif 
 
@@ -1927,12 +1926,12 @@ static int unix_stream_sendmsg(struct kiocb *kiocb, struct socket *sock,
                         {
                 
                          #ifdef CONFIG_MTK_NET_LOGGING 
-                         printk(KERN_INFO " [mtk_net][unix]: sendmsg[%lu:%lu]:peer close\n" ,SOCK_INODE(sk->sk_socket)->i_ino,SOCK_INODE(other->sk_socket)->i_ino);
+                         pr_debug(KERN_INFO " [mtk_net][unix]: sendmsg[%lu:%lu]:peer close\n" ,SOCK_INODE(sk->sk_socket)->i_ino,SOCK_INODE(other->sk_socket)->i_ino);
 				         #endif
 		         }
 		         else{
 				   	    #ifdef CONFIG_MTK_NET_LOGGING 
-				        printk(KERN_INFO " [mtk_net][unix]: sendmsg[null:%lu]:peer close\n" ,SOCK_INODE(other->sk_socket)->i_ino);
+				        pr_debug(KERN_INFO " [mtk_net][unix]: sendmsg[null:%lu]:peer close\n" ,SOCK_INODE(other->sk_socket)->i_ino);
 				        #endif
 		         }        
 
@@ -1940,7 +1939,7 @@ static int unix_stream_sendmsg(struct kiocb *kiocb, struct socket *sock,
 		    else	
 					{
 						#ifdef CONFIG_MTK_NET_LOGGING 	
-				        printk(KERN_INFO " [mtk_net][unix]: sendmsg:peer close \n" );
+				        pr_debug(KERN_INFO " [mtk_net][unix]: sendmsg:peer close \n" );
 				        #endif
 				}
 		   		
@@ -2224,17 +2223,17 @@ again:
 				   if(other && other->sk_socket ){
 				   	#ifdef CONFIG_MTK_NET_LOGGING 
 				   	
-                     printk(KERN_INFO " [mtk_net][unix]: recvmsg[%lu:%lu]:exit read due to peer shutdown  \n" ,SOCK_INODE(sk->sk_socket)->i_ino,SOCK_INODE(other->sk_socket)->i_ino);
+                     pr_debug(KERN_INFO " [mtk_net][unix]: recvmsg[%lu:%lu]:exit read due to peer shutdown  \n" ,SOCK_INODE(sk->sk_socket)->i_ino,SOCK_INODE(other->sk_socket)->i_ino);
 				   #endif
 				   }else{				   
 				   	#ifdef CONFIG_MTK_NET_LOGGING 				   
-                     printk(KERN_INFO "[mtk_net][unix]: recvmsg[%lu:null]:exit read due to peer shutdown  \n" ,SOCK_INODE(sk->sk_socket)->i_ino);
+                     pr_debug(KERN_INFO "[mtk_net][unix]: recvmsg[%lu:null]:exit read due to peer shutdown  \n" ,SOCK_INODE(sk->sk_socket)->i_ino);
                      #endif
 				   }
 				 }
 			    else{	
 					#ifdef CONFIG_MTK_NET_LOGGING 
-				   printk(KERN_INFO " [mtk_net][unix]: recvmsg: exit read due to peer shutdown \n" );
+				   pr_debug(KERN_INFO " [mtk_net][unix]: recvmsg: exit read due to peer shutdown \n" );
 				   #endif
 			    }
 				goto unlock;
@@ -2252,18 +2251,18 @@ again:
                             {
                                 if(other && other->sk_socket ){
 				   	#ifdef CONFIG_MTK_NET_LOGGING 
-                     printk(KERN_INFO " [mtk_net][unix]: recvmsg[%lu:%lu]:exit read due to timeout  \n" ,SOCK_INODE(sk->sk_socket)->i_ino,SOCK_INODE(other->sk_socket)->i_ino);
+                     pr_debug(KERN_INFO " [mtk_net][unix]: recvmsg[%lu:%lu]:exit read due to timeout  \n" ,SOCK_INODE(sk->sk_socket)->i_ino,SOCK_INODE(other->sk_socket)->i_ino);
 				   #endif
 				   }else{				   
 				   	#ifdef CONFIG_MTK_NET_LOGGING 				   
-                     printk(KERN_INFO " [mtk_net][unix]: recvmsg[%lu:null]:exit read due to timeout  \n" ,SOCK_INODE(sk->sk_socket)->i_ino);
+                     pr_debug(KERN_INFO " [mtk_net][unix]: recvmsg[%lu:null]:exit read due to timeout  \n" ,SOCK_INODE(sk->sk_socket)->i_ino);
                      #endif
 				    }			  
 		           }
 			   else	
 					{
 						#ifdef CONFIG_MTK_NET_LOGGING 	
-				  printk(KERN_INFO " [mtk_net][unix]: recvmsg:exit read due to timeout \n" );
+				  pr_debug(KERN_INFO " [mtk_net][unix]: recvmsg:exit read due to timeout \n" );
 				  #endif
 				}
 		   		  
@@ -2755,7 +2754,7 @@ static int __init af_unix_init(void)
 
 	rc = proto_register(&unix_proto, 1);
 	if (rc != 0) {
-		printk(KERN_CRIT "%s: Cannot create unix_sock SLAB cache!\n",
+		pr_debug(KERN_CRIT "%s: Cannot create unix_sock SLAB cache!\n",
 		       __func__);
 		goto out;
 	}

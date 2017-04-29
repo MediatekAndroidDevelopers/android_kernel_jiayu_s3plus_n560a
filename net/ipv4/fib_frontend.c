@@ -623,15 +623,15 @@ static int inet_rtm_delroute(struct sk_buff *skb, struct nlmsghdr *nlh)
 	struct fib_config cfg;
 	struct fib_table *tb;
 	int err;
-    #ifdef CONFIG_MTK_NET_LOGGING 
-	printk(KERN_INFO "[mtk_net][RTlog delete] inet_rtm_delroute !\n");
-	#endif
+	//#ifdef CONFIG_MTK_NET_LOGGING
+	//printk(KERN_INFO "[mtk_net][RTlog delete] inet_rtm_delroute !\n");
+	//#endif
 	err = rtm_to_fib_config(net, skb, nlh, &cfg);
 	if (err < 0)
 		goto errout;
-	#ifdef CONFIG_MTK_NET_LOGGING 
-	printk(KERN_INFO "[mtk_net][RTlog info]  inet_rtm_delroute  cfg.fc_dst =%08x, cfg.fc_gw =%08x\n",cfg.fc_dst,cfg.fc_gw);
-    #endif
+	//#ifdef CONFIG_MTK_NET_LOGGING
+	//printk(KERN_INFO "[mtk_net][RTlog info]  inet_rtm_delroute  cfg.fc_dst =%08x, cfg.fc_gw =%08x\n",cfg.fc_dst,cfg.fc_gw);
+	//#endif
 	tb = fib_get_table(net, cfg.fc_table);
 	if (tb == NULL) {
 		err = -ESRCH;
@@ -649,16 +649,16 @@ static int inet_rtm_newroute(struct sk_buff *skb, struct nlmsghdr *nlh)
 	struct fib_config cfg;
 	struct fib_table *tb;
 	int err;
-	#ifdef CONFIG_MTK_NET_LOGGING 
-	printk(KERN_INFO "[mtk_net][RTlog insert] inet_rtm_newroute !\n");
-	#endif
+	//#ifdef CONFIG_MTK_NET_LOGGING 
+	//printk(KERN_INFO "[mtk_net][RTlog insert] inet_rtm_newroute !\n");
+	//#endif
 
 	err = rtm_to_fib_config(net, skb, nlh, &cfg);
 	if (err < 0)
 		goto errout;
-	#ifdef CONFIG_MTK_NET_LOGGING 
-	printk(KERN_INFO "[mtk_net][RTlog info]  inet_rtm_newroute  cfg.fc_dst =%08x,cfg.fc_gw =%08x \n",cfg.fc_dst,cfg.fc_gw);
-	#endif
+	//#ifdef CONFIG_MTK_NET_LOGGING 
+	//printk(KERN_INFO "[mtk_net][RTlog info]  inet_rtm_newroute  cfg.fc_dst =%08x,cfg.fc_gw =%08x \n",cfg.fc_dst,cfg.fc_gw);
+	//#endif
 
 	tb = fib_new_table(net, cfg.fc_table);
 	if (tb == NULL) {
@@ -784,9 +784,9 @@ void fib_add_ifaddr(struct in_ifaddr *ifa)
 	    (prefix != addr || ifa->ifa_prefixlen < 32)) {
 	    /* MTK_NET_CHANGES */
 	    if(0 == strncmp(dev->name, "ccmni", 2)){
-	    #ifdef CONFIG_MTK_NET_LOGGING 
-		printk(KERN_INFO "[mtk_net][RTlog] ignore ccmni subnet route\n");
-		#endif
+		//#ifdef CONFIG_MTK_NET_LOGGING 
+		//printk(KERN_INFO "[mtk_net][RTlog] ignore ccmni subnet route\n");
+		//#endif
 		} else {
 		fib_magic(RTM_NEWROUTE,
 			  dev->flags & IFF_LOOPBACK ? RTN_LOCAL : RTN_UNICAST,
@@ -1047,7 +1047,7 @@ static int fib_inetaddr_event(struct notifier_block *this, unsigned long event, 
 	switch (event) {
 	case NETDEV_UP:
 		#ifdef CONFIG_MTK_NET_LOGGING 
-		printk(KERN_INFO "[mtk_net][RTlog insert]   fib_inetaddr_event()  %s NETDEV_UP!\n", ifa->ifa_dev->dev->name);
+		pr_debug(KERN_INFO "[mtk_net][RTlog insert]   fib_inetaddr_event()  %s NETDEV_UP!\n", ifa->ifa_dev->dev->name);
 		#endif
 		fib_add_ifaddr(ifa);
 #ifdef CONFIG_IP_ROUTE_MULTIPATH
@@ -1057,9 +1057,9 @@ static int fib_inetaddr_event(struct notifier_block *this, unsigned long event, 
 		rt_cache_flush(dev_net(dev));
 		break;
 	case NETDEV_DOWN:
-		#ifdef CONFIG_MTK_NET_LOGGING 
-		printk(KERN_INFO "[mtk_net][RTlog delete]   fib_inetaddr_event()  %s NETDEV_DOWN!\n", ifa->ifa_dev->dev->name);
-		#endif
+		//#ifdef CONFIG_MTK_NET_LOGGING 
+		//printk(KERN_INFO "[mtk_net][RTlog delete]   fib_inetaddr_event()  %s NETDEV_DOWN!\n", ifa->ifa_dev->dev->name);
+		//#endif
 		fib_del_ifaddr(ifa, NULL);
 		atomic_inc(&net->ipv4.dev_addr_genid);
 		if (ifa->ifa_dev->ifa_list == NULL) {
@@ -1094,7 +1094,7 @@ static int fib_netdev_event(struct notifier_block *this, unsigned long event, vo
 	switch (event) {
 	case NETDEV_UP:
 		#ifdef CONFIG_MTK_NET_LOGGING 
-		printk(KERN_INFO "[mtk_net][RTlog insert]   fib_netdev_event()  %s NETDEV_UP!\n", dev->name);
+		pr_debug(KERN_INFO "[mtk_net][RTlog insert]   fib_netdev_event()  %s NETDEV_UP!\n", dev->name);
 		#endif
 		for_ifa(in_dev) {
 			fib_add_ifaddr(ifa);
@@ -1107,7 +1107,7 @@ static int fib_netdev_event(struct notifier_block *this, unsigned long event, vo
 		break;
 	case NETDEV_DOWN:
 		#ifdef CONFIG_MTK_NET_LOGGING 
-		printk(KERN_INFO "[mtk_net][RTlog delete]   fib_netdev_event()  %s NETDEV_DOWN!\n", dev->name);
+		pr_debug(KERN_INFO "[mtk_net][RTlog delete]   fib_netdev_event()  %s NETDEV_DOWN!\n", dev->name);
 		#endif
 		fib_disable_ip(dev, 0);
 		break;
