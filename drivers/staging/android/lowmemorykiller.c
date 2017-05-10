@@ -39,7 +39,6 @@
 #include <linux/sched.h>
 #include <linux/swap.h>
 #include <linux/rcupdate.h>
-#include <linux/sched.h>
 #include <linux/notifier.h>
 
 /* From page_alloc.c, for urgent allocations in preemptible situation */
