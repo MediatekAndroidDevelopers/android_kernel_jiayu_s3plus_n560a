@@ -18,19 +18,17 @@ static __le32 ext4_mmp_csum(struct super_block *sb, struct mmp_struct *mmp)
 	return cpu_to_le32(csum);
 }
 
-int ext4_mmp_csum_verify(struct super_block *sb, struct mmp_struct *mmp)
+static int ext4_mmp_csum_verify(struct super_block *sb, struct mmp_struct *mmp)
 {
-	if (!EXT4_HAS_RO_COMPAT_FEATURE(sb,
-				       EXT4_FEATURE_RO_COMPAT_METADATA_CSUM))
+	if (!ext4_has_metadata_csum(sb))
 		return 1;
 
 	return mmp->mmp_checksum == ext4_mmp_csum(sb, mmp);
 }
 
-void ext4_mmp_csum_set(struct super_block *sb, struct mmp_struct *mmp)
+static void ext4_mmp_csum_set(struct super_block *sb, struct mmp_struct *mmp)
 {
-	if (!EXT4_HAS_RO_COMPAT_FEATURE(sb,
-				       EXT4_FEATURE_RO_COMPAT_METADATA_CSUM))
+	if (!ext4_has_metadata_csum(sb))
 		return;
 
 	mmp->mmp_checksum = ext4_mmp_csum(sb, mmp);
@@ -54,10 +52,6 @@ static int write_mmp_block(struct super_block *sb, struct buffer_head *bh)
 	lock_buffer(bh);
 	bh->b_end_io = end_buffer_write_sync;
 	get_bh(bh);
-#ifdef FEATURE_STORAGE_META_LOG
-	if( bh && bh->b_bdev && bh->b_bdev->bd_disk)
-		set_metadata_rw_status(bh->b_bdev->bd_disk->first_minor, WAIT_WRITE_CNT);
-#endif
 	submit_bh(WRITE_SYNC | REQ_META | REQ_PRIO, bh);
 	wait_on_buffer(bh);
 	sb_end_write(sb);
@@ -90,10 +84,6 @@ static int read_mmp_block(struct super_block *sb, struct buffer_head **bh,
 		get_bh(*bh);
 		lock_buffer(*bh);
 		(*bh)->b_end_io = end_buffer_read_sync;
-#ifdef FEATURE_STORAGE_META_LOG
-		if( (*bh) && (*bh)->b_bdev && (*bh)->b_bdev->bd_disk)
-			set_metadata_rw_status((*bh)->b_bdev->bd_disk->first_minor, WAIT_READ_CNT);
-#endif
 		submit_bh(READ_SYNC | REQ_META | REQ_PRIO, *bh);
 		wait_on_buffer(*bh);
 		if (!buffer_uptodate(*bh)) {
@@ -267,7 +257,7 @@ static unsigned int mmp_new_seq(void)
 	u32 new_seq;
 
 	do {
-		get_random_bytes(&new_seq, sizeof(u32));
+		new_seq = prandom_u32();
 	} while (new_seq > EXT4_MMP_SEQ_MAX);
 
 	return new_seq;
