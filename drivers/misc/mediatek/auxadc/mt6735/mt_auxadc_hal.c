@@ -346,6 +346,16 @@ void mt_auxadc_hal_resume(void)
 
 int mt_auxadc_dump_register(char *buf)
 {
+	if (buf == NULL) {
+		pr_debug("[%s] Invalid input!!\n", __func__);
+		return 0;
+	}
+
+	if (strlen(buf) < 64) {
+		pr_debug("[%s] Invalid input!!\n", __func__);
+		return 0;
+	}
+
 	printk("[auxadc]: AUXADC_CON0=%x\n",AUXADC_DRV_ReadReg16((volatile u16 *)AUXADC_CON0));
 	printk("[auxadc]: AUXADC_CON1=%x\n",AUXADC_DRV_ReadReg16((volatile u16 *)AUXADC_CON1));
 	printk("[auxadc]: AUXADC_CON2=%x\n",AUXADC_DRV_ReadReg16((volatile u16 *)AUXADC_CON2));
