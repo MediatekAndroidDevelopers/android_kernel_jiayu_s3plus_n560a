@@ -600,7 +600,7 @@ static int sd_multi_rw_compare_slave(int host_num, int read, uint address)
 	mmc_wait_for_req(host_ctl->mmc, &msdc_mrq);
 	/* compare */
 	if (read) {
-		for(forIndex=0;forIndex<MSDC_MULTI_BUF_LEN;forIndex++){                    
+		for(forIndex = 0; forIndex < MSDC_MULTI_BUF_LEN; forIndex++){
 			//pr_err("index[%d]\tW_buffer[0x%x]\tR_buffer[0x%x]\t\n", forIndex, wData[forIndex%200], rPtr[forIndex]);
 			if(rPtr[forIndex]!=wData[forIndex%200]){
 				pr_err("index[%d]\tW_buffer[0x%x]\tR_buffer[0x%x]\tfailed\n",
@@ -803,7 +803,7 @@ static int emmc_multi_rw_compare_slave(int host_num, int read, uint address)
 	mmc_wait_for_req(host_ctl->mmc, &msdc_mrq);
 	/* compare */
 	if (read && !g_ett_tune){
-		for(forIndex=0;forIndex<MSDC_MULTI_BUF_LEN;forIndex++){                    
+		for(forIndex = 0; forIndex < MSDC_MULTI_BUF_LEN; forIndex++){
 			//pr_err("index[%d]\tW_buffer[0x%x]\tR_buffer[0x%x]\t\n", forIndex, wData[forIndex%200], rPtr[forIndex]);
 			if(rPtr[forIndex]!=wData[forIndex%16]){
 				pr_err("index[%d]\tW_buffer[0x%x]\tR_buffer[0x%x]\tfailed\n",
@@ -2005,7 +2005,7 @@ exit:
 
 static ssize_t msdc_debug_proc_write(struct file *file, const char *buf, size_t count, loff_t *data)
 {
-	int ret=0;
+	int ret = 0;
 	int cmd, p1, p2, p3, p4, p5, p6, p7 = 0;
 	int id, zone;
 	int mode, size;
@@ -2890,7 +2890,7 @@ static int msdc_tune_flag_proc_read_show(struct seq_file *m, void *data)
 static int msdc_debug_proc_read_FT_show(struct seq_file *m, void *data)
 {
 #if defined(CONFIG_MTK_WCN_CMB_SDIO_SLOT)
-    int msdc_id =0;
+    int msdc_id = 0;
     void __iomem *base;
     unsigned char  cmd_edge;
     unsigned char  data_edge;
@@ -3016,7 +3016,7 @@ static ssize_t msdc_debug_proc_write_FT(struct file *file, const char __user* bu
 {
     int ret;
 
-    int i_case=0, i_par1=-1, i_par2=-1, i_clk=0, i_driving=0, i_edge=0, i_data=0, i_delay=0;
+    int i_case = 0, i_par1 = -1, i_par2 = -1, i_clk = 0, i_driving = 0, i_edge = 0, i_data = 0, i_delay = 0;
     u32 cur_rxdly0;
     u8 u8_dat0, u8_dat1, u8_dat2, u8_dat3;
     void __iomem *base;
@@ -3177,6 +3177,11 @@ static ssize_t msdc_debug_proc_write_DVT(struct file *file, const char __user* b
 
     struct msdc_host *host;
 
+	if (count == 0)
+		return -1;
+	if (count > 255)
+		count = 255;
+
     ret = copy_from_user(cmd_buf, buf, count);
     if (ret < 0)return -1;
 
@@ -3193,10 +3198,11 @@ static ssize_t msdc_debug_proc_write_DVT(struct file *file, const char __user* b
 
     host = mtk_msdc_host[i_msdc_id];
 
-    pr_err("[****SD_Debug****] Start Online Tuning DVT test \n");
-    mt_msdc_online_tuning_test(host, 0, 0, 0);
-    pr_err("[****SD_Debug****] Finish Online Tuning DVT test \n");
-
+    if (host) {
+	    pr_err("[****SD_Debug****] Start Online Tuning DVT test \n");
+	    mt_msdc_online_tuning_test(host, 0, 0, 0);
+	    pr_err("[****SD_Debug****] Finish Online Tuning DVT test \n");
+    }
     return count;
 }
 #endif  // ONLINE_TUNING_DVTTEST
@@ -3379,6 +3385,11 @@ extern void pmic_config_interface(unsigned int, unsigned int, unsigned int, unsi
 static ssize_t msdc_voltage_proc_write(struct file *file, const char __user* buf, size_t count, loff_t *data)
 {
     int ret;
+
+	if (count == 0)
+		return -1;
+	if (count > 255)
+		count = 255;
 
     ret = copy_from_user(cmd_buf, buf, count);
     if (ret < 0)return -1;
