@@ -1459,6 +1459,15 @@ static long vcodec_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned 
                 MFV_LOGE("[ERROR] VCODEC_GET_CORE_LOADING, copy_from_user failed: %lu\n", ret);
                 return -EFAULT;
             }
+            if (rTempCoreLoading.CPUid > num_possible_cpus()) {
+                MFV_LOGE("[ERROR] rTempCoreLoading.CPUid(%d) > num_possible_cpus(%d)\n",
+                    rTempCoreLoading.CPUid, num_possible_cpus());
+                return -EFAULT;
+            }
+            if (rTempCoreLoading.CPUid < 0) {
+                MFV_LOGE("[ERROR] rTempCoreLoading.CPUid < 0\n");
+                return -EFAULT;
+            }
             rTempCoreLoading.Loading = get_cpu_load(rTempCoreLoading.CPUid);
             ret = copy_to_user(user_data_addr, &rTempCoreLoading, sizeof(VAL_VCODEC_CORE_LOADING_T));
             if (ret)
@@ -2619,4 +2628,3 @@ module_exit(vcodec_driver_exit);
 MODULE_AUTHOR("Legis, Lu <legis.lu@mediatek.com>");
 MODULE_DESCRIPTION("Denali-3 Vcodec Driver");
 MODULE_LICENSE("GPL");
-

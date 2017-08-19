@@ -35,45 +35,6 @@
 
 static char debug_buffer[4096];
 
-static void process_dbg_opt(const char *opt)
-{
-	unsigned long addr = 0;
-	int ret = 0;
-
-	if (0 == strncmp(opt, "set_reg:", 8)) {
-		unsigned long val = 0;
-
-		char *p = (char *)opt + 8;
-
-		ret = kstrtoul(p, 16, &addr);
-		p++;
-
-		ret = kstrtoul(p, 16, &val);
-
-		SMIMSG("set register: 0x%lx = 0x%x\n", addr, (unsigned int)val);
-
-		COM_WriteReg32(addr, val);
-	}
-	if (0 == strncmp(opt, "get_reg:", 8)) {
-		char *p = (char *)opt + 8;
-
-		ret = kstrtoul(p, 16, &addr);
-
-		SMIMSG("get register: 0x%lx = 0x%x\n", addr, COM_ReadReg32(addr));
-	}
-
-}
-
-
-static void process_dbg_cmd(char *cmd)
-{
-	char *tok;
-
-	while ((tok = strsep(&cmd, " ")) != NULL)
-		process_dbg_opt(tok);
-
-}
-
 
 /* --------------------------------------------------------------------------- */
 /* Debug FileSystem Routines */
@@ -96,30 +57,8 @@ static ssize_t debug_read(struct file *file, char __user *ubuf, size_t count, lo
 }
 
 
-static ssize_t debug_write(struct file *file, const char __user *ubuf, size_t count, loff_t *ppos)
-{
-	const int debug_bufmax = sizeof(debug_buffer) - 1;
-	size_t ret;
-
-	ret = count;
-
-	if (count > debug_bufmax)
-		count = debug_bufmax;
-
-	if (copy_from_user(&debug_buffer, ubuf, count))
-		return -EFAULT;
-
-	debug_buffer[count] = 0;
-
-	process_dbg_cmd(debug_buffer);
-
-	return ret;
-}
-
-
 static const struct file_operations debug_fops = {
 	.read = debug_read,
-	.write = debug_write,
 	.open = debug_open,
 };
 
