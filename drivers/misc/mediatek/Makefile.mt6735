@@ -87,7 +87,6 @@ obj-$(CONFIG_MTK_C2K_SUPPORT) += c2k_ccci/
 obj-$(CONFIG_MTK_ECCCI_DRIVER) +=  eccci/
 #obj-$(CONFIG_MTK_EEMCS_DRIVER) +=  eemcs/
 obj-$(CONFIG_MTK_NFC) += nfc/
-obj-$(CONFIG_ZRAM)	+= mlog/
 obj-$(CONFIG_MTK_IRTX_SUPPORT) += irtx/
 
 #obj-y	+= cam_cal/dummy_eeprom/
