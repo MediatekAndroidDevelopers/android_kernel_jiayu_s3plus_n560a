@@ -151,14 +151,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			rcu_read_unlock();
 			return 0;
 		}
-	#if 0
-		if (p->state & TASK_UNINTERRUPTIBLE) {
-			lowmem_print(1, "lowmem_shrink filter process: %d (%s) state:0x%lx\n",
-				     p->pid, p->comm, p->state);
-			task_unlock(p);
-			continue;
-		}
-	#endif
 		oom_score_adj = p->signal->oom_score_adj;
 
 		if (oom_score_adj < min_score_adj) {
@@ -210,7 +202,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     min_score_adj,
 			     free);
 		lowmem_deathpending_timeout = jiffies + HZ;
-
 		send_sig(SIGKILL, selected, 0);
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		rem -= selected_tasksize;
