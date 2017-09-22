@@ -19,35 +19,36 @@
 
 /* sysfs interface for charge levels */
 
-static ssize_t charge_level_ac_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+static ssize_t charge_level_ac_show(struct kobject *kobj,
+				    struct kobj_attribute *attr,
+				    char *buf)
 {
 
 	// print current value
-	return sprintf(buf, "%d\n", ac_level / 100 );
+	return sprintf(buf, "%d\n", ac_level / 100);
 
 }
 
 
-static ssize_t charge_level_ac_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+static ssize_t charge_level_ac_store(struct kobject *kobj,
+				     struct kobj_attribute *attr,
+				     const char *buf,
+				     size_t count)
 {
 
-	unsigned int ret = -EINVAL;
+	unsigned int ret;
 	int val;
 
 	// read value from input buffer
-	ret = sscanf(buf, "%d", &val);
+	ret = kstrtouint(buf, 0, &val);
 	val = val * 100;
 
 	// check whether value is within the valid ranges and adjust accordingly
 	if (val > AC_CHARGE_LEVEL_MAX)
-	{
 		val = AC_CHARGE_LEVEL_MAX;
-	}
 
 	if (val < AC_CHARGE_LEVEL_MIN)
-	{
 		val = AC_CHARGE_LEVEL_MIN;
-	}
 
 	// store value
 	ac_level = val;
@@ -56,35 +57,35 @@ static ssize_t charge_level_ac_store(struct kobject *kobj, struct kobj_attribute
 }
 
 
-static ssize_t charge_level_usb_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+static ssize_t charge_level_usb_show(struct kobject *kobj,
+				     struct kobj_attribute *attr,
+				     char *buf)
 {
-
 	// print current value
 	return sprintf(buf, "%d\n", usb_level / 100);
 
 }
 
 
-static ssize_t charge_level_usb_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+static ssize_t charge_level_usb_store(struct kobject *kobj,
+				      struct kobj_attribute *attr,
+				      const char *buf,
+				      size_t count)
 {
 
-	unsigned int ret = -EINVAL;
+	unsigned int ret;
 	int val;
 
 	// read value from input buffer
-	ret = sscanf(buf, "%d", &val);
+	ret = kstrtouint(buf, 0, &val);
 	val = val * 100;
 
 	// check whether value is within the valid ranges and adjust accordingly
 	if (val > USB_CHARGE_LEVEL_MAX)
-	{
 		val = USB_CHARGE_LEVEL_MAX;
-	}
 
 	if (val < USB_CHARGE_LEVEL_MIN)
-	{
 		val = USB_CHARGE_LEVEL_MIN;
-	}
 
 	// store value
 	usb_level = val;
@@ -92,7 +93,9 @@ static ssize_t charge_level_usb_store(struct kobject *kobj, struct kobj_attribut
 	return count;
 }
 
-static ssize_t quick_charge_enable_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+static ssize_t quick_charge_enable_show(struct kobject *kobj,
+					struct kobj_attribute *attr,
+					char *buf)
 {
 	// print current value
 	return sprintf(buf, "%d\n", qc_enable);
@@ -100,20 +103,21 @@ static ssize_t quick_charge_enable_show(struct kobject *kobj, struct kobj_attrib
 }
 
 
-static ssize_t quick_charge_enable_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
+static ssize_t quick_charge_enable_store(struct kobject *kobj,
+					 struct kobj_attribute *attr,
+					 const char *buf,
+					 size_t count)
 {
 
-	unsigned int ret = -EINVAL;
+	unsigned int ret;
 	int val;
 
 	// read value from input buffer
-	ret = sscanf(buf, "%d", &val);
+	ret = kstrtouint(buf, 0, &val);
 
 	// check whether value is within the valid ranges and adjust accordingly
 	if (val > 1 || val < 0)
-	{
 		val = 0;
-	}
 
 	// store value
 	qc_enable = val;
@@ -124,13 +128,13 @@ static ssize_t quick_charge_enable_store(struct kobject *kobj, struct kobj_attri
 /* Initialize charge level sysfs folder */
 
 static struct kobj_attribute charge_level_ac_attribute =
-__ATTR(charge_level_ac, 0666, charge_level_ac_show, charge_level_ac_store);
+__ATTR(charge_level_ac, 0660, charge_level_ac_show, charge_level_ac_store);
 
 static struct kobj_attribute charge_level_usb_attribute =
-__ATTR(charge_level_usb, 0666, charge_level_usb_show, charge_level_usb_store);
+__ATTR(charge_level_usb, 0660, charge_level_usb_show, charge_level_usb_store);
 
 static struct kobj_attribute quick_charge_enable_attribute =
-__ATTR(quick_charge_enable, 0666, quick_charge_enable_show, quick_charge_enable_store);
+__ATTR(quick_charge_enable, 0660, quick_charge_enable_show, quick_charge_enable_store);
 
 static struct attribute *charge_level_attrs[] = {
 &charge_level_ac_attribute.attr,
@@ -150,27 +154,26 @@ int charge_level_init(void)
 {
 	int charge_level_retval;
 
-        charge_level_kobj = kobject_create_and_add("charge_levels", kernel_kobj);
+	charge_level_kobj = kobject_create_and_add("charge_levels", kernel_kobj);
 
-        if (!charge_level_kobj)
-	{
-		printk("Fast-Charge: failed to create kernel object for charge level interface.\n");
-                return -ENOMEM;
-        }
+	if (!charge_level_kobj) {
+		pr_debug("Fast-Charge: failed to create kernel object for charge level interface.\n");
+		return -ENOMEM;
+	}
 
-        charge_level_retval = sysfs_create_group(charge_level_kobj, &charge_level_attr_group);
+	charge_level_retval = sysfs_create_group(charge_level_kobj,
+						&charge_level_attr_group);
 
-        if (charge_level_retval)
-	{
-			kobject_put(charge_level_kobj);
-		printk("Fast-Charge: failed to create fs object for charge level interface.\n");
-	        return (charge_level_retval);
+	if (charge_level_retval) {
+		kobject_put(charge_level_kobj);
+		pr_debug("Fast-Charge: failed to create fs object for charge level interface.\n");
+		return charge_level_retval;
 	}
 
 	// print debug info
-	printk("Fast-Charge: charge level interface started.\n");
+	pr_info("Fast-Charge: charge level interface started.\n");
 
-        return (charge_level_retval);
+	return charge_level_retval;
 }
 
 
@@ -179,7 +182,7 @@ void charge_level_exit(void)
 	kobject_put(charge_level_kobj);
 
 	// print debug info
-	printk("Fast-Charge: charge level interface stopped.\n");
+	pr_info("Fast-Charge: charge level interface stopped.\n");
 }
 
 
