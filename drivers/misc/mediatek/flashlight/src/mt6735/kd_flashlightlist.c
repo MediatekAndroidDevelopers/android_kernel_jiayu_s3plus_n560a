@@ -126,7 +126,9 @@ int	checkAndRelease(void)
 	{
 		if(g_pFlashInitFunc[i][j][k]!=0)
 		{
+		    #ifndef CONFIG_MEIZU_CLOSE_MTK_LOG
 		    logI("checkAndRelease %d %d %d", i, j, k);
+		    #endif
 			g_pFlashInitFunc[i][j][k]->flashlight_release(0);
 			g_pFlashInitFunc[i][j][k]=0;
 		}
