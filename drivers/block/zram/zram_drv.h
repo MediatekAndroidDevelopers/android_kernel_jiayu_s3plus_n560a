@@ -18,7 +18,7 @@
 #include <linux/spinlock.h>
 #include <linux/zsmalloc.h>
 
-#include "zcomp.h"
+#include <linux/zcomp.h>
 
 /*
  * Some arbitrary value. This is just to catch
@@ -122,4 +122,6 @@ struct zram {
 	u64 disksize;	/* bytes */
 	char compressor[10];
 };
+
+extern struct zram *zram_devices;
 #endif

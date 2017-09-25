@@ -37,7 +37,7 @@
 
 /* Globals */
 static int zram_major;
-static struct zram *zram_devices;
+struct zram *zram_devices;
 static const char *default_compressor = "lzo";
 
 /* Module params (documentation at end) */
