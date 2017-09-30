@@ -1,0 +1,9 @@
+config MTK_DEVINFO_DRIVER
+	bool "Support MTK EFUSE driver with sysfs interface"
+	default y
+	help
+	  EFUSE driver is a must. EFUSE Driver V1 includes the Sysfs driver.
+	  EFUSE Sysfs driver v1 is supported in legacy platforms.
+	  It is used to provide device information. The devinfo kernel API and
+	  user-space API(including ioctl and sysfs) are provided for users to
+	  query device information in an easier way.
