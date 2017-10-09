@@ -39,6 +39,8 @@
 #include <linux/balloon_compaction.h>
 #include <linux/ptrace.h>
 
+#include <linux/ptrace.h>
+
 #include <asm/tlbflush.h>
 
 #define CREATE_TRACE_POINTS
