@@ -94,7 +94,7 @@ static int systracker_platform_probe_default(struct platform_device *pdev)
 	/* save entry info */
 	save_entry();
 
-	memset(&track_config, sizeof(struct systracker_config_t), 0);
+	memset(&track_config, 0, sizeof(struct systracker_config_t));
 	/* To latch last PC when tracker timeout, we need to enable interrupt mode */
 	track_config.enable_timeout = 1;
 	track_config.enable_slave_err = 1;
