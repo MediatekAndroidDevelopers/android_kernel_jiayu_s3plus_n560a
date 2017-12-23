@@ -199,7 +199,6 @@ config MTK_MEMCFG
 menu "MT load balance and schedule enhancement"
 config MT_SCHED
 	bool "Enhance CPU affinity in hotplug"	
- 	depends on HOTPLUG
 	default y
 
 config MT_LOAD_BALANCE_ENHANCEMENT
