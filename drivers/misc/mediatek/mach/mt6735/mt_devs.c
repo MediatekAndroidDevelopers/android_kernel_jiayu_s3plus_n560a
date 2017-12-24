@@ -5,7 +5,6 @@
 #include <linux/fs.h>
 #include <linux/delay.h>
 #include <linux/platform_device.h>
-#include <linux/android_pmem.h>
 #include <linux/memblock.h>
 #include <asm/setup.h>
 #include <asm/mach/arch.h>
@@ -1108,23 +1107,8 @@ struct platform_device mt3326_device_gps = {
 #endif
 
 /*=======================================================================*/
-/* MT6573 PMEM                                                           */
+/* MT6573 VMEM                                                           */
 /*=======================================================================*/
-#if defined(CONFIG_ANDROID_PMEM)
-static struct android_pmem_platform_data  pdata_multimedia = {
-        .name = "pmem_multimedia",
-        .no_allocator = 0,
-        .cached = 1,
-        .buffered = 1
-};
-
-static struct platform_device pmem_multimedia_device = {
-        .name = "android_pmem",
-        .id = 1,
-        .dev = { .platform_data = &pdata_multimedia }
-};
-#endif
-
 #if defined(CONFIG_ANDROID_VMEM)
 static struct android_vmem_platform_data  pdata_vmultimedia = {
         .name = "vmem_multimedia",
@@ -2528,19 +2512,6 @@ retval = platform_device_register(&dummychar_device);
 	if (retval != 0){
 		return retval;
 	}
-#endif
-
-
-#if defined(CONFIG_ANDROID_PMEM)
-    pdata_multimedia.start = PMEM_MM_START;;
-    pdata_multimedia.size = PMEM_MM_SIZE;
-    printk("PMEM start: 0x%lx size: 0x%lx\n", pdata_multimedia.start, pdata_multimedia.size);
-
-    retval = platform_device_register(&pmem_multimedia_device);
-    printk("[%s]: pmem_multimedia_device, retval=%d \n!", __func__, retval);
-    if (retval != 0){
-       return retval;
-    }
 #endif
 
 #if defined(CONFIG_ANDROID_VMEM)

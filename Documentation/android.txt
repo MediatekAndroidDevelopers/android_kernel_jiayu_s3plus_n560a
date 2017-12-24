@@ -91,7 +91,6 @@ DNOTIFY
 
 1.3 Recommended enabled config options
 ------------------------------
-ANDROID_PMEM
 PSTORE_CONSOLE
 PSTORE_RAM
 SCHEDSTATS
