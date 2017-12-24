@@ -1107,24 +1107,6 @@ struct platform_device mt3326_device_gps = {
 #endif
 
 /*=======================================================================*/
-/* MT6573 VMEM                                                           */
-/*=======================================================================*/
-#if defined(CONFIG_ANDROID_VMEM)
-static struct android_vmem_platform_data  pdata_vmultimedia = {
-        .name = "vmem_multimedia",
-        .no_allocator = 0,
-        .cached = 1,
-        .buffered = 1
-};
-
-static struct platform_device vmem_multimedia_device = {
-        .name = "android_vmem",
-        .id = -1,
-        .dev = { .platform_data = &pdata_vmultimedia }
-};
-#endif
-
-/*=======================================================================*/
 /* MT6575 SYSRAM                                                         */
 /*=======================================================================*/
 static struct platform_device camera_sysram_dev = {
@@ -2512,19 +2494,6 @@ retval = platform_device_register(&dummychar_device);
 	if (retval != 0){
 		return retval;
 	}
-#endif
-
-#if defined(CONFIG_ANDROID_VMEM)
-    pdata_vmultimedia.start = PMEM_MM_START;;
-    pdata_vmultimedia.size = PMEM_MM_SIZE;
-    printk("VMEM start: 0x%lx size: 0x%lx\n", pdata_vmultimedia.start, pdata_vmultimedia.size);
-
-    retval = platform_device_register(&vmem_multimedia_device);
-    printk("[%s]: vmem_multimedia_device, retval=%d \n!", __func__, retval);
-    if (retval != 0){
-	printk("vmem platform register failed\n");
-       return retval;
-    }
 #endif
 
 #ifdef CONFIG_CPU_FREQ
