@@ -47,6 +47,10 @@
 /* From page_alloc.c, for urgent allocations in preemptible situation */
 extern void show_free_areas_minimum(void);
 
+/*#ifdef CONFIG_ZRAM
+extern void mlog(int type);
+#endif*/
+
 static uint32_t lowmem_debug_level = 1;
 
 static short lowmem_adj[6] = {
@@ -203,6 +207,11 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     min_score_adj,
 			     free);
 		lowmem_deathpending_timeout = jiffies + HZ;
+
+/*#ifdef CONFIG_ZRAM
+		mlog(1);
+#endif*/
+
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		send_sig(SIGKILL, selected, 0);
 		rem -= selected_tasksize;
