@@ -98,7 +98,7 @@ void* history_record_get_record(struct history_record *history_record)
 	}
 
 	if(history_record_test_busy(history_record, index)) {
-		IONMSG("%s: error to get record %d, bitmap is:\n", __FUNCTION__, index);
+		IONMSG("%s: error to get record %d, bitmap is:\n", __func__, index);
 		history_record_dump_busy(NULL, history_record);
 		spin_unlock(&history_record->lock);
 		return NULL;
@@ -214,7 +214,7 @@ static int history_record_open(struct inode *inode, struct file *file)
 
 	res = seq_open(file, &seq_op);
 	if (res) {
-		IONMSG("%s fail\n", __FUNCTION__);
+		IONMSG("%s fail\n", __func__);
 		return res;
 	}
 
@@ -270,13 +270,13 @@ struct history_record * history_record_create(unsigned int record_num,
 
 	history_record = kzalloc(sizeof(struct history_record) + bitmap_bytes, GFP_KERNEL);
 	if(!history_record) {
-		IONMSG("%s error to kzalloc %zd.\n", __FUNCTION__, sizeof(struct history_record));
+		IONMSG("%s error to kzalloc %zd.\n", __func__, sizeof(struct history_record));
 		return ERR_PTR(-ENOMEM);
 	}
 
 	history_record->record = vzalloc(size_align);
 	if(!history_record->record) {
-		IONMSG("%s error to valloc %zu.\n", __FUNCTION__, size_align);
+		IONMSG("%s error to valloc %zu.\n", __func__, size_align);
 		kfree(history_record);
 		return ERR_PTR(-ENOMEM);
 	}
@@ -310,7 +310,7 @@ void history_record_destroy(struct history_record *history_record)
 		for(i=0; i<bitmap_longs; i++) {
 			if(history_record->bitmap_busy[i]) {
 				/* busy ! */
-				IONMSG("warning: %s when busy %d\n", __FUNCTION__, i);
+				IONMSG("warning: %s when busy %d\n", __func__, i);
 				spin_unlock(&history_record->lock);
 				busy = 1;
 				cond_resched();
@@ -382,7 +382,7 @@ static struct string_struct * string_hash_get(const char* str)
 		/* add string */
 		string = kzalloc(sizeof(*string) + len + 1, GFP_ATOMIC);
 		if(!string) {
-			IONMSG("%s: kzalloc fail size=%zd.\n", __FUNCTION__, 
+			IONMSG("%s: kzalloc fail size=%zd.\n", __func__, 
 					sizeof(*string) + len + 1);
 			goto out;
 		}
@@ -404,7 +404,7 @@ static int string_hash_put(struct string_struct *string)
 	spin_lock(&ion_str_hash_lock);
 
 	if(!string->ref) {
-		IONMSG("error %s string_ref is 0!!!\n", __FUNCTION__);
+		IONMSG("error %s string_ref is 0!!!\n", __func__);
 		spin_unlock(&ion_str_hash_lock);
 		return -EINVAL;
 	}

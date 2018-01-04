@@ -52,19 +52,12 @@ static unsigned int high_order_gfp_flags = (GFP_HIGHUSER | __GFP_ZERO |
 					    __GFP_NO_KSWAPD) & ~__GFP_WAIT;
 static unsigned int low_order_gfp_flags  = (GFP_HIGHUSER | __GFP_ZERO |
 					 __GFP_NOWARN);
-/* Vanzo:yucheng on: Sat, 27 Jun 2015 11:33:19 +0800
- * Modified for RAM OPT
 #ifdef CONFIG_MTK_GMO_RAM_OPTIMIZE
- */
-#if defined(CONFIG_MTK_GMO_RAM_OPTIMIZE) || defined(VANZO_FEATURE_RAM_OPTIMIZE)
-// End of Vanzo: yucheng
 static const unsigned int orders[] = {0};
 #else
-static const unsigned int orders[] = {2,0};
+static const unsigned int orders[] = {2, 0};
 #endif
-
 //static const unsigned int orders[] = {8, 4, 0};
-
 static const int num_orders = ARRAY_SIZE(orders);
 static int order_to_index(unsigned int order)
 {
@@ -408,23 +401,6 @@ void ion_mm_heap_add_freelist(struct ion_buffer *buffer)
     ion_mm_heap_free_bufferInfo(buffer);
 }
 
-int ion_mm_heap_pool_total(struct ion_heap *heap) {
-	struct ion_system_heap *sys_heap;
-	int total = 0;
-	int i;
-
-	sys_heap = container_of(heap, struct ion_system_heap, heap);
-
-	for (i = 0; i < num_orders; i++) {
-		struct ion_page_pool *pool = sys_heap->pools[i];
-		total += (pool->high_count + pool->low_count) * (1 << pool->order);
-                pool = sys_heap->cached_pools[i];
-		total += (pool->high_count + pool->low_count) * (1 << pool->order);
-	}
-
-	return total;
-}
-
 static struct ion_heap_ops system_heap_ops = {
     .allocate = ion_mm_heap_allocate,
     .free = ion_mm_heap_free,
@@ -436,7 +412,6 @@ static struct ion_heap_ops system_heap_ops = {
     .phys = ion_mm_heap_phys,
 	.shrink = ion_mm_heap_shrink,
     .add_freelist = ion_mm_heap_add_freelist,
-    .page_pool_total = ion_mm_heap_pool_total,
 };
 
 static int ion_mm_heap_debug_show(struct ion_heap *heap, struct seq_file *s,
