@@ -1551,12 +1551,6 @@ menuconfig MTK_EMMC_CACHE
 	  Say Y here if you want do enable cache feature for EMMC
 	  If unsure, say N.
 
-config MTK_GPU_SUPPORT
-	bool "MTK_GPU_SUPPORT"
-    default n
-	help
-	  Using HW 3D if MTK_GPU_SUPPORT=y, otherwise using SW 3D
-
 config MTK_ICUSB_SUPPORT
 	bool "MTK_ICUSB_SUPPORT"
 	help
@@ -1816,11 +1810,6 @@ config MTK_EXTMEM
 	   bool "mtk external memory"
 	   depends on MTK_INTERNAL
 	   default n
-	  
-config MTK_INHOUSE_GPU
-	bool "MTK_INHOUSE_GPU"
-	help
-	  Select Y here to enable inhouse gpu support
 
 config SW_SYNC64
 	bool "Software synchronization 64bits objects"

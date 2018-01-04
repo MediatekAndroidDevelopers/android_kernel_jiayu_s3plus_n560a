@@ -13,7 +13,7 @@
 
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <mt-plat/mtk_gpu_utility.h>
+#include <linux/mtk_gpu_utility.h>
 #include "ged_monitor_3D_fence.h"
 
 unsigned int (*mtk_get_gpu_memory_usage_fp)(void) = NULL;

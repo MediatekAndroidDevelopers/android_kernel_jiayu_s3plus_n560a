@@ -30,7 +30,7 @@
 #include <linux/semaphore.h>
 #include <linux/workqueue.h>
 #include <linux/kthread.h>
-#include <mt-plat/aee.h>
+#include <linux/aee.h>
 
 #include "ged_debugFS.h"
 #include "ged_log.h"

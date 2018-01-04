@@ -1,5 +1,5 @@
-include $(src)/Kbuild-mtk-custom-env
+#include $(src)/Kbuild-mtk-custom-env
 
-curr := platform/mt6735
+#curr := platform/mt6735
 
-obj-y += $(curr)/mali_kbase_config_mt6735.o
+#obj-y += $(curr)/mali_kbase_config_mt6735.o

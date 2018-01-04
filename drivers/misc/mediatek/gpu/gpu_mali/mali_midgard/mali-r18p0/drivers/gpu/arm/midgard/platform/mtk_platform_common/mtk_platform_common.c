@@ -17,13 +17,13 @@
 #include <linux/proc_fs.h>
 
 #include "platform/mtk_platform_common.h"
-#include "mt_gpufreq.h"
+#include <mach/mt_gpufreq.h>
 #include <mali_kbase_pm_internal.h>
 
 #include <ged_log.h>
 
 #include <linux/workqueue.h>
-#include <mt-plat/aee.h>
+#include <linux/aee.h>
 
 #ifdef ENABLE_MTK_MEMINFO
 

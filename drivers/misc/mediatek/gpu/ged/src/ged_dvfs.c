@@ -14,11 +14,11 @@
 #include <linux/slab.h>
 #include <linux/sched.h>
 
-#include <mt-plat/mt_boot.h>
+#include <mach/mt_boot.h>
 #include <mt_gpufreq.h>
 
 #include <trace/events/mtk_events.h>
-#include <mt-plat/mtk_gpu_utility.h>
+#include <linux/mtk_gpu_utility.h>
 
 #include <asm/siginfo.h>
 #include <linux/sched.h>
@@ -1237,4 +1237,3 @@ module_param(gpu_cust_boost_freq, uint, 0644);
 module_param(gpu_cust_upbound_freq, uint, 0644);
 module_param(g_gpu_timer_based_emu, uint, 0644);
 #endif
-

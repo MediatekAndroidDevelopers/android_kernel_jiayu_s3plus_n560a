@@ -13,7 +13,7 @@
 #
 
 include $(src)/Kbuild-mtk-custom-env
-include $(src)/platform/mtk_platform_common/Kbuild
+#include $(src)/platform/mtk_platform_common/Kbuild
 
 # Driver version string which is returned to userspace via an ioctl
 MALI_RELEASE_NAME ?= "r18p0-00cet0"
@@ -155,6 +155,9 @@ ifeq ($(CONFIG_MALI_PLATFORM_FAKE),y)
 	endif
 endif # CONFIG_MALI_PLATFORM_FAKE=y
 
+SRC += platform/mtk_platform_common/mtk_platform_common.c
+SRC += platform/mt6735/mali_kbase_config_mt6735.c
+
 # Tell the Linux build system from which .o file to create the kernel module
 obj-$(CONFIG_MALI_MIDGARD) += mali_kbase.o
 
@@ -166,7 +169,7 @@ ifeq ($(CONFIG_MALI_PLATFORM_THIRDPARTY),y)
   platform_name := $(shell echo $(CONFIG_MALI_PLATFORM_THIRDPARTY_NAME))
   MALI_PLATFORM_THIRDPARTY_DIR := platform/$(platform_name)
   ccflags-y += -I$(src)/$(MALI_PLATFORM_THIRDPARTY_DIR)
-  include $(src)/$(MALI_PLATFORM_THIRDPARTY_DIR)/Kbuild
+  #include $(src)/$(MALI_PLATFORM_THIRDPARTY_DIR)/Kbuild
 endif
 
 ifeq ($(CONFIG_MALI_DEVFREQ),y)

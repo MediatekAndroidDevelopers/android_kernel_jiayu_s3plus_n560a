@@ -23,7 +23,7 @@
 #include <../drivers/staging/android/sync.h>
 #endif
 
-#include <mt-plat/mtk_gpu_utility.h>
+#include <linux/mtk_gpu_utility.h>
 #include <trace/events/gpu.h>
 #include <mt_gpufreq.h>
 

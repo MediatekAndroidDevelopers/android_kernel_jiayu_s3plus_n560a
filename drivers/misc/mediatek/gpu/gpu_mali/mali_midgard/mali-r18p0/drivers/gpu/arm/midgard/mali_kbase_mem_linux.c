@@ -2581,8 +2581,8 @@ void *kbase_va_alloc(struct kbase_context *kctx, u32 size, struct kbase_hwc_dma_
 	phys_addr_t *page_array;
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 8, 0))
 	unsigned long attrs = DMA_ATTR_WRITE_COMBINE;
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
-	DEFINE_DMA_ATTRS(attrs);
+//#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
+	//DEFINE_DMA_ATTRS(attrs);
 #endif
 
 	u32 pages = ((size - 1) >> PAGE_SHIFT) + 1;
@@ -2601,9 +2601,10 @@ void *kbase_va_alloc(struct kbase_context *kctx, u32 size, struct kbase_hwc_dma_
 	va = dma_alloc_attrs(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL,
 			     attrs);
 #elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
-	dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
-	va = dma_alloc_attrs(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL,
-			     &attrs);
+	//dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
+	//va = dma_alloc_attrs(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL,
+	//		     &attrs);
+	va = dma_alloc_coherent(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL);
 #else
 	va = dma_alloc_writecombine(kctx->kbdev->dev, size, &dma_pa, GFP_KERNEL);
 #endif
@@ -2655,7 +2656,8 @@ no_reg:
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 8, 0))
 	dma_free_attrs(kctx->kbdev->dev, size, va, dma_pa, attrs);
 #elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
-	dma_free_attrs(kctx->kbdev->dev, size, va, dma_pa, &attrs);
+	//dma_free_attrs(kctx->kbdev->dev, size, va, dma_pa, &attrs);
+	dma_free_coherent(kctx->kbdev->dev, size, va, dma_pa);
 #else
 	dma_free_writecombine(kctx->kbdev->dev, size, va, dma_pa);
 #endif
@@ -2668,10 +2670,10 @@ void kbase_va_free(struct kbase_context *kctx, struct kbase_hwc_dma_mapping *han
 {
 	struct kbase_va_region *reg;
 	int err;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0)) && \
-	(LINUX_VERSION_CODE < KERNEL_VERSION(4, 8, 0))
-	DEFINE_DMA_ATTRS(attrs);
-#endif
+//#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0)) && \
+//	(LINUX_VERSION_CODE < KERNEL_VERSION(4, 8, 0))
+//	DEFINE_DMA_ATTRS(attrs);
+//#endif
 
 	KBASE_DEBUG_ASSERT(kctx != NULL);
 	KBASE_DEBUG_ASSERT(handle->cpu_va != NULL);
@@ -2691,13 +2693,14 @@ void kbase_va_free(struct kbase_context *kctx, struct kbase_hwc_dma_mapping *han
 	dma_free_attrs(kctx->kbdev->dev, handle->size,
 		       handle->cpu_va, handle->dma_pa, DMA_ATTR_WRITE_COMBINE);
 #elif (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 5, 0))
-	dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
-	dma_free_attrs(kctx->kbdev->dev, handle->size,
-			handle->cpu_va, handle->dma_pa, &attrs);
+	//dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
+	//dma_free_attrs(kctx->kbdev->dev, handle->size,
+	//		handle->cpu_va, handle->dma_pa, &attrs);
+	dma_free_coherent(kctx->kbdev->dev, handle->size,
+			handle->cpu_va, handle->dma_pa);
 #else
 	dma_free_writecombine(kctx->kbdev->dev, handle->size,
 				handle->cpu_va, handle->dma_pa);
 #endif
 }
 KBASE_EXPORT_SYMBOL(kbase_va_free);
-

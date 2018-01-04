@@ -24,14 +24,16 @@
 #include "mali_kbase_config_platform.h"
 
 /* MTK clock modified */
-#include "mt_gpufreq.h"
-#include "upmu_common.h"
+#include <mach/mt_gpufreq.h>
+#include <mach/upmu_common.h>
 #include "mach/upmu_sw.h"
 #include "mach/upmu_hw.h"
 #include "mali_kbase_pm.h"
 #include <backend/gpu/mali_kbase_pm_internal.h>
 
-#include "mt_chip.h"
+#include <mach/mt_chip.h>
+
+#include <mach/mt_devinfo.h>
 
 #ifdef CONFIG_MTK_CLKMGR
 #include "mt_clkmgr.h"
