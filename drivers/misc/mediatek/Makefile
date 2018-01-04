@@ -56,8 +56,6 @@ obj-y	+= mtprof/
 obj-y	+= sched/
 obj-$(CONFIG_MTK_CMDQ) += cmdq/
 obj-y	+= mmp/
-obj-y	+= dispsys/
-obj-$(CONFIG_MTK_VIDEOX) += videox/
 
 obj-y	+= auxadc/
 

@@ -1,5 +1,0 @@
-config MTK_VIDEOX
-  bool CONFIG_MTK_VIDEOX
-  default n
-  help
-    CONFIG_MTK_VIDEOX

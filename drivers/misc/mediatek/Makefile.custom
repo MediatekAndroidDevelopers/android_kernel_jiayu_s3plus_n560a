@@ -60,7 +60,6 @@ ccflags-y += -I$(MTK_CUSTOM_PATH)/accdet/$(MTK_PLATFORM) \
              -I$(MTK_CUSTOM_PATH)/camera/$(MTK_PLATFORM) \
              -I$(MTK_CUSTOM_PATH)/cmdq/$(MTK_PLATFORM) \
              -I$(MTK_CUSTOM_PATH)/devinfo/$(MTK_PLATFORM) \
-             -I$(MTK_CUSTOM_PATH)/dispsys/$(MTK_PLATFORM) \
              -I$(MTK_CUSTOM_PATH)/dual_ccci/$(MTK_PLATFORM)/include \
              -I$(MTK_CUSTOM_PATH)/dual_ccci/include \
              -I$(MTK_CUSTOM_PATH)/flashlight/inc \
