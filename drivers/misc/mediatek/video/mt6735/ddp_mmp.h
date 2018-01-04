@@ -14,10 +14,10 @@
 #ifndef __H_DDP_MMP__
 #define __H_DDP_MMP__
 
-#include "mmprofile.h"
+#include <linux/mmprofile.h>
 #include "ddp_info.h"
 #include "ddp_ovl.h"
-#include "mmprofile_internal.h"
+#include <linux/mmprofile_internal.h>
 
 typedef struct {
 	MMP_Event DDP;

@@ -27,8 +27,8 @@
 #include <linux/switch.h>
 
 #include "disp_drv_platform.h"
-#include "ion_drv.h"
-#include "mtk_ion.h"
+#include <linux/ion_drv.h>
+#include <linux/mtk_ion.h>
 
 #include "m4u.h"
 
@@ -37,7 +37,7 @@
 #include "mt_spm.h" /* for sodi reg addr define */
 #define mt_eint_set_hw_debounce(eint_num, ms) (void)0
 
-#include <mt-plat/mt_gpio.h>
+#include <mach/mt_gpio.h>
 #ifdef CONFIG_MTK_CLKMGR
 #include <mach/mt_clkmgr.h>
 #endif
@@ -77,7 +77,7 @@
 #include "mtk_disp_mgr.h"
 #include "ddp_wdma.h"
 #include "ddp_wdma_ex.h"
-#include "mt_clk_id.h"
+//#include "mt_clk_id.h"
 #include "mmdvfs_mgr.h"
 #include "mt_smi.h"
 #include <mach/mt_freqhopping.h>

@@ -13,7 +13,7 @@
 
 #ifndef __DISP_LOG_H__
 #define __DISP_LOG_H__
-#include <mt-plat/aee.h>
+#include <linux/aee.h>
 #include <linux/printk.h>
 
 #include "disp_recorder.h"

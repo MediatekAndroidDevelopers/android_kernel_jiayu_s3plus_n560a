@@ -24,7 +24,7 @@ void DBG_OnTriggerLcd(void);
 void DBG_OnTeDelayDone(void);
 void DBG_OnLcdDone(void);
 
-#include "mmprofile.h"
+#include <linux/mmprofile.h>
 extern struct MTKFB_MMP_Events_t {
 	MMP_Event MTKFB;
 	MMP_Event CreateSyncTimeline;

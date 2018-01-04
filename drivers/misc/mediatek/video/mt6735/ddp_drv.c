@@ -59,7 +59,7 @@
 #include <mach/mt_clkmgr.h>	/* ???? */
 #endif
 /* #include <mach/mt_irq.h> */
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 #include "m4u.h"
 
 #include "disp_drv_platform.h"

@@ -15,7 +15,7 @@
 #define _DISPLAY_RECOREDR_H_
 
 #include <linux/types.h>
-#include "mmprofile.h"
+#include <linux/mmprofile.h>
 #include "disp_event.h"
 #include "ddp_info.h"
 

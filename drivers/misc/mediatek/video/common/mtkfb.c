@@ -32,7 +32,7 @@
 #include <linux/atomic.h>
 #include <asm/cacheflush.h>
 #include <linux/io.h>
-#include <mt-plat/dma.h>
+#include <mach/dma.h>
 #include <linux/compat.h>
 #include <linux/dma-mapping.h>
 #if defined(COMMON_DISP_LOG)
@@ -59,7 +59,7 @@
 #include "fbconfig_kdebug.h"
 #include "ddp_manager.h"
 #include "mtk_ovl.h"
-#include "ion_drv.h"
+#include <linux/ion_drv.h>
 #include "ddp_drv.h"
 #ifdef DISP_GPIO_DTS
 #include "disp_dts_gpio.h" /* set gpio via DTS */

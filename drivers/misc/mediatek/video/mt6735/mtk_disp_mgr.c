@@ -84,7 +84,7 @@
 #include "mtk_ovl.h"
 #include "ddp_mmp.h"
 
-#include "extd_multi_control.h"
+//#include "extd_multi_control.h"
 /* extern unsigned int is_hwc_enabled; */
 /* extern int is_DAL_Enabled(void); */
 /* extern struct semaphore dal_sem; */

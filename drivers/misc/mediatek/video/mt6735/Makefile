@@ -14,6 +14,8 @@
 # drivers/video/mtk/Makefile
 #
 
+include $(srctree)/drivers/misc/mediatek/Makefile.custom
+
 obj-$(CONFIG_MTK_FB) += mtkfb_console.o        \
 			    disp_assert_layer.o    \
 			    primary_display.o      \
@@ -23,7 +25,6 @@ obj-$(CONFIG_MTK_FB) += mtkfb_console.o        \
 			    compat_mtk_disp_mgr.o  \
 			    mtk_mira.o             \
 			    mtk_ovl.o              \
-			    disp_dts_gpio.o        \
 			    disp_helper.o          \
 			    disp_debug.o           \
 			    ddp_wdma_ex.o          \
@@ -74,7 +75,7 @@ subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/m4u/$(MTK_PLATFORM) \
 
 subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/mmp/
 
-subdir-ccflags-$(CONFIG_MTK_LCM) += -I$(srctree)/drivers/misc/mediatek/lcm/inc
+subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/lcm/inc
 
 ifeq ($(CONFIG_ARCH_MT6735),y)
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/mt6735/
@@ -92,15 +93,16 @@ ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/include/     \
              -I$(srctree)/drivers/misc/mediatek/video/common/rdma10/ \
              -I$(srctree)/drivers/misc/mediatek/video/common/wdma10/ \
              -I$(srctree)/drivers/misc/mediatek/sync/      \
-             -I$(srctree)/drivers/misc/mediatek/cmdq/v2/ \
-             -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)/ \
+             -I$(srctree)/drivers/misc/mediatek/cmdq/ \
+             -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/ \
+             -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6753/ \
              -I$(srctree)/drivers/misc/mediatek/ext_disp/ \
              -I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include/mach/ \
              -I$(srctree)/drivers/misc/mediatek/base/power/$(MTK_PLATFORM) \
              -I$(srctree)/drivers/misc/mediatek/smi/ \
              -I$(srctree)/drivers/misc/mediatek/include/mt-plat/
 
-ccflags-$(CONFIG_MTK_LCM) += -I$(srctree)/drivers/misc/mediatek/lcm/inc
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/lcm/inc
 
 ccflags-y += -I$(srctree)/drivers/staging/android/ion \
              -I$(srctree)/drivers/staging/android/ion/mtk

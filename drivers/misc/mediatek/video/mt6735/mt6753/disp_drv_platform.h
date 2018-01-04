@@ -27,7 +27,7 @@
 /* #include <mach/mt_irq.h> */
 /*#include <board-custom.h>*/
 #include "disp_assert_layer.h"
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 #include "ddp_hal.h"
 /* #include "ddp_drv.h" */
 #include "ddp_path.h"
@@ -47,7 +47,7 @@
 /**
  * SODI defeature.
  */
-#define MTK_FB_SODI_DEFEATURE
+//#define MTK_FB_SODI_DEFEATURE
 
 /**
  * ESD recovery support.

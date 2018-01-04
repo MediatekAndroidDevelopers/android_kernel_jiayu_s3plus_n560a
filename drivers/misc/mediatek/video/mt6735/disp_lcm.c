@@ -16,7 +16,7 @@
 #include <linux/types.h>
 #include "disp_log.h"
 #include "lcm_drv.h"
-#include "lcm_define.h"
+//#include "lcm_define.h"
 #include "disp_drv_platform.h"
 #include "ddp_manager.h"
 #include "mtkfb.h"

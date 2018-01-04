@@ -15,7 +15,7 @@
 
 #include "disp_log.h"
 
-#include <mt-plat/met_drv.h>
+#include <linux/met_drv.h>
 #include "ddp_irq.h"
 #include "ddp_reg.h"
 #include "ddp_met.h"

@@ -27,8 +27,7 @@
 /*#include "mach/mt_typedefs.h"*/
 #include <linux/types.h>
 
-/*#include <mach/sync_write.h>*/
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 
 #if defined(CONFIG_MTK_LEGACY) || defined(CONFIG_MTK_CLKMGR)
 #include <mach/mt_clkmgr.h>

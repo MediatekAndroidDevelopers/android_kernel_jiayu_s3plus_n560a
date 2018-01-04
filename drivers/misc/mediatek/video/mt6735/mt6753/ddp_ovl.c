@@ -30,6 +30,7 @@
 #include "disp_assert_layer.h"
 #include "ddp_irq.h"
 #include "disp_log.h"
+#include "ddp_mmp.h"
 
 #define OVL_NUM			(2)
 #define OVL_REG_BACK_MAX	(40)

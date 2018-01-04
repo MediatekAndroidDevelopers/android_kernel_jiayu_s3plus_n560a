@@ -267,7 +267,7 @@ obj-$(CONFIG_MTK_SWITCH_TX_POWER) += sw_tx_power/
 
 obj-$(CONFIG_MTK_BTIF)	+= btif/
 obj-$(CONFIG_MTK_POWER_GS)	+= power_gs/
-obj-$(CONFIG_MTK_VIDEO) += video/
+obj-$(CONFIG_MTK_FB) += video/
 obj-$(CONFIG_MTK_AEE_MRDUMP)	+= mrdump/
 obj-$(CONFIG_MTK_WMT_CCCI)	+= wmt_ccci/
 obj-$(CONFIG_MTK_VCOREFS)	+= vcorefs/

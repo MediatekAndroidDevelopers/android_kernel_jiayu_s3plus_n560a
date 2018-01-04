@@ -11,6 +11,8 @@
 # GNU General Public License for more details.
 #
 
+include $(srctree)/drivers/misc/mediatek/Makefile.custom
+
 obj-y += ddp_aal.o
 obj-y += ddp_pwm.o
 
@@ -22,8 +24,9 @@ ccflags-y += \
 				-I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/videox \
 				-I$(srctree)/drivers/misc/mediatek/sync/      \
 				-I$(srctree)/drivers/misc/mediatek/smi/ \
-				-I$(srctree)/drivers/misc/mediatek/cmdq/v2/ \
-				-I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)/ \
+				-I$(srctree)/drivers/misc/mediatek/cmdq/ \
+				-I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/ \
+				-I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6753/ \
 				-I$(srctree)/drivers/misc/mediatek/lcm/inc/ \
 				-I$(srctree)/drivers/misc/mediatek/leds/ \
 				-I$(srctree)/drivers/misc/mediatek/leds/$(MTK_PLATFORM)/
@@ -43,4 +46,3 @@ ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/dispsys/mt
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/videox/mt6753/
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/mt6753/
 endif
-

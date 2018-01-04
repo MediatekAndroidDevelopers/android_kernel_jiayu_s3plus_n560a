@@ -21,7 +21,7 @@
 #include <linux/string.h>
 #include <stdarg.h>
 #include <linux/slab.h>
-#include <mt-plat/met_drv.h>
+#include <linux/met_drv.h>
 
 #include "ddp_mmp.h"
 

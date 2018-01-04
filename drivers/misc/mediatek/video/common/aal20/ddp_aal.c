@@ -24,6 +24,7 @@
 #include <asm/atomic.h>
 #include <leds_drv.h>
 #include <leds_sw.h>
+#include <linux/leds-mt65xx.h>
 #include <cmdq_record.h>
 #include <ddp_reg.h>
 #include <ddp_drv.h>
@@ -31,7 +32,7 @@
 #include <primary_display.h>
 #include <disp_drv_platform.h>
 #include <mt_smi.h>
-#include <smi_public.h>
+//#include <smi_public.h>
 #ifdef CONFIG_MTK_CLKMGR
 #include <mach/mt_clkmgr.h>
 #else

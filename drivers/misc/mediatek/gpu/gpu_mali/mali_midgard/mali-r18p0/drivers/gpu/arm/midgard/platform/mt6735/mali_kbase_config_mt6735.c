@@ -36,7 +36,7 @@
 #include <mach/mt_devinfo.h>
 
 #ifdef CONFIG_MTK_CLKMGR
-#include "mt_clkmgr.h"
+#include <mach/mt_clkmgr.h>
 #endif /* CONFIG_MTK_CLKMGR */
 
 #ifndef CONFIG_MTK_CLKMGR

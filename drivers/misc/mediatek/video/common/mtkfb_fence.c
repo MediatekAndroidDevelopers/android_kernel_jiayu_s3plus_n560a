@@ -18,7 +18,7 @@
 
 #include <linux/wait.h>
 #include <linux/file.h>
-#include "ion_drv.h"
+#include <linux/ion_drv.h>
 #include "m4u.h"
 #include "mtk_sync.h"
 #include "mtkfb_fence.h"

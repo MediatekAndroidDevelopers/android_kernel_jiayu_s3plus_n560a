@@ -60,12 +60,8 @@ endif
 ifeq ($(CONFIG_ARCH_MT6753),y)
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/mt6753/
 endif
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/videox/mt6735/
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/dispsys/mt6735/
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/dispsys/mt6735/mt6753/
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/mt6735/
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/mt6735/mt6753/
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6753/
 endif
 # ---------------------- #
 

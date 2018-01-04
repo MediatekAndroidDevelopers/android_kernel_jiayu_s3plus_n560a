@@ -24,9 +24,9 @@ ifeq (y, $(filter y, $(CONFIG_ARCH_MT6570) $(CONFIG_ARCH_MT6580) $(CONFIG_ARCH_M
 subdir-ccflags-y += -DCOMMON_DISP_LOG
 endif
 
-ifneq ($(CONFIG_MTK_LCM), y)
-	obj-y += mtdummy/
-else
+#ifneq ($(CONFIG_MTK_LCM), y)
+#	obj-y += mtdummy/
+#else
 	######################################
 	obj-$(CONFIG_MTK_FB) += $(subst ",,$(CONFIG_MTK_PLATFORM))/
 	obj-$(CONFIG_ARCH_MT6735) += common/
@@ -39,5 +39,4 @@ else
 	obj-$(CONFIG_ARCH_MT6757) += common/
 	obj-$(CONFIG_ARCH_MT8167) += common/
 	obj-$(CONFIG_ARCH_ELBRUS) += common/
-endif
-
+#endif

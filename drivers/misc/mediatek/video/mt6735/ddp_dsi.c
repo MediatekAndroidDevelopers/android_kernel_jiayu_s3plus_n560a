@@ -32,7 +32,7 @@
 #include "disp_log.h"
 #include "disp_debug.h"
 #ifdef CONFIG_MTK_LEGACY
-#include <mt-plat/mt_gpio.h>
+#include <mach/mt_gpio.h>
 /* #include <cust_gpio_usage.h> */
 #endif
 #include "ddp_mmp.h"
@@ -49,7 +49,7 @@ atomic_t PMaster_enable = ATOMIC_INIT(0);
 /*...below is new dsi driver...*/
 #define IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII 0
 static int dsi_reg_op_debug;
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 
 #ifndef CONFIG_MTK_CLKMGR
 #include <linux/of.h>
@@ -2736,7 +2736,7 @@ static LCM_UTIL_FUNCS lcm_utils_dsi0;
 static LCM_UTIL_FUNCS lcm_utils_dsi1;
 static LCM_UTIL_FUNCS lcm_utils_dsidual;
 
-long lcd_enp_bias_setting(unsigned int value)
+/*long lcd_enp_bias_setting(unsigned int value)
 {
 	long ret = 0;
 
@@ -2758,7 +2758,7 @@ long lcd_enp_bias_setting_by_name(bool bOn, char *pinName)
 		ret = lcm_turn_on_gate_by_name(0, pinName);
 
 	return ret;
-}
+}*/
 
 int ddp_dsi_set_lcm_utils(DISP_MODULE_ENUM module, LCM_DRIVER *lcm_drv)
 {

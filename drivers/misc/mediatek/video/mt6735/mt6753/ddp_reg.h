@@ -13,7 +13,7 @@
 
 #ifndef _DDP_REG_H_
 #define _DDP_REG_H_
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 /* #include <mach/mt_reg_base.h> */
 #include <linux/types.h>
 #include "disp_recorder.h"
