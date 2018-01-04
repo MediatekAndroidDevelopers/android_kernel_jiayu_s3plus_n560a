@@ -24,12 +24,27 @@
 #include "mali_kbase_cpu_vexpress.h"
 
 /* MTK clock modified */
-#include "mach/mt_clkmgr.h"
-#include "mach/mt_gpufreq.h"
-#include <mach/upmu_common.h>
-#include <mach/upmu_sw.h>
-#include <mach/upmu_hw.h>
-#include <mali_kbase_pm.h>
+#include "mt_gpufreq.h"
+#include "upmu_common.h"
+#include "upmu_sw.h"
+#include "upmu_hw.h"
+#include "mali_kbase_pm.h"
+
+#include "mt_chip.h"
+
+#ifdef CONFIG_MTK_CLKMGR
+#include "mt_clkmgr.h"
+#endif /* CONFIG_MTK_CLKMGR */
+
+#ifndef CONFIG_MTK_CLKMGR
+#include <linux/clk.h>
+#endif /* !CONFIG_MTK_CLKMGR */
+
+#ifdef CONFIG_OF
+extern void __iomem  *clk_mfgcfg_base_addr;
+#endif
+
+#include "ged_dvfs.h"
 
 /* Versatile Express (VE) configuration defaults shared between config_attributes[]
  * and config_attributes_hw_issue_8408[]. Settings are not shared for
@@ -80,41 +95,83 @@ static kbase_io_resources io_resources = {
 
 unsigned int g_power_off_gpu_freq_idx;
 unsigned int g_power_status;
-extern unsigned int g_type_T;
 
 static int pm_callback_power_on(struct kbase_device *kbdev)
 {
 	int touch_boost_flag, touch_boost_id;
     unsigned int current_gpu_freq_idx;
-	unsigned int boost_idx;
+#ifndef CONFIG_MTK_CLKMGR
+	int ret;
+#endif
+
+	unsigned int code = mt_get_chip_hw_code();
 
 	mt_gpufreq_voltage_enable_set(1);
-	enable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
-	enable_clock( MT_CG_MFG_BG3D, "GPU");
+#ifdef ENABLE_COMMON_DVFS
+	ged_dvfs_gpu_clock_switch_notify(1);
+#endif
+	if (0x321 == code) {
+		// do something for Denali-1(6735)
+#ifdef CONFIG_MTK_CLKMGR
+		enable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+		enable_clock( MT_CG_MFG_BG3D, "GPU");
+#else
+		ret = clk_prepare_enable(kbdev->clk_display_scp);
+		if (ret)
+		{
+			pr_debug("MALI: clk_prepare_enable failed when enabling display MTCMOS");
+		}
+		
+		ret = clk_prepare_enable(kbdev->clk_smi_common);
+		if (ret)
+		{
+			pr_debug("MALI: clk_prepare_enable failed when enabling display smi_common clock");
+		}
+		
+		ret = clk_prepare_enable(kbdev->clk_mfg_scp);
+		if (ret)
+		{
+			pr_debug("MALI: clk_prepare_enable failed when enabling mfg MTCMOS");
+		}
+		
+		ret = clk_prepare_enable(kbdev->clk_mfg);
+		if (ret)
+		{
+			pr_debug("MALI: clk_prepare_enable failed when enabling mfg clock");
+		}
+#endif
+	} else if (0x335 == code) {
+		// do something for Denali-2(6735M)
+#ifdef CONFIG_MTK_CLKMGR
+		enable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+		enable_clock( MT_CG_MFG_BG3D, "GPU");
+#endif /* CONFIG_MTK_CLKMGR */
+	} else if (0x337 == code) {
+		// do something for Denali-3(6753)
+#ifdef CONFIG_MTK_CLKMGR
+		enable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+		enable_clock( MT_CG_MFG_BG3D, "GPU");
+#endif /* CONFIG_MTK_CLKMGR */
+	} else {
+		// unknown chip ID, error !!
+#ifdef CONFIG_MTK_CLKMGR
+		enable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+		enable_clock( MT_CG_MFG_BG3D, "GPU");
+#endif /* CONFIG_MTK_CLKMGR */
+	}
 
 	g_power_status = 1; // the power status is "power on".
 	mt_gpufreq_target(g_power_off_gpu_freq_idx);
 	current_gpu_freq_idx = mt_gpufreq_get_cur_freq_index();
 	if( current_gpu_freq_idx > g_power_off_gpu_freq_idx)
-		printk("MALI: GPU freq. can't switch to idx=%d\n", g_power_off_gpu_freq_idx );
+		pr_debug("MALI: GPU freq. can't switch to idx=%d\n", g_power_off_gpu_freq_idx );
 
     mtk_get_touch_boost_flag( &touch_boost_flag, &touch_boost_id);
-	if(g_type_T==1)
-	{
-		if(touch_boost_flag > 0)
-    	{
-        	mt_gpufreq_target(1);
-        	mtk_clear_touch_boost_flag();
-    	}
-	}
-	else
-	{
-    	if(touch_boost_flag > 0)
-    	{
-        	mt_gpufreq_target(touch_boost_id);
-        	mtk_clear_touch_boost_flag();
-    	}
-	}
+    if(touch_boost_flag > 0)
+    {
+        mt_gpufreq_target(touch_boost_id);
+        mtk_clear_touch_boost_flag();
+    }
 
 	/* Nothing is needed on VExpress, but we may have destroyed GPU state (if the below HARD_RESET code is active) */
 	return 1;
@@ -127,8 +184,8 @@ static int pm_callback_power_on(struct kbase_device *kbdev)
 #define MFG_DEBUG_SEL        0x3
 #define MFG_BUS_IDLE_BIT    (1 << 2)
                             
-#define MFG_DEBUG_CTRL_REG  (clk_mfgcfg_base + 0x180)
-#define MFG_DEBUG_STAT_REG  (clk_mfgcfg_base + 0x184)
+#define MFG_DEBUG_CTRL_REG  (clk_mfgcfg_base_addr + 0x180)
+#define MFG_DEBUG_STAT_REG  (clk_mfgcfg_base_addr + 0x184)
 
 #define MFG_WRITE32(value, addr) writel(value, addr)
 #define MFG_READ32(addr)         readl(addr)
@@ -139,12 +196,13 @@ static void pm_callback_power_off(struct kbase_device *kbdev)
 
 	volatile int polling_count = 100000;
 	volatile int i = 0;
+	unsigned int code;
 
 	/// 1. Delay 0.01ms before power off   
 	for (i=0; i < DELAY_LOOP_COUNT;i++);
 	if (DELAY_LOOP_COUNT != i)
 	{   
-		printk("[MALI] power off delay error!\n");
+		pr_debug("[MALI] power off delay error!\n");
 	}
       
 	/// 2. Polling the MFG_DEBUG_REG for checking GPU IDLE before MTCMOS power off (0.1ms)
@@ -163,7 +221,7 @@ static void pm_callback_power_off(struct kbase_device *kbdev)
 
 	if (polling_count <=0)
 	{
-		printk("[MALI]!!!!MFG(GPU) subsys is still BUSY!!!!!, polling_count=%d\n", polling_count);
+		pr_debug("[MALI]!!!!MFG(GPU) subsys is still BUSY!!!!!, polling_count=%d\n", polling_count);
 	}
 
 #if HARD_RESET_AT_POWER_OFF
@@ -194,7 +252,7 @@ static void pm_callback_power_off(struct kbase_device *kbdev)
 
 	if (polling_count <=0)
 	{
-		printk("[MALI]!!!!MFG(GPU) subsys is still BUSY!!!!!, polling_count=%d\n", polling_count);
+		pr_debug("[MALI]!!!!MFG(GPU) subsys is still BUSY!!!!!, polling_count=%d\n", polling_count);
 	}
 
 	g_power_status = 0; // the power status is "power off".
@@ -207,10 +265,44 @@ static void pm_callback_power_off(struct kbase_device *kbdev)
 #endif
 
 
+	code = mt_get_chip_hw_code();
+
     /* MTK clock modified */
-	disable_clock( MT_CG_MFG_BG3D, "GPU");
-	disable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+	if (0x321 == code) {
+		// do something for Denali-1(6735)
+#ifdef CONFIG_MTK_CLKMGR
+		disable_clock( MT_CG_MFG_BG3D, "GPU");
+		disable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+#else	 
+		clk_disable_unprepare(kbdev->clk_mfg);
+		clk_disable_unprepare(kbdev->clk_mfg_scp);
+		clk_disable_unprepare(kbdev->clk_smi_common);
+		clk_disable_unprepare(kbdev->clk_display_scp);
+#endif
+	} else if (0x335 == code) {
+		// do something for Denali-2(6735M)
+#ifdef CONFIG_MTK_CLKMGR
+		disable_clock( MT_CG_MFG_BG3D, "GPU");
+		disable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+#endif /* CONFIG_MTK_CLKMGR */
+	} else if (0x337 == code) {
+		// do something for Denali-3(6753)
+#ifdef CONFIG_MTK_CLKMGR
+		disable_clock( MT_CG_MFG_BG3D, "GPU");
+		disable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+#endif /* CONFIG_MTK_CLKMGR */
+	} else {
+		// unknown chip ID, error !!
+#ifdef CONFIG_MTK_CLKMGR
+		disable_clock( MT_CG_MFG_BG3D, "GPU");
+		disable_clock( MT_CG_DISP0_SMI_COMMON, "GPU");
+#endif /* CONFIG_MTK_CLKMGR */
+	}
+
 	mt_gpufreq_voltage_enable_set(0);
+#ifdef ENABLE_COMMON_DVFS
+	ged_dvfs_gpu_clock_switch_notify(0);
+#endif
 
 }
 

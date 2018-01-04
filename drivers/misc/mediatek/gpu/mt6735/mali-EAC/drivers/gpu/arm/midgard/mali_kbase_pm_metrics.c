@@ -47,7 +47,7 @@ int g_current_sample_gl_utilization = 0;
 int g_current_sample_cl_utilization[2] = {0};
 
 /* MTK GPU DVFS */
-#include "mach/mt_gpufreq.h"
+#include "mt_gpufreq.h"
 #include "random.h"
 
 int g_dvfs_enabled = 1;
@@ -62,89 +62,11 @@ int g_touch_boost_flag = 0;
 int g_touch_boost_id = 0;
 
 int g_early_suspend = 0;
-
 extern unsigned int g_power_status;
-extern unsigned int g_type_T;
-extern mtk_gpu_thd_level_offset gpu_thd_level_off[];
 
-#include <linux/earlysuspend.h>
 #include <linux/suspend.h>
 
 static enum hrtimer_restart dvfs_callback(struct hrtimer *timer);
-
-#ifdef CONFIG_HAS_EARLYSUSPEND
-static void mali_early_suspend(struct early_suspend *h)
-{
-	  struct list_head *entry;
-	  const struct list_head *kbdev_list;    
-	  unsigned long flgs;	  
-	  kbdev_list = kbase_dev_list_get();	  
-	  
-	  list_for_each(entry, kbdev_list) 
-	  {
-	  	struct kbase_device *kbdev = NULL;
-	  	kbdev = list_entry(entry, struct kbase_device, entry);	  	
-		spin_lock_irqsave(&kbdev->pm.metrics.lock, flgs);
-	    g_early_suspend = 1;				
-	    spin_unlock_irqrestore(&kbdev->pm.metrics.lock, flgs);
-	  	
-	  	if (MALI_TRUE == kbdev->pm.metrics.timer_active)
-	  	{
-				 unsigned long flags;	
-				
-				 spin_lock_irqsave(&kbdev->pm.metrics.lock, flags);
-				 kbdev->pm.metrics.timer_active = MALI_FALSE;				
-				 spin_unlock_irqrestore(&kbdev->pm.metrics.lock, flags);
-				 
-				 hrtimer_cancel(&kbdev->pm.metrics.timer);
-	  	}
-	  }	  
-	  kbase_dev_list_put(kbdev_list);	  	  
-}
-
-
-static void mali_late_resume(struct early_suspend *h)
-{	  
-		struct list_head *entry;
-	  const struct list_head *kbdev_list;
-	  unsigned long flgs;
-	  kbdev_list = kbase_dev_list_get();	
-	    
-	  list_for_each(entry, kbdev_list) 
-	  {
-	  	 struct kbase_device *kbdev = NULL;
-	  	 kbdev = list_entry(entry, struct kbase_device, entry);	  	
-
-	  	 if (MALI_FALSE == kbdev->pm.metrics.timer_active)
-	  	 {		
-	  	 	 unsigned long flags;	
-	  	 	 
-			 spin_lock_irqsave(&kbdev->pm.metrics.lock, flags);
-  		 	 kbdev->pm.metrics.timer_active = MALI_TRUE;
-  		 	 spin_unlock_irqrestore(&kbdev->pm.metrics.lock, flags);
-  		 	 
-  		 	 hrtimer_init(&kbdev->pm.metrics.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-  		 	 kbdev->pm.metrics.timer.function = dvfs_callback;			 
-  		 	 hrtimer_start(&kbdev->pm.metrics.timer, HR_TIMER_DELAY_MSEC(kbdev->pm.platform_dvfs_frequency), HRTIMER_MODE_REL);
-
-			 spin_lock_irqsave(&kbdev->pm.metrics.lock, flags);
-  		 	 g_early_suspend = 0;
-  		 	 spin_unlock_irqrestore(&kbdev->pm.metrics.lock, flags);			 
-  		 }
-  	}
-	
-  	kbase_dev_list_put(kbdev_list);  	
-}
-
-
-static struct early_suspend mali_early_suspend_handler =
-{
-	.level =    EARLY_SUSPEND_LEVEL_BLANK_SCREEN +1 ,
-	.suspend =  mali_early_suspend,
-	.resume =   mali_late_resume,
-};
-#endif /* CONFIG_HAS_EARLYSUSPEND */
-
 
 void mali_SODI_begin(void)
 {
@@ -246,44 +168,17 @@ int mtk_get_dvfs_freq()
 
 int mtk_get_dvfs_threshold_max()
 {
-	if(g_type_T==1)
-	{
-		unsigned int iCurrentFreq;
-    	iCurrentFreq = mt_gpufreq_get_cur_freq_index();
-		return 	gpu_thd_level_off[iCurrentFreq].max_level;
-	}
-	else
-	{
-    	return g_dvfs_threshold_max;
-	}
+    return g_dvfs_threshold_max;
 }
 
 int mtk_get_dvfs_threshold_min()
 {
-	if(g_type_T==1)
-	{
-		unsigned int iCurrentFreq;
-    	iCurrentFreq = mt_gpufreq_get_cur_freq_index();
-		return 	gpu_thd_level_off[iCurrentFreq].min_level;
-	}
-	else
-	{
-    	return g_dvfs_threshold_min;
-	}
+    return g_dvfs_threshold_min;
 }
 
 int mtk_get_dvfs_deferred_count()
 {
-	if(g_type_T==1)
-	{
-		unsigned int iCurrentFreq;
-		iCurrentFreq = mt_gpufreq_get_cur_freq_index();
-		return	gpu_thd_level_off[iCurrentFreq].def_count;
-	}
-	else
-	{
-	    return g_dvfs_deferred_count;
-	}
+    return g_dvfs_deferred_count;
 }
 
 enum kbase_pm_dvfs_action mtk_get_dvfs_action()
@@ -347,15 +242,12 @@ mali_error kbasep_pm_metrics_init(struct kbase_device *kbdev)
 	spin_lock_init(&kbdev->pm.metrics.lock);
 
 #ifdef CONFIG_MALI_MIDGARD_DVFS
+#ifndef ENABLE_COMMON_DVFS	
 	kbdev->pm.metrics.timer_active = MALI_TRUE;
 	hrtimer_init(&kbdev->pm.metrics.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	kbdev->pm.metrics.timer.function = dvfs_callback;
 
 	hrtimer_start(&kbdev->pm.metrics.timer, HR_TIMER_DELAY_MSEC(kbdev->pm.platform_dvfs_frequency), HRTIMER_MODE_REL);
-
-	/// Add early suspend callback to disable dvfs timer during deepidle state
-#ifdef CONFIG_HAS_EARLYSUSPEND
-    register_early_suspend(&mali_early_suspend_handler);
 #endif
 	
 #endif /* CONFIG_MALI_MIDGARD_DVFS */
@@ -373,9 +265,6 @@ void kbasep_pm_metrics_term(struct kbase_device *kbdev)
 	unsigned long flags;
 	KBASE_DEBUG_ASSERT(kbdev != NULL);
 		
-#ifdef CONFIG_HAS_EARLYSUSPEND
-    unregister_early_suspend(&mali_early_suspend_handler);
-#endif
 	if (MALI_TRUE == kbdev->pm.metrics.timer_active)
 	{	
 		 spin_lock_irqsave(&kbdev->pm.metrics.lock, flags);
@@ -576,6 +465,92 @@ out:
 	return utilisation;
 }
 
+/// MTK_GED{
+void MTKCalGpuUtilization(unsigned int* pui32Loading , unsigned int* pui32Block,unsigned int* pui32Idle)
+{
+   struct kbase_device *kbdev = MaliGetMaliData();
+   
+	unsigned long flags;
+	int utilisation, util_gl_share;
+	int util_cl_share[2];
+	int random_action;
+	enum kbase_pm_dvfs_action action;
+
+	KBASE_DEBUG_ASSERT(kbdev != NULL);
+
+	spin_lock_irqsave(&kbdev->pm.metrics.lock, flags);
+
+	utilisation = kbase_pm_get_dvfs_utilisation_old(kbdev, &util_gl_share, util_cl_share);
+
+	if(pui32Loading)
+        *pui32Loading = utilisation;
+    if(pui32Idle)
+        *pui32Idle = 100 - utilisation;
+    
+    /*
+    if(pui32Block)
+        *pui32Block = 0; // no ref value in r5px
+     */
+
+	if (utilisation < 0 || util_gl_share < 0 || util_cl_share[0] < 0 || util_cl_share[1] < 0) {
+		action = KBASE_PM_DVFS_NOP;
+		utilisation = 0;
+		util_gl_share = 0;
+		util_cl_share[0] = 0;
+		util_cl_share[1] = 0;
+		goto out;
+	}
+
+	if (kbdev->pm.metrics.vsync_hit) {
+		/* VSync is being met */
+		if (utilisation < mtk_get_dvfs_threshold_min())
+			action = KBASE_PM_DVFS_CLOCK_DOWN;
+		else if (utilisation > mtk_get_dvfs_threshold_max())
+			action = KBASE_PM_DVFS_CLOCK_UP;
+		else
+			action = KBASE_PM_DVFS_NOP;
+	} else {
+		/* VSync is being missed */
+		if (utilisation < KBASE_PM_NO_VSYNC_MIN_UTILISATION)
+			action = KBASE_PM_DVFS_CLOCK_DOWN;
+		else if (utilisation > KBASE_PM_NO_VSYNC_MAX_UTILISATION)
+			action = KBASE_PM_DVFS_CLOCK_UP;
+		else
+			action = KBASE_PM_DVFS_NOP;
+	}
+
+	// get a radom action for stress test
+	if (mtk_get_dvfs_enabled() == 2)
+	{
+		get_random_bytes( &random_action, sizeof(random_action));
+        random_action = random_action%3;
+        pr_debug("[MALI] GPU DVFS stress test - genereate random action here: action = %d", random_action);
+        action = random_action;
+	}
+
+	kbdev->pm.metrics.utilisation = utilisation;
+	kbdev->pm.metrics.util_cl_share[0] = util_cl_share[0];
+	kbdev->pm.metrics.util_cl_share[1] = util_cl_share[1];
+	kbdev->pm.metrics.util_gl_share = util_gl_share;
+
+	g_current_sample_gl_utilization = utilisation;
+	g_current_sample_cl_utilization[0] = util_cl_share[0];
+	g_current_sample_cl_utilization[1] = util_cl_share[1];
+
+   
+out:
+#if 0 /// def CONFIG_MALI_MIDGARD_DVFS
+	kbase_platform_dvfs_event(kbdev, utilisation, util_gl_share, util_cl_share);
+#endif				/*CONFIG_MALI_MIDGARD_DVFS */
+	kbdev->pm.metrics.time_idle = 0;
+	kbdev->pm.metrics.time_busy = 0;
+	kbdev->pm.metrics.busy_cl[0] = 0;
+	kbdev->pm.metrics.busy_cl[1] = 0;
+	kbdev->pm.metrics.busy_gl = 0;
+	spin_unlock_irqrestore(&kbdev->pm.metrics.lock, flags);	
+}
+///}
+
 enum kbase_pm_dvfs_action kbase_pm_get_dvfs_action(struct kbase_device *kbdev)
 {
 	unsigned long flags;
@@ -622,7 +597,8 @@ enum kbase_pm_dvfs_action kbase_pm_get_dvfs_action(struct kbase_device *kbdev)
 	{
 		get_random_bytes( &random_action, sizeof(random_action));
         random_action = random_action%3;
-        printk("[MALI] GPU DVFS stress test - genereate random action here: action = %d", random_action);
+        //printk("[MALI] GPU DVFS stress test - genereate random action here: action = %d", random_action);
+        pr_debug("[MALI] GPU DVFS stress test - genereate random action here: action = %d", random_action);
         action = random_action;
 	}
 
@@ -713,7 +689,7 @@ static unsigned int _mtk_gpu_dvfs_index_to_frequency(int iFreq)
 				return 3000000;
         }    
 	}
-        
+	return 0;
 }
 
 ///=====================================================================================
@@ -826,7 +802,7 @@ static int kbasep_gpu_dvfs_enable_debugfs_open(struct inode *in, struct file *fi
 	return single_open(file, proc_gpu_dvfs_enabled_show , NULL);
 }
 
-static int kbasep_gpu_dvfs_enable_write(struct file *file, const char __user *buffer, 
+static ssize_t kbasep_gpu_dvfs_enable_write(struct file *file, const char __user *buffer, 
                 size_t count, loff_t *data)
 {
     char desc[32]; 
@@ -852,6 +828,7 @@ static const struct file_operations kbasep_gpu_dvfs_enable_debugfs_fops = {
 	.open    = kbasep_gpu_dvfs_enable_debugfs_open,
 	.read    = seq_read,
 	.write   = kbasep_gpu_dvfs_enable_write,
+	.release = single_release,
 };
 
 
@@ -874,7 +851,7 @@ static int kbasep_gpu_input_boost_debugfs_open(struct inode *in, struct file *fi
 	return single_open(file, proc_gpu_input_boost_show , NULL);
 }
 
-static int kbasep_gpu_input_boost_write(struct file *file, const char __user *buffer, 
+static ssize_t kbasep_gpu_input_boost_write(struct file *file, const char __user *buffer, 
                 size_t count, loff_t *data)
 {
     char desc[32]; 
@@ -898,6 +875,7 @@ static const struct file_operations kbasep_gpu_input_boost_debugfs_fops = {
 	.open    = kbasep_gpu_input_boost_debugfs_open,
 	.read    = seq_read,
 	.write   = kbasep_gpu_input_boost_write,
+	.release = single_release,
 };
 
 
@@ -920,7 +898,7 @@ static int kbasep_gpu_dvfs_freq_debugfs_open(struct inode *in, struct file *file
 	return single_open(file, proc_gpu_dvfs_freq_show , NULL);
 }
 
-static int kbasep_gpu_dvfs_freq_write(struct file *file, const char __user *buffer, 
+static ssize_t kbasep_gpu_dvfs_freq_write(struct file *file, const char __user *buffer, 
                 size_t count, loff_t *data)
 {
     char desc[32]; 
@@ -936,7 +914,8 @@ static int kbasep_gpu_dvfs_freq_write(struct file *file, const char __user *buff
     if(sscanf(desc, "%d", &dvfs_freq) == 1)
         g_dvfs_freq = dvfs_freq;
     else 
-        printk("[MALI] warning! echo [dvfs_freq(ms)] > /proc/mali/dvfs_freq\n");
+        //printk("[MALI] warning! echo [dvfs_freq(ms)] > /proc/mali/dvfs_freq\n");
+        pr_debug("[MALI] warning! echo [dvfs_freq(ms)] > /proc/mali/dvfs_freq\n");
 
     return count;
 }
@@ -945,6 +924,7 @@ static const struct file_operations kbasep_gpu_dvfs_freq_debugfs_fops = {
 	.open    = kbasep_gpu_dvfs_freq_debugfs_open,
 	.read    = seq_read,
 	.write   = kbasep_gpu_dvfs_freq_write,
+	.release = single_release,
 };
 
 
@@ -953,22 +933,12 @@ static const struct file_operations kbasep_gpu_dvfs_freq_debugfs_fops = {
 static int proc_gpu_dvfs_threshold_show(struct seq_file *m, void *v)
 {
 
-	if(g_type_T==1)
-	{
-		seq_printf(m, "GPU DVFS threshold :\n");
-		seq_printf(m, "high_max:%d high_min:%d\n", gpu_thd_level_off[0].max_level, gpu_thd_level_off[0].min_level);
-		seq_printf(m, "mid_max:%d  mid_min:%d\n",  gpu_thd_level_off[1].max_level, gpu_thd_level_off[1].min_level);
-		seq_printf(m, "low_max:%d  low_min:%d\n",  gpu_thd_level_off[2].max_level, gpu_thd_level_off[2].min_level);
-	}
-	else
-	{
-    	int threshold_max, threshold_min;
+    int threshold_max, threshold_min;
 
-    	threshold_max = mtk_get_dvfs_threshold_max();
-    	threshold_min = mtk_get_dvfs_threshold_min();
+    threshold_max = mtk_get_dvfs_threshold_max();
+    threshold_min = mtk_get_dvfs_threshold_min();
 
-    	seq_printf(m, "GPU DVFS threshold : max:%d min:%d\n", threshold_max, threshold_min);
-	}
+    seq_printf(m, "GPU DVFS threshold : max:%d min:%d\n", threshold_max, threshold_min);
 
     return 0;
 }
@@ -978,10 +948,10 @@ static int kbasep_gpu_dvfs_threshold_debugfs_open(struct inode *in, struct file 
 	return single_open(file, proc_gpu_dvfs_threshold_show , NULL);
 }
 
-static int kbasep_gpu_dvfs_threshold_write(struct file *file, const char __user *buffer, 
+static ssize_t kbasep_gpu_dvfs_threshold_write(struct file *file, const char __user *buffer, 
                 size_t count, loff_t *data)
 {
-    char desc[64]; 
+    char desc[32]; 
     int len = 0;
     int threshold_max, threshold_min;
     
@@ -991,30 +961,14 @@ static int kbasep_gpu_dvfs_threshold_write(struct file *file, const char __user 
     }
     desc[len] = '\0';
 
-	if(g_type_T==1)
-	{
-		int thd_max[3];
-		int thd_min[3];
-		
-		if(sscanf(desc, "%d %d %d %d %d %d", &thd_max[0], &thd_min[0], &thd_max[1], &thd_min[1], &thd_max[2], &thd_min[2]) == 6)
-    	{
-        	gpu_thd_level_off[0].max_level = thd_max[0];	gpu_thd_level_off[0].min_level = thd_min[0];
-	        gpu_thd_level_off[1].max_level = thd_max[1];	gpu_thd_level_off[1].min_level = thd_min[1];
-			gpu_thd_level_off[2].max_level = thd_max[2];	gpu_thd_level_off[2].min_level = thd_min[2];
-    	}
-	    else 
-    	    printk("[MALI] warning! echo [High_threshold_max] [High_threshold_min] [mid_threshold_max] [mid_freq_threshold_min] [low_freq_threshold_max][low_freq_threshold_min] > /proc/mali/dvfs_threshold\n");		
-	}
-	else
-	{
-    	if(sscanf(desc, "%d %d", &threshold_max, &threshold_min) == 2)
-    	{
-        	g_dvfs_threshold_max = threshold_max;
-	        g_dvfs_threshold_min = threshold_min;
-    	}
-	    else 
-    	    printk("[MALI] warning! echo [dvfs_threshold_max] [dvfs_threshold_min] > /proc/mali/dvfs_threshold\n");
-	}
+    if(sscanf(desc, "%d %d", &threshold_max, &threshold_min) == 2)
+    {
+        g_dvfs_threshold_max = threshold_max;
+        g_dvfs_threshold_min = threshold_min;
+    }
+    else 
+        //printk("[MALI] warning! echo [dvfs_threshold_max] [dvfs_threshold_min] > /proc/mali/dvfs_threshold\n");
+        pr_debug("[MALI] warning! echo [dvfs_threshold_max] [dvfs_threshold_min] > /proc/mali/dvfs_threshold\n");
 
     return count;
 }
@@ -1023,6 +977,7 @@ static const struct file_operations kbasep_gpu_dvfs_threshold_debugfs_fops = {
 	.open    = kbasep_gpu_dvfs_threshold_debugfs_open,
 	.read    = seq_read,
 	.write   = kbasep_gpu_dvfs_threshold_write,
+	.release = single_release,
 };
 
 
@@ -1030,20 +985,12 @@ static const struct file_operations kbasep_gpu_dvfs_threshold_debugfs_fops = {
 /// 8.For query GPU dynamically set dvfs deferred count
 static int proc_gpu_dvfs_deferred_count_show(struct seq_file *m, void *v)
 {
-	if(g_type_T==1)
-	{
-		seq_printf(m, "GPU DVFS deferred_count :\n");
-		seq_printf(m, "high: %d\n", gpu_thd_level_off[0].def_count);
-		seq_printf(m, "mid: %d\n",  gpu_thd_level_off[1].def_count);
-		seq_printf(m, "low: %d\n",  gpu_thd_level_off[2].def_count);
-	}
-	else
-	{
-    	int deferred_count;
 
-    	deferred_count = mtk_get_dvfs_deferred_count();
-    	seq_printf(m, "GPU DVFS deferred_count : %d\n", deferred_count);
-	}
+    int deferred_count;
+
+    deferred_count = mtk_get_dvfs_deferred_count();
+
+    seq_printf(m, "GPU DVFS deferred_count : %d\n", deferred_count);
 
     return 0;
 }
@@ -1053,7 +1000,7 @@ static int kbasep_gpu_dvfs_deferred_count_debugfs_open(struct inode *in, struct 
 	return single_open(file, proc_gpu_dvfs_deferred_count_show , NULL);
 }
 
-static int kbasep_gpu_dvfs_deferred_count_write(struct file *file, const char __user *buffer, 
+static ssize_t kbasep_gpu_dvfs_deferred_count_write(struct file *file, const char __user *buffer, 
                 size_t count, loff_t *data)
 {
     char desc[32]; 
@@ -1065,25 +1012,12 @@ static int kbasep_gpu_dvfs_deferred_count_write(struct file *file, const char __
         return 0;
     }
     desc[len] = '\0';
-	if(g_type_T==1)
-	{
-		unsigned int deferred_count[3];
-		if(sscanf(desc, "%d %d %d", &deferred_count[0], &deferred_count[1], &deferred_count[2]) == 3)
-		{
-        	gpu_thd_level_off[0].def_count = deferred_count[0];
-			gpu_thd_level_off[1].def_count = deferred_count[1];
-			gpu_thd_level_off[2].def_count = deferred_count[2];
-		}
-	    else 
-    	    printk("[MALI] warning! echo [high_deferred_count] [mid_deferred_count] [low_deferred_count] > /proc/mali/dvfs_deferred_count\n");
-	}
-	else
-	{
-    	if(sscanf(desc, "%d", &dvfs_deferred_count) == 1)
-        	g_dvfs_deferred_count = dvfs_deferred_count;
-	    else 
-    	    printk("[MALI] warning! echo [dvfs_deferred_count] > /proc/mali/dvfs_deferred_count\n");
-	}
+
+    if(sscanf(desc, "%d", &dvfs_deferred_count) == 1)
+        g_dvfs_deferred_count = dvfs_deferred_count;
+    else 
+        //printk("[MALI] warning! echo [dvfs_deferred_count] > /proc/mali/dvfs_deferred_count\n");
+        pr_debug("[MALI] warning! echo [dvfs_deferred_count] > /proc/mali/dvfs_deferred_count\n");
 
     return count;
 }
@@ -1092,6 +1026,7 @@ static const struct file_operations kbasep_gpu_dvfs_deferred_count_debugfs_fops 
 	.open    = kbasep_gpu_dvfs_deferred_count_debugfs_open,
 	.read    = seq_read,
 	.write   = kbasep_gpu_dvfs_deferred_count_write,
+	.release = single_release,
 };
 
 

@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #ifndef __GED_LOG_H__
 #define __GED_LOG_H__
 
@@ -37,18 +50,6 @@ int ged_log_buf_get_early(const char* pszName, GED_LOG_BUF_HANDLE *callback_set_
 
 GED_ERROR ged_log_buf_print(GED_LOG_BUF_HANDLE hLogBuf, const char *fmt, ...) GED_LOG_BUF_FORMAT_PRINTF(2,3);
 
-enum
-{
-    /* bit 0~7 reserved for internal used */
-    GED_RESVERED                = 0xFF,
-
-    /* log with a prefix kernel time */
-    GED_LOG_ATTR_TIME           = 0x100,
-
-    /* log with a prefix user time, pid, tid */
-    GED_LOG_ATTR_TIME_TPT       = 0x200,
-};
-
 GED_ERROR ged_log_buf_print2(GED_LOG_BUF_HANDLE hLogBuf, int i32LogAttrs, const char *fmt, ...) GED_LOG_BUF_FORMAT_PRINTF(3,4);
 
 GED_ERROR ged_log_system_init(void);
@@ -56,5 +57,11 @@ GED_ERROR ged_log_system_init(void);
 void ged_log_system_exit(void);
 
 int ged_log_buf_write(GED_LOG_BUF_HANDLE hLogBuf, const char __user *pszBuffer, int i32Count);
+
+void ged_log_trace_begin(char *name);
+
+void ged_log_trace_end(void);
+
+void ged_log_trace_counter(char *name, int count);
 
 #endif

@@ -30,8 +30,8 @@
 #if KBASE_PM_EN
 
 /* MTK GPU DVFS */
-#include "mach/mt_gpufreq.h"
-#include "mach/mt_chip.h"
+#include "mt_gpufreq.h"
+#include "mt_chip.h"
 //#include "mach/mt_devinfo.h"
 
 extern u32 get_devinfo_with_index(u32 index);
@@ -46,16 +46,6 @@ mtk_gpu_freq_limit_data mt6735_gpu_freq_limit_data[MTK_MT6735_GPU_LIMIT_COUNT]=
 { {2, 2, (const int[]){0,1}}, // Denali-1;   
   {3, 3, (const int[]){0,1,2}}, // Denali-3(MT6753T);  
 };
-
-
-unsigned int g_type_T = 0;
-mtk_gpu_thd_level_offset gpu_thd_level_off[3] = 
-{
-  	{0,0,0}, 
-	{0,0,0}, 
-	{0,0,0},
-};
-
 
 extern unsigned int (*mtk_get_gpu_loading_fp)(void);
 extern void (*mtk_boost_gpu_freq_fp)(void);
@@ -79,12 +69,11 @@ unsigned int mtk_get_current_gpu_platform_id()
     return g_current_gpu_platform_id;
 }
 
-void _mtk_gpu_dvfs_init()
+void _mtk_gpu_dvfs_init(void)
 {
     int i;
     unsigned int iCurrentFreqCount;
-	unsigned int code;
-    printk(KERN_EMERG "[MALI] _mtk_gpu_dvfs_init\n");
+    pr_debug("[MALI] _mtk_gpu_dvfs_init\n");
     
     iCurrentFreqCount = mt_gpufreq_get_dvfs_table_num();
     
@@ -97,40 +86,6 @@ void _mtk_gpu_dvfs_init()
             break;
         }
     }
-	
-	// check chip id:
-	code = mt_get_chip_hw_code();
-	if((0x337==code) && (iCurrentFreqCount==3)) // (53) && (T)
-	{   
-		g_type_T = 1;
-		gpu_thd_level_off[0].def_count = 1;		// high
-		gpu_thd_level_off[0].max_level = 80;
-		gpu_thd_level_off[0].min_level = 60;
-
-		gpu_thd_level_off[1].def_count = 3;		// middle
-		gpu_thd_level_off[1].max_level = 80;
-		gpu_thd_level_off[1].min_level = 25;
-
-		gpu_thd_level_off[2].def_count = 3;		// low
-		gpu_thd_level_off[2].max_level = 45;
-		gpu_thd_level_off[2].min_level = 25;		
-	} 
-	else
-	{
-		g_type_T = 0;
-		gpu_thd_level_off[0].def_count = 3;
-		gpu_thd_level_off[0].max_level = 45;
-		gpu_thd_level_off[0].min_level = 25;
-
-		gpu_thd_level_off[1].def_count = 3;
-		gpu_thd_level_off[1].max_level = 45;
-		gpu_thd_level_off[1].min_level = 25;
-
-		gpu_thd_level_off[2].def_count = 3;
-		gpu_thd_level_off[2].max_level = 45;
-		gpu_thd_level_off[2].min_level = 25;	
-	}
-	
 
     // init g_custom_gpu_boost_id and g_ged_gpu_boost_id as 0
     mtk_kbase_custom_boost_gpu_freq(0);
@@ -204,7 +159,7 @@ mali_error kbase_pm_init(struct kbase_device *kbdev)
 
 	/* MTK GPU DVFS init */
 	_mtk_gpu_dvfs_init();
-
+#ifndef ENABLE_COMMON_DVFS	
 	/* MTK Register input boost and power limit call back function */
 	mt_gpufreq_input_boost_notify_registerCB(mtk_gpu_input_boost_CB);
 	mt_gpufreq_power_limit_notify_registerCB(mtk_gpu_power_limit_CB);
@@ -221,6 +176,8 @@ mali_error kbase_pm_init(struct kbase_device *kbdev)
   /* SODI callback function */
   mtk_gpu_sodi_entry_fp = mali_SODI_begin;
   mtk_gpu_sodi_exit_fp  = mali_SODI_exit;
+#endif
+
   
 	kbdev->pm.platform_dvfs_frequency = (u32) kbasep_get_config_value(kbdev, kbdev->config_attributes, KBASE_CONFIG_ATTR_POWER_MANAGEMENT_DVFS_FREQ);
 
