@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #include <linux/uaccess.h>
 #include <linux/module.h>
 #include <linux/fs.h>
@@ -35,7 +48,7 @@
 
 #define SMI_LOG_TAG "smi"
 
-#if !defined(CONFIG_MTK_LEGACY)
+#if !defined(CONFIG_MTK_CLKMGR)
 #define SMI_INTERNAL_CCF_SUPPORT
 #endif
 
@@ -345,4 +358,12 @@ int smi_debug_bus_hanging_detect_ext(unsigned int larbs, int show_dump, int outp
 
 	}
 	return is_smi_issue;
+}
+void smi_dump_clk_status(void)
+{
+	int i = 0;
+
+	for (i = 0 ; i < SMI_CLK_CNT ; ++i)
+		SMIMSG("CLK status of %s is 0x%x", smi_clk_info[i].name,
+		M4U_ReadReg32(smi_clk_info[i].base_addr, smi_clk_info[i].offset));
 }

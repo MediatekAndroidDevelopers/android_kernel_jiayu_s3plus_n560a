@@ -11,10 +11,12 @@
  * GNU General Public License for more details.
  */
 
-#ifndef _SMI_CONFIG_UTIL_H_
-#define _SMI_CONFIG_UTIL_H_
+#ifndef __SMI_PUBLIC_H__
+#define __SMI_PUBLIC_H__
 
-extern unsigned long gLarbBaseAddr[SMI_LARB_NR];
+#include <mach/mt_smi.h>
 
+/* SMI extern API */
+extern MTK_SMI_BWC_SCEN smi_get_current_profile(void);
 
 #endif

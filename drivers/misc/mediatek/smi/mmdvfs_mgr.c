@@ -196,13 +196,6 @@ static void mmdvfs_update_cmd(MTK_MMDVFS_CMD *cmd)
 	g_mmdvfs_cmd.camera_mode = cmd->camera_mode;
 }
 
-static void mmdvfs_dump_info(void)
-{
-	MMDVFSMSG("CMD %d %d %d\n", g_mmdvfs_cmd.sensor_size,
-	g_mmdvfs_cmd.sensor_fps, g_mmdvfs_cmd.camera_mode);
-	MMDVFSMSG("INFO VR %d %d\n", g_mmdvfs_info->video_record_size[0],
-	g_mmdvfs_info->video_record_size[1]);
-}
 
 /* delay 4 seconds to go LPM to workaround camera ZSD + PIP issue */
 #if !defined(SMI_D3)
@@ -244,25 +237,10 @@ int mmdvfs_set_step(MTK_SMI_BWC_SCEN scenario, mmdvfs_voltage_enum step)
 	if (!is_vcorefs_can_work())
 		return 0;
 
-	/* D1 FHD always HPM. do not have to trigger vcore dvfs. */
-	if (g_mmdvfs_profile_id == MMDVFS_PROFILE_D1
-			&& mmdvfs_get_lcd_resolution() == MMDVFS_LCD_SIZE_FHD)
-			return 0;
-
-	/* D1 plus FHD only allowed DISP as the client  */
-	if (g_mmdvfs_profile_id == MMDVFS_PROFILE_D1_PLUS)
-		if (mmdvfs_get_lcd_resolution() == MMDVFS_LCD_SIZE_FHD
-			&& scenario != (MTK_SMI_BWC_SCEN) MMDVFS_SCEN_DISP)
-			return 0;
-
-
 	if ((scenario >= (MTK_SMI_BWC_SCEN) MMDVFS_SCEN_COUNT) || (scenario < SMI_BWC_SCEN_NORMAL)) {
 		MMDVFSERR("invalid scenario\n");
 		return -1;
 	}
-
-	/* dump information */
-	mmdvfs_dump_info();
 
 	/* go through all scenarios to decide the final step */
 	scen_index = (int)scenario;
@@ -315,15 +293,6 @@ void mmdvfs_handle_cmd(MTK_MMDVFS_CMD *cmd)
 	MMDVFSMSG("MMDVFS cmd %u %d\n", cmd->type, cmd->scen);
 
 	switch (cmd->type) {
-	case MTK_MMDVFS_CMD_TYPE_MMSYS_SET:
-		if (cmd->scen == SMI_BWC_SCEN_NORMAL) {
-			mmdvfs_set_mmsys_clk(cmd->scen, MMSYS_CLK_LOW);
-			vcorefs_request_dvfs_opp(KIR_MM, OPPI_UNREQ);
-		} else {
-			vcorefs_request_dvfs_opp(KIR_MM, OPPI_PERF);
-			mmdvfs_set_mmsys_clk(cmd->scen, MMSYS_CLK_HIGH);
-		}
-		break;
 	case MTK_MMDVFS_CMD_TYPE_SET:
 		/* save cmd */
 		mmdvfs_update_cmd(cmd);
@@ -526,7 +495,6 @@ int mmdvfs_get_mmdvfs_profile(void)
 #elif defined(SMI_EV)
 	mmdvfs_profile_id = MMDVFS_PROFILE_E1;
 #endif
-
 	return mmdvfs_profile_id;
 
 }
@@ -697,7 +665,6 @@ static int default_clk_switch_cb(int ori_mmsys_clk_mode, int update_mmsys_clk_mo
 	} else if (ori_mmsys_clk_mode  == MMSYS_CLK_HIGH && update_mmsys_clk_mode == MMSYS_CLK_LOW) {
 			venc_pll_con1_val = 0x830E0000;
 	} else {
-		MMDVFSMSG("default_clk_switch_cb: by-pass (%d,%d)\n", ori_mmsys_clk_mode, update_mmsys_clk_mode);
 		return 1;
 	}
 
@@ -705,4 +672,9 @@ static int default_clk_switch_cb(int ori_mmsys_clk_mode, int update_mmsys_clk_mo
 		mmsys_clk_switch_impl(venc_pll_con1_val);
 
 	return 1;
+}
+
+int mmdvfs_get_stable_isp_clk(void)
+{
+	return MMSYS_CLK_MEDIUM;
 }

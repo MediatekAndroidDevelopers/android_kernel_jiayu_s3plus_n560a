@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #include <linux/of.h>
 #include <linux/of_irq.h>
 #include <linux/of_address.h>
@@ -20,10 +33,25 @@
 #define SMI_LARB1_PORT_NUM	7
 #define SMI_LARB2_PORT_NUM	17
 
-static void initSetting(struct mtk_smi_data *smidev, bool *default_saved,
+static void mt8127_init_setting(struct mtk_smi_data *smidev, bool *default_saved,
 			u32 *default_smi_val, unsigned int larbid)
 {
 
+	if (!(*default_saved)) {
+		SMIMSG("Save default config:\n");
+		default_smi_val[0] = M4U_ReadReg32(SMI_COMMON_EXT_BASE, REG_OFFSET_SMI_L1ARB0);
+		default_smi_val[1] = M4U_ReadReg32(SMI_COMMON_EXT_BASE, REG_OFFSET_SMI_L1ARB1);
+		default_smi_val[2] = M4U_ReadReg32(SMI_COMMON_EXT_BASE, REG_OFFSET_SMI_L1ARB2);
+
+		SMIMSG("l1arb[0-2]= 0x%x,  0x%x, 0x%x\n", default_smi_val[0],
+		       default_smi_val[1], default_smi_val[2]);
+		*default_saved = true;
+	}
+
+	/* Keep the HW's init setting in REG_SMI_L1ARB0 ~ REG_SMI_L1ARB4 */
+	M4U_WriteReg32(SMI_COMMON_EXT_BASE, REG_OFFSET_SMI_L1ARB0, default_smi_val[0]);
+	M4U_WriteReg32(SMI_COMMON_EXT_BASE, REG_OFFSET_SMI_L1ARB1, default_smi_val[1]);
+	M4U_WriteReg32(SMI_COMMON_EXT_BASE, REG_OFFSET_SMI_L1ARB2, default_smi_val[2]);
 
 	SMIMSG("Current Setting: GPU - new");
 	if (!SMI_COMMON_EXT_BASE || !LARB0_BASE) {
@@ -83,7 +111,7 @@ static void initSetting(struct mtk_smi_data *smidev, bool *default_saved,
 	M4U_WriteReg32(LARB2_BASE, 0x24C, 0x1);	/* VENC_CUR_CHROMA */
 }
 
-static void vpSetting(struct mtk_smi_data *smidev)
+static void mt8127_vp_setting(struct mtk_smi_data *smidev)
 {
 	/* 2 non-ultra write, 3 write command , 4 non-ultra read , 5 ultra read */
 	M4U_WriteReg32(REG_SMI_M4U_TH, 0, ((0x2 << 15) + (0x3 << 10) + (0x4 << 5) + 0x5));
@@ -143,7 +171,7 @@ static void vpSetting(struct mtk_smi_data *smidev)
 
 }
 
-static void vrSetting(struct mtk_smi_data *smidev)
+static void mt8127_vr_setting(struct mtk_smi_data *smidev)
 {
 	/* 2 non-ultra write, 3 write command , 4 non-ultra read , 5 ultra read */
 	M4U_WriteReg32(REG_SMI_M4U_TH, 0, ((0x2 << 15) + (0x3 << 10) + (0x4 << 5) + 0x5));
@@ -202,19 +230,20 @@ static void vrSetting(struct mtk_smi_data *smidev)
 	M4U_WriteReg32(LARB2_BASE, 0x24C, 0x1);	/* VENC_CUR_CHROMA */
 }
 
-static void hdmiSetting(struct mtk_smi_data *smidev)
+static void mt8127_hdmi_setting(struct mtk_smi_data *smidev)
 {
 }
 
-static void hdmi4kSetting(struct mtk_smi_data *smidev)
+static void mt8127_hdmi4k_setting(struct mtk_smi_data *smidev)
 {
 }
 
 const struct mtk_smi_priv smi_mt8127_priv = {
+	.plat = MTK_PLAT_MT8127,
 	.larb_port_num = { SMI_LARB0_PORT_NUM, SMI_LARB1_PORT_NUM, SMI_LARB2_PORT_NUM },
-	.init_setting = initSetting,
-	.vp_setting = vpSetting,
-	.vr_setting = vrSetting,
-	.hdmi_setting = hdmiSetting,
-	.hdmi_4k_setting = hdmi4kSetting,
+	.init_setting = mt8127_init_setting,
+	.vp_setting = mt8127_vp_setting,
+	.vr_setting = mt8127_vr_setting,
+	.hdmi_setting = mt8127_hdmi_setting,
+	.hdmi_4k_setting = mt8127_hdmi4k_setting,
 };
