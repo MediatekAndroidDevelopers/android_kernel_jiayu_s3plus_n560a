@@ -34,9 +34,9 @@
 #include <linux/wait.h>
 #include <linux/proc_fs.h>
 #include <linux/semaphore.h>
-#include <mt-plat/dma.h>
+#include <mach/dma.h>
 #include <linux/delay.h>
-#include "mt-plat/sync_write.h"
+#include "mach/sync_write.h"
 /* #include "mach/mt_reg_base.h" */
 
 #ifndef CONFIG_MTK_CLKMGR
@@ -46,7 +46,7 @@
 #endif
 
 #ifdef CONFIG_MTK_HIBERNATION
-#include <mtk_hibernate_dpm.h>
+#include <mach/mtk_hibernate_dpm.h>
 /* #include <mach/diso.h> */
 #endif
 
@@ -324,8 +324,10 @@ static VAL_UINT32_T gu4HwVencIrqStatus; /* hardware VENC IRQ status (VP8/H264) *
 static VAL_UINT32_T gu4VdecPWRCounter;  /* mutex : VdecPWRLock */
 static VAL_UINT32_T gu4VencPWRCounter;  /* mutex : VencPWRLock */
 
+#if 0
 static VAL_UINT32_T gu4LogCountUser;  /* mutex : LogCountLock */
 static VAL_UINT32_T gu4LogCount;
+#endif
 
 static VAL_UINT32_T gLockTimeOutCount;
 
@@ -1652,6 +1654,7 @@ static long vcodec_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned 
 	}
 	break;
 
+#if 0
 	case VCODEC_SET_LOG_COUNT:
 	{
 		MODULE_MFV_LOGD("VCODEC_SET_LOG_COUNT + tid = %d\n", current->pid);
@@ -1683,6 +1686,7 @@ static long vcodec_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned 
 		MODULE_MFV_LOGD("VCODEC_SET_LOG_COUNT - tid = %d\n", current->pid);
 	}
 	break;
+#endif
 
 	default: {
 		MODULE_MFV_LOGE("========[ERROR] vcodec_ioctl default case======== %u\n", cmd);
@@ -2516,7 +2520,7 @@ static int vcodec_pm_restore_noirq(struct device *device)
 #endif
 
 static const struct of_device_id vcodec_of_match[] = {
-	{ .compatible = "mediatek,mt6735-vdec_gcon", },
+	{ .compatible = "mediatek,VDEC_GCON", },
 	{/* sentinel */}
 };
 
@@ -2547,15 +2551,17 @@ static int __init vcodec_driver_init(void)
 	Driver_Open_Count = 0;
 	mutex_unlock(&DriverOpenCountLock);
 
+#if 0
 	mutex_lock(&LogCountLock);
 	gu4LogCountUser = 0;
 	gu4LogCount = 0;
 	mutex_unlock(&LogCountLock);
+#endif
 
 	{
 		struct device_node *node = NULL;
 
-		node = of_find_compatible_node(NULL, NULL, "mediatek,mt6735-venc");
+		node = of_find_compatible_node(NULL, NULL, "mediatek,VENC");
 		KVA_VENC_BASE = (VAL_ULONG_T)of_iomap(node, 0);
 		VENC_IRQ_ID =  irq_of_parse_and_map(node, 0);
 		KVA_VENC_IRQ_STATUS_ADDR =    KVA_VENC_BASE + 0x05C;
@@ -2565,7 +2571,7 @@ static int __init vcodec_driver_init(void)
 	{
 		struct device_node *node = NULL;
 
-		node = of_find_compatible_node(NULL, NULL, "mediatek,mt6735-vdec");
+		node = of_find_compatible_node(NULL, NULL, "mediatek,VDEC_FULL_TOP");
 		KVA_VDEC_BASE = (VAL_ULONG_T)of_iomap(node, 0);
 		VDEC_IRQ_ID =  irq_of_parse_and_map(node, 0);
 		KVA_VDEC_MISC_BASE = KVA_VDEC_BASE + 0x0000;
@@ -2574,7 +2580,7 @@ static int __init vcodec_driver_init(void)
 	{
 		struct device_node *node = NULL;
 
-		node = of_find_compatible_node(NULL, NULL, "mediatek,mt6735-vdec_gcon");
+		node = of_find_compatible_node(NULL, NULL, "mediatek,VDEC_GCON");
 		KVA_VDEC_GCON_BASE = (VAL_ULONG_T)of_iomap(node, 0);
 
 		MODULE_MFV_LOGD("[VCODEC][DeviceTree] KVA_VENC_BASE(0x%lx), KVA_VDEC_BASE(0x%lx), KVA_VDEC_GCON_BASE(0x%lx)",
