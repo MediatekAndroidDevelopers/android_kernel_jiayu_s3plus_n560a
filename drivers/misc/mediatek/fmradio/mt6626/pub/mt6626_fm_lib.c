@@ -17,10 +17,10 @@
 #include "mt6626_fm_lib.h"
 #include "mt6626_fm_cmd.h"
 
-#define MT6626_FM_PATCH_PATH "/etc/firmware/mt6626_fm_patch.bin"
-#define MT6626_FM_COEFF_PATH "/etc/firmware/mt6626_fm_coeff.bin"
-#define MT6626_FM_HWCOEFF_PATH "/etc/firmware/mt6626_fm_hwcoeff.bin"
-#define MT6626_FM_ROM_PATH "/etc/firmware/mt6626_fm_rom.bin"
+#define MT6626_FM_PATCH_PATH "/vendor/firmware/mt6626_fm_patch.bin"
+#define MT6626_FM_COEFF_PATH "/vendor/firmware/mt6626_fm_coeff.bin"
+#define MT6626_FM_HWCOEFF_PATH "/vendor/firmware/mt6626_fm_hwcoeff.bin"
+#define MT6626_FM_ROM_PATH "/vendor/firmware/mt6626_fm_rom.bin"
 
 extern void fm_low_power_wa(int fmon);
 extern void mt66x6_poweron(int idx);

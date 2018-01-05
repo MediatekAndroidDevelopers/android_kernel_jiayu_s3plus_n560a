@@ -24,29 +24,29 @@
 extern fm_cust_cfg mt6630_fm_config;
 
 static struct fm_patch_tbl mt6630_patch_tbl[5] = {
-	{FM_ROM_V1, "/etc/firmware/mt6630/mt6630_fm_v1_patch.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v1_coeff.bin", NULL, NULL},
-	{FM_ROM_V2, "/etc/firmware/mt6630/mt6630_fm_v2_patch.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v2_coeff.bin", NULL, NULL},
-	{FM_ROM_V3, "/etc/firmware/mt6630/mt6630_fm_v3_patch.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v3_coeff.bin", NULL, NULL},
-	{FM_ROM_V4, "/etc/firmware/mt6630/mt6630_fm_v4_patch.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v4_coeff.bin", NULL, NULL},
-	{FM_ROM_V5, "/etc/firmware/mt6630/mt6630_fm_v5_patch.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v5_coeff.bin", NULL, NULL},
+	{FM_ROM_V1, "/vendor/firmware/mt6630/mt6630_fm_v1_patch.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v1_coeff.bin", NULL, NULL},
+	{FM_ROM_V2, "/vendor/firmware/mt6630/mt6630_fm_v2_patch.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v2_coeff.bin", NULL, NULL},
+	{FM_ROM_V3, "/vendor/firmware/mt6630/mt6630_fm_v3_patch.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v3_coeff.bin", NULL, NULL},
+	{FM_ROM_V4, "/vendor/firmware/mt6630/mt6630_fm_v4_patch.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v4_coeff.bin", NULL, NULL},
+	{FM_ROM_V5, "/vendor/firmware/mt6630/mt6630_fm_v5_patch.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v5_coeff.bin", NULL, NULL},
 };
 
 static struct fm_patch_tbl mt6630_patch_tbl_tx[5] = {
-	{FM_ROM_V1, "/etc/firmware/mt6630/mt6630_fm_v1_patch_tx.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v1_coeff_tx.bin", NULL, NULL},
-	{FM_ROM_V2, "/etc/firmware/mt6630/mt6630_fm_v2_patch_tx.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v2_coeff_tx.bin", NULL, NULL},
-	{FM_ROM_V3, "/etc/firmware/mt6630/mt6630_fm_v3_patch_tx.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v3_coeff_tx.bin", NULL, NULL},
-	{FM_ROM_V4, "/etc/firmware/mt6630/mt6630_fm_v4_patch_tx.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v4_coeff_tx.bin", NULL, NULL},
-	{FM_ROM_V5, "/etc/firmware/mt6630/mt6630_fm_v5_patch_tx.bin",
-	 "/etc/firmware/mt6630/mt6630_fm_v5_coeff_tx.bin", NULL, NULL},
+	{FM_ROM_V1, "/vendor/firmware/mt6630/mt6630_fm_v1_patch_tx.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v1_coeff_tx.bin", NULL, NULL},
+	{FM_ROM_V2, "/vendor/firmware/mt6630/mt6630_fm_v2_patch_tx.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v2_coeff_tx.bin", NULL, NULL},
+	{FM_ROM_V3, "/vendor/firmware/mt6630/mt6630_fm_v3_patch_tx.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v3_coeff_tx.bin", NULL, NULL},
+	{FM_ROM_V4, "/vendor/firmware/mt6630/mt6630_fm_v4_patch_tx.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v4_coeff_tx.bin", NULL, NULL},
+	{FM_ROM_V5, "/vendor/firmware/mt6630/mt6630_fm_v5_patch_tx.bin",
+	 "/vendor/firmware/mt6630/mt6630_fm_v5_coeff_tx.bin", NULL, NULL},
 };
 
 static struct fm_hw_info mt6630_hw_info = {

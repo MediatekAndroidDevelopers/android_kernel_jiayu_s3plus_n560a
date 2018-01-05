@@ -62,7 +62,7 @@
 #define MD_ROOT_DIR                     "Z:"
 #define DSP_ROOT_DIR                    "Y:"
 #define FS_ROOT_DIR                     "/data/nvram/md1"
-#define FS_DSP_ROOT_DIR                 "/system/etc/firmware"
+#define FS_DSP_ROOT_DIR                 "/system/vendor/firmware"
 
 #define MAX_FS_PKT_BYTE                 (0x1000 - 128)
 #define CCCI_FS_REQ_SEND_AGAIN          0x80000000

@@ -538,7 +538,7 @@ static int sec_lib_version_check(void)
 // New signature check version. 2012-2-2. 
 // Change to use masp_ccci_signfmt_verify_file(char *file_path, unsigned int *data_offset, unsigned int *data_sec_len)
 //  masp_ccci_signfmt_verify_file parameter description
-//    @ file_path: such as etc/firmware/modem.img
+//    @ file_path: such as vendor/firmware/modem.img
 //    @ data_offset: the offset address that bypass signature header
 //    @ data_sec_len: length of signature header + tail
 //    @ return value: 0-success;

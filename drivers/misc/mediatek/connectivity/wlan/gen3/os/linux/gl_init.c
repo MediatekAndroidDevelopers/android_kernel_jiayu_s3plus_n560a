@@ -2599,7 +2599,7 @@ static INT_32 wlanProbe(PVOID pvData)
 				} else if (kalReadToFile("/data/misc/wifi/wifi.cfg", pucConfigBuf,
 							 WLAN_CFG_FILE_BUF_SIZE, &u4ConfigReadLen) == 0) {
 					/* ToDo:: Nothing */
-				} else if (kalReadToFile("/etc/firmware/wifi.cfg", pucConfigBuf,
+				} else if (kalReadToFile("/vendor/firmware/wifi.cfg", pucConfigBuf,
 							 WLAN_CFG_FILE_BUF_SIZE, &u4ConfigReadLen) == 0) {
 					/* ToDo:: Nothing */
 				}

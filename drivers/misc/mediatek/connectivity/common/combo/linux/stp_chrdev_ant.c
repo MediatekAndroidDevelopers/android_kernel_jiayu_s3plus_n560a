@@ -21,8 +21,8 @@ MODULE_LICENSE("Dual BSD/GPL");
 #define ANT_DRIVER_NAME "mtk_stp_ANT_chrdev"
 #define ANT_DEV_MAJOR 197	/* never used number */
 static PINT8 ANT_BUILT_IN_PATCH_FILE_NAME;
-static PINT8 ANT_BUILT_IN_PATCH_FILE_NAME_E1 = "/system/etc/firmware/ANT_RAM_CODE_E1.BIN";
-static PINT8 ANT_BUILT_IN_PATCH_FILE_NAME_E2 = "/system/etc/firmware/ANT_RAM_CODE_E2.BIN";
+static PINT8 ANT_BUILT_IN_PATCH_FILE_NAME_E1 = "/system/vendor/firmware/ANT_RAM_CODE_E1.BIN";
+static PINT8 ANT_BUILT_IN_PATCH_FILE_NAME_E2 = "/system/vendor/firmware/ANT_RAM_CODE_E2.BIN";
 
 #define PFX                         "[MTK-ANT] "
 #define ANT_LOG_DBG                  3

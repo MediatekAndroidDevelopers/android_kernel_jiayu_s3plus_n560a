@@ -25,22 +25,22 @@
 #include "mt6628_fm_cust_cfg.h"
 extern fm_cust_cfg mt6628_fm_config;
 
-#define MT6628_FM_PATCH_PATH "/etc/firmware/mt6628/mt6628_fm_patch.bin"
-#define MT6628_FM_COEFF_PATH "/etc/firmware/mt6628/mt6628_fm_coeff.bin"
-#define MT6628_FM_HWCOEFF_PATH "/etc/firmware/mt6628/mt6628_fm_hwcoeff.bin"
-#define MT6628_FM_ROM_PATH "/etc/firmware/mt6628/mt6628_fm_rom.bin"
+#define MT6628_FM_PATCH_PATH "/vendor/firmware/mt6628/mt6628_fm_patch.bin"
+#define MT6628_FM_COEFF_PATH "/vendor/firmware/mt6628/mt6628_fm_coeff.bin"
+#define MT6628_FM_HWCOEFF_PATH "/vendor/firmware/mt6628/mt6628_fm_hwcoeff.bin"
+#define MT6628_FM_ROM_PATH "/vendor/firmware/mt6628/mt6628_fm_rom.bin"
 
 static struct fm_patch_tbl mt6628_patch_tbl[5] = {
-	{FM_ROM_V1, "/etc/firmware/mt6628/mt6628_fm_v1_patch.bin",
-	 "/etc/firmware/mt6628/mt6628_fm_v1_coeff.bin", NULL, NULL},
-	{FM_ROM_V2, "/etc/firmware/mt6628/mt6628_fm_v2_patch.bin",
-	 "/etc/firmware/mt6628/mt6628_fm_v2_coeff.bin", NULL, NULL},
-	{FM_ROM_V3, "/etc/firmware/mt6628/mt6628_fm_v3_patch.bin",
-	 "/etc/firmware/mt6628/mt6628_fm_v3_coeff.bin", NULL, NULL},
-	{FM_ROM_V4, "/etc/firmware/mt6628/mt6628_fm_v4_patch.bin",
-	 "/etc/firmware/mt6628/mt6628_fm_v4_coeff.bin", NULL, NULL},
-	{FM_ROM_V5, "/etc/firmware/mt6628/mt6628_fm_v5_patch.bin",
-	 "/etc/firmware/mt6628/mt6628_fm_v5_coeff.bin", NULL, NULL},
+	{FM_ROM_V1, "/vendor/firmware/mt6628/mt6628_fm_v1_patch.bin",
+	 "/vendor/firmware/mt6628/mt6628_fm_v1_coeff.bin", NULL, NULL},
+	{FM_ROM_V2, "/vendor/firmware/mt6628/mt6628_fm_v2_patch.bin",
+	 "/vendor/firmware/mt6628/mt6628_fm_v2_coeff.bin", NULL, NULL},
+	{FM_ROM_V3, "/vendor/firmware/mt6628/mt6628_fm_v3_patch.bin",
+	 "/vendor/firmware/mt6628/mt6628_fm_v3_coeff.bin", NULL, NULL},
+	{FM_ROM_V4, "/vendor/firmware/mt6628/mt6628_fm_v4_patch.bin",
+	 "/vendor/firmware/mt6628/mt6628_fm_v4_coeff.bin", NULL, NULL},
+	{FM_ROM_V5, "/vendor/firmware/mt6628/mt6628_fm_v5_patch.bin",
+	 "/vendor/firmware/mt6628/mt6628_fm_v5_coeff.bin", NULL, NULL},
 };
 
 static struct fm_hw_info mt6628_hw_info = {

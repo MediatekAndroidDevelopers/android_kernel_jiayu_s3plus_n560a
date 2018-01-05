@@ -2901,9 +2901,9 @@ static INT_32 wlanProbe(PVOID pvData)
 				} else if (kalReadToFile("/data/misc/wifi/wifi.cfg",
 						pucConfigBuf, WLAN_CFG_FILE_BUF_SIZE, &u4ConfigReadLen) == 0) {
 					DBGLOG(INIT, LOUD, "CFG_FILE: Read /data/misc/wifi/wifi.cfg\n");
-				} else if (kalReadToFile("/etc/firmware/wifi.cfg",
+				} else if (kalReadToFile("/vendor/firmware/wifi.cfg",
 						pucConfigBuf, WLAN_CFG_FILE_BUF_SIZE, &u4ConfigReadLen) == 0) {
-					DBGLOG(INIT, LOUD, "CFG_FILE: Read /etc/firmware/wifi.cfg\n");
+					DBGLOG(INIT, LOUD, "CFG_FILE: Read /vendor/firmware/wifi.cfg\n");
 				}
 
 				if (pucConfigBuf[0] != '\0' && u4ConfigReadLen > 0)

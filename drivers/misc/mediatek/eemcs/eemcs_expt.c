@@ -1139,7 +1139,7 @@ void eemcs_expt_reset_statistics(void)
 }
 
 #define EEMCS_EXCEPTION_LOG_TO_FILE  1
-#define EEMCS_EXCEPTION_LOG_PATH    "/system/etc/firmware"
+#define EEMCS_EXCEPTION_LOG_PATH    "/system/vendor/firmware"
 
 /*
  * @brief Flush all packets in exception instance to files for debugging

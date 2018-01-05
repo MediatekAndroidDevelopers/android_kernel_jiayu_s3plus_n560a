@@ -40,11 +40,11 @@ extern struct md32_regs md32reg;
 #define MD32_AED_STR_LEN  (512)
 
 #ifdef CONFIG_MTK_LDVT
-  #define MD32_DATA_IMAGE_PATH "/system/etc/firmware/md32_d.bin"
-  #define MD32_PROGRAM_IMAGE_PATH "/system/etc/firmware/md32_p.bin"
+  #define MD32_DATA_IMAGE_PATH "/system/vendor/firmware/md32_d.bin"
+  #define MD32_PROGRAM_IMAGE_PATH "/system/vendor/firmware/md32_p.bin"
 #else
-  #define MD32_DATA_IMAGE_PATH "/etc/firmware/md32_d.bin"
-  #define MD32_PROGRAM_IMAGE_PATH "/etc/firmware/md32_p.bin"
+  #define MD32_DATA_IMAGE_PATH "/vendor/firmware/md32_d.bin"
+  #define MD32_PROGRAM_IMAGE_PATH "/vendor/firmware/md32_p.bin"
 #endif
 /* Support dynamic TCM data/program swap macro */
 //#define DYNAMIC_TCM_SWAP

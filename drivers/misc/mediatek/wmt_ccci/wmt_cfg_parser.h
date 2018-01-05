@@ -56,7 +56,7 @@ extern unsigned int wmtCcciLogLvl;
 #endif
 
 #define WMT_CFG_FILE "WMT_SOC.cfg"
-#define WMT_CFG_FILE_PREFIX "/system/etc/firmware/"
+#define WMT_CFG_FILE_PREFIX "/system/vendor/firmware/"
 
 /*******************************************************************************
 *                             D A T A   T Y P E S

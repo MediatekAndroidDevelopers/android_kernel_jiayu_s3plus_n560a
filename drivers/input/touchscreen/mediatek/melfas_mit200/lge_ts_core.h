@@ -603,7 +603,7 @@ void touch_disable(unsigned int irq);
 void touch_enable_wake(unsigned int irq);
 void touch_disable_wake(unsigned int irq);
 
-#define EXTERNAL_FW_PATH	"/etc/firmware/"
+#define EXTERNAL_FW_PATH	"/vendor/firmware/"
 #define EXTERNAL_FW_NAME	"mit_ts.fw"
 
 
