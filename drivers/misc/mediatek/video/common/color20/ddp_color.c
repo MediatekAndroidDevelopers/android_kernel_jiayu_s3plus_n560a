@@ -1729,7 +1729,7 @@ static unsigned long color_get_TDSHP_VA(void)
 #if defined(CONFIG_ARCH_MT6595) || defined(CONFIG_ARCH_MT6795)
 	node = of_find_compatible_node(NULL, NULL, "mediatek,mdp_tdshp0");
 #else
-	node = of_find_compatible_node(NULL, NULL, "mediatek,mdp_tdshp");
+	node = of_find_compatible_node(NULL, NULL, "mediatek,MDP_TDSHP");
 #endif
 	VA = (unsigned long)of_iomap(node, 0);
 	COLOR_DBG("TDSHP VA: 0x%lx\n", VA);

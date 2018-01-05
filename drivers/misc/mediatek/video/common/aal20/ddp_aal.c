@@ -98,29 +98,23 @@ static volatile unsigned int g_aal_panel_type = CONFIG_BY_CUSTOM_LIB;
 
 static int disp_aal_get_cust_led(void)
 {
-	struct device_node *led_node = NULL;
 	int ret = 0;
-	int led_mode;
-	int pwm_config[5] = { 0 };
+	struct cust_mt65xx_led *cust_led_list;
+	struct cust_mt65xx_led *cust;
 
-	led_node = of_find_compatible_node(NULL, NULL, "mediatek,lcd-backlight");
-	if (!led_node) {
+	cust_led_list = get_cust_led_list();
+
+	if (!cust_led_list) {
 		ret = -1;
-		AAL_ERR("Cannot find LED node from dts\n");
+		AAL_ERR("Cannot load cust led list\n");
 	} else {
-		ret = of_property_read_u32(led_node, "led_mode", &led_mode);
-		if (!ret)
-			g_led_mode = led_mode;
-		else
-			AAL_ERR("led dts can not get led mode data.\n");
-
-		ret = of_property_read_u32_array(led_node, "pwm_config", pwm_config,
-						       ARRAY_SIZE(pwm_config));
+		/* WARNING: may overflow if MT65XX_LED_TYPE_LCD not configured properly */
+		cust = &cust_led_list[MT65XX_LED_TYPE_LCD];
+		g_led_mode = cust->mode;
 	}
 
 	if (ret)
 		AAL_ERR("get pwm cust info fail");
-	AAL_DBG("mode=%u", g_led_mode);
 
 	return ret;
 }

@@ -89,37 +89,30 @@ static bool g_pwm_first_config;
 
 int disp_pwm_get_cust_led(unsigned int *clocksource, unsigned int *clockdiv)
 {
-	struct device_node *led_node = NULL;
 	int ret = 0;
-	int led_mode;
-	int pwm_config[5] = { 0 };
+	struct cust_mt65xx_led *cust_led_list;
+	struct cust_mt65xx_led *cust;
+	struct PWM_config *config_data;
 
-	led_node = of_find_compatible_node(NULL, NULL, "mediatek,lcd-backlight");
-	if (!led_node) {
+	cust_led_list = get_cust_led_list();
+
+	if (!cust_led_list) {
 		ret = -1;
-		PWM_ERR("Cannot find LED node from dts\n");
+		PWM_ERR("Cannot load cust led list\n");
 	} else {
-		ret = of_property_read_u32_array(led_node, "pwm_config", pwm_config,
-						       ARRAY_SIZE(pwm_config));
-		if (!ret) {
-			/*
-			PWM_MSG("The backlight's pwm config data is %d %d %d %d %d\n",
-			     pwm_config[0], pwm_config[1], pwm_config[2], pwm_config[3], pwm_config[4]);
-			*/
-			*clocksource = pwm_config[0];
-			*clockdiv = pwm_config[1];
-		} else {
-			PWM_ERR("led dts can not get pwm config data.\n");
-		}
+		/* WARNING: may overflow if MT65XX_LED_TYPE_LCD not configured properly */
+		cust = &cust_led_list[MT65XX_LED_TYPE_LCD];
+		if ((strcmp(cust->name,"lcd-backlight") == 0) && (cust->mode == MT65XX_LED_MODE_CUST_BLS_PWM)) {
+			config_data = &cust->config_data;
+			*clocksource = config_data->clock_source;
+			*clockdiv = config_data->div;
 
-		if (g_pwm_led_mode == MT65XX_LED_MODE_NONE) {
-			ret = of_property_read_u32(led_node, "led_mode", &led_mode);
-			if (!ret) {
-				/* Save current LED mode */
-				g_pwm_led_mode = led_mode;
-			} else {
-				PWM_ERR("led dts can not get led mode data.\n");
+			if (g_pwm_led_mode == MT65XX_LED_MODE_NONE) {
+				g_pwm_led_mode = cust->mode;
 			}
+		}
+		else {
+			ret = -1;
 		}
 	}
 
@@ -851,4 +844,3 @@ void disp_pwm_test(const char *cmd, char *debug_output)
 	}
 #endif
 }
-
