@@ -1413,8 +1413,23 @@
        };
 // End of Vanzo: dingge
 
+	firmware {
+		android {
+			compatible = "android,firmware";
+			fstab {
+				compatible = "android,fstab";
+				system {
+					compatible = "android,system";
+					dev = "/dev/block/platform/mtk-msdc.0/11230000.MSDC0/by-name/system";
+					type = "ext4";
+					mnt_flags = "ro";
+					fsmgr_flags = "wait";
+				};
+			};
+		};
+	};
+
 /* sensor end */
 };
 
 /include/ "cust_eint.dtsi"
-
