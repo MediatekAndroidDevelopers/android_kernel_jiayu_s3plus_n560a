@@ -74,6 +74,9 @@ static int LSM6DS0_ACC_i2c_remove(struct i2c_client *client);
 static int LSM6DS0_ACC_i2c_detect(struct i2c_client *client, struct i2c_board_info *info);
 static int lis_i2c_read_block(struct i2c_client *client, u8 addr, u8 *data, u8 len);
 
+static int LSM6DS0_ACC_suspend(struct i2c_client *client, pm_message_t msg);
+static int LSM6DS0_ACC_resume(struct i2c_client *client);
+
 static int LSM6DS0_ACC_local_init(void);
 static int LSM6DS0_ACC_remove(void);
 static int LSM6DS0_ACC_init_flag =-1; // 0<==>OK -1 <==> fail

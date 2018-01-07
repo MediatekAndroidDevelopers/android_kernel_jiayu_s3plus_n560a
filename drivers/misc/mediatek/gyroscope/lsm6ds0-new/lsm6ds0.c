@@ -79,6 +79,9 @@ static int LSM6DS0_i2c_detect(struct i2c_client *client, int kind, struct i2c_bo
 static int LSM6DS0_init_client(struct i2c_client *client, bool enable);
 static int LSM6DS0_read_byte_sr(struct i2c_client *client, u8 addr, u8 *data, u8 len);
 
+static int LSM6DS0_suspend(struct i2c_client *client, pm_message_t msg);
+static int LSM6DS0_resume(struct i2c_client *client);
+
 static int LSM6DS0_local_init(void);
 static int  LSM6DS0_remove(void);
 static int LSM6DS0_init_flag =-1; // 0<==>OK -1 <==> fail
@@ -1201,6 +1204,7 @@ static struct miscdevice LSM6DS0_device = {
 static int LSM6DS0_suspend(struct i2c_client *client, pm_message_t msg) 
 {
 	struct LSM6DS0_i2c_data *obj = i2c_get_clientdata(client);    
+	int err;
 	GYRO_FUN();    
 
 	if(msg.event == PM_EVENT_SUSPEND)

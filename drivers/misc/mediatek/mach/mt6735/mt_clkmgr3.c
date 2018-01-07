@@ -11,7 +11,6 @@
 #include <linux/device.h>
 #include <linux/platform_device.h>
 #include <linux/smp.h>
-#include <linux/earlysuspend.h>
 #include <linux/io.h>
 
 #include <mach/mt_typedefs.h>
@@ -4648,31 +4647,6 @@ void mt_clkmgr_debug_init(void)
     entry = proc_create("armpll_ckdiv", S_IRUGO, clkmgr_dir, &armpll_ckdiv_proc_fops);
 }
 
-/***********************************
-*for early suspend
-************************************/
-#if 0
-#ifdef CONFIG_HAS_EARLYSUSPEND
-
-static void clkmgr_early_suspend(struct early_suspend *h)
-{
-    return;
-}
-static void clkmgr_late_resume(struct early_suspend *h)
-{
-    return;
-}
-
-static struct early_suspend mt_clkmgr_early_suspend_handler =
-{
-//    .level = EARLY_SUSPEND_LEVEL_DISABLE_FB + 250,
-    .level = EARLY_SUSPEND_LEVEL_DISABLE_FB,
-    .suspend = clkmgr_early_suspend,
-    .resume  = clkmgr_late_resume,
-};
-#endif //#ifdef CONFIG_HAS_EARLYSUSPEND
-#endif
-
 
 struct platform_device clkmgr_device =
 {
@@ -4819,12 +4793,6 @@ static int mt_clkmgr_debug_module_init(void)
 	int ret;
 
     mt_clkmgr_debug_init();
-
-#if 0
-#ifdef CONFIG_HAS_EARLYSUSPEND
-    register_early_suspend(&mt_clkmgr_early_suspend_handler);
-#endif
-#endif
 
     ret = platform_device_register(&clkmgr_device);
     if (ret) {
@@ -5003,5 +4971,3 @@ int clk_monitor(enum ckmon_sel ckmon, enum monitor_clk_sel sel, int div)
 }
 EXPORT_SYMBOL(clk_monitor);
 #endif
-
-

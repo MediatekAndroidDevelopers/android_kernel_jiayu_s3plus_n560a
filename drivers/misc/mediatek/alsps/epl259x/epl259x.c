@@ -24,7 +24,6 @@
 #include <linux/input.h>
 #include <linux/workqueue.h>
 #include <linux/kobject.h>
-#include <linux/earlysuspend.h>
 #include <linux/platform_device.h>
 #include <asm/atomic.h>
 
@@ -49,12 +48,6 @@
 #include <mach/mt_gpio.h>
 #include <mach/mt_pm_ldo.h>
 #endif
-
-
-//add for fix resume issue
-#include <linux/earlysuspend.h>
-#include <linux/wakelock.h>
-//add for fix resume issue end
 
 #define MTK_LTE         1
 
@@ -352,10 +345,6 @@ struct epl_sensor_priv
     int c_gain_l; // incandescent (C2)
     uint32_t lsource_thd_high; //different light source boundary (N) fluorescent (C1)
     uint32_t lsource_thd_low; //different light source boundary (N) incandescent (C2)
-#endif
-    /*early suspend*/
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-    struct early_suspend    early_drv;
 #endif
 };
 
@@ -4350,88 +4339,6 @@ static int epl_sensor_i2c_resume(struct i2c_client *client)
     return 0;
 }
 
-
-
-/*----------------------------------------------------------------------------*/
-static void epl_sensor_early_suspend(struct early_suspend *h)
-{
-    /*early_suspend is only applied for ALS*/
-    struct epl_sensor_priv *obj = container_of(h, struct epl_sensor_priv, early_drv);
-    bool enable_ps = test_bit(CMC_BIT_PS, &obj->enable) && atomic_read(&obj->ps_suspend)==0;
-    bool enable_als = test_bit(CMC_BIT_ALS, &obj->enable) && atomic_read(&obj->als_suspend)==0;
-
-    APS_FUN();
-
-    if(!obj)
-    {
-        APS_ERR("null pointer!!\n");
-        return;
-    }
-
-    atomic_set(&obj->als_suspend, 1);
-#if HS_ENABLE
-    atomic_set(&obj->hs_suspend, 1);
-#endif
-#if PS_GES
-    ps_ges_suspend_flag = true;
-    atomic_set(&obj->ges_suspend, 1);
-#endif
-    if(enable_ps == 1){
-        //atomic_set(&obj->ps_suspend, 0);
-
-        APS_LOG("[%s]: ps enable \r\n", __func__);
-    }
-    else{
-        //atomic_set(&obj->ps_suspend, 1);
-        APS_LOG("[%s]: ps disable \r\n", __func__);
-        epl_sensor_update_mode(obj->client);
-    }
-
-
-}
-
-
-
-/*----------------------------------------------------------------------------*/
-static void epl_sensor_late_resume(struct early_suspend *h)
-{
-    /*late_resume is only applied for ALS*/
-    struct epl_sensor_priv *obj = container_of(h, struct epl_sensor_priv, early_drv);
-    bool enable_ps = test_bit(CMC_BIT_PS, &obj->enable);
-    bool enable_als = test_bit(CMC_BIT_ALS, &obj->enable);
-
-    APS_FUN();
-
-    if(!obj)
-    {
-        APS_ERR("null pointer!!\n");
-        return;
-    }
-
-    atomic_set(&obj->als_suspend, 0);
-    atomic_set(&obj->ps_suspend, 0);
-#if HS_ENABLE
-    atomic_set(&obj->hs_suspend, 0);
-#endif
-#if PS_GES
-    atomic_set(&obj->ges_suspend, 0);
-#endif
-    if(enable_ps == 1)
-    {
-        //atomic_set(&obj->ps_suspend, 0);
-        APS_LOG("[%s]: ps enable \r\n", __func__);
-    }
-    else
-    {
-        APS_LOG("[%s]: ps disable \r\n", __func__);
-        epl_sensor_update_mode(obj->client);
-    }
-#if PS_GES
-    ps_ges_suspend_flag = false;
-#endif
-
-}
-
 #if MTK_LTE /*MTK_LTE start .................*/
 /*--------------------------------------------------------------------------------*/
 static int als_open_report_data(int open)
@@ -5188,13 +5095,6 @@ static int epl_sensor_i2c_probe(struct i2c_client *client, const struct i2c_devi
         goto exit_create_attr_failed;
     }
 #endif  /*MTK_LTE end .................*/
-
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-    obj->early_drv.level    = EARLY_SUSPEND_LEVEL_DISABLE_FB - 1,
-    obj->early_drv.suspend  = epl_sensor_early_suspend,
-    obj->early_drv.resume   = epl_sensor_late_resume,
-    register_early_suspend(&obj->early_drv);
-#endif
 
     if(obj->hw->polling_mode_ps == 0 || obj->hw->polling_mode_als == 0)
         epl_sensor_setup_eint(client);

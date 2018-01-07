@@ -161,7 +161,6 @@ PROC_FOPS_RO_UNSIGNED_INT_FULL(state, hps_ctxt.state);
 /***********************************************************
 * procfs callback - enabled series
 *                     - enabled
-*                     - early_suspend_enabled
 *                     - suspend_enabled
 *                     - cur_dump_enabled
 *                     - stats_dump_enabled
@@ -171,11 +170,6 @@ PROC_FOPS_RW_UNSIGNED_INT_FULL_FUNC(
     hps_ctxt.enabled, 
     mutex_lock(&hps_ctxt.lock);, 
     hps_ctxt_reset_stas_nolock(); mutex_unlock(&hps_ctxt.lock); );
-PROC_FOPS_RW_UNSIGNED_INT_FULL_FUNC(
-    early_suspend_enabled, 
-    hps_ctxt.early_suspend_enabled,
-    mutex_lock(&hps_ctxt.lock);, 
-    mutex_unlock(&hps_ctxt.lock); );
 PROC_FOPS_RW_UNSIGNED_INT_FULL_FUNC(
     suspend_enabled, 
     hps_ctxt.suspend_enabled,
@@ -958,7 +952,6 @@ int hps_procfs_init()
         PROC_ENTRY(init_state),
         PROC_ENTRY(state),
         PROC_ENTRY(enabled),
-        PROC_ENTRY(early_suspend_enabled),
         PROC_ENTRY(suspend_enabled),
         PROC_ENTRY(cur_dump_enabled),
         PROC_ENTRY(stats_dump_enabled),

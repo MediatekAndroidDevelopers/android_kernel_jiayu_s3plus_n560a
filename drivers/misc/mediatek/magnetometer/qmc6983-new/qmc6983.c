@@ -128,6 +128,9 @@ static int qmc6983_i2c_probe(struct i2c_client *client, const struct i2c_device_
 static int qmc6983_i2c_remove(struct i2c_client *client);
 //static int qmc6983_i2c_detect(struct i2c_client *client, int kind, struct i2c_board_info *info);
 
+static int qmc6983_suspend(struct i2c_client *client, pm_message_t msg);
+static int qmc6983_resume(struct i2c_client *client);
+
 static int qmc6983_init_flag =0; 
 static int qmc6983_remove(void);
 static int qmc6983_local_init(void);
@@ -1791,8 +1794,7 @@ int qmc6983_orientation_operate(void* self, uint32_t command, void* buff_in, int
 /*----------------------------------------------------------------------------*/
 static int qmc6983_suspend(struct i2c_client *client, pm_message_t msg)
 {
-	struct qmc6983_i2c_data *obj = i2c_get_clientdata(client)
-
+	struct qmc6983_i2c_data *obj = i2c_get_clientdata(client);
 
 	if(msg.event == PM_EVENT_SUSPEND)
 	{
@@ -1803,11 +1805,9 @@ static int qmc6983_suspend(struct i2c_client *client, pm_message_t msg)
 /*----------------------------------------------------------------------------*/
 static int qmc6983_resume(struct i2c_client *client)
 {
-	struct qmc6983_i2c_data *obj = i2c_get_clientdata(client)
-
+	struct qmc6983_i2c_data *obj = i2c_get_clientdata(client);
 
 	qmc6983_power(obj->hw, 1);
-
 
 	return 0;
 }
@@ -2085,4 +2085,3 @@ MODULE_AUTHOR("QST Corp");
 MODULE_DESCRIPTION("qmc6983 compass driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRIVER_VERSION);
-

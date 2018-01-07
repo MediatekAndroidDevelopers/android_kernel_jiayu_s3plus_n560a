@@ -23,7 +23,6 @@
 #include <linux/input.h>
 #include <linux/workqueue.h>
 #include <linux/kobject.h>
-#include <linux/earlysuspend.h>
 #include <linux/platform_device.h>
 #include <asm/atomic.h>
 
@@ -40,7 +39,6 @@
 #include <mach/mt_gpio.h>
 #include <mach/mt_pm_ldo.h>
 
-#include <linux/wakelock.h>
 #include <linux/sched.h>
 
 #include <alsps.h>
@@ -213,10 +211,6 @@ struct epl2182_priv
 
 	atomic_t	ps_thd_val_high;	 /*the cmd value can't be read, stored in ram*/
 	atomic_t	ps_thd_val_low; 	/*the cmd value can't be read, stored in ram*/
-    /*early suspend*/
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-    struct early_suspend    early_drv;
-#endif
 };
 
 
@@ -1643,71 +1637,6 @@ static int epl2182_i2c_resume(struct i2c_client *client)
     return err;
 }
 
-
-
-/*----------------------------------------------------------------------------*/
-static void epl2182_early_suspend(struct early_suspend *h)
-{
-    /*early_suspend is only applied for ALS*/
-    struct epl2182_priv *obj = container_of(h, struct epl2182_priv, early_drv);
-    int err;
-    APS_FUN();
-
-    if(!obj)
-    {
-        APS_ERR("null pointer!!\n");
-        return;
-    }
-
-    atomic_set(&obj->als_suspend, 1);
-    if(test_bit(CMC_BIT_ALS, &obj->enable))
-    {
-        if((err = elan_epl2182_lsensor_enable(obj, 0)) != 0)
-        {
-            APS_ERR("disable als fail: %d\n", err);
-        }
-    }
-}
-
-
-
-/*----------------------------------------------------------------------------*/
-static void epl2182_late_resume(struct early_suspend *h)
-{
-    /*late_resume is only applied for ALS*/
-    struct epl2182_priv *obj = container_of(h, struct epl2182_priv, early_drv);
-    int err;
-    APS_FUN();
-
-    if(!obj)
-    {
-        APS_ERR("null pointer!!\n");
-        return;
-    }
-
-    atomic_set(&obj->als_suspend, 0);
-
-    if(test_bit(CMC_BIT_ALS, &obj->enable))
-    {
-
-        if((err = elan_epl2182_lsensor_enable(obj, 1)) != 0)
-        {
-            APS_ERR("enable als fail: %d\n", err);
-        }
-    }
-
-    atomic_set(&obj->ps_suspend, 0);
-
-    if(test_bit(CMC_BIT_PS, &obj->enable))
-    {
-
-        if((err = elan_epl2182_psensor_enable(obj, 1)) != 0)
-        {
-            APS_ERR("enable ps fail: %d\n", err);
-        }
-    }
-}
-
 /*--------------------------------------------------------------------------------*/
 static int als_open_report_data(int open)
 {
@@ -2163,16 +2092,6 @@ static int epl2182_i2c_probe(struct i2c_client *client, const struct i2c_device_
 		goto exit_sensor_obj_attach_fail;
 	}
 
-	
-#ifndef FPGA_EARLY_PORTING
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-    obj->early_drv.level    = EARLY_SUSPEND_LEVEL_STOP_DRAWING - 2,
-    obj->early_drv.suspend  = epl2182_early_suspend,
-    obj->early_drv.resume   = epl2182_late_resume,
-    register_early_suspend(&obj->early_drv);
-#endif
-#endif
-
     if(isInterrupt)
         epl2182_setup_eint(client);
 
@@ -2278,8 +2197,3 @@ module_exit(epl2182_exit);
 MODULE_AUTHOR("yucong.xiong@mediatek.com");
 MODULE_DESCRIPTION("EPL2182 ALSPS driver");
 MODULE_LICENSE("GPL");
-
-
-
-
-

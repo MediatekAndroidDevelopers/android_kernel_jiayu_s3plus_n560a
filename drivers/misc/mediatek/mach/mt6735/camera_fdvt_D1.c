@@ -18,7 +18,6 @@
 #include <linux/interrupt.h>
 #include <mach/irqs.h>
 #include <linux/wait.h>
-#include <linux/earlysuspend.h>
 #include <linux/slab.h>
 #include <linux/xlog.h>
 #include <mach/sync_write.h>
@@ -1054,27 +1053,6 @@ static struct platform_device FDVT_device = {
 };
 */
 
-#ifdef CONFIG_HAS_EARLYSUSPEND
-static void FDVT_early_suspend(struct early_suspend *h)
-{
-	/* LOG_DBG("[FDVT_DEBUG] FDVT_suspend\n"); */
-	/* mt_fdvt_clk_ctrl(0); */
-
-}
-
-static void FDVT_early_resume(struct early_suspend *h)
-{
-	/* LOG_DBG("[FDVT_DEBUG] FDVT_suspend\n"); */
-	/* mt_fdvt_clk_ctrl(1); */
-}
-
-static struct early_suspend FDVT_early_suspend_desc = {
-	.level		= EARLY_SUSPEND_LEVEL_BLANK_SCREEN + 1,
-	.suspend	= FDVT_early_suspend,
-	.resume		= FDVT_early_resume,
-};
-#endif
-
 static int __init FDVT_driver_init(void)
 {
 	int ret;
@@ -1095,9 +1073,6 @@ static int __init FDVT_driver_init(void)
 		ret = -ENODEV;
 		return ret;
 	}
-	#ifdef CONFIG_HAS_EARLYSUSPEND
-	register_early_suspend(&FDVT_early_suspend_desc);
-	#endif
 
 	LOG_DBG("[FDVT_DEBUG] FDVT_driver_init Done\n");
 
@@ -1125,4 +1100,3 @@ module_exit(FDVT_driver_exit);
 MODULE_AUTHOR("WCD/OSS9/ME3");
 MODULE_DESCRIPTION("FDVT Driver");
 MODULE_LICENSE("GPL");
-

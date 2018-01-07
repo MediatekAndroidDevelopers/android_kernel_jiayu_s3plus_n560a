@@ -25,7 +25,6 @@
 #include <linux/input.h>
 #include <linux/workqueue.h>
 #include <linux/kobject.h>
-#include <linux/earlysuspend.h>
 #include <linux/platform_device.h>
 #include <asm/atomic.h>
 
@@ -46,11 +45,6 @@
 #include <mach/mt_gpio.h>
 #include <mach/mt_pm_ldo.h>
 
-
-//add for fix resume issue
-#include <linux/earlysuspend.h>
-#include <linux/wakelock.h>
-//add for fix resume issue end
 #include <alsps.h>
 #include <linux/batch.h>
 
@@ -228,11 +222,6 @@ struct epl8865_priv
     u16         	als_value_num;
     u32         	als_level[C_CUST_ALS_LEVEL-1];
     u32         	als_value[C_CUST_ALS_LEVEL];
-
-    /*early suspend*/
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-    struct early_suspend    early_drv;
-#endif
 };
 
 
@@ -2369,65 +2358,6 @@ static int epl8865_i2c_resume(struct i2c_client *client)
 }
 
 
-
-/*----------------------------------------------------------------------------*/
-static void epl8865_early_suspend(struct early_suspend *h)
-{
-    /*early_suspend is only applied for ALS*/
-    struct epl8865_priv *obj = container_of(h, struct epl8865_priv, early_drv);
-	bool enable_ps = test_bit(CMC_BIT_PS, &obj->enable) && atomic_read(&obj->ps_suspend)==0;
-	
-    APS_FUN();
-
-    if(!obj)
-    {
-        APS_ERR("null pointer!!\n");
-        return;
-    }
-
-    atomic_set(&obj->als_suspend, 1);
-    atomic_set(&obj->ges_suspend, 1);
-	atomic_set(&obj->hs_suspend, 1);
-
-	if (!enable_ps)
-		atomic_set(&obj->ps_suspend, 1);	
-	//add by ELAN Robert at 2014/11/19 	1658
-	if(enable_ps &&(obj->hw->polling_mode_ps == 0))
-	{
-		gRawData.ps_suspend = true;
-		//msleep(ALS_DELAY+2*PS_DELAY+30);
-	}
-}
-
-
-
-/*----------------------------------------------------------------------------*/
-static void epl8865_late_resume(struct early_suspend *h)
-{
-    /*late_resume is only applied for ALS*/
-    struct epl8865_priv *obj = container_of(h, struct epl8865_priv, early_drv);
-    APS_FUN();
-
-    if(!obj)
-    {
-        APS_ERR("null pointer!!\n");
-        return;
-    }
-
-    atomic_set(&obj->als_suspend, 0);
-    atomic_set(&obj->ps_suspend, 0);
-    atomic_set(&obj->ges_suspend, 0);
-    atomic_set(&obj->hs_suspend, 0);
-
-//add by ELAN Robert at 2014/11/19
-	gRawData.ps_suspend = false;
-	
-    //if(test_bit(CMC_BIT_ALS, &obj->enable) || test_bit(CMC_BIT_GES, &obj->enable))
-        epl8865_restart_polling();
-
-}
-
-
 /*----------------------------------------------------------------------------*/
 int epl8865_ps_operate(void* self, uint32_t command, void* buff_in, int size_in,
                        void* buff_out, int size_out, int* actualout)
@@ -2899,13 +2829,6 @@ static int epl8865_i2c_probe(struct i2c_client *client, const struct i2c_device_
       goto exit_sensor_obj_attach_fail;
     }
 
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-    obj->early_drv.level    = EARLY_SUSPEND_LEVEL_DISABLE_FB - 1,
-      obj->early_drv.suspend  = epl8865_early_suspend,
-      obj->early_drv.resume   = epl8865_late_resume,
-      register_early_suspend(&obj->early_drv);
-#endif
-
     if(obj->hw->polling_mode_ps ==0|| obj->polling_mode_ges==0 || obj->polling_mode_hs == 0)
         epl8865_setup_eint(client);
 
@@ -3013,4 +2936,3 @@ module_exit(epl8865_exit);
 MODULE_AUTHOR("renato.pan@eminent-tek.com");
 MODULE_DESCRIPTION("EPL8865 ALPsr driver");
 MODULE_LICENSE("GPL");
-

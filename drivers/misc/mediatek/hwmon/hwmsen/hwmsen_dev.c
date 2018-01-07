@@ -29,14 +29,9 @@
 #include <linux/wait.h>
 #include <linux/slab.h>
 
-
 #include <linux/hwmsensor.h>
 #include <linux/hwmsen_helper.h>
 #include <linux/hwmsen_dev.h>
-//add for fix resume issue
-#include <linux/earlysuspend.h>
-#include <linux/wakelock.h>
-//add for fix resume issue end
 
 #include <cust_alsps.h>
 #include <aal_control.h>

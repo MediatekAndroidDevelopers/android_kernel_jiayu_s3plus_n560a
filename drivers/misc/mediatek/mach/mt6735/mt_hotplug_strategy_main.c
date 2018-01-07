@@ -11,7 +11,6 @@
 #include <linux/module.h>               //MODULE_DESCRIPTION, MODULE_LICENSE
 #include <linux/init.h>                 //module_init, module_exit
 #include <linux/cpu.h>                  //cpu_up
-#include <linux/earlysuspend.h>         //register_early_suspend
 #include <linux/platform_device.h>      //platform_driver_register
 #include <linux/wakelock.h>             //wake_lock_init
 // project includes
@@ -88,7 +87,6 @@ hps_ctxt_t hps_ctxt = {
 #else
     .enabled = 1,
 #endif
-    .early_suspend_enabled = 1,
     .suspend_enabled = 1,
     .cur_dump_enabled = 0,
     .stats_dump_enabled = 0,
@@ -97,13 +95,6 @@ hps_ctxt_t hps_ctxt = {
     .lock = __MUTEX_INITIALIZER(hps_ctxt.lock), /* Synchronizes accesses to loads statistics */
     .tsk_struct_ptr = NULL,
     .wait_queue = __WAIT_QUEUE_HEAD_INITIALIZER(hps_ctxt.wait_queue),
-#ifdef CONFIG_HAS_EARLYSUSPEND
-    .es_handler = {
-        .level = EARLY_SUSPEND_LEVEL_DISABLE_FB + 250,
-        .suspend = hps_early_suspend,
-        .resume  = hps_late_resume,
-    },
-#endif //#ifdef CONFIG_HAS_EARLYSUSPEND
     .pdrv = {
         .remove     = NULL,
         .shutdown   = NULL,
@@ -230,7 +221,6 @@ void hps_ctxt_print_basic(int toUart)
         hps_warn("hps_ctxt.init_state: %u\n", hps_ctxt.init_state);
         hps_warn("hps_ctxt.state: %u\n", hps_ctxt.state);
         hps_warn("hps_ctxt.enabled: %u\n", hps_ctxt.enabled);
-        hps_warn("hps_ctxt.early_suspend_enabled: %u\n", hps_ctxt.early_suspend_enabled);
         hps_warn("hps_ctxt.suspend_enabled: %u\n", hps_ctxt.suspend_enabled);
         hps_warn("hps_ctxt.is_hmp: %u\n", hps_ctxt.is_hmp);
         hps_warn("hps_ctxt.little_cpu_id_min: %u\n", hps_ctxt.little_cpu_id_min);
@@ -243,7 +233,6 @@ void hps_ctxt_print_basic(int toUart)
         hps_debug("hps_ctxt.init_state: %u\n", hps_ctxt.init_state);
         hps_debug("hps_ctxt.state: %u\n", hps_ctxt.state);
         hps_debug("hps_ctxt.enabled: %u\n", hps_ctxt.enabled);
-        hps_debug("hps_ctxt.early_suspend_enabled: %u\n", hps_ctxt.early_suspend_enabled);
         hps_debug("hps_ctxt.suspend_enabled: %u\n", hps_ctxt.suspend_enabled);
         hps_debug("hps_ctxt.is_hmp: %u\n", hps_ctxt.is_hmp);
         hps_debug("hps_ctxt.little_cpu_id_min: %u\n", hps_ctxt.little_cpu_id_min);
@@ -384,81 +373,6 @@ void hps_ctxt_print_algo_stats_tlp(int toUart)
 }
 
 /***********************************************************
-* early suspend / late resume
-***********************************************************/
-/*
- * early suspend callback
- */
-#ifdef CONFIG_HAS_EARLYSUSPEND
-static void hps_early_suspend(struct early_suspend *h)
-{
-    hps_warn("hps_early_suspend\n");
-
-    mutex_lock(&hps_ctxt.lock);
-    hps_ctxt.state = STATE_EARLY_SUSPEND;
-
-    hps_ctxt.rush_boost_enabled_backup = hps_ctxt.rush_boost_enabled;
-    hps_ctxt.rush_boost_enabled = 0;
-
-    //Reset data structure of statistics process while enter early suspend mode.
-    hps_ctxt.up_loads_sum = 0;
-    hps_ctxt.up_loads_count = 0;
-    hps_ctxt.up_loads_history_index = 0;
-    hps_ctxt.up_loads_history[hps_ctxt.es_up_times - 1] = 0;
-    hps_ctxt.down_loads_sum = 0;
-    hps_ctxt.down_loads_count = 0;
-    hps_ctxt.down_loads_history_index = 0;
-    hps_ctxt.down_loads_history[hps_ctxt.es_down_times - 1] = 0;
-    
-    if (hps_ctxt.is_hmp && hps_ctxt.early_suspend_enabled)
-    {
-        unsigned int cpu;
-        for (cpu = hps_ctxt.big_cpu_id_max; cpu >= hps_ctxt.big_cpu_id_min; --cpu)
-        {
-            if (cpu_online(cpu))
-                cpu_down(cpu);
-        }
-    }
-    mutex_unlock(&hps_ctxt.lock);
-		atomic_set(&hps_ctxt.is_ondemand, 1);
-    hps_warn("state: %u, enabled: %u, early_suspend_enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
-        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.early_suspend_enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
-
-    return;
-}
-#endif //#ifdef CONFIG_HAS_EARLYSUSPEND
-
-/*
- * late resume callback
- */
-#ifdef CONFIG_HAS_EARLYSUSPEND
-static void hps_late_resume(struct early_suspend *h)
-{
-    hps_warn("hps_late_resume\n");
-
-    mutex_lock(&hps_ctxt.lock);
-    hps_ctxt.rush_boost_enabled = hps_ctxt.rush_boost_enabled_backup;
-    
-    //Reset data structure of statistics process while enter late resume mode.
-    hps_ctxt.up_loads_sum = 0;
-    hps_ctxt.up_loads_count = 0;
-    hps_ctxt.up_loads_history_index = 0;
-    hps_ctxt.up_loads_history[hps_ctxt.up_times - 1] = 0;
-    hps_ctxt.down_loads_sum = 0;
-    hps_ctxt.down_loads_count = 0;
-    hps_ctxt.down_loads_history_index = 0;
-    hps_ctxt.down_loads_history[hps_ctxt.down_times - 1] = 0;
-    hps_ctxt.state = STATE_LATE_RESUME;
-    mutex_unlock(&hps_ctxt.lock);
-
-    hps_warn("state: %u, enabled: %u, early_suspend_enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
-        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.early_suspend_enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
-
-    return;
-}
-#endif //#ifdef CONFIG_HAS_EARLYSUSPEND
-
-/***********************************************************
 * device driver
 ***********************************************************/
 /*
@@ -488,8 +402,8 @@ static int hps_suspend(struct device *dev)
 
 suspend_end:
     hps_ctxt.state = STATE_SUSPEND;
-    hps_warn("state: %u, enabled: %u, early_suspend_enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
-        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.early_suspend_enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
+    hps_warn("state: %u, enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
+        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
 
     return 0;
 }
@@ -519,8 +433,8 @@ static int hps_resume(struct device *dev)
 
 resume_end:
     hps_ctxt.state = STATE_EARLY_SUSPEND;
-    hps_warn("state: %u, enabled: %u, early_suspend_enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
-        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.early_suspend_enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
+    hps_warn("state: %u, enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
+        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
 
     return 0;
 }
@@ -553,8 +467,8 @@ static int hps_freeze(struct device *dev)
 
 freeze_end:
     hps_ctxt.state = STATE_SUSPEND;
-    hps_warn("state: %u, enabled: %u, early_suspend_enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
-        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.early_suspend_enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
+    hps_warn("state: %u, enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
+        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
 
     return 0;
 }
@@ -575,8 +489,8 @@ static int hps_restore(struct device *dev)
 
 restore_end:
     hps_ctxt.state = STATE_EARLY_SUSPEND;
-    hps_warn("state: %u, enabled: %u, early_suspend_enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
-        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.early_suspend_enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
+    hps_warn("state: %u, enabled: %u, suspend_enabled: %u, rush_boost_enabled: %u\n",
+        hps_ctxt.state, hps_ctxt.enabled, hps_ctxt.suspend_enabled, hps_ctxt.rush_boost_enabled);
 
     return 0;
 }
@@ -605,10 +519,6 @@ static int __init hps_init(void)
     r = hps_procfs_init();
     if (r)
         hps_error("hps_procfs_init fail(%d)\n", r);
-
-#ifdef CONFIG_HAS_EARLYSUSPEND
-    register_early_suspend(&hps_ctxt.es_handler);
-#endif //#ifdef CONFIG_HAS_EARLYSUSPEND
 
     r = platform_device_register(&hotplug_strategy_pdev);
     if (r)
@@ -645,11 +555,7 @@ module_exit(hps_exit);
  * module parameters
  */
 //module_param(g_enable, int, 0644);
-//#ifdef CONFIG_HAS_EARLYSUSPEND
-//module_param(g_enable_cpu_rush_boost, int, 0644);
-//#endif //#ifdef CONFIG_HAS_EARLYSUSPEND
 //module_param(g_enable_dynamic_hps_at_suspend, int, 0644);
 
 MODULE_DESCRIPTION("MediaTek CPU Hotplug Stragegy Core v0.1");
 MODULE_LICENSE("GPL");
-

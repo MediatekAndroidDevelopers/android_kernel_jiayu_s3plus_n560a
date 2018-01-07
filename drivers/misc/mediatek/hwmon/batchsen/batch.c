@@ -10,11 +10,6 @@ static struct batch_context *batch_context_obj = NULL;
 
 static struct batch_init_info* batch_init_list[MAX_CHOOSE_BATCH_NUM]= {0}; 
 
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-static void batch_early_suspend(struct early_suspend *h);
-static void batch_late_resume(struct early_suspend *h);
-#endif //#if defined(CONFIG_HAS_EARLYSUSPEND)
-
 static int IDToSensorType(int id)
     {
     int sensorType;
@@ -1014,16 +1009,6 @@ static int batch_probe(struct platform_device *pdev)
 		goto exit_alloc_input_dev_failed;
 	}
 
-#if defined(CONFIG_HAS_EARLYSUSPEND) && defined(CONFIG_EARLYSUSPEND)
-    	atomic_set(&(batch_context_obj->early_suspend), 0);
-	batch_context_obj->early_drv.level    = EARLY_SUSPEND_LEVEL_STOP_DRAWING - 1,
-	batch_context_obj->early_drv.suspend  = batch_early_suspend,
-	batch_context_obj->early_drv.resume   = batch_late_resume,    
-	register_early_suspend(&batch_context_obj->early_drv);
-
-	wake_lock_init(&(batch_context_obj->read_data_wake_lock),WAKE_LOCK_SUSPEND,"read_data_wake_lock");
-#endif //#if defined(CONFIG_HAS_EARLYSUSPEND)
-
 	//add misc dev for sensor hal control cmd
 	err = batch_misc_init(batch_context_obj);
 	if(err)
@@ -1089,22 +1074,6 @@ static int batch_remove(struct platform_device *pdev)
 
 	return 0;
 }
-
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-static void batch_early_suspend(struct early_suspend *h) 
-{
-   atomic_set(&(batch_context_obj->early_suspend), 1);
-   BATCH_LOG(" batch_early_suspend ok------->hwm_obj->early_suspend=%d \n",atomic_read(&(batch_context_obj->early_suspend)));
-   return ;
-}
-/*----------------------------------------------------------------------------*/
-static void batch_late_resume(struct early_suspend *h)
-{
-   atomic_set(&(batch_context_obj->early_suspend), 0);
-   BATCH_LOG(" batch_late_resume ok------->hwm_obj->early_suspend=%d \n",atomic_read(&(batch_context_obj->early_suspend)));
-   return ;
-}
-#endif //#if defined(CONFIG_HAS_EARLYSUSPEND)
 
 static int batch_suspend(struct platform_device *dev, pm_message_t state) 
 {
@@ -1233,4 +1202,3 @@ late_initcall(batch_init);
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("batch device driver");
 MODULE_AUTHOR("Mediatek");
-

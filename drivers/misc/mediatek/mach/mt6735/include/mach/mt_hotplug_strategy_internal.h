@@ -16,7 +16,6 @@ extern "C" {
 // system includes
 #include <linux/kernel.h>                   //printk
 #include <linux/io.h>                       //__raw_readl
-#include <linux/earlysuspend.h>             //struct early_suspend
 #include <linux/platform_device.h>          //struct platform_driver
 #include <linux/kthread.h>                  //struct task_struct
 #include <linux/timer.h>                    //struct timer_list
@@ -155,7 +154,6 @@ typedef struct hps_ctxt_struct {
 
     //enabled
     unsigned int enabled;
-    unsigned int early_suspend_enabled;         /* default 1, disable all big cores if is_hmp after early suspend stage (aka screen off) */
     unsigned int suspend_enabled;               /* default 1, disable hotplug strategy in suspend flow */
     unsigned int cur_dump_enabled;
     unsigned int stats_dump_enabled;
@@ -164,9 +162,6 @@ typedef struct hps_ctxt_struct {
     struct mutex lock;                          /* Synchronizes accesses */
     struct task_struct *tsk_struct_ptr;
     wait_queue_head_t wait_queue;
-#ifdef CONFIG_HAS_EARLYSUSPEND
-    struct early_suspend es_handler;
-#endif //#ifdef CONFIG_HAS_EARLYSUSPEND
     struct platform_driver pdrv;
 
     //backup
@@ -312,4 +307,3 @@ extern void hps_cpu_get_tlp(unsigned int *avg, unsigned int *iowait_avg);
 #endif
 
 #endif // __MT_HOTPLUG_STRATEGY_INTERNAL_H__
-

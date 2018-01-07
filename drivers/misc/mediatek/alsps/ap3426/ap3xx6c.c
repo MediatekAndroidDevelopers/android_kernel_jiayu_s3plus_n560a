@@ -48,10 +48,8 @@
 #include <linux/input.h>
 #include <linux/workqueue.h>
 #include <linux/kobject.h>
-#include <linux/earlysuspend.h>
 #include <linux/platform_device.h>
 #include <linux/atomic.h>
-#include <linux/wakelock.h>
 
 #include <mach/mt_typedefs.h>
 #include <mach/mt_gpio.h>
@@ -192,11 +190,6 @@ struct ap3xx6_priv {
 
 	ulong		enable;		/*enable mask*/
 	ulong		pending_intr;	/*pending interrupt*/
-
-	/*early suspend*/
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-	struct early_suspend	early_drv;
-#endif
 };
 /*----------------------------------------------------------------------------*/
 static struct i2c_driver ap3xx6_i2c_driver = {
@@ -1653,51 +1646,6 @@ static int ap3xx6_i2c_resume(struct i2c_client *client)
 	return 0;
 }
 /*----------------------------------------------------------------------------*/
-static void ap3xx6_early_suspend(struct early_suspend *h)
-{
-	struct ap3xx6_priv *obj = container_of(h, struct ap3xx6_priv, early_drv);
-	int err;
-	APS_FUN();
-
-	if (!obj) {
-		APS_ERR("null pointer!!\n");
-		return;
-	}
-
-	atomic_set(&obj->als_suspend, 1);
-
-	if (test_bit(CMC_BIT_ALS, &obj->enable)) {
-		err = ap3xx6_enable_als(obj->client, 0);
-		if (err != 0) {
-			APS_ERR("disable als fail: %d\n", err);
-		}
-	}
-
-}
-/*----------------------------------------------------------------------------*/
-static void ap3xx6_late_resume(struct early_suspend *h)
-{
-	struct ap3xx6_priv *obj = container_of(h, struct ap3xx6_priv, early_drv);
-	int err;
-	APS_FUN();
-
-	if (!obj) {
-		APS_ERR("null pointer!!\n");
-		return;
-	}
-
-	atomic_set(&obj->als_suspend, 0);
-	if (test_bit(CMC_BIT_ALS, &obj->enable)) {
-		err = ap3xx6_enable_als(obj->client, 1);
-		if (err != 0) {
-			APS_ERR("enable als fail: %d\n", err);
-
-		}
-	}
-
-}
-
-
 static int ap3xx6_als_open_report_data(int open)
 {
 
@@ -2007,17 +1955,6 @@ static int ap3xx6_i2c_probe(struct i2c_client *client, const struct i2c_device_i
 	}
 
 APS_LOG("als_register_data_path OK.%s:\n", __func__);
-
-#if defined(CONFIG_HAS_EARLYSUSPEND)
-	obj->early_drv.level	= EARLY_SUSPEND_LEVEL_DISABLE_FB - 1,
-	obj->early_drv.suspend = ap3xx6_early_suspend,
-	obj->early_drv.resume	= ap3xx6_late_resume,
-	register_early_suspend(&obj->early_drv);
-#endif
-
-
-
-
 
 	ap3xx6_init_flag = 0;
 	APS_LOG("%s: OK\n", __func__);
