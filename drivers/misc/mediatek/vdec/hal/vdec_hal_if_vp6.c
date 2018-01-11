@@ -258,7 +258,7 @@ void vVDEC_HAL_VP6_InitCtx(UINT32 u4VDecID, UINT32 u4BSID, VDEC_INFO_VP6_FRM_HDR
 {
     UINT32 i, j, u4Cnt, u4Addr, u4Addr2, u4Tmp;
     UINT32 coeff_model[4];
-    printk("//<vdec> entry %s\n", __FUNCTION__);
+    printk("//<vdec> entry %s\n", __func__);
 
     if (!prFrmHdr)
     {
@@ -401,7 +401,7 @@ void vVDEC_HAL_VP6_InitCtx(UINT32 u4VDecID, UINT32 u4BSID, VDEC_INFO_VP6_FRM_HDR
 // **************************************************************************
 INT32 i4VDEC_HAL_VP6_InitVDecHW(UINT32 u4VDecID, VDEC_INFO_VP6_VFIFO_PRM_T *prVp6VFifoInitPrm)
 {
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
 #if (CONFIG_CHIP_VER_CURR < CONFIG_CHIP_VER_MT8555)
     vVDecResetHW(u4VDecID);
@@ -469,7 +469,7 @@ INT32 i4VDEC_HAL_VP6_InitBarrelShifter(UINT32 u4BSID, UINT32 u4VDecID, VDEC_INFO
     //UINT32 u4VLDByte, u4VLDBit;
     UINT32 u4VLDRemainByte;
 
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
 #if (CONFIG_DRV_VERIFY_SUPPORT) && (CONFIG_DRV_LINUX)
     //HalFlushInvalidateDCache();
@@ -580,7 +580,7 @@ INT32 i4VDEC_HAL_VP6_InitBarrelShifter2(UINT32 u4BSID, UINT32 u4VDecID, VDEC_INF
     INT32 i;
     UINT32 u4VLDRemainByte;
     UINT32 u4Cnt = 0;
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 #if (CONFIG_DRV_VERIFY_SUPPORT) && (CONFIG_DRV_LINUX)
     //HalFlushInvalidateDCache();
 #endif
@@ -794,7 +794,7 @@ INT32 i4VDEC_HAL_VP6_DecStart(UINT32 u4VDecID, VDEC_INFO_DEC_PRM_T *prDecPrm)
     //u4CRCSrc = (VDEC_CRC_EN | VDEC_CRC_SRC_PP);  //CRC input from PP
     vVDecWriteCRC(u4VDecID, 0x4, u4CRCSrc);
 #endif
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
     // set video down scaler parameter
     vVDECSetDownScalerPrm(u4VDecID, &prDecPrm->rDownScalerPrm);
 
@@ -1083,7 +1083,7 @@ INT32 i4VDEC_HAL_VP6_DecStart(UINT32 u4VDecID, VDEC_INFO_DEC_PRM_T *prDecPrm)
 #endif
 
     {
-        printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVP6VLD(u4VDecID, 0xF0), __FUNCTION__, __LINE__);
+        printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVP6VLD(u4VDecID, 0xF0), __func__, __LINE__);
         //u4VDecReadVldRPtr(u4BSID, u4VDecID, &u4VldBit, PHYSICAL((UINT32)_pucVFifo[u4VDecID]));
     }
 
@@ -1334,7 +1334,7 @@ UINT32 u4VDEC_HAL_VP6_Default_Models_Init(UINT32 u4BSID, UINT32 u4VDecID)
     //    MEMCPY_ALIGNED(s->coeff_reorder, vp6_def_coeff_reorder, sizeof(s->coeff_reorder));
 
     //   vp6_coeff_order_table_init(s);
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
     pred_range = 840;
     mbt_range = 102;
@@ -2055,7 +2055,7 @@ UINT32 u4VDEC_HAL_VP6_Parse_Mb_Type_Models(UINT32 u4BSID, UINT32 u4VDecID)
     UINT32    u4Val, u4Tmp0, u4Tmp1, u4Tmp2, u4Tmp3;
 #ifdef VP6_MULTI_STREAM
     UINT32 u4Addr;
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
     for (idx = 0; idx < 16; idx++)
     {
@@ -2213,7 +2213,7 @@ UINT32 u4VDEC_HAL_VP6_Load_QMatrix(UINT32 u4BSID, UINT32 u4VDecID)
         12, 13, 13, 13, 13, 13, 14, 14,
         14, 14, 15, 15, 15, 15, 15, 15,
     };
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
     for (i = 0; i < 64; i += 4)
     {
         //fprintf(risc_out,"RISCWrite(`VLD_ADDR_1 +4*152, (0<<8) + %d);\n", i);
@@ -2252,7 +2252,7 @@ UINT32 u4VDEC_HAL_VP6_Read_QMatrix(UINT32 u4BSID, UINT32 u4VDecID)
         0,  0,  0,  0,  0,  0,  0,  0,
         0,  0,  0,  0,  0,  0,  0,  0,
     };
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
     for (i = 0; i < 64; i += 4)
     {
         vVDecWriteVLD(u4VDecID, RW_VLD_SCL_ADDR, ((1 << 8) + i));
@@ -2450,7 +2450,7 @@ UINT32 u4VDEC_HAL_VP6_Load_Filter_Coef(UINT32 u4BSID, UINT32 u4VDecID, UINT32 u4
     //     ==> 0x870 [28:24] = 3
     //     ==> 0x870 [20:16] = 2
     //     ==> 0x870 [12:8] = 1
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
     u4Tmp0 = (vp6_block_copy_filter[u4Select][1][0] * -1);
     u4Tmp1 = (vp6_block_copy_filter[u4Select][2][0] * -1);
@@ -2511,7 +2511,7 @@ UINT32 u4VDEC_HAL_VP6_Load_Filter_Coef(UINT32 u4BSID, UINT32 u4VDecID, UINT32 u4
 
 UINT32 u4VDEC_HAL_VP6_Write_SRAMData1(UINT32 u4BSID, UINT32 u4VDecID)
 {
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
     //---------- ctx = 0 ----------
     vVDecWriteVP6VLD(u4VDecID, 4 * 50, 0x3a8, u4BSID);
@@ -2820,7 +2820,7 @@ UINT32 u4VDEC_HAL_VP6_Read_SRAMData1(UINT32 u4BSID, UINT32 u4VDecID)
     UINT32 u4Reg77 [50] = {0};
     UINT32 u4Reg78 [50] = {0};
     UINT32 u4Reg79 [50] = {0};
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
     for (i = 936; i <= 984; i++)
     {
         //RISCWrite(`VP6_ADDR + 4*75, 32'h3a8);
@@ -2875,7 +2875,7 @@ UINT32 u4VDec_HAL_VP6_VDec_BackupSram(UINT32 u4VDecID, VDEC_INFO_VP6_DEC_PRM_T *
 {
     UINT32 i, j, u4Cnt, u4Addr, *pBuf;
 
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
     if (!prDecPrm)
     {
@@ -2914,7 +2914,7 @@ UINT32 u4VDec_HAL_VP6_VDec_RestoreSram(UINT32 u4VDecID, VDEC_INFO_VP6_DEC_PRM_T 
 {
     UINT32 i, j, u4Cnt, u4Addr, *pBuf;
 
-    printk("<vdec> entry %s\n", __FUNCTION__);
+    printk("<vdec> entry %s\n", __func__);
 
     if (!prDecPrm)
     {

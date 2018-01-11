@@ -80,7 +80,7 @@ DevmemPDumpLoadMem(DEVMEM_MEMDESC *psMemDesc,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -106,7 +106,7 @@ DevmemPDumpLoadZeroMem(DEVMEM_MEMDESC *psMemDesc,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -129,7 +129,7 @@ DevmemPDumpLoadMemValue32(DEVMEM_MEMDESC *psMemDesc,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -151,7 +151,7 @@ DevmemPDumpLoadMemValue64(DEVMEM_MEMDESC *psMemDesc,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -184,7 +184,7 @@ DevmemPDumpPageCatBaseToSAddr(DEVMEM_MEMDESC		*psMemDesc,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 
@@ -213,7 +213,7 @@ DevmemPDumpSaveToFile(DEVMEM_MEMDESC *psMemDesc,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -249,7 +249,7 @@ DevmemPDumpSaveToFileVirtual(DEVMEM_MEMDESC *psMemDesc,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }

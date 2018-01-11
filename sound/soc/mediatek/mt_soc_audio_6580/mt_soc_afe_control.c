@@ -1068,7 +1068,7 @@ bool SetChannels(uint32 Memory_Interface, uint32 channel)
 
 bool Set2ndI2SOutAttribute(uint32_t sampleRate)
 {
-    printk("+%s(), sampleRate = %d\n", __FUNCTION__, sampleRate);
+    printk("+%s(), sampleRate = %d\n", __func__, sampleRate);
     m2ndI2Sout->mLR_SWAP = Soc_Aud_LR_SWAP_NO_SWAP;
     m2ndI2Sout->mI2S_SLAVE = Soc_Aud_I2S_SRC_MASTER_MODE;
     m2ndI2Sout->mINV_LRCK = Soc_Aud_INV_LRCK_NO_INVERSE;
@@ -1295,7 +1295,7 @@ bool SetI2SAdcIn(AudioDigtalI2S *DigtalI2S)
         Audio_I2S_Adc |= (SampleRateTransform(AudioAdcI2S->mI2S_SAMPLERATE) << 8);
         Audio_I2S_Adc |= (AudioAdcI2S->mI2S_FMT << 3);
         Audio_I2S_Adc |= (AudioAdcI2S->mI2S_WLEN << 1);
-        printk("%s Audio_I2S_Adc = 0x%x", __FUNCTION__, Audio_I2S_Adc);
+        printk("%s Audio_I2S_Adc = 0x%x", __func__, Audio_I2S_Adc);
         Afe_Set_Reg(AFE_I2S_CON2, Audio_I2S_Adc, MASK_ALL);
     }
     return true;
@@ -1303,7 +1303,7 @@ bool SetI2SAdcIn(AudioDigtalI2S *DigtalI2S)
 
 bool EnableSideGenHw(uint32 connection , bool direction  , bool  Enable)
 {
-    printk("+%s(), connection = %d, direction = %d, Enable= %d\n", __FUNCTION__, connection, direction, Enable);
+    printk("+%s(), connection = %d, direction = %d, Enable= %d\n", __func__, connection, direction, Enable);
     if (Enable && direction)
     {
         switch (connection)
@@ -1337,7 +1337,7 @@ bool EnableSideGenHw(uint32 connection , bool direction  , bool  Enable)
                 Afe_Set_Reg(AFE_SGEN_CON0, 0x64662662, 0xffffffff);
                 break;
             default:
-                printk("+%s(), no corresponding input SGEN\n", __FUNCTION__);
+                printk("+%s(), no corresponding input SGEN\n", __func__);
                 break;
         }
     }
@@ -1388,7 +1388,7 @@ bool EnableSideGenHw(uint32 connection , bool direction  , bool  Enable)
                 }
                 break;
             default:
-                printk("+%s(), no corresponding output SGEN\n", __FUNCTION__);
+                printk("+%s(), no corresponding output SGEN\n", __func__);
                 break;
         }
     }
@@ -1406,7 +1406,7 @@ bool SetSideGenSampleRate(uint32 SampleRate)
     uint32 sine_mode_ch1 = 0;
     uint32 sine_mode_ch2 = 0;
 
-    printk("+%s(), SampleRate = %d\n", __FUNCTION__, SampleRate);
+    printk("+%s(), SampleRate = %d\n", __func__, SampleRate);
 
     sine_mode_ch1 = SGENSampleRateTransform(SampleRate) << 8;
     sine_mode_ch2 = SGENSampleRateTransform(SampleRate) << 20;
@@ -1446,7 +1446,7 @@ bool Set2ndI2SEnable(bool bEnable)
 
 bool CleanPreDistortion()
 {
-    //printk("%s \n", __FUNCTION__);
+    //printk("%s \n", __func__);
     Afe_Set_Reg(AFE_ADDA_PREDIS_CON0, 0, MASK_ALL);
     Afe_Set_Reg(AFE_ADDA_PREDIS_CON1, 0, MASK_ALL);
     return true;
@@ -1553,7 +1553,7 @@ bool SetHwDigitalGainMode(uint32 GainType, uint32 SampleRate, uint32 SamplePerSt
 
 bool SetHwDigitalGainEnable(int GainType, bool Enable)
 {
-    printk("+%s(), GainType = %d, Enable = %d\n", __FUNCTION__, GainType, Enable);
+    printk("+%s(), GainType = %d, Enable = %d\n", __func__, GainType, Enable);
     switch (GainType)
     {
         case Soc_Aud_Hw_Digital_Gain_HW_DIGITAL_GAIN1:
@@ -1609,7 +1609,7 @@ bool SetModemPcmConfig(int modem_index , AudioDigitalPCM p_modem_pcm_attribute)
         reg_pcm2_intf_con |= (p_modem_pcm_attribute.mPcmWordLength      & 0x1) << 5;
         reg_pcm2_intf_con |= (p_modem_pcm_attribute.mPcmModeWidebandSel & 0x3) << 3;
         reg_pcm2_intf_con |= (p_modem_pcm_attribute.mPcmFormat          & 0x3) << 1;
-        printk("%s(), PCM2_INTF_CON(0x%lx) = 0x%x\n", __FUNCTION__, PCM2_INTF_CON, reg_pcm2_intf_con);
+        printk("%s(), PCM2_INTF_CON(0x%lx) = 0x%x\n", __func__, PCM2_INTF_CON, reg_pcm2_intf_con);
         Afe_Set_Reg(PCM2_INTF_CON, reg_pcm2_intf_con, MASK_ALL);
         if (p_modem_pcm_attribute.mPcmModeWidebandSel == Soc_Aud_PCM_MODE_PCM_MODE_8K)
         {
@@ -1718,7 +1718,7 @@ bool SetModemPcmConfig(int modem_index , AudioDigitalPCM p_modem_pcm_attribute)
         reg_pcm_intf_con1 |= (p_modem_pcm_attribute.mPcmModeWidebandSel    & 0x03) << 3;
         reg_pcm_intf_con1 |= (p_modem_pcm_attribute.mPcmFormat             & 0x03) << 1;
 
-        printk("%s(), PCM_INTF_CON1(0x%lx) = 0x%x", __FUNCTION__, PCM_INTF_CON, reg_pcm_intf_con1);
+        printk("%s(), PCM_INTF_CON1(0x%lx) = 0x%x", __func__, PCM_INTF_CON, reg_pcm_intf_con1);
         Afe_Set_Reg(PCM_INTF_CON, reg_pcm_intf_con1, MASK_ALL);
 
     }
@@ -1728,7 +1728,7 @@ bool SetModemPcmConfig(int modem_index , AudioDigitalPCM p_modem_pcm_attribute)
 bool SetModemPcmEnable(int modem_index, bool modem_pcm_on)
 {
     uint32 dNeedDisableASM = 0, mPcm1AsyncFifo;
-    printk("+%s(), modem_index = %d, modem_pcm_on = %d\n", __FUNCTION__, modem_index, modem_pcm_on);
+    printk("+%s(), modem_index = %d, modem_pcm_on = %d\n", __func__, modem_index, modem_pcm_on);
 
     if (modem_index == MODEM_1) // MODEM_1 use PCM2_INTF_CON (0x53C) !!!
     {
@@ -1770,7 +1770,7 @@ bool SetModemPcmEnable(int modem_index, bool modem_pcm_on)
     }
     else
     {
-        printk("%s(), no such modem_index: %d!!", __FUNCTION__, modem_index);
+        printk("%s(), no such modem_index: %d!!", __func__, modem_index);
         return false;
     }
     return true;
@@ -1791,11 +1791,11 @@ bool EnableSideToneFilter(bool stf_on)
         const bool bypass_stf_on = true;
         uint32_t reg_value = (bypass_stf_on << 31) | (stf_on << 8);
         Afe_Set_Reg(AFE_SIDETONE_CON1, reg_value, MASK_ALL);
-        printk("%s(), AFE_SIDETONE_CON1[0x%lx] = 0x%x\n", __FUNCTION__, AFE_SIDETONE_CON1, reg_value);
+        printk("%s(), AFE_SIDETONE_CON1[0x%lx] = 0x%x\n", __func__, AFE_SIDETONE_CON1, reg_value);
 
         // set side tone gain = 0
         Afe_Set_Reg(AFE_SIDETONE_GAIN, 0, MASK_ALL);
-        printk("%s(), AFE_SIDETONE_GAIN[0x%lx] = 0x%x\n", __FUNCTION__, AFE_SIDETONE_GAIN, 0);
+        printk("%s(), AFE_SIDETONE_GAIN[0x%lx] = 0x%x\n", __func__, AFE_SIDETONE_GAIN, 0);
     }
     else
     {
@@ -1810,11 +1810,11 @@ bool EnableSideToneFilter(bool stf_on)
         uint32_t   read_reg_value = Afe_Get_Reg(AFE_SIDETONE_CON0);
         size_t coef_addr = 0;
 
-        printk("%s(), AFE_SIDETONE_GAIN[0x%lx] = 0x%x\n", __FUNCTION__, AFE_SIDETONE_GAIN, 0);
+        printk("%s(), AFE_SIDETONE_GAIN[0x%lx] = 0x%x\n", __func__, AFE_SIDETONE_GAIN, 0);
         // set side tone gain
         Afe_Set_Reg(AFE_SIDETONE_GAIN, 0, MASK_ALL);
         Afe_Set_Reg(AFE_SIDETONE_CON1, write_reg_value, MASK_ALL);
-        printk("%s(), AFE_SIDETONE_CON1[0x%lx] = 0x%x\n", __FUNCTION__, AFE_SIDETONE_CON1, write_reg_value);
+        printk("%s(), AFE_SIDETONE_CON1[0x%lx] = 0x%x\n", __func__, AFE_SIDETONE_CON1, write_reg_value);
 
 #if 0 // no need to set sidetone coeffecient. spend too much time during incall
         for (coef_addr = 0; coef_addr < kSideToneHalfTapNum; coef_addr++)
@@ -1828,7 +1828,7 @@ bool EnableSideToneFilter(bool stf_on)
                               coef_addr         << 16 |
                               kSideToneCoefficientTable16k[coef_addr];
             Afe_Set_Reg(AFE_SIDETONE_CON0, write_reg_value, 0x39FFFFF);
-            printk("%s(), AFE_SIDETONE_CON0[0x%lx] = 0x%x\n", __FUNCTION__, AFE_SIDETONE_CON0, write_reg_value);
+            printk("%s(), AFE_SIDETONE_CON0[0x%lx] = 0x%x\n", __func__, AFE_SIDETONE_CON0, write_reg_value);
 
             // wait until flag write_ready changed (means write done)
             for (try_cnt = 0; try_cnt < 10; try_cnt++)  // max try 10 times
@@ -1850,7 +1850,7 @@ bool EnableSideToneFilter(bool stf_on)
 #endif
     }
     AudDrv_Clk_Off();
-    printk("-%s(), stf_on = %d\n", __FUNCTION__, stf_on);
+    printk("-%s(), stf_on = %d\n", __func__, stf_on);
     return true;
 }
 
@@ -1979,7 +1979,7 @@ bool SetConnection(uint32 ConnectionState, uint32 Input , uint32 Output)
 
 bool SetIrqEnable(uint32 Irqmode, bool bEnable)
 {
-    //printk("+%s(), Irqmode = %d, bEnable = %d\n", __FUNCTION__, Irqmode, bEnable);
+    //printk("+%s(), Irqmode = %d, bEnable = %d\n", __func__, Irqmode, bEnable);
     switch (Irqmode)
     {
         case Soc_Aud_IRQ_MCU_MODE_IRQ1_MCU_MODE:
@@ -2014,7 +2014,7 @@ bool SetIrqEnable(uint32 Irqmode, bool bEnable)
         default:
             break;
     }
-    //printk("-%s(), Irqmode = %d, bEnable = %d\n", __FUNCTION__, Irqmode, bEnable);
+    //printk("-%s(), Irqmode = %d, bEnable = %d\n", __func__, Irqmode, bEnable);
     return true;
 }
 
@@ -2168,7 +2168,7 @@ bool Set2ndI2SInEnable(bool bEnable)
 
 bool SetI2SASRCConfig(bool bIsUseASRC, unsigned int dToSampleRate)
 {
-    printk("+%s() bIsUseASRC [%d] dToSampleRate [%d]\n", __FUNCTION__, bIsUseASRC, dToSampleRate);
+    printk("+%s() bIsUseASRC [%d] dToSampleRate [%d]\n", __func__, bIsUseASRC, dToSampleRate);
     if (true == bIsUseASRC)
     {
         BUG_ON(!(dToSampleRate == 44100 || dToSampleRate == 48000));
@@ -2216,7 +2216,7 @@ bool  SetMemIfFetchFormatPerSample(uint32 InterfaceType, uint32 eFetchFormat)
 {
     mAudioMEMIF[InterfaceType]->mFetchFormatPerSample = eFetchFormat;
     /*
-    printk("+%s(), InterfaceType = %d, eFetchFormat = %d, mAudioMEMIF[InterfaceType].mFetchFormatPerSample = %d\n", __FUNCTION__
+    printk("+%s(), InterfaceType = %d, eFetchFormat = %d, mAudioMEMIF[InterfaceType].mFetchFormatPerSample = %d\n", __func__
            , InterfaceType, eFetchFormat, mAudioMEMIF[InterfaceType]->mFetchFormatPerSample);*/
 #if 0   //Sammodi 82 no
     switch (InterfaceType)
@@ -2282,7 +2282,7 @@ bool  SetMemIfFetchFormatPerSample(uint32 InterfaceType, uint32 eFetchFormat)
 bool SetoutputConnectionFormat(uint32 ConnectionFormat, uint32  Output)
 {
 #if 0   //Sammodi 82 no
-    //printk("+%s(), Data Format = %d, Output = %d\n", __FUNCTION__, ConnectionFormat, Output);
+    //printk("+%s(), Data Format = %d, Output = %d\n", __func__, ConnectionFormat, Output);
     Afe_Set_Reg(AFE_CONN_24BIT, (ConnectionFormat << Output), (1 << Output));
 #endif
     return true;

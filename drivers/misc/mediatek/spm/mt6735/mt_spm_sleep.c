@@ -1345,7 +1345,7 @@ wake_reason_t spm_go_to_sleep(u32 spm_flags, u32 spm_data)
         extern bool is_already_snap_shot;
 
         if (!is_already_snap_shot)
-            snapshot_golden_setting(__FUNCTION__, 0);
+            snapshot_golden_setting(__func__, 0);
     }
 #endif
 

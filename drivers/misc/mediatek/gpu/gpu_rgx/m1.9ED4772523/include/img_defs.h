@@ -335,7 +335,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /* To guarantee that __func__ can be used, define it as a macro here if it
    isn't already provided by the compiler. */
 #if defined(_MSC_VER)
-#define __func__ __FUNCTION__
+#define __func__ __func__
 #endif
 
 #if defined(__cplusplus)

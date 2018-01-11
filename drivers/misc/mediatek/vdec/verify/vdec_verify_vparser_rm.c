@@ -950,7 +950,7 @@ UINT32 u4RM_FindIPic(UINT32 u4InstID, UINT32 u4EndFrm)
 
     for (i = 0; i < u4EndFrm; i++)
     {
-        fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+        fgGetRvPic(u4InstID, __func__, __LINE__);
         if (prPic->ePtype == RM_INTRAPIC)
         {
             u4IFrmIdx = i;
@@ -958,7 +958,7 @@ UINT32 u4RM_FindIPic(UINT32 u4InstID, UINT32 u4EndFrm)
         _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMParsPicInfo.u4DecodedPicCnt++;
     }
 
-    printk("<vdec> %s(%u, %u) return %u.\n", __FUNCTION__, u4InstID, u4EndFrm, u4IFrmIdx);
+    printk("<vdec> %s(%u, %u) return %u.\n", __func__, u4InstID, u4EndFrm, u4IFrmIdx);
 
     _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMParsPicInfo.u4DecodedPicCnt = u4IFrmIdx;
 
@@ -971,7 +971,7 @@ UINT32 u4RM_PreParseIPic(UINT32 u4InstID, UINT32 u4EndFrm)
 
     for (i = 0; i < u4EndFrm; i++)
     {
-        fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+        fgGetRvPic(u4InstID, __func__, __LINE__);
         _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMParsPicInfo.u4DecodedPicCnt++;
     }
 
@@ -1135,7 +1135,7 @@ void vRM_VParser(UINT32 u4InstID)
         _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.fgRPRRacingModeEnable = FALSE;
 
         //Parsing First Pic Info
-        fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+        fgGetRvPic(u4InstID, __func__, __LINE__);
 
         memcpy((void *)(&_tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMPicInfo_Preparsing),
                (void *)(&_tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMPicInfo),
@@ -1147,7 +1147,7 @@ void vRM_VParser(UINT32 u4InstID)
             //Search Next I or  P
             for (u4SearchLoop = 0; u4SearchLoop < RPR_RAC_PREPARSING_CNT; u4SearchLoop++)
             {
-                if (fgGetRvPic(u4InstID, __FUNCTION__, __LINE__) == FALSE)
+                if (fgGetRvPic(u4InstID, __func__, __LINE__) == FALSE)
                 {
                     break;
                 }
@@ -1245,7 +1245,7 @@ void vRM_VParser(UINT32 u4InstID)
         }
     }
 #else //RM_SKIPFRAME_Test
-    fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+    fgGetRvPic(u4InstID, __func__, __LINE__);
 #endif //RM_SKIPFRAME_Test
 #endif //RM_LOOPDECODE_FLOW
 
@@ -1694,7 +1694,7 @@ void vRM_VParserEx(UINT32 u4InstID)
         _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.fgRPRRacingModeEnable = FALSE;
 
         //Parsing First Pic Info
-        fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+        fgGetRvPic(u4InstID, __func__, __LINE__);
 
         memcpy((void *)(&_tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMPicInfo_Preparsing),
                (void *)(&_tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMPicInfo),
@@ -1707,7 +1707,7 @@ void vRM_VParserEx(UINT32 u4InstID)
             //Search Next I or  P
             for (u4SearchLoop = 0; u4SearchLoop < RPR_RAC_PREPARSING_CNT; u4SearchLoop++)
             {
-                if (fgGetRvPic(u4InstID, __FUNCTION__, __LINE__) == FALSE)
+                if (fgGetRvPic(u4InstID, __func__, __LINE__) == FALSE)
                 {
                     break;
                 }
@@ -1756,13 +1756,13 @@ void vRM_VParserEx(UINT32 u4InstID)
                 _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMParsPicInfo.u4DecodedPicCnt = u4LoopDecodeFrmCnt - 1;
                 for (u4Loop = 0; u4Loop < u4LoopDecodeFrmCnt; u4Loop++)
                 {
-                    fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+                    fgGetRvPic(u4InstID, __func__, __LINE__);
                 }
             }
             else
             {
                 _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMParsPicInfo.u4DecodedPicCnt = 0;
-                fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+                fgGetRvPic(u4InstID, __func__, __LINE__);
             }
             u4LoopDecodeFirstFlag = 0;
         }
@@ -1770,7 +1770,7 @@ void vRM_VParserEx(UINT32 u4InstID)
         {
             if (u4LoopDecodeTargetCnt >= u4LoopDecodeFrmCnt)
             {
-                fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+                fgGetRvPic(u4InstID, __func__, __LINE__);
                 //u4LoopDecodeFrmCnt++;
             }
             else
@@ -1790,7 +1790,7 @@ void vRM_VParserEx(UINT32 u4InstID)
         {
             for (u4SkipIdx = 0; u4SkipIdx < u4SkipFrameNum; u4SkipIdx++)
             {
-                fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+                fgGetRvPic(u4InstID, __func__, __LINE__);
             }
 
             _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecRMDecPrm.rRMParsPicInfo.u4DecodedPicCnt = u4SkipFrameNum - 1;
@@ -1800,11 +1800,11 @@ void vRM_VParserEx(UINT32 u4InstID)
         }
         else
         {
-            fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+            fgGetRvPic(u4InstID, __func__, __LINE__);
         }
     }
 #else //RM_SKIPFRAME_Test
-    fgGetRvPic(u4InstID, __FUNCTION__, __LINE__);
+    fgGetRvPic(u4InstID, __func__, __LINE__);
 #endif //RM_SKIPFRAME_Test
 #endif //RM_LOOPDECODE_FLOW
 
@@ -4314,7 +4314,7 @@ void vRM_GenerateDownScalerGolden(UINT32 u4InstID, UINT32 DecYAddr, UINT32 DecCA
 
 static void vDumpVldCkSum(void)
 {
-    printk("\n<vdec> %s\n", __FUNCTION__);
+    printk("\n<vdec> %s\n", __func__);
     u4VDecReadRMVLD(0, 33 * 4);
     u4VDecReadRMVLD(0, 34 * 4);
     u4VDecReadRMVLD(0, 35 * 4);
@@ -4357,7 +4357,7 @@ static void vDumpVldCkSum(void)
 
 static void vDumpAvcMvCkSum(void)
 {
-    printk("\n<vdec> %s\n", __FUNCTION__);
+    printk("\n<vdec> %s\n", __func__);
     u4VDecReadRMMV(0, 148 * 4);
     u4VDecReadRMMV(0, 149 * 4);
     u4VDecReadRMMV(0, 150 * 4);
@@ -4373,7 +4373,7 @@ static void vDumpAvcMvCkSum(void)
 
 void vDumpMCPerformance(void)
 {
-    printk("\n<vdec> %s\n", __FUNCTION__);
+    printk("\n<vdec> %s\n", __func__);
     u4VDecReadMC(0, 474 * 4);
     u4VDecReadMC(0, 476 * 4);
     u4VDecReadMC(0, 477 * 4);
@@ -4391,7 +4391,7 @@ void vDumpMCPerformance(void)
 
 static void vDumpMcCkSum(void)
 {
-    printk("\n<vdec> %s\n", __FUNCTION__);
+    printk("\n<vdec> %s\n", __func__);
     u4VDecReadMC(0, 378 * 4);
     u4VDecReadMC(0, 379 * 4);
     u4VDecReadMC(0, 380 * 4);
@@ -4426,7 +4426,7 @@ static void vDumpPpCkSum(void)
 {
     int i;
 
-    printk("\n<vdec> %s\n", __FUNCTION__);
+    printk("\n<vdec> %s\n", __func__);
     u4VDecReadRMPP(0, 5 * 4);
     u4VDecReadRMPP(0, 6 * 4);
     u4VDecReadRMPP(0, 67 * 4);
@@ -4470,7 +4470,7 @@ static void vDumpReg(void)
 {
     INT32 i;
 
-    printk("\n<vdec> %s\n", __FUNCTION__);
+    printk("\n<vdec> %s\n", __func__);
     u4VDecReadRMMV(0, 131 * 4);
     u4VDecReadRMMV(0, 134 * 4);
     u4VDecReadRMMV(0, 135 * 4);

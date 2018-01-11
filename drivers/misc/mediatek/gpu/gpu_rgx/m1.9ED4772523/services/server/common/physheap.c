@@ -192,7 +192,7 @@ PVRSRV_ERROR PhysHeapAcquire(IMG_UINT32 ui32PhysHeapID,
 	else
 	{
 		psTmp->ui32RefCount++;
-		PHYSHEAP_REFCOUNT_PRINT("%s: Heap %p, refcount = %d", __FUNCTION__, psTmp, psTmp->ui32RefCount);
+		PHYSHEAP_REFCOUNT_PRINT("%s: Heap %p, refcount = %d", __func__, psTmp, psTmp->ui32RefCount);
 	}
 
 	*ppsPhysHeap = psTmp;
@@ -204,7 +204,7 @@ void PhysHeapRelease(PHYS_HEAP *psPhysHeap)
 	PVR_DPF_ENTERED1(psPhysHeap);
 
 	psPhysHeap->ui32RefCount--;
-	PHYSHEAP_REFCOUNT_PRINT("%s: Heap %p, refcount = %d", __FUNCTION__, psPhysHeap, psPhysHeap->ui32RefCount);
+	PHYSHEAP_REFCOUNT_PRINT("%s: Heap %p, refcount = %d", __func__, psPhysHeap, psPhysHeap->ui32RefCount);
 
 	PVR_DPF_RETURN;
 }

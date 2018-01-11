@@ -516,7 +516,7 @@ static MUINT32 g_DmaErr_p1[nDMA_ERR] = {0};
     }     \
 }while(0);
 #else
-#define IRQ_LOG_KEEPER(irq,ppb,logT,fmt,...)  pr_debug("KEEPER[%s] " fmt, __FUNCTION__, ##__VA_ARGS__)
+#define IRQ_LOG_KEEPER(irq,ppb,logT,fmt,...)  pr_debug("KEEPER[%s] " fmt, __func__, ##__VA_ARGS__)
 #endif
 
 #if 1

@@ -576,7 +576,7 @@ void vMPEGWrData2PC(UINT32 u4InstID, UCHAR *ptAddr, UINT32 u4Size)
 
     BOOL fgDecCheckCRCErr = FALSE;
 
-    printk("<vdec> %s, %d\n", __FUNCTION__, __LINE__);
+    printk("<vdec> %s, %d\n", __func__, __LINE__);
     strncpy(_tFileListRecInfo[u4InstID].bFileName, _FileList_Rec[u4InstID], sizeof(_FileList_Rec[u4InstID]));
 
 #ifdef REDEC
@@ -6339,9 +6339,9 @@ BOOL fgVdecReadFileName(UINT32 u4InstID, VDEC_INFO_VERIFY_FILE_INFO_T *ptFileLis
             const char *p = _bFileStr1[u4InstID][8];
 #if 1 // for MT8320
             _bFileStr1[u4InstID][0][u4FileNameCnt1 - (u4SubNameCnt)] = '/';
-            //printk("<vdec> _bFileStr1[%d][%d] = (%s), (%s, %d)\n", u4InstID, 0, _bFileStr1[u4InstID][0], __FUNCTION__, __LINE__);
+            //printk("<vdec> _bFileStr1[%d][%d] = (%s), (%s, %d)\n", u4InstID, 0, _bFileStr1[u4InstID][0], __func__, __LINE__);
             sprintf(_bFileStr1[u4InstID][0] + u4FileNameCnt1 - (u4SubNameCnt - 1), "%s_", p + 1);
-            //printk("<vdec> _bFileStr1[%d][%d] = (%s), (%s, %d)\n", u4InstID, 0, _bFileStr1[u4InstID][0], __FUNCTION__, __LINE__);
+            //printk("<vdec> _bFileStr1[%d][%d] = (%s), (%s, %d)\n", u4InstID, 0, _bFileStr1[u4InstID][0], __func__, __LINE__);
 #else
             _bFileStr1[u4InstID][0][u4FileNameCnt1 - (u4SubNameCnt)] = '\\';
             _bFileStr1[u4InstID][0][u4FileNameCnt1 - (u4SubNameCnt - 1)] = 'P';

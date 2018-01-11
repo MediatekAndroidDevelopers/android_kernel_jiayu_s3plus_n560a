@@ -940,7 +940,7 @@ _AttemptAllocAligned (RA_ARENA *pArena,
 		/* partition the buffer, create a new boundary tag */
 		if (pNeighbour == NULL)
 		{
-			PVR_DPF ((PVR_DBG_ERROR, "%s: Front split failed", __FUNCTION__));
+			PVR_DPF ((PVR_DBG_ERROR, "%s: Front split failed", __func__));
 			/* Put pBT back in the list */
 			_FreeListInsert (pArena, pBT);
 			return IMG_FALSE;
@@ -958,7 +958,7 @@ _AttemptAllocAligned (RA_ARENA *pArena,
 		/* partition the buffer, create a new boundary tag */
 		if (pNeighbour == NULL)
 		{
-			PVR_DPF ((PVR_DBG_ERROR, "%s: Back split failed", __FUNCTION__));
+			PVR_DPF ((PVR_DBG_ERROR, "%s: Back split failed", __func__));
 			/* Put pBT back in the list */
 			_FreeListInsert (pArena, pBT);
 			return IMG_FALSE;

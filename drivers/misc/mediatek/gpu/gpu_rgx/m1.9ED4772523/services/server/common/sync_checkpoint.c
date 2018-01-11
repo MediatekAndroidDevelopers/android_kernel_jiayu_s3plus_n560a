@@ -252,7 +252,7 @@ _SyncCheckpointContextUnref(_SYNC_CHECKPOINT_CONTEXT *psContext)
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s called for context<%p> with %d sync checkpoints still in the pool",
-					__FUNCTION__,
+					__func__,
 					(void*)psContext,
 					psContext->psContextCtl->ui32SyncCheckpointPoolCount));
 		}
@@ -507,7 +507,7 @@ SyncCheckpointResolveFence(PSYNC_CHECKPOINT_CONTEXT psSyncCheckpointContext,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)",
-				__FUNCTION__));
+				__func__));
 		eError = PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED;
 		PVR_LOG_ERROR(eError, "g_pfnFenceResolve is NULL");
 	}
@@ -533,7 +533,7 @@ SyncCheckpointResolveFence(PSYNC_CHECKPOINT_CONTEXT psSyncCheckpointContext,
 
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: g_pfnFenceResolve() for fence %d returned the following %d checkpoints:",
-				__FUNCTION__,
+				__func__,
 				hFence,
 				*pui32NumSyncCheckpoints));
 
@@ -542,7 +542,7 @@ SyncCheckpointResolveFence(PSYNC_CHECKPOINT_CONTEXT psSyncCheckpointContext,
 			PSYNC_CHECKPOINT psNextCheckpoint = *(*papsSyncCheckpoints +  ii);
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s:   *papsSyncCheckpoints[%d]:<%p>",
-					__FUNCTION__,
+					__func__,
 					ii,
 					(void*)psNextCheckpoint));
 		}
@@ -552,7 +552,7 @@ SyncCheckpointResolveFence(PSYNC_CHECKPOINT_CONTEXT psSyncCheckpointContext,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: ERROR g_pfnFenceResolve() returned %s",
-				__FUNCTION__,
+				__func__,
 				PVRSRVGetErrorStringKM(eError)));
 	}
 	return eError;
@@ -578,7 +578,7 @@ SyncCheckpointCreateFence(PVRSRV_DEVICE_NODE *psDevNode,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)",
-				__FUNCTION__));
+				__func__));
 		eError = PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED;
 		PVR_LOG_ERROR(eError, "g_pfnFenceCreate is NULL");
 	}
@@ -598,7 +598,7 @@ SyncCheckpointCreateFence(PVRSRV_DEVICE_NODE *psDevNode,
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s failed to create new fence<%p> for timeline<%d> using "
 					"sync checkpoint context<%p>, psNewSyncCheckpoint=<%p>, eError=%s",
-			         __FUNCTION__,
+			         __func__,
 			         (void*)phNewFence,
 			         hTimeline,
 			         (void*)psSyncCheckpointContext,
@@ -611,7 +611,7 @@ SyncCheckpointCreateFence(PVRSRV_DEVICE_NODE *psDevNode,
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s created new fence<%d> for timeline<%d> using "
 					"sync checkpoint context<%p>, new sync_checkpoint=<%p>",
-			         __FUNCTION__,
+			         __func__,
 			         *phNewFence,
 			         hTimeline,
 			         (void*)psSyncCheckpointContext,
@@ -631,7 +631,7 @@ SyncCheckpointRollbackFenceData(PVRSRV_FENCE hFence, void *pvFinaliseData)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)",
-				__FUNCTION__));
+				__func__));
 		eError = PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED;
 		PVR_LOG_ERROR(eError, "g_pfnFenceDataRollback is NULL");
 	}
@@ -640,7 +640,7 @@ SyncCheckpointRollbackFenceData(PVRSRV_FENCE hFence, void *pvFinaliseData)
 #if (ENABLE_SYNC_CHECKPOINT_FENCE_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: called to rollback fence data <%p>",
-				__FUNCTION__,
+				__func__,
 				pvFinaliseData));
 #endif
 		eError = g_pfnFenceDataRollback(hFence, pvFinaliseData);
@@ -658,7 +658,7 @@ SyncCheckpointFinaliseFence(PVRSRV_FENCE hFence, void *pvFinaliseData)
 	{
 		PVR_DPF((PVR_DBG_WARNING,
 				"%s: Warning (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED) (this is permitted)",
-				__FUNCTION__));
+				__func__));
 		eError = PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED;
 	}
 	else
@@ -666,7 +666,7 @@ SyncCheckpointFinaliseFence(PVRSRV_FENCE hFence, void *pvFinaliseData)
 #if (ENABLE_SYNC_CHECKPOINT_FENCE_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: called to finalise fence <%d>",
-				__FUNCTION__,
+				__func__,
 				hFence));
 #endif
 		eError = g_pfnFenceFinalise(hFence, pvFinaliseData);
@@ -684,7 +684,7 @@ SyncCheckpointNoHWUpdateTimelines(void *pvPrivateData)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)",
-				__FUNCTION__));
+				__func__));
 		eError = PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED;
 		PVR_LOG_ERROR(eError, "g_pfnNoHWUpdateTimelines is NULL");
 	}
@@ -816,7 +816,7 @@ SyncCheckpointContextCreate(PPVRSRV_DEVICE_NODE psDevNode,
 #if (ENABLE_SYNC_CHECKPOINT_CONTEXT_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s: created psSyncCheckpointContext=<%p>",
-			__FUNCTION__,
+			__func__,
 			(void*)*ppsSyncCheckpointContext));
 #endif
 	return PVRSRV_OK;
@@ -879,7 +879,7 @@ static IMG_BOOL _FreeSyncCheckpointIfPossible(_SYNC_CHECKPOINT *psSyncCheckpoint
 		#if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s CALLING RA_Free(psSyncCheckpoint(ID:%d)<%p>), psSubAllocRA=<%p>, ui32SpanAddr=0x%llx",
-					__FUNCTION__,
+					__func__,
 					psSyncCheckpoint->ui32UID,
 					(void*)psSyncCheckpoint,
 					(void*)psSyncCheckpoint->psSyncCheckpointBlock->psContext->psSubAllocRA,
@@ -904,7 +904,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncCheckpointContextDestroy(PSYNC_CHECKPOINT_CONTEXT 
 #if (ENABLE_SYNC_CHECKPOINT_CONTEXT_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s: destroying psSyncCheckpointContext=<%p>",
-			__FUNCTION__,
+			__func__,
 			(void*)psSyncCheckpointContext));
 #endif
 
@@ -918,7 +918,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncCheckpointContextDestroy(PSYNC_CHECKPOINT_CONTEXT 
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s freed %d sync checkpoints that were still in the pool for context<%p>",
-				__FUNCTION__,
+				__func__,
 				ui32NumFreedFromPool,
 				(void*)psContext));
 #else
@@ -934,7 +934,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncCheckpointContextDestroy(PSYNC_CHECKPOINT_CONTEXT 
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s <%p> attempted with active references (iRf=%d), "
 				"may be the result of a race",
-				__FUNCTION__,
+				__func__,
 				(void*)psContext,
 				iRf));
 
@@ -950,7 +950,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncCheckpointContextDestroy(PSYNC_CHECKPOINT_CONTEXT 
 				PVR_UNREFERENCED_PARAMETER(psSyncCheckpoint);
 				PVR_DPF((PVR_DBG_ERROR,
 						"%s syncCheckpoint<%p> ID=%d, %s, state=%s, enqCount:%d,FWCount:%d ",
-						__FUNCTION__,
+						__func__,
 						(void*)psSyncCheckpoint,
 						psSyncCheckpoint->ui32UID,
 						psSyncCheckpoint->azName,
@@ -1000,13 +1000,13 @@ SyncCheckpointAlloc(PSYNC_CHECKPOINT_CONTEXT psSyncContext,
 
 #if (SYNC_CHECKPOINT_POOL_SIZE > 0)
 #if ((ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1) || (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1))
-	PVR_DPF((PVR_DBG_ERROR, "%s Entry, Getting checkpoint from pool", __FUNCTION__));
+	PVR_DPF((PVR_DBG_ERROR, "%s Entry, Getting checkpoint from pool", __func__));
 #endif
 	psNewSyncCheckpoint = _GetCheckpointFromPool(psSyncContextInt);
 	if (!psNewSyncCheckpoint)
 	{
 #if ((ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1) || (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1))
-		PVR_DPF((PVR_DBG_ERROR, "%s     checkpoint pool empty - will have to allocate", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s     checkpoint pool empty - will have to allocate", __func__));
 #endif
 	}
 #endif
@@ -1034,7 +1034,7 @@ SyncCheckpointAlloc(PSYNC_CHECKPOINT_CONTEXT psSyncContext,
 #if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s CALLED RA_Alloc(), psSubAllocRA=<%p>, ui32SpanAddr=0x%llx",
-				__FUNCTION__,
+				__func__,
 				(void*)psSyncContextInt->psSubAllocRA,
 				psNewSyncCheckpoint->uiSpanAddr));
 #endif
@@ -1045,11 +1045,11 @@ SyncCheckpointAlloc(PSYNC_CHECKPOINT_CONTEXT psSyncContext,
 		OSAtomicIncrement(&psNewSyncCheckpoint->psSyncCheckpointBlock->psContext->hCheckpointCount);
 		psNewSyncCheckpoint->ui32ValidationCheck = SYNC_CHECKPOINT_PATTERN_IN_USE;
 #if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
-		PVR_DPF((PVR_DBG_ERROR, "%s called to allocate new sync checkpoint<%p> for context<%p>", __FUNCTION__, (void*)psNewSyncCheckpoint, (void*)psSyncContext));
-		PVR_DPF((PVR_DBG_ERROR, "%s                    psSyncCheckpointFwObj<%p>", __FUNCTION__, (void*)psNewSyncCheckpoint->psSyncCheckpointFwObj));
-		PVR_DPF((PVR_DBG_ERROR, "%s                    psSyncCheckpoint FwAddr=0x%x", __FUNCTION__, SyncCheckpointGetFirmwareAddr((PSYNC_CHECKPOINT)psNewSyncCheckpoint)));
-		PVR_DPF((PVR_DBG_ERROR, "%s                    pszCheckpointName = %s", __FUNCTION__, pszCheckpointName));
-		PVR_DPF((PVR_DBG_ERROR, "%s                    psSyncCheckpoint Timeline=%d", __FUNCTION__, psNewSyncCheckpoint->hTimeline));
+		PVR_DPF((PVR_DBG_ERROR, "%s called to allocate new sync checkpoint<%p> for context<%p>", __func__, (void*)psNewSyncCheckpoint, (void*)psSyncContext));
+		PVR_DPF((PVR_DBG_ERROR, "%s                    psSyncCheckpointFwObj<%p>", __func__, (void*)psNewSyncCheckpoint->psSyncCheckpointFwObj));
+		PVR_DPF((PVR_DBG_ERROR, "%s                    psSyncCheckpoint FwAddr=0x%x", __func__, SyncCheckpointGetFirmwareAddr((PSYNC_CHECKPOINT)psNewSyncCheckpoint)));
+		PVR_DPF((PVR_DBG_ERROR, "%s                    pszCheckpointName = %s", __func__, pszCheckpointName));
+		PVR_DPF((PVR_DBG_ERROR, "%s                    psSyncCheckpoint Timeline=%d", __func__, psNewSyncCheckpoint->hTimeline));
 #endif
 	}
 
@@ -1122,7 +1122,7 @@ SyncCheckpointAlloc(PSYNC_CHECKPOINT_CONTEXT psSyncContext,
 #if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s Exit(Ok), psNewSyncCheckpoint->ui32UID=%d <%p>",
-			__FUNCTION__,
+			__func__,
 			psNewSyncCheckpoint->ui32UID,
 			(void*)psNewSyncCheckpoint));
 #endif
@@ -1151,7 +1151,7 @@ IMG_INTERNAL void SyncCheckpointFree(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s Entry,  psSyncCheckpoint(ID:%d)<%p>, hRefCount=%d, psSyncCheckpoint->ui32ValidationCheck=0x%x",
-			__FUNCTION__,
+			__func__,
 			psSyncCheckpointInt->ui32UID,
 			(void*)psSyncCheckpoint,
 			(IMG_UINT32)(OSAtomicRead(&psSyncCheckpointInt->hRefCount)),
@@ -1172,7 +1172,7 @@ IMG_INTERNAL void SyncCheckpointFree(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s No outstanding FW ops and hRef is zero, deleting SyncCheckpoint..",
-					__FUNCTION__));
+					__func__));
 #endif
 #if defined(PVRSRV_ENABLE_FULL_SYNC_TRACKING)
 			{
@@ -1191,7 +1191,7 @@ IMG_INTERNAL void SyncCheckpointFree(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if ((ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1) || (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1))
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s attempting to return sync checkpoint to the pool",
-					__FUNCTION__));
+					__func__));
 #endif
 			if (!_PutCheckpointInPool(psSyncCheckpointInt))
 #endif
@@ -1200,13 +1200,13 @@ IMG_INTERNAL void SyncCheckpointFree(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if ((ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1) || (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1))
 				PVR_DPF((PVR_DBG_ERROR,
 						"%s pool is full, so just free it",
-						__FUNCTION__));
+						__func__));
 #endif
 #endif
 #if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
 				PVR_DPF((PVR_DBG_ERROR,
 						"%s CALLING RA_Free(psSyncCheckpoint(ID:%d)<%p>), psSubAllocRA=<%p>, ui32SpanAddr=0x%llx",
-						__FUNCTION__,
+						__func__,
 						psSyncCheckpointInt->ui32UID,
 						(void*)psSyncCheckpointInt,
 						(void*)psSyncCheckpointInt->psSyncCheckpointBlock->psContext->psSubAllocRA,
@@ -1221,7 +1221,7 @@ IMG_INTERNAL void SyncCheckpointFree(PSYNC_CHECKPOINT psSyncCheckpoint)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s Outstanding FW ops hEnqueuedCCBCount=%d != FwObj->ui32FwRefCount=%d "
 					"- DEFERRING CLEANUP psSyncCheckpoint(ID:%d)<%p>",
-					__FUNCTION__,
+					__func__,
 					OSAtomicRead(&psSyncCheckpointInt->hEnqueuedCCBCount),
 					psSyncCheckpointInt->psSyncCheckpointFwObj->ui32FwRefCount,
 					psSyncCheckpointInt->ui32UID,
@@ -1239,7 +1239,7 @@ IMG_INTERNAL void SyncCheckpointFree(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_ALLOC_AND_FREE_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s psSyncCheckpoint(ID:%d)<%p>, hRefCount decremented to %d",
-				__FUNCTION__,
+				__func__,
 				psSyncCheckpointInt->ui32UID,
 				(void*)psSyncCheckpointInt,
 				(IMG_UINT32)(OSAtomicRead(&psSyncCheckpointInt->hRefCount))));
@@ -1298,7 +1298,7 @@ SyncCheckpointSignal(PSYNC_CHECKPOINT psSyncCheckpoint)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s asked to set PVRSRV_SYNC_CHECKPOINT_SIGNALLED(%d) for (psSyncCheckpointInt->ui32UID=%d), "
 					"when value is already %d",
-					__FUNCTION__,
+					__func__,
 					PVRSRV_SYNC_CHECKPOINT_SIGNALLED,
 					psSyncCheckpointInt->ui32UID,
 					psSyncCheckpointInt->psSyncCheckpointFwObj->ui32State));
@@ -1345,7 +1345,7 @@ SyncCheckpointSignalNoHW(PSYNC_CHECKPOINT psSyncCheckpoint)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s asked to set PVRSRV_SYNC_CHECKPOINT_SIGNALLED(%d) for (psSyncCheckpointInt->ui32UID=%d), "
 					"when value is already %d",
-					__FUNCTION__,
+					__func__,
 					PVRSRV_SYNC_CHECKPOINT_SIGNALLED,
 					psSyncCheckpointInt->ui32UID,
 					psSyncCheckpointInt->psSyncCheckpointFwObj->ui32State));
@@ -1443,7 +1443,7 @@ IMG_BOOL SyncCheckpointIsSignalled(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_ENQ_AND_SIGNAL_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s called for psSyncCheckpoint<%p>, returning %d",
-				__FUNCTION__,
+				__func__,
 				(void*)psSyncCheckpoint,
 				bRet));
 #endif
@@ -1493,7 +1493,7 @@ SyncCheckpointIsErrored(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_ENQ_AND_SIGNAL_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s called for psSyncCheckpoint<%p>, returning %d",
-				__FUNCTION__,
+				__func__,
 				(void*)psSyncCheckpoint,
 				bRet));
 #endif
@@ -1557,7 +1557,7 @@ SyncCheckpointCCBEnqueued(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if !defined(NO_HARDWARE)
 #if (ENABLE_SYNC_CHECKPOINT_ENQ_AND_SIGNAL_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR, "%s called for psSyncCheckpoint<%p> %d->%d (FWRef %u)",
-				__FUNCTION__,
+				__func__,
 		         (void*)psSyncCheckpoint,
 		         OSAtomicRead(&psSyncCheckpointInt->hEnqueuedCCBCount),
 		         OSAtomicRead(&psSyncCheckpointInt->hEnqueuedCCBCount)+1,
@@ -1585,7 +1585,7 @@ SyncCheckpointGetRGXFWIFUFOAddr(PSYNC_CHECKPOINT psSyncCheckpoint)
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s called for psSyncCheckpoint<%p>, but ui32ValidationCheck=0x%x",
-					__FUNCTION__,
+					__func__,
 			         (void*)psSyncCheckpoint,
 			         psSyncCheckpointInt->ui32ValidationCheck));
 		}
@@ -1616,7 +1616,7 @@ SyncCheckpointGetFirmwareAddr(PSYNC_CHECKPOINT psSyncCheckpoint)
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s called for psSyncCheckpoint<%p>, but ui32ValidationCheck=0x%x",
-					__FUNCTION__,
+					__func__,
 			         (void*)psSyncCheckpoint,
 			         psSyncCheckpointInt->ui32ValidationCheck));
 		}
@@ -1646,7 +1646,7 @@ SyncCheckpointGetFirmwareAddrFromList(PSYNC_CHECKPOINT psSyncCheckpoint)
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s called for psSyncCheckpointInt<%p>, but ui32ValidationCheck=0x%x",
-					__FUNCTION__,
+					__func__,
 			         (void*)psSyncCheckpointInt,
 			         psSyncCheckpointInt->ui32ValidationCheck));
 		}
@@ -1655,7 +1655,7 @@ SyncCheckpointGetFirmwareAddrFromList(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_UFO_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s returning %u (0x%x) as UFO addr for psSyncCheckpointInt<%p>",
-			__FUNCTION__,
+			__func__,
 			ui32Ret,
 			ui32Ret,
 			(void*)psSyncCheckpointInt));
@@ -1676,18 +1676,18 @@ SyncCheckpointGetId(PSYNC_CHECKPOINT psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_UFO_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s returning ID for sync checkpoint<%p>",
-				__FUNCTION__,
+				__func__,
 				(void*)psSyncCheckpointInt));
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s (validationCheck=0x%x)",
-				__FUNCTION__,
+				__func__,
 				psSyncCheckpointInt->ui32ValidationCheck));
 #endif
 		ui32Ret = psSyncCheckpointInt->ui32UID;
 #if (ENABLE_SYNC_CHECKPOINT_UFO_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s (ui32UID=0x%x)",
-				__FUNCTION__,
+				__func__,
 				psSyncCheckpointInt->ui32UID));
 #endif
 	}
@@ -1748,7 +1748,7 @@ void SyncCheckpointErrorFromUFO(PPVRSRV_DEVICE_NODE psDevNode,
 #if (ENABLE_SYNC_CHECKPOINT_UFO_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s called to error UFO with ui32FWAddr=%d",
-			__FUNCTION__,
+			__func__,
 			ui32FwAddr));
 #endif
 
@@ -1763,7 +1763,7 @@ void SyncCheckpointErrorFromUFO(PPVRSRV_DEVICE_NODE psDevNode,
 #if (ENABLE_SYNC_CHECKPOINT_UFO_DEBUG == 1)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s calling SyncCheckpointError for sync checkpoint <%p>",
-					__FUNCTION__,
+					__func__,
 					(void*)psSyncCheckpointInt));
 #endif
 			/* Mark as errored */
@@ -1783,7 +1783,7 @@ void SyncCheckpointRollbackFromUFO(PPVRSRV_DEVICE_NODE psDevNode, IMG_UINT32 ui3
 #if (ENABLE_SYNC_CHECKPOINT_UFO_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s called to rollback UFO with ui32FWAddr=0x%x",
-			__FUNCTION__,
+			__func__,
 			ui32FwAddr));
 #endif
 #if !defined(NO_HARDWARE)
@@ -1797,7 +1797,7 @@ void SyncCheckpointRollbackFromUFO(PPVRSRV_DEVICE_NODE psDevNode, IMG_UINT32 ui3
 #if ((ENABLE_SYNC_CHECKPOINT_UFO_DEBUG == 1)) || (ENABLE_SYNC_CHECKPOINT_ENQ_AND_SIGNAL_DEBUG == 1)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s called for psSyncCheckpointInt<%p> %d->%d",
-					__FUNCTION__,
+					__func__,
 					(void*)psSyncCheckpointInt,
 					OSAtomicRead(&psSyncCheckpointInt->hEnqueuedCCBCount),
 					OSAtomicRead(&psSyncCheckpointInt->hEnqueuedCCBCount)-1));
@@ -1850,12 +1850,12 @@ SyncCheckpointInit(PPVRSRV_DEVICE_NODE psDevNode)
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s FAILED to create psDevNode->hSyncCheckpointListLock",
-					__FUNCTION__));
+					__func__));
 		}
 	}
 	else
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s called but already initialised", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s called but already initialised", __func__));
 	}
 	return eError;
 }
@@ -1986,7 +1986,7 @@ SyncCheckpointRecordRemove(PSYNC_CHECKPOINT_RECORD_HANDLE hRecord)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: psDevNode->uiSyncCheckpointRecordFreeIdx out of range",
-				__FUNCTION__));
+				__func__));
 		psDevNode->uiSyncCheckpointRecordFreeIdx = 0;
 	}
 	ppFreedSync = &psDevNode->apsSyncCheckpointRecordsFreed[psDevNode->uiSyncCheckpointRecordFreeIdx];
@@ -2215,16 +2215,16 @@ static void _CheckDeferredCleanupList(_SYNC_CHECKPOINT_CONTEXT *psContext)
 	PVRSRV_DEVICE_NODE *psDevNode = (PVRSRV_DEVICE_NODE*)psContext->psDevNode;
 
 	/* Check the deferred cleanup list and free any sync checkpoints we can */
-	//PVR_DPF((PVR_DBG_ERROR, "%s acquiring hDeferredCleanupListLock for context<%p>, context->psContextCtl<%p>", __FUNCTION__, (void*)psContext, (void*)psContext->psContextCtl));
+	//PVR_DPF((PVR_DBG_ERROR, "%s acquiring hDeferredCleanupListLock for context<%p>, context->psContextCtl<%p>", __func__, (void*)psContext, (void*)psContext->psContextCtl));
 	OSLockAcquire(psContext->psContextCtl->hDeferredCleanupListLock);
 #if (ENABLE_SYNC_CHECKPOINT_DEFERRED_CLEANUP_DEBUG == 1)
-	PVR_DPF((PVR_DBG_ERROR, "%s called", __FUNCTION__));
+	PVR_DPF((PVR_DBG_ERROR, "%s called", __func__));
 #endif
 
 	if (dllist_is_empty(&psContext->psContextCtl->sDeferredCleanupListHead))
 	{
 #if (ENABLE_SYNC_CHECKPOINT_DEFERRED_CLEANUP_DEBUG == 1)
-		PVR_DPF((PVR_DBG_ERROR, "%s: Defer free list is empty", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Defer free list is empty", __func__));
 #endif
 	}
 
@@ -2257,7 +2257,7 @@ static void _CheckDeferredCleanupList(_SYNC_CHECKPOINT_CONTEXT *psContext)
 #if (ENABLE_SYNC_CHECKPOINT_DEFERRED_CLEANUP_DEBUG == 1)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s attempting to return sync(ID:%d),%p> to pool",
-					__FUNCTION__,
+					__func__,
 					psSyncCheckpointInt->ui32UID,
 					(void*)psSyncCheckpointInt));
 #endif
@@ -2266,14 +2266,14 @@ static void _CheckDeferredCleanupList(_SYNC_CHECKPOINT_CONTEXT *psContext)
 			{
 #if (SYNC_CHECKPOINT_POOL_SIZE > 0)
 #if (ENABLE_SYNC_CHECKPOINT_DEFERRED_CLEANUP_DEBUG == 1)
-				PVR_DPF((PVR_DBG_ERROR, "%s pool is full, so just free it", __FUNCTION__));
+				PVR_DPF((PVR_DBG_ERROR, "%s pool is full, so just free it", __func__));
 #endif
 #endif
 #if (ENABLE_SYNC_CHECKPOINT_DEFERRED_CLEANUP_DEBUG == 1)
 				PVR_DPF((PVR_DBG_ERROR,
 						"%s CALLING RA_Free(psSyncCheckpoint(ID:%d)<%p>), "
 						"psSubAllocRA=<%p>, ui32SpanAddr=0x%llx",
-						__FUNCTION__,
+						__func__,
 						psSyncCheckpointInt->ui32UID,
 						(void*)psSyncCheckpointInt,
 						(void*)psSyncCheckpointInt->psSyncCheckpointBlock->psContext->psSubAllocRA,
@@ -2287,7 +2287,7 @@ static void _CheckDeferredCleanupList(_SYNC_CHECKPOINT_CONTEXT *psContext)
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s psSyncCheckpoint '%s'' (ID:%d)<%p>), still pending (enq=%d,FWRef=%d)",
-					__FUNCTION__,
+					__func__,
 					psSyncCheckpointInt->azName,
 					psSyncCheckpointInt->ui32UID,
 					(void*)psSyncCheckpointInt,
@@ -2323,7 +2323,7 @@ static _SYNC_CHECKPOINT *_GetCheckpointFromPool(_SYNC_CHECKPOINT_CONTEXT *psCont
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s checkpoint(old ID:%d)<-POOL(%d/%d), psContext=<%p>, poolRp=%d, poolWp=%d",
-				__FUNCTION__,
+				__func__,
 				psSyncCheckpoint->ui32UID,
 				psContext->psContextCtl->ui32SyncCheckpointPoolCount,
 				SYNC_CHECKPOINT_POOL_SIZE,
@@ -2363,7 +2363,7 @@ static IMG_BOOL _PutCheckpointInPool(_SYNC_CHECKPOINT *psSyncCheckpoint)
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s checkpoint(ID:%d)->POOL(%d/%d), poolRp=%d, poolWp=%d",
-				__FUNCTION__,
+				__func__,
 				psSyncCheckpoint->ui32UID,
 				psContext->psContextCtl->ui32SyncCheckpointPoolCount,
 				SYNC_CHECKPOINT_POOL_SIZE, psContext->psContextCtl->ui32SyncCheckpointPoolRp, psContext->psContextCtl->ui32SyncCheckpointPoolWp));
@@ -2386,7 +2386,7 @@ static IMG_UINT32 _CleanCheckpointPool(_SYNC_CHECKPOINT_CONTEXT *psContext)
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
 	PVR_DPF((PVR_DBG_ERROR,
 			"%s psContext=<%p>, bSyncCheckpointPoolValid=%d, uiSyncCheckpointPoolCount=%d",
-			__FUNCTION__,
+			__func__,
 			(void*)psContext,
 			psContext->psContextCtl->bSyncCheckpointPoolValid,
 			psContext->psContextCtl->ui32SyncCheckpointPoolCount));
@@ -2413,25 +2413,25 @@ static IMG_UINT32 _CleanCheckpointPool(_SYNC_CHECKPOINT_CONTEXT *psContext)
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
 				PVR_DPF((PVR_DBG_ERROR,
 						"%s pool contains invalid entry (ui32ValidationCheck=0x%x)",
-						__FUNCTION__,
+						__func__,
 						psSyncCheckpointInt->ui32ValidationCheck));
 #endif
 			}
 
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
-			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint(ID:%d)", __FUNCTION__, psSyncCheckpointInt->ui32UID));
-			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->ui32ValidationCheck=0x%x", __FUNCTION__, psSyncCheckpointInt->ui32ValidationCheck));
-			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->uiSpanAddr=0x%llx", __FUNCTION__, psSyncCheckpointInt->uiSpanAddr));
-			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->psSyncCheckpointBlock=<%p>", __FUNCTION__, (void*)psSyncCheckpointInt->psSyncCheckpointBlock));
-			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->psSyncCheckpointBlock->psContext=<%p>", __FUNCTION__, (void*)psSyncCheckpointInt->psSyncCheckpointBlock->psContext));
-			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->psSyncCheckpointBlock->psContext->psSubAllocRA=<%p>", __FUNCTION__, (void*)psSyncCheckpointInt->psSyncCheckpointBlock->psContext->psSubAllocRA));
+			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint(ID:%d)", __func__, psSyncCheckpointInt->ui32UID));
+			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->ui32ValidationCheck=0x%x", __func__, psSyncCheckpointInt->ui32ValidationCheck));
+			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->uiSpanAddr=0x%llx", __func__, psSyncCheckpointInt->uiSpanAddr));
+			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->psSyncCheckpointBlock=<%p>", __func__, (void*)psSyncCheckpointInt->psSyncCheckpointBlock));
+			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->psSyncCheckpointBlock->psContext=<%p>", __func__, (void*)psSyncCheckpointInt->psSyncCheckpointBlock->psContext));
+			PVR_DPF((PVR_DBG_ERROR, "%s psSyncCheckpoint->psSyncCheckpointBlock->psContext->psSubAllocRA=<%p>", __func__, (void*)psSyncCheckpointInt->psSyncCheckpointBlock->psContext->psSubAllocRA));
 #endif
 			OSAtomicDecrement(&psContext->hCheckpointCount);
 			psSyncCheckpointInt->ui32ValidationCheck = SYNC_CHECKPOINT_PATTERN_FREED;
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s CALLING RA_Free(psSyncCheckpoint(ID:%d)<%p>), psSubAllocRA=<%p>, ui32SpanAddr=0x%llx",
-					__FUNCTION__,
+					__func__,
 					psSyncCheckpointInt->ui32UID,
 					(void*)psSyncCheckpointInt,
 					(void*)psSyncCheckpointInt->psSyncCheckpointBlock->psContext->psSubAllocRA,
@@ -2444,7 +2444,7 @@ static IMG_UINT32 _CleanCheckpointPool(_SYNC_CHECKPOINT_CONTEXT *psContext)
 		else
 		{
 #if (ENABLE_SYNC_CHECKPOINT_POOL_DEBUG == 1)
-			PVR_DPF((PVR_DBG_ERROR, "%s pool contains NULL entry", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s pool contains NULL entry", __func__));
 #endif
 		}
 	}

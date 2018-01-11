@@ -29,9 +29,9 @@
 #ifdef CAM_CAL_DEBUG
 #define PFX "cat2416c"
 
-#define CAM_CALINF(fmt, arg...)    pr_debug("[%s] " fmt, __FUNCTION__, ##arg)
-#define CAM_CALDB(fmt, arg...)    pr_debug("[%s] " fmt, __FUNCTION__, ##arg)
-#define CAM_CALERR(fmt, arg...)    pr_err("[%s] " fmt, __FUNCTION__, ##arg)
+#define CAM_CALINF(fmt, arg...)    pr_debug("[%s] " fmt, __func__, ##arg)
+#define CAM_CALDB(fmt, arg...)    pr_debug("[%s] " fmt, __func__, ##arg)
+#define CAM_CALERR(fmt, arg...)    pr_err("[%s] " fmt, __func__, ##arg)
 #else
 #define CAM_CALDB(x,...)
 #endif

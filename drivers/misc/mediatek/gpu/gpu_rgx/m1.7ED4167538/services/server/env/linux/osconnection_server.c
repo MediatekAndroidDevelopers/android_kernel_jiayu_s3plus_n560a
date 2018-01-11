@@ -76,7 +76,7 @@ PVRSRV_ERROR OSConnectionPrivateDataInit(IMG_HANDLE *phOsPrivateData, void *pvOS
 
 	if (*phOsPrivateData == NULL)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: OSAllocMem failed", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: OSAllocMem failed", __func__));
 		return PVRSRV_ERROR_OUT_OF_MEMORY;
 	}
 
@@ -92,7 +92,7 @@ PVRSRV_ERROR OSConnectionPrivateDataInit(IMG_HANDLE *phOsPrivateData, void *pvOS
 	psIonConnection = (ENV_ION_CONNECTION_DATA *)OSAllocZMem(sizeof(ENV_ION_CONNECTION_DATA));
 	if (psIonConnection == NULL)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: OSAllocMem failed", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: OSAllocMem failed", __func__));
 		return PVRSRV_ERROR_OUT_OF_MEMORY;
 	}
 

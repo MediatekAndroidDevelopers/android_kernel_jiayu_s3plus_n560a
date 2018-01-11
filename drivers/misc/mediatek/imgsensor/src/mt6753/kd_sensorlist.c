@@ -79,7 +79,7 @@ static struct i2c_board_info i2c_devs2 __initdata = {I2C_BOARD_INFO(CAMERA_HW_DR
 #define PFX "[kd_sensorlist]"
 #define PK_DBG_NONE(fmt, arg...)    do {} while (0)
 #define PK_DBG_FUNC(fmt, arg...)    pr_debug(fmt, ##arg)
-#define PK_INF(fmt, args...)     pr_debug(PFX "[%s] " fmt, __FUNCTION__, ##args)
+#define PK_INF(fmt, args...)     pr_debug(PFX "[%s] " fmt, __func__, ##args)
 
 #undef DEBUG_CAMERA_HW_K
 /* #define DEBUG_CAMERA_HW_K */
@@ -670,8 +670,8 @@ int iWriteRegI2C(u8 *a_pSendData , u16 a_sizeSendData, u16 i2cId)
 /*******************************************************************************
 * sensor function adapter
 ********************************************************************************/
-#define KD_MULTI_FUNCTION_ENTRY()   /* PK_XLOG_INFO("[%s]:E\n",__FUNCTION__) */
-#define KD_MULTI_FUNCTION_EXIT()    /* PK_XLOG_INFO("[%s]:X\n",__FUNCTION__) */
+#define KD_MULTI_FUNCTION_ENTRY()   /* PK_XLOG_INFO("[%s]:E\n",__func__) */
+#define KD_MULTI_FUNCTION_EXIT()    /* PK_XLOG_INFO("[%s]:X\n",__func__) */
 /*  */
 MUINT32
 kdSetI2CSlaveID(MINT32 i, MUINT32 socketIdx, MUINT32 firstSet) {
@@ -1033,7 +1033,7 @@ u32 i = 0;
 
     for (i = KDIMGSENSOR_INVOKE_DRIVER_0; i < KDIMGSENSOR_MAX_INVOKE_DRIVERS; i++) {
     if (g_bEnableDriver[i]) {
-        /* PK_XLOG_INFO("[%s][%d][%d][%s][%s]\r\n",__FUNCTION__,g_bEnableDriver[i],socketIdx[i],sensorNameStr[i],mode_name); */
+        /* PK_XLOG_INFO("[%s][%d][%d][%s][%s]\r\n",__func__,g_bEnableDriver[i],socketIdx[i],sensorNameStr[i],mode_name); */
 #ifndef CONFIG_FPGA_EARLY_PORTING
         ret = kdCISModulePowerOn(socketIdx[i], sensorNameStr[i], On, mode_name);
 #endif

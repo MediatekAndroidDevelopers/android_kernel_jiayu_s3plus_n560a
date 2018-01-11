@@ -87,7 +87,7 @@ PVRSRV_ERROR RGXKickSyncKM(PVRSRV_DEVICE_NODE        *psDeviceNode,
 	{
 		if (!(paui32ServerSyncFlags[i] & PVRSRV_CLIENT_SYNC_PRIM_OP_CHECK))
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Server fence (on %s) must fence", __FUNCTION__, pszCommandName));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Server fence (on %s) must fence", __func__, pszCommandName));
 			return PVRSRV_ERROR_INVALID_SYNC_PRIM_OP;
 		}
 	}
@@ -175,7 +175,7 @@ PVRSRV_ERROR RGXKickSyncKM(PVRSRV_DEVICE_NODE        *psDeviceNode,
 	
 	if (eError2 != PVRSRV_OK)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s failed to schedule kernel CCB command. (0x%x)", __FUNCTION__, eError));
+		PVR_DPF((PVR_DBG_ERROR, "%s failed to schedule kernel CCB command. (0x%x)", __func__, eError));
 	}
 	/*
 	 * Now check eError (which may have returned an error from our earlier call

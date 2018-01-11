@@ -66,8 +66,8 @@ this source file refer to MT6572 platform
 #define LM3632_DEV_NAME "charge-pump"
 
 #define CPD_TAG                  "[chargepump] "
-#define CPD_FUN(f)               printk(CPD_TAG"%s\n", __FUNCTION__)
-#define CPD_ERR(fmt, args...)    printk(CPD_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define CPD_FUN(f)               printk(CPD_TAG"%s\n", __func__)
+#define CPD_ERR(fmt, args...)    printk(CPD_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define CPD_LOG(fmt, args...)    printk(CPD_TAG fmt, ##args)
 
 // I2C variable

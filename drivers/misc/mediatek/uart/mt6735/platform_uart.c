@@ -2138,7 +2138,7 @@ void mtk_uart_restore(void)
 
 void mtk_uart_switch_tx_to_gpio(struct mtk_uart *uart)
 {
-    printk(KERN_ERR "%s port:0x%x\n", __FUNCTION__, uart->nport);
+    printk(KERN_ERR "%s port:0x%x\n", __func__, uart->nport);
 #ifdef CONFIG_PM
 #ifndef CONFIG_MTK_FPGA
     switch(uart->nport){
@@ -2184,7 +2184,7 @@ void mtk_uart_switch_tx_to_gpio(struct mtk_uart *uart)
 /*---------------------------------------------------------------------------*/
 void mtk_uart_switch_to_tx(struct mtk_uart *uart)
 {
-    printk(KERN_ERR "%s port:0x%x\n", __FUNCTION__, uart->nport);
+    printk(KERN_ERR "%s port:0x%x\n", __func__, uart->nport);
 #ifdef CONFIG_PM
 #ifndef CONFIG_MTK_FPGA
     switch(uart->nport){
@@ -2226,7 +2226,7 @@ void mtk_uart_switch_to_tx(struct mtk_uart *uart)
 /*---------------------------------------------------------------------------*/
 void mtk_uart_switch_rx_to_gpio(struct mtk_uart *uart)
 {
-    printk(KERN_ERR "%s port:0x%x\n", __FUNCTION__, uart->nport);
+    printk(KERN_ERR "%s port:0x%x\n", __func__, uart->nport);
 #ifdef CONFIG_PM
 #ifndef CONFIG_MTK_FPGA
     switch(uart->nport){
@@ -2268,7 +2268,7 @@ void mtk_uart_switch_rx_to_gpio(struct mtk_uart *uart)
 /*---------------------------------------------------------------------------*/
 void mtk_uart_switch_to_rx(struct mtk_uart *uart)
 {
-    printk(KERN_ERR "%s port:0x%x\n", __FUNCTION__, uart->nport);
+    printk(KERN_ERR "%s port:0x%x\n", __func__, uart->nport);
 #ifdef CONFIG_PM
 #ifndef CONFIG_MTK_FPGA
     switch(uart->nport){

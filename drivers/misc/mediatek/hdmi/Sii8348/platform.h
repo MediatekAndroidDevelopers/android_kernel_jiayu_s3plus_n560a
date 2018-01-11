@@ -169,7 +169,7 @@ int is_interrupt_asserted(void);
 //#define	GPIO_LED_ON	0
 //#define	GPIO_LED_OFF	1
 //void set_pin_impl(void *dev_context, int pin_idx, int value,const char *function_name,int line_num);
-//#define set_pin(dev_context,pin_idx,value) set_pin_impl(dev_context, pin_idx, value,__FUNCTION__,__LINE__)
+//#define set_pin(dev_context,pin_idx,value) set_pin_impl(dev_context, pin_idx, value,__func__,__LINE__)
 /*
 typedef enum {
 

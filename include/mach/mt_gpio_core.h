@@ -24,7 +24,7 @@
 #define GPIOLOG(fmt, arg...)   printk(GPIOTAG fmt, ##arg)
 #define GPIOMSG(fmt, arg...)   printk(fmt, ##arg)
 #define GPIOERR(fmt, arg...)   printk(KERN_ERR GPIOTAG "%5d: "fmt, __LINE__, ##arg)
-#define GPIOFUC(fmt, arg...)	/* printk(GPIOTAG "%s\n", __FUNCTION__) */
+#define GPIOFUC(fmt, arg...)	/* printk(GPIOTAG "%s\n", __func__) */
 /*----------------------------------------------------------------------------*/
 /* Error Code No. */
 #define RSUCCESS        0

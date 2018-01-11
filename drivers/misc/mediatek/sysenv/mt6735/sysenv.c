@@ -409,7 +409,7 @@ write_env:
 	ret = write_env_area(env_buffer);
 	if (ret < 0) {
 		pr_err("[%s]%s error: write env area fail\n", 
-			MODULE_NAME, __FUNCTION__);
+			MODULE_NAME, __func__);
 		memset(env_buffer, 0x00, CFG_ENV_SIZE);
 		return -1;
 	}

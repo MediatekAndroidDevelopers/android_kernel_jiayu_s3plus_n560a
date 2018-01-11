@@ -139,7 +139,7 @@ static PVRSRV_ERROR AcquireHandle(HANDLE_IMPL_BASE *psBase,
 		if (result == -ENOSPC)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Limit of %u handles reached", 
-				 __FUNCTION__, psBase->ui32MaxHandleValue));
+				 __func__, psBase->ui32MaxHandleValue));
 
 			return PVRSRV_ERROR_UNABLE_TO_ADD_HANDLE;
 		}
@@ -192,7 +192,7 @@ static PVRSRV_ERROR ReleaseHandle(HANDLE_IMPL_BASE *psBase,
 	if (pvData == NULL)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Handle out of range (%u > %u)", 
-			 __FUNCTION__, id, psBase->ui32TotalHandCount));
+			 __func__, id, psBase->ui32TotalHandCount));
 		return PVRSRV_ERROR_HANDLE_INDEX_OUT_OF_RANGE;
 	}
 
@@ -358,7 +358,7 @@ static PVRSRV_ERROR CreateHandleBase(HANDLE_IMPL_BASE **ppsBase)
 	psBase = OSAllocZMem(sizeof(*psBase));
 	if (psBase == NULL)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Couldn't allocate generic handle base", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Couldn't allocate generic handle base", __func__));
 
 		return PVRSRV_ERROR_OUT_OF_MEMORY;
 	}
@@ -422,7 +422,7 @@ PVRSRV_ERROR PVRSRVHandleGetFuncTable(HANDLE_IMPL_FUNCTAB const **ppsFuncs)
 	if (bAcquired)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Function table already acquired", 
-			 __FUNCTION__));
+			 __func__));
 		return PVRSRV_ERROR_RESOURCE_UNAVAILABLE;
 	}
 

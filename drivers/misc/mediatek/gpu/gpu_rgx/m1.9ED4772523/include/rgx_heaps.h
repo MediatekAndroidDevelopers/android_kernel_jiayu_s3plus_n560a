@@ -141,7 +141,7 @@ static INLINE IMG_UINT32 RGXHeapDerivePageSize(IMG_UINT32 uiLog2PageSize)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: Provided incompatible log2 page size %u",
-				__FUNCTION__,
+				__func__,
 				uiLog2PageSize));
 		PVR_ASSERT(0);
 		return 0;

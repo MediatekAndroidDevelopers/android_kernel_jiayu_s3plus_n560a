@@ -270,7 +270,7 @@ struct leadingui_ts_data {
 
 #define LUI_TRACE_FUNC(fmt, args...)\
 	if (LEADINGUI_TRACE_FUNC) \
-		printk(KERN_ERR "[leadingui] [%s] " fmt, __FUNCTION__, ##args)
+		printk(KERN_ERR "[leadingui] [%s] " fmt, __func__, ##args)
 
 #define LUI_TRACE_POWER(fmt, args...)\
 	if (LEADINGUI_TRACE_POWER) \
@@ -281,11 +281,11 @@ struct leadingui_ts_data {
 		printk(KERN_ERR "[leadingui] " fmt, ##args)
 
 #define LUI_ERROR(fmt, args...)	\
-		printk(KERN_ERR "[leadingui] [%s %d] " fmt, __FUNCTION__, __LINE__, ##args)
+		printk(KERN_ERR "[leadingui] [%s %d] " fmt, __func__, __LINE__, ##args)
 
 #define LUI_WARNING(fmt, args...)	\
 	if (LEADINGUI_WARNING_MSG) \
-		printk(KERN_ERR "[leadingui] [%s %d] " fmt, __FUNCTION__, __LINE__, ##args)
+		printk(KERN_ERR "[leadingui] [%s %d] " fmt, __func__, __LINE__, ##args)
 
 #define LUI_INFO(fmt, args...)\
 	if (LEADINGUI_INFO) \

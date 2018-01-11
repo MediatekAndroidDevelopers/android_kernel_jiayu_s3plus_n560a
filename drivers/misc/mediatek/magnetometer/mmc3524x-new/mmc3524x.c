@@ -997,7 +997,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 
 			break;
 		default:
-             printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
              return -ENOIOCTLCMD;
 			break;
 		}
@@ -1023,7 +1023,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 	switch (cmd)
 	{
 		case COMPAT_MMC31XX_IOC_TM:
-             printk(KERN_ERR "%s test01 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test01 %04x", __func__, cmd);
 			data[0] = MMC3524X_REG_CTRL;
 			data[1] = MMC3524X_CTRL_TM;
 			if (I2C_TxData(data, 2) < 0)
@@ -1037,7 +1037,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 
 		case COMPAT_MMC31XX_IOC_SET:
 		case COMPAT_MMC31XX_IOC_RM:
-             printk(KERN_ERR "%s test02 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test02 %04x", __func__, cmd);
 			data[0] = MMC3524X_REG_CTRL;
 			data[1] = MMC3524X_CTRL_REFILL;
 			if(I2C_TxData(data, 2) < 0)
@@ -1069,7 +1069,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 
 		case COMPAT_MMC31XX_IOC_RESET:
 		case COMPAT_MMC31XX_IOC_RRM:
-             printk(KERN_ERR "%s test03 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test03 %04x", __func__, cmd);
 			data[0] = MMC3524X_REG_CTRL;
 			data[1] = MMC3524X_CTRL_REFILL;
 			if(I2C_TxData(data, 2) < 0)
@@ -1100,7 +1100,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_MMC31XX_IOC_READ:
-             printk(KERN_ERR "%s test04 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test04 %04x", __func__, cmd);
 			data[0] = MMC3524X_REG_DATA;
 			if(I2C_RxData(data, 6) < 0)
 			{
@@ -1127,7 +1127,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_MMC31XX_IOC_READXYZ:
-             printk(KERN_ERR "%s test05 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test05 %04x", __func__, cmd);
 			ECS_ReadXYZData(vec, 3);
 			if(copy_to_user(argp, vec, sizeof(vec)))
 			{
@@ -1137,7 +1137,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_MMC3524X_IOC_READ_REG:
-             printk(KERN_ERR "%s test06 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test06 %04x", __func__, cmd);
 		     printk("MMC3524X_IOC_READ_REG \n");
 			if (copy_from_user(&reg_addr, argp, sizeof(reg_addr)))
 				return -EFAULT;
@@ -1155,7 +1155,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_MMC3524X_IOC_WRITE_REG:
-             printk(KERN_ERR "%s test07 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test07 %04x", __func__, cmd);
 		     printk(" MMC3524X_IOC_WRITE_REG \n");
 			if (copy_from_user(&data, argp, sizeof(data)))
 			return -EFAULT;
@@ -1168,7 +1168,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 		    break; 
 
 		case COMPAT_MMC3524X_IOC_READ_REGS:
-             printk(KERN_ERR "%s test08 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test08 %04x", __func__, cmd);
 			printk(" MMC3524X_IOC_READ_REGS \n");
 			if (copy_from_user(&data, argp, sizeof(data)))
 				return -EFAULT;
@@ -1185,7 +1185,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break; 
 
 		case COMPAT_ECOMPASS_IOC_GET_DELAY:
-             printk(KERN_ERR "%s test09 %04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test09 %04x", __func__, cmd);
 			delay = mmcd_delay;
 			if(copy_to_user(argp, &delay, sizeof(delay)))
 			{
@@ -1195,7 +1195,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_ECOMPASS_IOC_SET_YPR:
-             printk(KERN_ERR "%s test011%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test011%04x", __func__, cmd);
 			if(argp == NULL)
 			{
 				MMCDBG("invalid argument.");
@@ -1210,7 +1210,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_ECOMPASS_IOC_GET_OPEN_STATUS:
-             printk(KERN_ERR "%s test012%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test012%04x", __func__, cmd);
 			status = ECS_GetOpenStatus();
 			if(copy_to_user(argp, &status, sizeof(status)))
 			{
@@ -1220,7 +1220,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_ECOMPASS_IOC_GET_MFLAG:
-             printk(KERN_ERR "%s test013%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test013%04x", __func__, cmd);
 			sensor_status = atomic_read(&m_flag);
 			if(copy_to_user(argp, &sensor_status, sizeof(sensor_status)))
 			{
@@ -1230,7 +1230,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_ECOMPASS_IOC_GET_OFLAG:
-             printk(KERN_ERR "%s test014%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test014%04x", __func__, cmd);
 			sensor_status = atomic_read(&o_flag);
 			if(copy_to_user(argp, &sensor_status, sizeof(sensor_status)))
 			{
@@ -1241,7 +1241,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 
 
 		case COMPAT_MSENSOR_IOCTL_READ_CHIPINFO:
-             printk(KERN_ERR "%s test015%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test015%04x", __func__, cmd);
 			if(argp == NULL)
 			{
 				printk(KERN_ERR "IO parameter pointer is NULL!\r\n");
@@ -1256,7 +1256,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_MSENSOR_IOCTL_READ_SENSORDATA:
-             printk(KERN_ERR "%s test016%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test016%04x", __func__, cmd);
 			if(argp == NULL)
 			{
 				printk(KERN_ERR "IO parameter pointer is NULL!\r\n");
@@ -1271,7 +1271,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_ECOMPASS_IOC_GET_LAYOUT:
-             printk(KERN_ERR "%s test017%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test017%04x", __func__, cmd);
 			status = atomic_read(&clientdata->layout);
 			if(copy_to_user(argp, &status, sizeof(status)))
 			{
@@ -1281,7 +1281,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_MSENSOR_IOCTL_SENSOR_ENABLE:
-             printk(KERN_ERR "%s test018%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test018%04x", __func__, cmd);
 
 			if(argp == NULL)
 			{
@@ -1316,7 +1316,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		case COMPAT_MSENSOR_IOCTL_READ_FACTORY_SENSORDATA:
-             printk(KERN_ERR "%s test019%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s test019%04x", __func__, cmd);
 			if(argp == NULL)
 			{
 				printk(KERN_ERR "IO parameter pointer is NULL!\r\n");
@@ -1343,7 +1343,7 @@ static long mmc3524x_compat_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		default:
-			printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;
 		}
@@ -1679,7 +1679,7 @@ static long mmc3524x_unlocked_ioctl(struct file *file, unsigned int cmd,unsigned
 			break;
 
 		default:
-			printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;
 		}

@@ -327,7 +327,7 @@ ssize_t mtk_uart_debug_store(struct kobject *kobj, const char *buffer, size_t si
     int res = sscanf(buffer, "0x%x 0x%x 0x%x 0x%x", &a, &b, &c, &d);
 
     if (res != 4) {
-        MSG_ERR("%s: expect 4 numbers\n", __FUNCTION__);
+        MSG_ERR("%s: expect 4 numbers\n", __func__);
     } else {
 	set_uart_evt_mask(0, a);
 	set_uart_evt_mask(1, b);
@@ -340,7 +340,7 @@ ssize_t mtk_uart_debug_store(struct kobject *kobj, const char *buffer, size_t si
     int res = sscanf(buffer, "0x%x 0x%x 0x%x 0x%x 0x%x", &a, &b, &c, &d, &e);
 
     if (res != 5) {
-        MSG_ERR("%s: expect 5 numbers\n", __FUNCTION__);
+        MSG_ERR("%s: expect 5 numbers\n", __func__);
     } else {
 	set_uart_evt_mask(0, a);
 	set_uart_evt_mask(1, b);
@@ -364,7 +364,7 @@ ssize_t mtk_uart_sysrq_store(struct kobject *kobj, const char *buffer, size_t si
     int res = sscanf(buffer, "%d\n", &a);
 
     if (res != 1) {
-        MSG_ERR("%s: expect 1 number\n", __FUNCTION__);
+        MSG_ERR("%s: expect 1 number\n", __func__);
     } else {
         atomic_set(&obj->sysrq, a);    
     }
@@ -392,9 +392,9 @@ ssize_t mtk_uart_vffsz_store(struct kobject *kobj, const char *buffer, size_t si
     int idx, sz;
 
     if (2 != sscanf(buffer, "%d %d", &idx, &sz)) {
-        MSG_ERR("%s: expect 2 variables\n", __FUNCTION__);    
+        MSG_ERR("%s: expect 2 variables\n", __func__);    
     } else if (idx >= ARRAY_SIZE(obj->vffLen) || (sz%8 != 0)) {
-        MSG_ERR("%s: invalid args %d, %d\n", __FUNCTION__, idx, sz);        
+        MSG_ERR("%s: invalid args %d, %d\n", __func__, idx, sz);        
     } else {
         atomic_set(&obj->vffLen[idx], sz);    
     }
@@ -414,7 +414,7 @@ ssize_t mtk_uart_conse_store(struct kobject *kobj, const char *buffer, size_t si
     int enable;
 
     if (1 != sscanf(buffer, "%d", &enable)) {
-        MSG_ERR("%s: expect 1 variables\n", __FUNCTION__);    
+        MSG_ERR("%s: expect 1 variables\n", __func__);    
     } else {
         atomic_set(&obj->console_enable, enable);    
     }
@@ -455,7 +455,7 @@ ssize_t mtk_uart_vff_en_store(struct kobject *kobj, const char *buffer, size_t s
     			&u1_tx, &u1_rx, &u2_tx, &u2_rx, &u3_tx, &u3_rx, &u4_tx, &u4_rx);
 
     if (res != 8) {
-        MSG_ERR("%s: expect 8 numbers\n", __FUNCTION__);
+        MSG_ERR("%s: expect 8 numbers\n", __func__);
     } else {
 	uart_setting = get_uart_default_settings(0);
         uart_setting->tx_mode = u1_tx;
@@ -478,7 +478,7 @@ ssize_t mtk_uart_vff_en_store(struct kobject *kobj, const char *buffer, size_t s
     			&u1_tx, &u1_rx, &u2_tx, &u2_rx, &u3_tx, &u3_rx, &u4_tx, &u4_rx, &u5_tx, &u5_rx);
 
     if (res != 8) {
-        MSG_ERR("%s: expect 8 numbers\n", __FUNCTION__);
+        MSG_ERR("%s: expect 8 numbers\n", __func__);
     } else {
         uart_setting = get_uart_default_settings(0);
         uart_setting->tx_mode = u1_tx;
@@ -536,7 +536,7 @@ ssize_t mtk_uart_lsr_status_store(struct kobject *kobj, const char *buffer, size
     			&u1_lsr, &u2_lsr, &u3_lsr, &u4_lsr);
 
     if (res != 4) {
-        MSG_ERR("%s: expect 4 numbers\n", __FUNCTION__);
+        MSG_ERR("%s: expect 4 numbers\n", __func__);
     } else {
 	set_uart_lsr_status(0, u1_lsr);
 	set_uart_lsr_status(1, u2_lsr);
@@ -550,7 +550,7 @@ ssize_t mtk_uart_lsr_status_store(struct kobject *kobj, const char *buffer, size
     			&u1_lsr, &u2_lsr, &u3_lsr, &u4_lsr, &u5_lsr);
 
     if (res != 5) {
-        MSG_ERR("%s: expect 5 numbers\n", __FUNCTION__);
+        MSG_ERR("%s: expect 5 numbers\n", __func__);
     } else {
     	set_uart_lsr_status(0, u1_lsr);
 	    set_uart_lsr_status(1, u2_lsr);
@@ -1540,7 +1540,7 @@ static void mtk_uart_rx_chars(struct mtk_uart *uart)
     tty_flip_buffer_push(TTY_FLIP_ARG(tty));
 	update_history_time(0, uart->nport);
     spin_unlock_irqrestore(&port->lock, flags);  
-    MSG(FUC, "%s (%2d)\n", __FUNCTION__, UART_FIFO_SIZE - max_count - 1);
+    MSG(FUC, "%s (%2d)\n", __func__, UART_FIFO_SIZE - max_count - 1);
 #if defined(CONFIG_MTK_HDMI_SUPPORT)
 #ifdef MHL_UART_SHARE_PIN
     if((UART_FIFO_SIZE - max_count - 1) > 0)

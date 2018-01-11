@@ -224,7 +224,7 @@ static int load_bmt_data(int start, int pool_size)
     phys_bmt_struct phys_table;
     int i;
 
-    MSG(INIT, "[%s]: begin to search BMT from block 0x%x\n", __FUNCTION__, bmt_index);
+    MSG(INIT, "[%s]: begin to search BMT from block 0x%x\n", __func__, bmt_index);
 
     for (bmt_index = start + pool_size - 1; bmt_index >= start; bmt_index--)
     {

@@ -75,7 +75,7 @@ PVRSRV_ERROR OSCPUOperation(PVRSRV_CACHE_OP uiCacheOp)
 		default:
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s: Global cache operation type %d is invalid",
-					__FUNCTION__, uiCacheOp));
+					__func__, uiCacheOp));
 			eError = PVRSRV_ERROR_INVALID_PARAMS;
 			PVR_ASSERT(0);
 			break;

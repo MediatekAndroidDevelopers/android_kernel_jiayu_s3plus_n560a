@@ -177,7 +177,7 @@ static INLINE void _DevmemIntCtxRelease(DEVMEMINT_CTX *psDevmemCtx)
 		}
 		MMU_ContextDestroy(psDevmemCtx->psMMUContext);
 
-		PVR_DPF((PVR_DBG_MESSAGE, "%s: Freed memory context %p", __FUNCTION__, psDevmemCtx));
+		PVR_DPF((PVR_DBG_MESSAGE, "%s: Freed memory context %p", __func__, psDevmemCtx));
 		OSFreeMem(psDevmemCtx);
 	}
 }
@@ -367,7 +367,7 @@ DevmemIntCtxCreate(CONNECTION_DATA *psConnection,
 	}
 
 
-	PVR_DPF((PVR_DBG_MESSAGE, "%s", __FUNCTION__));
+	PVR_DPF((PVR_DBG_MESSAGE, "%s", __func__));
 	PVR_UNREFERENCED_PARAMETER(psConnection);
 
 	/* allocate a Devmem context */
@@ -375,7 +375,7 @@ DevmemIntCtxCreate(CONNECTION_DATA *psConnection,
 	if (psDevmemCtx == NULL)
 	{
 		eError = PVRSRV_ERROR_OUT_OF_MEMORY;
-		PVR_DPF ((PVR_DBG_ERROR, "%s: Alloc failed", __FUNCTION__));
+		PVR_DPF ((PVR_DBG_ERROR, "%s: Alloc failed", __func__));
 		goto fail_alloc;
 	}
 
@@ -389,7 +389,7 @@ DevmemIntCtxCreate(CONNECTION_DATA *psConnection,
 	                           psMMUDevAttrs);
 	if (eError != PVRSRV_OK)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: MMU_ContextCreate failed", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: MMU_ContextCreate failed", __func__));
 		goto fail_mmucontext;
 	}
 
@@ -399,7 +399,7 @@ DevmemIntCtxCreate(CONNECTION_DATA *psConnection,
 		eError = psDeviceNode->pfnRegisterMemoryContext(psDeviceNode, psDevmemCtx->psMMUContext, &hPrivDataInt);
 		if (eError != PVRSRV_OK)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to register MMU context", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to register MMU context", __func__));
 			goto fail_register;
 		}
 	}
@@ -444,14 +444,14 @@ DevmemIntHeapCreate(DEVMEMINT_CTX *psDevmemCtx,
 	PVRSRV_ERROR eError;
 	DEVMEMINT_HEAP *psDevmemHeap;
 
-	PVR_DPF((PVR_DBG_MESSAGE, "%s: DevmemIntHeap_Create", __FUNCTION__));
+	PVR_DPF((PVR_DBG_MESSAGE, "%s: DevmemIntHeap_Create", __func__));
 
 	/* allocate a Devmem context */
 	psDevmemHeap = OSAllocMem(sizeof *psDevmemHeap);
 	if (psDevmemHeap == NULL)
 	{
 		eError = PVRSRV_ERROR_OUT_OF_MEMORY;
-		PVR_DPF ((PVR_DBG_ERROR, "%s: Alloc failed", __FUNCTION__));
+		PVR_DPF ((PVR_DBG_ERROR, "%s: Alloc failed", __func__));
 		goto fail_alloc;
 	}
 
@@ -798,7 +798,7 @@ DevmemIntUnmapPMR(DEVMEMINT_MAPPING *psMapping)
 	if (iErr)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to unmap PMR from device (errno=%d)",
-				 __FUNCTION__, iErr));
+				 __func__, iErr));
 
 		return PVRSRV_ERROR_STILL_MAPPED;
 	}
@@ -935,7 +935,7 @@ DevmemIntHeapDestroy(DEVMEMINT_HEAP *psDevmemHeap)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "BUG!  %s called but has too many references (%d) "
 		         "which probably means allocations have been made from the heap and not freed",
-		         __FUNCTION__,
+		         __func__,
 		         OSAtomicRead(&psDevmemHeap->hRefCount)));
 
 		/*
@@ -956,7 +956,7 @@ DevmemIntHeapDestroy(DEVMEMINT_HEAP *psDevmemHeap)
 
 	_DevmemIntCtxRelease(psDevmemHeap->psDevmemCtx);
 
-	PVR_DPF((PVR_DBG_MESSAGE, "%s: Freed heap %p", __FUNCTION__, psDevmemHeap));
+	PVR_DPF((PVR_DBG_MESSAGE, "%s: Freed heap %p", __func__, psDevmemHeap));
 	OSFreeMem(psDevmemHeap);
 
 	return PVRSRV_OK;

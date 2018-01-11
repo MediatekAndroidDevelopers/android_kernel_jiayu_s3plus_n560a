@@ -24,8 +24,8 @@
 
 #define __MSG_DMA_MODE__
 
-#define	FUNC_START		TPD_DEBUG("[%s] begin\n", __FUNCTION__);
-#define	FUNC_END		TPD_DEBUG("[%s] end  \n", __FUNCTION__);
+#define	FUNC_START		TPD_DEBUG("[%s] begin\n", __func__);
+#define	FUNC_END		TPD_DEBUG("[%s] end  \n", __func__);
 
 extern void tpd_hw_enable(void);
 extern void tpd_hw_disable(void);

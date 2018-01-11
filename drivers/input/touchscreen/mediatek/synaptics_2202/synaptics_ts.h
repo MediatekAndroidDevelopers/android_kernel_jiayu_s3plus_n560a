@@ -42,13 +42,13 @@
 #endif
 
 #if defined(SYNAPTICS_RMI4_I2C_DEBUG_PRINT)
-#define SYNAPTICS_DEBUG_MSG(fmt, args...) printk(KERN_ERR "[Touch D] [%s %d] " fmt, __FUNCTION__, __LINE__, ##args);
+#define SYNAPTICS_DEBUG_MSG(fmt, args...) printk(KERN_ERR "[Touch D] [%s %d] " fmt, __func__, __LINE__, ##args);
 #else
 #define SYNAPTICS_DEBUG_MSG(fmt, args...) {};
 #endif
 
 #if defined(SYNAPTICS_RMI4_I2C_ERROR_PRINT)
-#define SYNAPTICS_ERR_MSG(fmt, args...) printk(KERN_ERR "[Touch E] [%s %d] " fmt, __FUNCTION__, __LINE__, ##args);
+#define SYNAPTICS_ERR_MSG(fmt, args...) printk(KERN_ERR "[Touch E] [%s %d] " fmt, __func__, __LINE__, ##args);
 #else
 #define SYNAPTICS_ERR_MSG(fmt, args...) {};
 #endif

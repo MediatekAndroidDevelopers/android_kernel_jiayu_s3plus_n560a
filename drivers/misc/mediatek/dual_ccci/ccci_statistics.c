@@ -81,7 +81,7 @@ static int s_to_date(    long seconds, long usec, int *us, int *sec, int *min, i
 
     if(!sec || !min || !hour || !day || !month || !year)
     {
-        CCCI_MSG("<ctl>%s invalid param!\n", __FUNCTION__);
+        CCCI_MSG("<ctl>%s invalid param!\n", __func__);
         return (-1);
     }
 

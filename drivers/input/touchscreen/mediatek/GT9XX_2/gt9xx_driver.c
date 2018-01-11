@@ -2766,9 +2766,9 @@ static int tpd_local_init(void)
     tpd->dev->id.product = tpd_info.pid;
     tpd->dev->id.version = tpd_info.vid;
 
-    GTP_INFO("end %s, %d\n", __FUNCTION__, __LINE__);
+    GTP_INFO("end %s, %d\n", __func__, __LINE__);
     tpd_type_cap = 1;
-	printk("end %s, %d\n", __FUNCTION__, __LINE__);
+	printk("end %s, %d\n", __func__, __LINE__);
     return 0;
 }
 

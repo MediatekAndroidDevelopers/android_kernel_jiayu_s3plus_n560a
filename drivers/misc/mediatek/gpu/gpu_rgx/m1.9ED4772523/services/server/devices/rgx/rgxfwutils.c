@@ -699,7 +699,7 @@ PVRSRV_ERROR FWCommonContextAllocate(CONNECTION_DATA *psConnection,
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"%s : Failed to allocate firmware %s context (%s)",
-									__FUNCTION__,
+									__func__,
 									aszCCBRequestors[eRGXCCBRequestor][REQ_PDUMP_COMMENT],
 									PVRSRVGetErrorStringKM(eError)));
 			goto fail_contextalloc;
@@ -725,7 +725,7 @@ PVRSRV_ERROR FWCommonContextAllocate(CONNECTION_DATA *psConnection,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: failed to create CCB for %s context(%s)",
-								__FUNCTION__,
+								__func__,
 								aszCCBRequestors[eRGXCCBRequestor][REQ_PDUMP_COMMENT],
 								PVRSRVGetErrorStringKM(eError)));
 		goto fail_allocateccb;
@@ -739,7 +739,7 @@ PVRSRV_ERROR FWCommonContextAllocate(CONNECTION_DATA *psConnection,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to map firmware %s context (%s)to CPU",
-								__FUNCTION__,
+								__func__,
 								aszCCBRequestors[eRGXCCBRequestor][REQ_PDUMP_COMMENT],
 								PVRSRVGetErrorStringKM(eError)));
 		goto fail_cpuvirtacquire;
@@ -1604,7 +1604,7 @@ PVRSRV_ERROR RGXTraceBufferInitOnDemandResources(PVRSRV_RGXDEV_INFO *psDevInfo)
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"%s: Failed to allocate %zu bytes for fw trace buffer %u (Error code:%u)",
-					__FUNCTION__,
+					__func__,
 					RGXFW_TRACE_BUFFER_SIZE * sizeof(*(psTraceBufCtl->sTraceBuf[ui32FwThreadNum].pui32TraceBuffer)),
 					ui32FwThreadNum,
 					eError));
@@ -1624,7 +1624,7 @@ PVRSRV_ERROR RGXTraceBufferInitOnDemandResources(PVRSRV_RGXDEV_INFO *psDevInfo)
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"%s: Failed to acquire kernel tracebuf (%u) ctl (Error code: %u)",
-					__FUNCTION__, ui32FwThreadNum, eError));
+					__func__, ui32FwThreadNum, eError));
 			goto fail;
 		}
 	}
@@ -1718,7 +1718,7 @@ static PVRSRV_ERROR RGXSetupOSConfig(PVRSRV_RGXDEV_INFO *psDevInfo,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 			"%s: Failed to get Sync Prim FW address with error (%u)",
-			__FUNCTION__, eError));
+			__func__, eError));
 		goto fail2;
 	}
 
@@ -3958,7 +3958,7 @@ PVRSRV_ERROR RGXWaitForFWOp(PVRSRV_RGXDEV_INFO	*psDevInfo,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: failed to acquire powerlock (%s)",
-					__FUNCTION__,
+					__func__,
 					PVRSRVGetErrorStringKM(eError)));
 
 		goto _PVRSRVPowerLock_Exit;
@@ -3973,7 +3973,7 @@ PVRSRV_ERROR RGXWaitForFWOp(PVRSRV_RGXDEV_INFO	*psDevInfo,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: failed to transition Rogue to ON (%s)",
-					__FUNCTION__,
+					__func__,
 					PVRSRVGetErrorStringKM(eError)));
 
 		goto _PVRSRVSetDevicePowerStateKM_Exit;
@@ -3984,7 +3984,7 @@ PVRSRV_ERROR RGXWaitForFWOp(PVRSRV_RGXDEV_INFO	*psDevInfo,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to set SyncPrim (%u)",
-			__FUNCTION__, eError));
+			__func__, eError));
 		goto _SyncPrimSet_Exit;
 	}
 
@@ -3994,7 +3994,7 @@ PVRSRV_ERROR RGXWaitForFWOp(PVRSRV_RGXDEV_INFO	*psDevInfo,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to get SyncPrim FW address(%u)",
-			__FUNCTION__, eError));
+			__func__, eError));
 		goto _SyncPrimGetFirmwareAddr_Exit;
 	}
 	sCmdSyncPrim.eCmdType = RGXFWIF_KCCB_CMD_SYNC;
@@ -4012,7 +4012,7 @@ PVRSRV_ERROR RGXWaitForFWOp(PVRSRV_RGXDEV_INFO	*psDevInfo,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to schedule Kernel SyncPrim with error (%u)",
-					__FUNCTION__,
+					__func__,
 					eError));
 		goto _RGXSendCommandRaw_Exit;
 	}
@@ -4052,7 +4052,7 @@ PVRSRV_ERROR RGXWaitForFWOp(PVRSRV_RGXDEV_INFO	*psDevInfo,
 		if (eError == PVRSRV_ERROR_TIMEOUT)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"%s: PVRSRVWaitForValueKMAndHoldBridgeLock timed out. Dump debug information.",
-					__FUNCTION__));
+					__func__));
 			PVRSRVPowerUnlock(psDeviceNode);
 
 			PVRSRVDebugRequest(psDeviceNode, DEBUG_REQUEST_VERBOSITY_MAX, NULL, NULL);
@@ -4728,7 +4728,7 @@ PVRSRV_ERROR ContextSetPriority(RGX_SERVER_COMMON_CONTEXT *psContext,
 	{
 		if (eError != PVRSRV_ERROR_RETRY)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to acquire space for client CCB", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to acquire space for client CCB", __func__));
 		}
 		goto fail_ccbacquire;
 	}
@@ -4761,7 +4761,7 @@ PVRSRV_ERROR ContextSetPriority(RGX_SERVER_COMMON_CONTEXT *psContext,
 
 	if (eError != PVRSRV_OK)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to release space in client CCB", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to release space in client CCB", __func__));
 		return eError;
 	}
 
@@ -5368,7 +5368,7 @@ PVRSRV_ERROR IMG_CALLCONV RGXClientConnectCompatCheck_ClientAgainstFW(PVRSRV_DEV
 	if (psDevInfo == NULL || psDevInfo->psRGXFWIfInitMemDesc == NULL)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Cannot acquire kernel fw compatibility check info, RGXFWIF_INIT structure not allocated.",
-				__FUNCTION__));
+				__func__));
 		return PVRSRV_ERROR_NOT_INITIALISED;
 	}
 
@@ -5377,7 +5377,7 @@ PVRSRV_ERROR IMG_CALLCONV RGXClientConnectCompatCheck_ClientAgainstFW(PVRSRV_DEV
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to acquire kernel fw compatibility check info (%u)",
-				__FUNCTION__, eError));
+				__func__, eError));
 		return eError;
 	}
 

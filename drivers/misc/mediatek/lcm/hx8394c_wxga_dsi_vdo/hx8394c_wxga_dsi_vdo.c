@@ -37,17 +37,17 @@
 
 #define LCM_ALOGD(fmt, ...) \
     do { \
-        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-dbg-%s>> [%04d] [@%s] " fmt "\n", LCM_MODULE_PART, __LINE__, __FUNCTION__,##__VA_ARGS__); \
+        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-dbg-%s>> [%04d] [@%s] " fmt "\n", LCM_MODULE_PART, __LINE__, __func__,##__VA_ARGS__); \
     } while (0)
 
 #define LCM_ALOGE(fmt, ...) \
     do { \
-        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-err-%s>> [%04d] [@%s] " fmt "\n", LCM_MODULE_PART, __LINE__, __FUNCTION__,##__VA_ARGS__); \
+        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-err-%s>> [%04d] [@%s] " fmt "\n", LCM_MODULE_PART, __LINE__, __func__,##__VA_ARGS__); \
     } while (0)
 
 #define LCM_ALOGF() \
     do { \
-        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-fun-%s>> [%04d] [@%s] %s() is call!\n", LCM_MODULE_PART, __LINE__, __FUNCTION__, __FUNCTION__); \
+        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-fun-%s>> [%04d] [@%s] %s() is call!\n", LCM_MODULE_PART, __LINE__, __func__, __func__); \
     } while (0)
 
 #else
@@ -56,7 +56,7 @@
 #define LCM_ALOGD(fmt, ...)              do {} while (0)
 #define LCM_ALOGE(fmt, ...) \
     do { \
-        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-err-%s>> [%04d] [@%s] " fmt "\n", LCM_MODULE_PART, __LINE__, __FUNCTION__,##__VA_ARGS__); \
+        PRINT_FUN(LCM_LOG_LEVEL "<<-" LCM_PREFIX "-err-%s>> [%04d] [@%s] " fmt "\n", LCM_MODULE_PART, __LINE__, __func__,##__VA_ARGS__); \
     } while (0)
 
 #endif

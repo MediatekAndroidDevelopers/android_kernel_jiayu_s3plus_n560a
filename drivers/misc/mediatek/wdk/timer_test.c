@@ -468,7 +468,7 @@ void cpuxgpt_run_case(int testcase)
 			generic_timer_ppi_check();
 			break;	
 		default:
-			printk("[%s] invalid testcase\n", __FUNCTION__);			
+			printk("[%s] invalid testcase\n", __func__);			
 	}
 	test_case = 0;
 }

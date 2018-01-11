@@ -1294,7 +1294,7 @@ static struct early_suspend kick_compaction_early_suspend_desc = {
 
 static int __init compaction_init(void)
 {
-	printk("@@@@@@ [%s] Register early suspend callback @@@@@@\n",__FUNCTION__);
+	printk("@@@@@@ [%s] Register early suspend callback @@@@@@\n",__func__);
  #ifdef CONFIG_EARLYSUSPEND
 	register_early_suspend(&kick_compaction_early_suspend_desc);
  #endif
@@ -1302,7 +1302,7 @@ static int __init compaction_init(void)
 }
 static void __exit compaction_exit(void)
 {
-	printk("@@@@@@ [%s] Unregister early suspend callback @@@@@@\n",__FUNCTION__);
+	printk("@@@@@@ [%s] Unregister early suspend callback @@@@@@\n",__func__);
   #ifdef CONFIG_EARLYSUSPEND
 	unregister_early_suspend(&kick_compaction_early_suspend_desc);
   #endif

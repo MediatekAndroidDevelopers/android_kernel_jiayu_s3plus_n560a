@@ -56,8 +56,8 @@
 #define AMI304_AXES_NUM          3
 /*----------------------------------------------------------------------------*/
 #define MSE_TAG                  "MSENSOR"
-#define MSE_FUN(f)               printk(KERN_INFO MSE_TAG" %s\r\n", __FUNCTION__)
-#define MSE_ERR(fmt, args...)    printk(KERN_ERR MSE_TAG" %s %d : \r\n"fmt, __FUNCTION__, __LINE__, ##args)
+#define MSE_FUN(f)               printk(KERN_INFO MSE_TAG" %s\r\n", __func__)
+#define MSE_ERR(fmt, args...)    printk(KERN_ERR MSE_TAG" %s %d : \r\n"fmt, __func__, __LINE__, ##args)
 #define MSE_LOG(fmt, args...)    printk(KERN_INFO MSE_TAG fmt, ##args)
 #define MSE_VER(fmt, args...)   ((void)0)
 static DECLARE_WAIT_QUEUE_HEAD(data_ready_wq);
@@ -960,7 +960,7 @@ static long ami304_unlocked_ioctl(struct file *file, unsigned int cmd,
 			break;
 		    
 		default:
-			MSE_ERR("%s not supported = 0x%04x", __FUNCTION__, cmd);
+			MSE_ERR("%s not supported = 0x%04x", __func__, cmd);
 			retval = -ENOIOCTLCMD;
 			break;
 		}

@@ -28,7 +28,7 @@ BOOL fgOverWrData2PC(void *pvAddr, UINT32 u4Size, UINT32 u4Mode, char *strFileNa
 
 /// IDE HDD
 BOOL fgOpenHDDFileEx(UINT32 u4InstID, char *strFileName , char *strMode, VDEC_INFO_VERIFY_FILE_INFO_T *ptFileInfo, const char *szFile, INT32 i4Line);
-#define fgOpenHDDFile(u4InstID, strFileName, strMode, ptFileInfo) fgOpenHDDFileEx(u4InstID, strFileName, strMode, ptFileInfo, __FUNCTION__, __LINE__)
+#define fgOpenHDDFile(u4InstID, strFileName, strMode, ptFileInfo) fgOpenHDDFileEx(u4InstID, strFileName, strMode, ptFileInfo, __func__, __LINE__)
 
 
 BOOL fgReadHDDFile(UINT32 u4InstID, BOOL fgReadInfo, void *pvAddr, UINT32 u4Size, char *strFileName, UINT32 u4OffSet, UINT32 *pu4RealReadSize, UINT32 *pu4FileLength, ULONG *pi4FileId);
@@ -40,7 +40,7 @@ BOOL fgWrData2PC(void *pvAddr, UINT32 u4Size, UINT32 u4Mode, char *strFileName);
 
 BOOL fgOpenFileEx(UINT32 u4InstID, char *strFileName , char *strMode, VDEC_INFO_VERIFY_FILE_INFO_T *ptFileInfo, const char *szFunction, INT32 i4Line);
 
-#define fgOpenFile(u4InstID, strFileName, strMode, ptFileInfo) fgOpenFileEx(u4InstID, strFileName, strMode, ptFileInfo, __FUNCTION__, __LINE__)
+#define fgOpenFile(u4InstID, strFileName, strMode, ptFileInfo) fgOpenFileEx(u4InstID, strFileName, strMode, ptFileInfo, __func__, __LINE__)
 ///
 
 #ifdef IDE_WRITE_SUPPORT

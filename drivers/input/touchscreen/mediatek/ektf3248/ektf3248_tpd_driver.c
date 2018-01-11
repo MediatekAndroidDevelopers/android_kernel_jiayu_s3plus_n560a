@@ -2173,7 +2173,7 @@ static int tpd_local_init(void)
          memcpy(tpd_def_calmat, tpd_def_calmat_local, 8*4);         
 #endif 
 
-    printk("mtk-tpd:end %s, %d\n", __FUNCTION__, __LINE__);
+    printk("mtk-tpd:end %s, %d\n", __func__, __LINE__);
     tpd_type_cap = 1;
     return 0;
 }

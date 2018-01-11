@@ -68,7 +68,7 @@ SysVzPvzOnVmOnline(IMG_UINT32 ui32OSid, IMG_UINT32 ui32Priority)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: invalid OSID (%d)",
-				 __FUNCTION__, ui32OSid));
+				 __func__, ui32OSid));
 
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
@@ -77,7 +77,7 @@ SysVzPvzOnVmOnline(IMG_UINT32 ui32OSid, IMG_UINT32 ui32Priority)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: OSID %d is already enabled.",
-				 __FUNCTION__, ui32OSid));
+				 __func__, ui32OSid));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
 
@@ -97,7 +97,7 @@ SysVzPvzOnVmOnline(IMG_UINT32 ui32OSid, IMG_UINT32 ui32Priority)
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					 "%s: failed to initialize firmware (%s)",
-					 __FUNCTION__, PVRSRVGetErrorStringKM(eError)));
+					 __func__, PVRSRVGetErrorStringKM(eError)));
 			goto e0;
 		}
 #if defined(PVRSRV_USE_BRIDGE_LOCK)
@@ -133,7 +133,7 @@ SysVzPvzOnVmOffline(IMG_UINT32 ui32OSid)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: invalid OSID (%d)",
-				 __FUNCTION__, ui32OSid));
+				 __func__, ui32OSid));
 
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
@@ -142,7 +142,7 @@ SysVzPvzOnVmOffline(IMG_UINT32 ui32OSid)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: OSID %d is already disabled.",
-				 __FUNCTION__, ui32OSid));
+				 __func__, ui32OSid));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
 

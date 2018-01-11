@@ -8107,7 +8107,7 @@ wlanoidSetNetworkAddress(IN P_ADAPTER_T prAdapter,
 		prCmdNetworkAddressList->ucAddressCount = (UINT_8) u4IPv4AddrCount;
 		prNetworkAddress = prNetworkAddressList->arAddress;
 
-		/* DBGLOG(INIT, INFO, ("%s: u4IPv4AddrCount (%lu)\n", __FUNCTION__, u4IPv4AddrCount)); */
+		/* DBGLOG(INIT, INFO, ("%s: u4IPv4AddrCount (%lu)\n", __func__, u4IPv4AddrCount)); */
 
 		for (i = 0, u4IPv4AddrIdx = 0; i < prNetworkAddressList->u4AddressCount; i++) {
 			if (prNetworkAddress->u2AddressType == PARAM_PROTOCOL_ID_TCP_IP &&

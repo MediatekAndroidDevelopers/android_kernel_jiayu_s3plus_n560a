@@ -185,7 +185,7 @@ static u32 strtol(const char *nptr, u8 base)
 	u8 ret;
 	if(!nptr || (base!=16 && base!=10 && base!=8))
 	{
-		SENSORDB("GC2145MIPI %s(): NULL pointer input\n", __FUNCTION__);
+		SENSORDB("GC2145MIPI %s(): NULL pointer input\n", __func__);
 		return -1;
 	}
 	for(ret=0; *nptr; nptr++)

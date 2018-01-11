@@ -239,7 +239,7 @@ static unsigned int lcd_id;
 static void lcm_init(void)
 {
 #ifdef BUILD_LK
-    printf("%s, %d,r63315 id = 0x%x\n",__FUNCTION__,__LINE__,lcd_id);
+    printf("%s, %d,r63315 id = 0x%x\n",__func__,__LINE__,lcd_id);
 #endif
 
     lcm_util.set_gpio_mode(GPIO112, GPIO_MODE_00);
@@ -347,7 +347,7 @@ static unsigned int lcm_esd_check(void)
 
     if(dummy_delay %2 == 0)
     {    
-        //printk("%s return 1\n",__FUNCTION__);
+        //printk("%s return 1\n",__func__);
 
 	    data_array[0] = 0x00013700;
 	    dsi_set_cmdq(data_array, 1, 1);
@@ -380,7 +380,7 @@ static unsigned int lcm_esd_check(void)
 
 static unsigned int lcm_esd_recover(void)
 {
-    //printk("%s \n",__FUNCTION__);
+    //printk("%s \n",__func__);
     
     lcm_resume();
     lcm_init();

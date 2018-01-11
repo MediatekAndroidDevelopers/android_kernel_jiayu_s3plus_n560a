@@ -225,7 +225,7 @@ static PVRSRV_ERROR _Destroy2DTransferContext(RGX_SERVER_TQ_2D_DATA *ps2DData,
 	else if (eError != PVRSRV_OK)
 	{
 		PVR_LOG(("%s: Unexpected error from RGXFWRequestCommonContextCleanUp (%s)",
-				 __FUNCTION__,
+				 __func__,
 				 PVRSRVGetErrorStringKM(eError)));
 	}
 
@@ -256,7 +256,7 @@ static PVRSRV_ERROR _Destroy3DTransferContext(RGX_SERVER_TQ_3D_DATA *ps3DData,
 	else if (eError != PVRSRV_OK)
 	{
 		PVR_LOG(("%s: Unexpected error from RGXFWRequestCommonContextCleanUp (%s)",
-				 __FUNCTION__,
+				 __func__,
 				 PVRSRVGetErrorStringKM(eError)));
 	}
 
@@ -690,7 +690,7 @@ PVRSRV_ERROR PVRSRVRGXSubmitTransferKM(RGX_SERVER_TQ_CONTEXT	*psTransferContext,
 			if (bNewPDumpContinuous != bPDumpContinuous)
 			{
 				eError = PVRSRV_ERROR_INVALID_PARAMS;
-				PVR_DPF((PVR_DBG_ERROR, "%s: Mixing of continuous and non-continuous command in a batch is not permitted", __FUNCTION__));
+				PVR_DPF((PVR_DBG_ERROR, "%s: Mixing of continuous and non-continuous command in a batch is not permitted", __func__));
 				goto fail_pdumpcheck;
 			}
 		}
@@ -737,7 +737,7 @@ PVRSRV_ERROR PVRSRVRGXSubmitTransferKM(RGX_SERVER_TQ_CONTEXT	*psTransferContext,
 											   &psAppendData);
 			if (err)
 			{
-				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to append buffer syncs (errno=%d)", __FUNCTION__, err));
+				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to append buffer syncs (errno=%d)", __func__, err));
 				eError = (err == -ENOMEM) ? PVRSRV_ERROR_OUT_OF_MEMORY : PVRSRV_ERROR_INVALID_PARAMS;
 				goto fail_sync_append;
 			}
@@ -980,7 +980,7 @@ PVRSRV_ERROR PVRSRVRGXSubmitTransferKM(RGX_SERVER_TQ_CONTEXT	*psTransferContext,
 		if (i32UpdateFenceFD < 0)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to get install update sync fd",
-				__FUNCTION__));
+				__func__));
 			/* If we fail here, we cannot rollback the syncs as the hw already
 			 * has references to resources they may be protecting in the kick
 			 * so fallthrough */
@@ -1071,7 +1071,7 @@ PVRSRV_ERROR PVRSRVRGXSetTransferContextPriorityKM(CONNECTION_DATA *psConnection
 		{
 			if(eError != PVRSRV_ERROR_RETRY)
 			{
-				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the 2D part of the transfercontext (%s)", __FUNCTION__, PVRSRVGetErrorStringKM(eError)));
+				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the 2D part of the transfercontext (%s)", __func__, PVRSRVGetErrorStringKM(eError)));
 			}
 			goto fail_2dcontext;
 		}
@@ -1090,7 +1090,7 @@ PVRSRV_ERROR PVRSRVRGXSetTransferContextPriorityKM(CONNECTION_DATA *psConnection
 		{
 			if(eError != PVRSRV_ERROR_RETRY)
 			{
-				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the 3D part of the transfercontext (%s)", __FUNCTION__, PVRSRVGetErrorStringKM(eError)));
+				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the 3D part of the transfercontext (%s)", __func__, PVRSRVGetErrorStringKM(eError)));
 			}
 			goto fail_3dcontext;
 		}

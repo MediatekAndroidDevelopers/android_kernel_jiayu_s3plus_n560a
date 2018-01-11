@@ -600,7 +600,7 @@ PVRSRV_ERROR RGXHWPerfInitOnDemandResources(PVRSRV_RGXDEV_INFO* psRgxDevInfo)
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to allocate kernel fw hwperf buffer (%u)",
-					__FUNCTION__, eError));
+					__func__, eError));
 		goto e0;
 	}
 
@@ -619,7 +619,7 @@ PVRSRV_ERROR RGXHWPerfInitOnDemandResources(PVRSRV_RGXDEV_INFO* psRgxDevInfo)
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to acquire kernel hwperf buffer (%u)",
-					 __FUNCTION__, eError));
+					 __func__, eError));
 		goto e0;
 	}
 
@@ -643,7 +643,7 @@ PVRSRV_ERROR RGXHWPerfInitOnDemandResources(PVRSRV_RGXDEV_INFO* psRgxDevInfo)
 				   psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier) < 0)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to form HWPerf stream name for device %d",
-		                        __FUNCTION__,
+		                        __func__,
 								psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
@@ -838,7 +838,7 @@ static PVRSRV_ERROR RGXHWPerfCtrlHostBuffer(const PVRSRV_DEVICE_NODE *psDeviceNo
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Initialization of on-demand HWPerfHost"
-			        " resources failed", __FUNCTION__));
+			        " resources failed", __func__));
 			OSLockRelease(psDevice->hLockHWPerfHostStream);
 			return eError;
 		}
@@ -1364,7 +1364,7 @@ PVRSRV_ERROR RGXHWPerfHostInitOnDemandResources(PVRSRV_RGXDEV_INFO *psRgxDevInfo
 				   psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier) < 0)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to form HWPerf host stream name for device %d",
-		                        __FUNCTION__,
+		                        __func__,
 								psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
@@ -2146,7 +2146,7 @@ static PVRSRV_ERROR RGXHWPerfFTraceGPUEnable(PVRSRV_RGXDEV_INFO *psRgxDevInfo)
 					PVRSRV_TL_HWPERF_RGX_FW_STREAM, psRgxDevNode->sDevId.i32UMIdentifier) < 0)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to form HWPerf stream name for device %d",
-		                        __FUNCTION__,
+		                        __func__,
 								psRgxDevNode->sDevId.i32UMIdentifier));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
@@ -3019,7 +3019,7 @@ PVRSRV_ERROR RGXHWPerfLazyConnect(RGX_HWPERF_CONNECTION** ppsHWPerfConnection)
 		               "hwperf_device_%d", psDeviceNode->sDevId.i32UMIdentifier) < 0)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to form HWPerf device name for device %d",
-		    	                    __FUNCTION__,
+		    	                    __func__,
 									psDeviceNode->sDevId.i32UMIdentifier));
 			return PVRSRV_ERROR_INVALID_PARAMS;
 		}
@@ -3072,7 +3072,7 @@ PVRSRV_ERROR RGXHWPerfOpen(RGX_HWPERF_CONNECTION *psHWPerfConnection)
 			if (eError != PVRSRV_OK)
 			{
 				PVR_DPF((PVR_DBG_ERROR, "%s: Initialization of on-demand HWPerfFW"
-			        " resources failed", __FUNCTION__));
+			        " resources failed", __func__));
 				OSLockRelease(psRgxDevInfo->hHWPerfLock);
 				return eError;
 			}
@@ -3086,7 +3086,7 @@ PVRSRV_ERROR RGXHWPerfOpen(RGX_HWPERF_CONNECTION *psHWPerfConnection)
 			if (eError != PVRSRV_OK)
 			{
 				PVR_DPF((PVR_DBG_ERROR, "%s: Initialization of on-demand HWPerfHost"
-						" resources failed", __FUNCTION__));
+						" resources failed", __func__));
 				OSLockRelease(psRgxDevInfo->hLockHWPerfHostStream);
 				return eError;
 			}
@@ -3099,7 +3099,7 @@ PVRSRV_ERROR RGXHWPerfOpen(RGX_HWPERF_CONNECTION *psHWPerfConnection)
 						psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier) < 0)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to form HWPerf stream name for device %d",
-		    	                    __FUNCTION__,
+		    	                    __func__,
 									psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier));
 			return PVRSRV_ERROR_INVALID_PARAMS;
 		}
@@ -3116,7 +3116,7 @@ PVRSRV_ERROR RGXHWPerfOpen(RGX_HWPERF_CONNECTION *psHWPerfConnection)
 					psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier) < 0)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to form HWPerf host stream name for device %d",
-		    	                    __FUNCTION__,
+		    	                    __func__,
 									psRgxDevInfo->psDeviceNode->sDevId.i32UMIdentifier));
 			return PVRSRV_ERROR_INVALID_PARAMS;
 		}

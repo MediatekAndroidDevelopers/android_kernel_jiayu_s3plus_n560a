@@ -803,7 +803,7 @@ VOID statsEventHandle(GLUE_INFO_T *prGlueInfo, UINT8 *prInBuf, UINT32 u4InBufLen
 
 	/* sanity check */
 /* DBGLOG(RX, INFO, */
-/* ("<stats> %s: Rcv a event\n", __FUNCTION__)); */
+/* ("<stats> %s: Rcv a event\n", __func__)); */
 
 	if ((prGlueInfo == NULL) || (prInBuf == NULL))
 		return;		/* shall not be here */
@@ -813,7 +813,7 @@ VOID statsEventHandle(GLUE_INFO_T *prGlueInfo, UINT8 *prInBuf, UINT32 u4InBufLen
 	u4InBufLen -= 4;
 
 /* DBGLOG(RX, INFO, */
-/* ("<stats> %s: Rcv a event: %d\n", __FUNCTION__, u4EventId)); */
+/* ("<stats> %s: Rcv a event: %d\n", __func__, u4EventId)); */
 
 	switch (u4EventId) {
 	case STATS_HOST_EVENT_ENV_REPORT:

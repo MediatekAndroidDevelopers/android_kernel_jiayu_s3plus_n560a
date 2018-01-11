@@ -423,7 +423,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		{
 			PVR_LOG(("(FAIL) %s: Mismatch in client-side and KM driver build options; "
 				"extra options present in client-side driver: (0x%x). Please check rgx_options.h",
-				__FUNCTION__,
+				__func__,
 				ui32ClientBuildOptions & ui32BuildOptionsMismatch ));
 			eError = PVRSRV_ERROR_BUILD_OPTIONS_MISMATCH;
 			goto chk_exit;
@@ -433,7 +433,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		{
 			PVR_LOG(("(FAIL) %s: Mismatch in client-side and KM driver build options; "
 				"extra options present in KM driver: (0x%x). Please check rgx_options.h",
-				__FUNCTION__,
+				__func__,
 				ui32BuildOptions & ui32BuildOptionsMismatch ));
 			eError = PVRSRV_ERROR_BUILD_OPTIONS_MISMATCH;
 			goto chk_exit;
@@ -441,14 +441,14 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		if(IMG_FALSE == bIsFirstConnection)
 		{
 			PVR_LOG(("%s: COMPAT_TEST: Client-side (0x%04x) (%s) and KM driver (0x%04x) (%s) build options differ.",
-																			__FUNCTION__,
+																			__func__,
 																			ui32ClientBuildOptions,
 																			(psSRVData->sDriverInfo.sUMBuildInfo.ui32BuildType)?"release":"debug",
 																			ui32BuildOptions,
 																			(psSRVData->sDriverInfo.sKMBuildInfo.ui32BuildType)?"release":"debug"));
 		}else{
 			PVR_DPF((PVR_DBG_WARNING, "%s: COMPAT_TEST: Client-side (0x%04x) and KM driver (0x%04x) build options differ.",
-																		__FUNCTION__,
+																		__func__,
 																		ui32ClientBuildOptions,
 																		ui32BuildOptions));
 
@@ -458,7 +458,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 	}
 	else
 	{
-		PVR_DPF((PVR_DBG_MESSAGE, "%s: COMPAT_TEST: Client-side and KM driver build options match. [ OK ]", __FUNCTION__));
+		PVR_DPF((PVR_DBG_MESSAGE, "%s: COMPAT_TEST: Client-side and KM driver build options match. [ OK ]", __func__));
 	}
 
 	/*
@@ -469,7 +469,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		if(!psSRVData->sDriverInfo.bIsNoMatch)
 			psSRVData->sDriverInfo.bIsNoMatch = IMG_TRUE;
 		PVR_LOG(("(FAIL) %s: Incompatible driver DDK version (%u.%u) / client DDK version (%u.%u).",
-				__FUNCTION__,
+				__func__,
 				PVRVERSION_MAJ, PVRVERSION_MIN,
 				PVRVERSION_UNPACK_MAJ(ui32ClientDDKVersion),
 				PVRVERSION_UNPACK_MIN(ui32ClientDDKVersion)));
@@ -480,7 +480,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 	else
 	{
 		PVR_DPF((PVR_DBG_MESSAGE, "%s: COMPAT_TEST: driver DDK version (%u.%u) and client DDK version (%u.%u) match. [ OK ]",
-				__FUNCTION__,
+				__func__,
 				PVRVERSION_MAJ, PVRVERSION_MIN, PVRVERSION_MAJ, PVRVERSION_MIN));
 	}
 
@@ -532,7 +532,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		if(!psSRVData->sDriverInfo.bIsNoMatch)
 			psSRVData->sDriverInfo.bIsNoMatch = IMG_TRUE;
 		PVR_DPF((PVR_DBG_WARNING, "%s: Mismatch in driver DDK revision (%d) / client DDK revision (%d).",
-				__FUNCTION__, ui32DDKBuild, ui32ClientDDKBuild));
+				__func__, ui32DDKBuild, ui32ClientDDKBuild));
 #if defined(PVRSRV_STRICT_COMPAT_CHECK)
 		eError = PVRSRV_ERROR_DDK_BUILD_MISMATCH;
 		PVR_DBG_BREAK;
@@ -542,7 +542,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 	else
 	{
 		PVR_DPF((PVR_DBG_MESSAGE, "%s: COMPAT_TEST: driver DDK revision (%d) and client DDK revision (%d) match. [ OK ]",
-				__FUNCTION__, ui32DDKBuild, ui32ClientDDKBuild));
+				__func__, ui32DDKBuild, ui32ClientDDKBuild));
 	}
 
 	/* Success so far so is it the PDump client that is connecting? */
@@ -569,7 +569,7 @@ PVRSRVConnectKM(CONNECTION_DATA *psConnection,
 		int ii;
 
 		/* dump dispatch table offset lookup table */
-		PVR_DPF((PVR_DBG_MESSAGE, "%s: g_BridgeDispatchTableStartOffsets[0-%lu] entries:", __FUNCTION__, BRIDGE_DISPATCH_TABLE_START_ENTRY_COUNT - 1));
+		PVR_DPF((PVR_DBG_MESSAGE, "%s: g_BridgeDispatchTableStartOffsets[0-%lu] entries:", __func__, BRIDGE_DISPATCH_TABLE_START_ENTRY_COUNT - 1));
 		for (ii=0; ii < BRIDGE_DISPATCH_TABLE_START_ENTRY_COUNT; ii++)
 		{
 			PVR_DPF((PVR_DBG_MESSAGE, "g_BridgeDispatchTableStartOffsets[%d]: %u", ii, g_BridgeDispatchTableStartOffsets[ii][PVR_DISPATCH_OFFSET_FIRST_FUNC]));
@@ -697,11 +697,11 @@ DummyBW(IMG_UINT32 ui32DispatchTableEntry,
 #if defined(DEBUG_BRIDGE_KM)
 	PVR_DPF((PVR_DBG_ERROR, "%s: BRIDGE ERROR: ui32DispatchTableEntry %u (%s) mapped to "
 			 "Dummy Wrapper (probably not what you want!)",
-			 __FUNCTION__, ui32DispatchTableEntry, g_BridgeDispatchTable[ui32DispatchTableEntry].pszIOCName));
+			 __func__, ui32DispatchTableEntry, g_BridgeDispatchTable[ui32DispatchTableEntry].pszIOCName));
 #else
 	PVR_DPF((PVR_DBG_ERROR, "%s: BRIDGE ERROR: ui32DispatchTableEntry %u mapped to "
 			 "Dummy Wrapper (probably not what you want!)",
-			 __FUNCTION__, ui32DispatchTableEntry));
+			 __func__, ui32DispatchTableEntry));
 #endif
 	return PVRSRV_ERROR_BRIDGE_ENOTTY;
 }
@@ -804,8 +804,8 @@ _SetDispatchTableEntry(IMG_UINT32 ui32BridgeGroup,
 
 #if defined(DEBUG_BRIDGE_KM_DISPATCH_TABLE)
 	/* Enable this to dump out the dispatch table entries */
-	PVR_DPF((PVR_DBG_WARNING, "%s: g_BridgeDispatchTableStartOffsets[%d]=%d", __FUNCTION__, ui32BridgeGroup, g_BridgeDispatchTableStartOffsets[ui32BridgeGroup][PVR_DISPATCH_OFFSET_FIRST_FUNC]));
-	PVR_DPF((PVR_DBG_WARNING, "%s: %d %s %s %s", __FUNCTION__, ui32Index, pszIOCName, pszFunctionName, pszBridgeLockName));
+	PVR_DPF((PVR_DBG_WARNING, "%s: g_BridgeDispatchTableStartOffsets[%d]=%d", __func__, ui32BridgeGroup, g_BridgeDispatchTableStartOffsets[ui32BridgeGroup][PVR_DISPATCH_OFFSET_FIRST_FUNC]));
+	PVR_DPF((PVR_DBG_WARNING, "%s: %d %s %s %s", __func__, ui32Index, pszIOCName, pszFunctionName, pszBridgeLockName));
 #endif
 
 	/* Any gaps are sub-optimal in-terms of memory usage, but we are mainly
@@ -825,56 +825,56 @@ _SetDispatchTableEntry(IMG_UINT32 ui32BridgeGroup,
 #if defined(DEBUG_BRIDGE_KM_DISPATCH_TABLE)
 		PVR_DPF((PVR_DBG_WARNING,
 				 "%s: There is a gap in the dispatch table between indices %u (%s) and %u (%s)",
-				 __FUNCTION__, ui32PrevIndex, g_BridgeDispatchTable[ui32PrevIndex].pszIOCName,
+				 __func__, ui32PrevIndex, g_BridgeDispatchTable[ui32PrevIndex].pszIOCName,
 				 ui32Index, pszIOCName));
 #else
 		PVR_DPF((PVR_DBG_MESSAGE,
 				 "%s: There is a gap in the dispatch table between indices %u and %u (%s)",
-				 __FUNCTION__, (IMG_UINT)ui32PrevIndex, (IMG_UINT)ui32Index, pszIOCName));
+				 __func__, (IMG_UINT)ui32PrevIndex, (IMG_UINT)ui32Index, pszIOCName));
 #endif
 	}
 
 	if (ui32Index >= BRIDGE_DISPATCH_TABLE_ENTRY_COUNT)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Index %u (%s) out of range",
-				 __FUNCTION__, (IMG_UINT)ui32Index, pszIOCName));
+				 __func__, (IMG_UINT)ui32Index, pszIOCName));
 
 #if defined(DEBUG_BRIDGE_KM)
 		PVR_DPF((PVR_DBG_ERROR, "%s: BRIDGE_DISPATCH_TABLE_ENTRY_COUNT = %lu",
-				 __FUNCTION__, BRIDGE_DISPATCH_TABLE_ENTRY_COUNT));
+				 __func__, BRIDGE_DISPATCH_TABLE_ENTRY_COUNT));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_TIMERQUERY_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_TIMERQUERY_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_TIMERQUERY_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_REGCONFIG_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_REGCONFIG_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_REGCONFIG_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGXRAY_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGXRAY_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_RGXRAY_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGXHWPERF_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGXHWPERF_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_RGXHWPERF_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGXPDUMP_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGXPDUMP_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_RGXPDUMP_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_DEBUGMISC_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_DEBUGMISC_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_DEBUGMISC_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_BREAKPOINT_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_BREAKPOINT_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_BREAKPOINT_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGXTA3D_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGXTA3D_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_RGXTA3D_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGXCMP_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGXCMP_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_RGXCMP_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGXTQ_DISPATCH_LAST = %lu\n",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGXTQ_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_RGXTQ_DISPATCH_LAST));
 
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGX_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGX_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_RGX_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_RGX_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_RGX_LAST));
+				 __func__, PVRSRV_BRIDGE_RGX_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_LAST));
+				 __func__, PVRSRV_BRIDGE_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_DEVICEMEMHISTORY_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_DEVICEMEMHISTORY_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_DEVICEMEMHISTORY_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_TUTILS_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_TUTILS_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_TUTILS_DISPATCH_LAST));
 		PVR_DPF((PVR_DBG_ERROR, "%s: PVRSRV_BRIDGE_VALIDATION_DISPATCH_LAST = %lu",
-				 __FUNCTION__, PVRSRV_BRIDGE_VALIDATION_DISPATCH_LAST));
+				 __func__, PVRSRV_BRIDGE_VALIDATION_DISPATCH_LAST));
 #endif
 
 		OSPanic();
@@ -892,12 +892,12 @@ _SetDispatchTableEntry(IMG_UINT32 ui32BridgeGroup,
 #if defined(DEBUG_BRIDGE_KM_DISPATCH_TABLE)
 			PVR_DPF((PVR_DBG_ERROR,
 				 "%s: Adding dispatch table entry for %s clobbers an existing entry for %s (current pfn=<%p>, new pfn=<%p>)",
-				 __FUNCTION__, pszIOCName, g_BridgeDispatchTable[ui32Index].pszIOCName),
+				 __func__, pszIOCName, g_BridgeDispatchTable[ui32Index].pszIOCName),
 				 (void*)g_BridgeDispatchTable[ui32Index].pfFunction, (void*)pfFunction));
 #else
 			PVR_DPF((PVR_DBG_ERROR,
 				 "%s: Adding dispatch table entry for %s clobbers an existing entry (index=%u). (current pfn=<%p>, new pfn=<%p>)",
-				 __FUNCTION__, pszIOCName, ui32Index,
+				 __func__, pszIOCName, ui32Index,
 				 (void*)g_BridgeDispatchTable[ui32Index].pfFunction, (void*)pfFunction));
 			PVR_DPF((PVR_DBG_WARNING, "NOTE: Enabling DEBUG_BRIDGE_KM_DISPATCH_TABLE may help debug this issue."));
 #endif
@@ -990,7 +990,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	if(BRIDGE_DISPATCH_TABLE_START_ENTRY_COUNT <= psBridgePackageKM->ui32BridgeID)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Out of range dispatch table group ID: %d",
-		        __FUNCTION__, psBridgePackageKM->ui32BridgeID));
+		        __func__, psBridgePackageKM->ui32BridgeID));
 		err = PVRSRV_ERROR_BRIDGE_EINVAL;
 		goto return_error;
 	}
@@ -1001,7 +1001,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	if(0 == ui32DispatchTableEntry)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Dispatch table entry=%d, boundary = %d, (bridge module %d, function %d)",
-					__FUNCTION__,
+					__func__,
 					ui32DispatchTableEntry,ui32GroupBoundary, psBridgePackageKM->ui32BridgeID, psBridgePackageKM->ui32FunctionID));
 		/* this points to DummyBW() which returns PVRSRV_ERROR_ENOTTY */
 		err = g_BridgeDispatchTable[ui32DispatchTableEntry].pfFunction(ui32DispatchTableEntry,
@@ -1017,7 +1017,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	if(ui32DispatchTableEntry > ui32GroupBoundary)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Dispatch table entry=%d, boundary = %d, (bridge module %d, function %d)",
-					__FUNCTION__,
+					__func__,
 					ui32DispatchTableEntry,ui32GroupBoundary, psBridgePackageKM->ui32BridgeID, psBridgePackageKM->ui32FunctionID));
 		err = PVRSRV_ERROR_BRIDGE_EINVAL;
 		goto return_error;
@@ -1025,7 +1025,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	if(BRIDGE_DISPATCH_TABLE_ENTRY_COUNT <= ui32DispatchTableEntry)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Dispatch table entry=%d, entry count = %lu,"
-		        " (bridge module %d, function %d)", __FUNCTION__,
+		        " (bridge module %d, function %d)", __func__,
 		        ui32DispatchTableEntry, BRIDGE_DISPATCH_TABLE_ENTRY_COUNT,
 		        psBridgePackageKM->ui32BridgeID,
 		        psBridgePackageKM->ui32FunctionID));
@@ -1034,10 +1034,10 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	}
 #if defined(DEBUG_BRIDGE_KM)
 	PVR_DPF((PVR_DBG_MESSAGE, "%s: Dispatch table entry=%d, (bridge module %d, function %d)",
-			__FUNCTION__,
+			__func__,
 			ui32DispatchTableEntry, psBridgePackageKM->ui32BridgeID, psBridgePackageKM->ui32FunctionID));
 	PVR_DPF((PVR_DBG_MESSAGE, "%s: %s",
-			 __FUNCTION__,
+			 __func__,
 			 g_BridgeDispatchTable[ui32DispatchTableEntry].pszIOCName));
 	g_BridgeDispatchTable[ui32DispatchTableEntry].ui32CallCount++;
 	g_BridgeGlobalStats.ui32IOCTLCount++;
@@ -1087,7 +1087,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	if (psBridgePackageKM->ui32InBufferSize > PVRSRV_MAX_BRIDGE_IN_SIZE)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Bridge input buffer too small "
-		        "(data size %u, buffer size %u)!", __FUNCTION__,
+		        "(data size %u, buffer size %u)!", __func__,
 		        psBridgePackageKM->ui32InBufferSize, PVRSRV_MAX_BRIDGE_IN_SIZE));
 		err = PVRSRV_ERROR_BRIDGE_ERANGE;
 		goto unlock_and_return_error;
@@ -1097,7 +1097,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	if (psBridgePackageKM->ui32OutBufferSize > PVRSRV_MAX_BRIDGE_OUT_SIZE)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Bridge output buffer too small "
-		        "(data size %u, buffer size %u)!", __FUNCTION__,
+		        "(data size %u, buffer size %u)!", __func__,
 		        psBridgePackageKM->ui32OutBufferSize, PVRSRV_MAX_BRIDGE_OUT_SIZE));
 		err = PVRSRV_ERROR_BRIDGE_ERANGE;
 		goto unlock_and_return_error;
@@ -1118,7 +1118,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 #endif
 		) /* end of if-condition */
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: CopyFromUserWrapper returned an error!", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: CopyFromUserWrapper returned an error!", __func__));
 		err = PVRSRV_ERROR_BRIDGE_EFAULT;
 		goto unlock_and_return_error;
 	}
@@ -1133,7 +1133,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 	if (pfBridgeHandler == NULL)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: ui32DispatchTableEntry = %d is not a registered function!",
-				 __FUNCTION__, ui32DispatchTableEntry));
+				 __func__, ui32DispatchTableEntry));
 		err = PVRSRV_ERROR_BRIDGE_EFAULT;
 		goto unlock_and_return_error;
 	}
@@ -1149,7 +1149,7 @@ PVRSRV_ERROR BridgedDispatchKM(CONNECTION_DATA * psConnection,
 						  psConnection)
 		)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: pfBridgeHandler returned an error", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: pfBridgeHandler returned an error", __func__));
 		err = PVRSRV_ERROR_BRIDGE_EPERM;
 		goto unlock_and_return_error;
 	}
@@ -1232,7 +1232,7 @@ unlock_and_return_error:
 return_error:
 	if (err)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: returning (err = %d)", __FUNCTION__, err));
+		PVR_DPF((PVR_DBG_ERROR, "%s: returning (err = %d)", __func__, err));
 	}
 	/* ignore transport layer bridge to avoid HTB flooding */
 	if (psBridgePackageKM->ui32BridgeID != PVRSRV_BRIDGE_PVRTL)

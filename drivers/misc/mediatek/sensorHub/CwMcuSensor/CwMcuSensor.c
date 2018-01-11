@@ -120,14 +120,14 @@ static void cwmcu_reinit(void)
 				data[3] = (uint8_t)sensor->sensors_info[i][j].timeout;
 				data[4] = (uint8_t)(sensor->sensors_info[i][j].timeout >>8);
 				if(CWMCU_bus_write(sensor, CwRegMapW_SET_ENABLE, data, 5)< 0){
-					printk("%s:%s:(flush:bus write fail)\n",LOG_TAG_KERNEL ,__FUNCTION__);
+					printk("%s:%s:(flush:bus write fail)\n",LOG_TAG_KERNEL ,__func__);
 				}
-				printk("%s:%s:(id:%d enable)\n",LOG_TAG_KERNEL ,__FUNCTION__,j);
+				printk("%s:%s:(id:%d enable)\n",LOG_TAG_KERNEL ,__func__,j);
 				
 				if(CWMCU_bus_write(sensor, CwRegMapW_SET_FLUSH, data, 2)< 0){
-					printk("%s:%s:(flush:bus write fail)\n",LOG_TAG_KERNEL ,__FUNCTION__);
+					printk("%s:%s:(flush:bus write fail)\n",LOG_TAG_KERNEL ,__func__);
 			}
-				printk("%s:%s:(flush:id:%d)\n",LOG_TAG_KERNEL ,__FUNCTION__, j);
+				printk("%s:%s:(flush:id:%d)\n",LOG_TAG_KERNEL ,__func__, j);
 				msleep(1);				
 		}
 	}
@@ -148,7 +148,7 @@ static void cwmcu_reinit(void)
 				data[9] = sensor->hw_info[i].private_setting[3];
 				CWMCU_bus_write(sensor, CwRegMapRW_HW_SENSORS_CONFIG_START+i, data, 10);
 				printk(KERN_DEBUG "CwMcu:%s id:%d, HwId:%u, deviceaddr:%u, mode:%u, position:%u\n"
-					,__FUNCTION__
+					,__func__
 					, i
 					,sensor->hw_info[i].hw_id
 					,sensor->hw_info[i].deviceaddr
@@ -180,9 +180,9 @@ static void cwmcu_read_batch_buff(struct CWMCU_data *sensor)
 
 	if (CWMCU_bus_read(sensor, CwRegMapR_BatchCount, data, 2) >= 0) {
 		count = ((uint16_t)data[1] << 8) | (uint16_t)data[0];
-//		printk("CwMcu:%s count %u\n",__FUNCTION__, count);
+//		printk("CwMcu:%s count %u\n",__func__, count);
 	} else {
-		printk("CwMcu:%s check count failed~!!\n",__FUNCTION__);
+		printk("CwMcu:%s check count failed~!!\n",__func__);
         return;
 	}
 	for (i = 0; i < count; i++) {
@@ -192,7 +192,7 @@ static void cwmcu_read_batch_buff(struct CWMCU_data *sensor)
 				sensor->report_count++;
 				if (data[0] == META_DATA) {
 					data_event[1] = ((u32)sensor->report_count << 24) |((u32)data[0] << 16) | ((u32)data[2] << 8) | (u32)data[1];
-					printk("CwMcu:%s META_DATA ,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",__FUNCTION__, 
+					printk("CwMcu:%s META_DATA ,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",__func__, 
 						data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]
 						);
 					input_report_abs(sensor->input, CW_ABS_Z, data_event[1]);
@@ -244,9 +244,9 @@ static void cwmcu_read_stream_buff(struct CWMCU_data *sensor)
 
 	if (CWMCU_bus_read(sensor, CwRegMapR_StreamCount, data, 2) >= 0) {
 		count = ((uint16_t)data[1] << 8) | (uint16_t)data[0];
-//		printk("CwMcu:%s count %u\n",__FUNCTION__, count);
+//		printk("CwMcu:%s count %u\n",__func__, count);
 	} else {
-		printk("CwMcu:%s check count failed~!!\n",__FUNCTION__);
+		printk("CwMcu:%s check count failed~!!\n",__func__);
         return;
 	}
 	for (i = 0; i < count; i++) {
@@ -257,7 +257,7 @@ static void cwmcu_read_stream_buff(struct CWMCU_data *sensor)
 				sensor->report_count++;
 				if (data[0] == META_DATA) {
 					data_event[1] = ((u32)sensor->report_count << 24) |((u32)data[0] << 16) | ((u32)data[2] << 8) | (u32)data[1];
-					printk("CwMcu:%s META_DATA ,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",__FUNCTION__, 
+					printk("CwMcu:%s META_DATA ,%u,%u,%u,%u,%u,%u,%u,%u,%u\n",__func__, 
 						data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7],data[8]
 						);
 					input_report_abs(sensor->input, CW_ABS_Z, data_event[1]);
@@ -346,7 +346,7 @@ static void cwmcu_read_mcu_info(struct CWMCU_data *sensor)
 	if (CWMCU_bus_read(sensor, CwRegMapR_SystemInfoMsgCount, data, 1) >= 0) {
 		count = (uint16_t)data[0];
 	} else {
-		printk("CwMcu:%s check count failed~!!\n",__FUNCTION__);
+		printk("CwMcu:%s check count failed~!!\n",__func__);
         return;
 	}
 	for (i = 0; i < count; i++) {
@@ -366,7 +366,7 @@ static void cwmcu_read_Interrupt_buff(struct CWMCU_data *sensor)
 	if (CWMCU_bus_read(sensor, CwRegMapR_InteruptCount, data, 1) >= 0) {
 		count = (uint16_t)data[0];
 	} else {
-		printk("CwMcu:%s check count failed~!!\n",__FUNCTION__);
+		printk("CwMcu:%s check count failed~!!\n",__func__);
         return;
 	}
 	for (i = 0; i < count; i++) {
@@ -400,14 +400,14 @@ static void cwmcu_read_Interrupt_buff(struct CWMCU_data *sensor)
                 }else if(data[1] == 1){
                     sensor->mcu_enable_list = (sensor->mcu_enable_list&0x0000FFFF) |(((uint32_t)data[3])<<24)|(((uint32_t)data[2])<<16);
                 }
-                printk("CwMcu:%s:(McuEnableList:%u)\n",__FUNCTION__,sensor->mcu_enable_list);
+                printk("CwMcu:%s:(McuEnableList:%u)\n",__func__,sensor->mcu_enable_list);
             }else if(data[0] == MCU_HW_ENABLE_LIST){
                 if(data[1] == 0){
                     sensor->mcu_hw_enable_list = (sensor->mcu_hw_enable_list&0xFFFF0000) |(((uint32_t)data[3])<<8)|((uint32_t)data[2]);
                 }else if(data[1] == 1){
                     sensor->mcu_hw_enable_list = (sensor->mcu_hw_enable_list&0x0000FFFF) |(((uint32_t)data[3])<<24)|(((uint32_t)data[2])<<16);
                 }
-                printk("CwMcu:%s:(McuHwEnableList:%u)\n",__FUNCTION__,sensor->mcu_hw_enable_list);    
+                printk("CwMcu:%s:(McuHwEnableList:%u)\n",__func__,sensor->mcu_hw_enable_list);    
 			}		
 		}
 	sensor->interrupt_check_count++;
@@ -547,11 +547,11 @@ static int active_set(struct device *dev, struct device_attribute *attr, const c
 	cwmcu_powermode_switch(SWITCH_POWER_ENABLE, 1);
 	if(enabled){
 		if(CWMCU_bus_write(sensor, CwRegMapW_SET_ENABLE, data, 5)< 0){
-			printk("%s:%s:(bus Write Fail)\n",LOG_TAG_KERNEL ,__FUNCTION__);
+			printk("%s:%s:(bus Write Fail)\n",LOG_TAG_KERNEL ,__func__);
 		}
 	}else{
 		if(CWMCU_bus_write(sensor, CwRegMapW_SET_DISABLE, data, 5)< 0){
-			printk("%s:%s:(bus Write Fail)\n",LOG_TAG_KERNEL ,__FUNCTION__);
+			printk("%s:%s:(bus Write Fail)\n",LOG_TAG_KERNEL ,__func__);
 		}
 	}
 	msleep(5);
@@ -560,7 +560,7 @@ static int active_set(struct device *dev, struct device_attribute *attr, const c
         return count;
 	enabled_list = (uint32_t)data[3]<<24 |(uint32_t)data[2]<<16 |(uint32_t)data[1]<<8 |(uint32_t)data[0];
 	if(enabled_list !=sensor->enabled_list){
-		printk("%s:%s:(Enable not match AP:0x%x,MCU:0x%x)\n",LOG_TAG_KERNEL ,__FUNCTION__, sensor->enabled_list,enabled_list);
+		printk("%s:%s:(Enable not match AP:0x%x,MCU:0x%x)\n",LOG_TAG_KERNEL ,__func__, sensor->enabled_list,enabled_list);
 		enabled_list_temp = sensor->enabled_list ^ enabled_list;
 		for(i=0;i<SENSORS_ID_END;i++){
 			if (enabled_list_temp & (1<<i)) {
@@ -571,13 +571,13 @@ static int active_set(struct device *dev, struct device_attribute *attr, const c
 					data[3] = (uint8_t)sensor->sensors_info[NonWakeUpHandle][i].timeout;
 					data[4] = (uint8_t)(sensor->sensors_info[NonWakeUpHandle][i].timeout >>8);
 					CWMCU_bus_write(sensor, CwRegMapW_SET_ENABLE, data, 5);
-					printk("%s:%s:(id:%d enable)\n",LOG_TAG_KERNEL ,__FUNCTION__,i);
+					printk("%s:%s:(id:%d enable)\n",LOG_TAG_KERNEL ,__func__,i);
         }else{
 					data[2] = 0;
 					data[3] = 0;
 					data[4] = 0;
 					if(CWMCU_bus_write(sensor, CwRegMapW_SET_DISABLE, data, 5)< 0){
-						printk("%s:%s:(bus Write Fail)\n",LOG_TAG_KERNEL ,__FUNCTION__);
+						printk("%s:%s:(bus Write Fail)\n",LOG_TAG_KERNEL ,__func__);
 					}
 				}
 				msleep(5);
@@ -585,7 +585,7 @@ static int active_set(struct device *dev, struct device_attribute *attr, const c
         }
 	}
 	cwmcu_powermode_switch(SWITCH_POWER_ENABLE, 0);
-	printk("%s:%s:(id:%d, en:%d)\n",LOG_TAG_KERNEL ,__FUNCTION__, id,enabled);
+	printk("%s:%s:(id:%d, en:%d)\n",LOG_TAG_KERNEL ,__func__, id,enabled);
 	return count;
 }
 
@@ -639,10 +639,10 @@ static int batch_set(struct device *dev, struct device_attribute *attr, const ch
 		}
 		cwmcu_powermode_switch(SWITCH_POWER_BATCH, 1);
 		if (CWMCU_bus_write(sensor, CwRegMapW_SET_ENABLE, data, 5)<0){
-			printk("%s:%s:(Write Fail:id:%d, mode:%d, rate:%d, timeout:%lld)\n",LOG_TAG_KERNEL ,__FUNCTION__, id,mode, rate, timeout);
+			printk("%s:%s:(Write Fail:id:%d, mode:%d, rate:%d, timeout:%lld)\n",LOG_TAG_KERNEL ,__func__, id,mode, rate, timeout);
 		}
 		cwmcu_powermode_switch(SWITCH_POWER_BATCH, 0);
-		printk("%s:%s:(id:%d, mode:%d, rate:%d, timeout:%lld)\n",LOG_TAG_KERNEL ,__FUNCTION__, id,mode, rate, timeout);
+		printk("%s:%s:(id:%d, mode:%d, rate:%d, timeout:%lld)\n",LOG_TAG_KERNEL ,__func__, id,mode, rate, timeout);
 	}
 	return count;
 }
@@ -1209,14 +1209,14 @@ static int set_calibrator_data0(struct device *dev,struct device_attribute *attr
 	}
 	printk("--CWMCU-- CW_ACCELERATION_CALIBRATOR write data\n");
 	if (CWMCU_bus_write(sensor, CwRegMapRW_Calibrator_Data_Acceleration , &data[3], 30) >= 0) {
-		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__FUNCTION__,
+		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__func__,
 			data[0], data[1], data[2],
 			data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12],
 			data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22],
 			data[23], data[24], data[25], data[26], data[27], data[28], data[29], data[30], data[31], data[32]
 		);
 	}else{
-		printk("CwMcu:%s:(bus write fail)\n",__FUNCTION__);
+		printk("CwMcu:%s:(bus write fail)\n",__func__);
 	}
 
 	cwmcu_powermode_switch(SWITCH_POWER_CALIB, 0);
@@ -1240,7 +1240,7 @@ static int get_calibrator_data1(struct device *dev, struct device_attribute *att
 		printk(KERN_ERR "--CWMCU-- bus calibrator read fail!!! [MAG]\n");
 		data[0] = 255;
 	}else{
-		printk("CWMCU:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__FUNCTION__,
+		printk("CWMCU:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__func__,
 			data[0], data[1], data[2],
 			data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12],
 			data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22],
@@ -1281,14 +1281,14 @@ static int set_calibrator_data1(struct device *dev,struct device_attribute *attr
 	}
 	printk("--CWMCU-- CWMCU_MAGNETIC_CALIBRATOR write data\n");
 	if (CWMCU_bus_write(sensor, CwRegMapRW_Calibrator_Data_Magnetioc , &data[3], 30) >= 0) {
-		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__FUNCTION__,
+		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__func__,
 			data[0], data[1], data[2],
 			data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12],
 			data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22],
 			data[23], data[24], data[25], data[26], data[27], data[28], data[29], data[30], data[31], data[32]
 		);
 	}else{
-		printk("CwMcu:%s:(bus write fail)\n",__FUNCTION__);
+		printk("CwMcu:%s:(bus write fail)\n",__func__);
 	}
 
 	cwmcu_powermode_switch(SWITCH_POWER_CALIB, 0);
@@ -1307,10 +1307,10 @@ static int get_calibrator_data2(struct device *dev, struct device_attribute *att
     
 	cwmcu_powermode_switch(SWITCH_POWER_CALIB, 1);
 	if (CWMCU_bus_read(sensor, CwRegMapRW_Calibrator_Data_Gyro , &data[3], 30) < 0) {
-		printk("CwMcu:%s:(bus read fail)\n",__FUNCTION__);
+		printk("CwMcu:%s:(bus read fail)\n",__func__);
 		data[0] = 255;
 	}else{
-		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__FUNCTION__,
+		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__func__,
 			data[0], data[1], data[2],
 			data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12],
 			data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22],
@@ -1348,14 +1348,14 @@ static int set_calibrator_data2(struct device *dev,struct device_attribute *attr
 		data[i] = (uint8_t)temp[i];
 	}
 	if (CWMCU_bus_write(sensor, CwRegMapRW_Calibrator_Data_Gyro , &data[3], 30) >= 0) {
-		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__FUNCTION__,
+		printk("CwMcu:%s:(%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d)\n",__func__,
 			data[0], data[1], data[2],
 			data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12],
 			data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22],
 			data[23], data[24], data[25], data[26], data[27], data[28], data[29], data[30], data[31], data[32]
 		);
 	}else{
-		printk("CwMcu:%s:(bus write fail)\n",__FUNCTION__);
+		printk("CwMcu:%s:(bus write fail)\n",__func__);
 	}
 	cwmcu_powermode_switch(SWITCH_POWER_CALIB, 0);
 	return count;
@@ -1431,7 +1431,7 @@ static int timestamp_show(struct device *dev, struct device_attribute *attr, cha
 		timestamp = ((uint32_t)data[3])<<24 | ((uint32_t)data[2])<<16 | ((uint32_t)data[1])<<8 | ((uint32_t)data[0]);
 		timebase = ((uint32_t)data[7])<<24 | ((uint32_t)data[6])<<16 | ((uint32_t)data[5])<<8 | ((uint32_t)data[4]);
 		timebasew = ((uint32_t)data[11])<<24 | ((uint32_t)data[10])<<16 | ((uint32_t)data[9])<<8 | ((uint32_t)data[8]);
-		CW_INFO("%s:( Time:%d,Base:%d,Basew:%d)\n",__FUNCTION__, timestamp,timebase,timebasew);
+		CW_INFO("%s:( Time:%d,Base:%d,Basew:%d)\n",__func__, timestamp,timebase,timebasew);
 		buf[12] = 0;
 		memcpy(buf, data, 12);
 	}else{
@@ -1548,7 +1548,7 @@ void factory_active_sensor(int sensor_id, int enabled)
             mt_eint_unmask(CUST_EINT_SENSORHUB_NUM);
     }
     cwmcu_powermode_switch(SWITCH_POWER_ENABLE, 0);
-    printk("CwMcu:%s id:%d, en:%d\n",__FUNCTION__, sensor_id, enabled);
+    printk("CwMcu:%s id:%d, en:%d\n",__func__, sensor_id, enabled);
 
 
 }
@@ -1606,7 +1606,7 @@ void factory_clear_calibrator_data(int sensor_id)
 int factory_set_calibrator_data(int sensor_id, SENSOR_DATA *cali_data)
 {
     if (!cali_data){
-        CW_ERROR("[%s] no sensor data", __FUNCTION__);
+        CW_ERROR("[%s] no sensor data", __func__);
 		return -1;
 	}
 
@@ -1779,7 +1779,7 @@ static void cwmcu_resume_work(struct work_struct *work)
     }
 	cwmcu_powermode_switch(SWITCH_POWER_PROBE, 0);
 
-    CW_DEBUG("%s:end", __FUNCTION__);
+    CW_DEBUG("%s:end", __func__);
 }
 
 void CWMCU_suspend(struct device *dev)

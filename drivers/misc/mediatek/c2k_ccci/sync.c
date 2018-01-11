@@ -472,7 +472,7 @@ static int asc_rx_event_send(struct asc_rx_handle *rx, int id)
     int ret = -ENODEV;
 
     if(rx->thread == NULL){
-        ASCPRT("%s:no thread for event\n", __FUNCTION__);
+        ASCPRT("%s:no thread for event\n", __func__);
         return ret;
     }
 
@@ -508,7 +508,7 @@ static int asc_rx_event_recv(struct asc_rx_handle *rx)
     int ret = -ENODEV;
 
     if(rx->thread == NULL){
-        ASCPRT("%s:no thread for event\n", __FUNCTION__);
+        ASCPRT("%s:no thread for event\n", __func__);
         return ret;
     }
 
@@ -683,7 +683,7 @@ static int asc_rx_handle_init(struct asc_rx_handle *rx)
     name = kzalloc(ASC_NAME_LEN, GFP_KERNEL);
     if(!name){
         ret = -ENOMEM;
-        ASCPRT("%s: no memory to malloc for wake lock name\n", __FUNCTION__);
+        ASCPRT("%s: no memory to malloc for wake lock name\n", __func__);
         goto err_malloc_name;
     }
     snprintf(name, ASC_NAME_LEN, "asc_rx_%s", rx->cfg.name);
@@ -903,7 +903,7 @@ static int asc_tx_event_send(struct asc_tx_handle *tx, int id)
     int ret = -ENODEV;
 
     if(tx->thread == NULL){
-        ASCPRT("%s:no thread for event\n", __FUNCTION__);
+        ASCPRT("%s:no thread for event\n", __func__);
         return ret;
     }
 
@@ -938,7 +938,7 @@ static int asc_tx_event_recv(struct asc_tx_handle *tx)
     int ret = -ENODEV;
 
     if(tx->thread == NULL){
-        ASCPRT("%s:no thread for event\n", __FUNCTION__);
+        ASCPRT("%s:no thread for event\n", __func__);
         return ret;
     }
      
@@ -1162,7 +1162,7 @@ static int asc_tx_handle_init(struct asc_tx_handle *tx)
     name = kzalloc(ASC_NAME_LEN, GFP_KERNEL);
     if(!name){
         ret = -ENOMEM;
-        ASCPRT("%s: no memory to malloc for wake lock name\n", __FUNCTION__);
+        ASCPRT("%s: no memory to malloc for wake lock name\n", __func__);
         goto err_malloc_name;
     }
     snprintf(name, ASC_NAME_LEN, "asc_tx_%s", tx->cfg.name);
@@ -1354,7 +1354,7 @@ static void asc_tx_handle_reset(struct asc_tx_handle *tx)
 {
     unsigned long flags;
  
-    ASCDPRT("%s %s\n", __FUNCTION__, tx->cfg.name);
+    ASCDPRT("%s %s\n", __func__, tx->cfg.name);
     del_timer(&tx->timer_wait_ready);
     del_timer(&tx->timer_wait_idle);
     del_timer(&tx->timer_wait_sleep);
@@ -1506,7 +1506,7 @@ int asc_tx_add_user(const char *name, struct asc_infor *infor)
         list_add_tail(&user->node, &tx->user_list);
         spin_unlock_irqrestore(&tx->slock, flags);
     }else{
-        ASCPRT("%s error: user %s already exist!!\n", __FUNCTION__, infor->name);
+        ASCPRT("%s error: user %s already exist!!\n", __func__, infor->name);
         ret = -EINVAL;
     }
 error:
@@ -1533,7 +1533,7 @@ void asc_tx_del_user(const char *path)
         memcpy(hname, path, min(name - path, ASC_NAME_LEN - 1));
         name++;
     }else{
-        ASCPRT("%s: invalid path %s\n", __FUNCTION__, path);
+        ASCPRT("%s: invalid path %s\n", __func__, path);
         return ;
     }
 
@@ -1599,18 +1599,18 @@ int asc_tx_get_ready(const char *path, int sync)
         return -ENODEV;
 
     if(!strncmp(name, ASC_TX_AUTO_USER, strlen(ASC_TX_AUTO_USER))){
-        ASCPRT("%s:tx user name %s is reserved\n", __FUNCTION__, name);
+        ASCPRT("%s:tx user name %s is reserved\n", __func__, name);
         return -EINVAL;
     }
 
     spin_lock_irqsave(&tx->user_count_lock, flags);
     if(asc_tx_get_user(tx, name) < 0){
-        ASCPRT("%s:tx user name %s is unknow\n", __FUNCTION__, name);
+        ASCPRT("%s:tx user name %s is unknow\n", __func__, name);
         spin_unlock_irqrestore(&tx->user_count_lock, flags);
         return -ENODEV;
     }
     
-    ASCDPRT("%s: %s=%d, %s=%d\n", __FUNCTION__,\
+    ASCDPRT("%s: %s=%d, %s=%d\n", __func__,\
                          tx->cfg.name, asc_tx_refer(tx, NULL), path, asc_tx_refer(tx, name));
     spin_unlock_irqrestore(&tx->user_count_lock, flags);
 	
@@ -1630,7 +1630,7 @@ int asc_tx_get_ready(const char *path, int sync)
             break;
         case AP_TX_ST_READY:
             if(atomic_read(&tx->sleeping)){
-                ASCPRT("%s: tx state is sleeping\n", __FUNCTION__);
+                ASCPRT("%s: tx state is sleeping\n", __func__);
                 asc_tx_event_send(tx, AP_TX_EVENT_REQUEST);
             }
             break;
@@ -1695,15 +1695,15 @@ int asc_tx_put_ready(const char *path, int sync)
 
     spin_lock_irqsave(&tx->user_count_lock, flags);
     if(asc_tx_put_user(tx, name) < 0){
-        ASCPRT("%s:tx user name %s is unknow\n", __FUNCTION__, name);
+        ASCPRT("%s:tx user name %s is unknow\n", __func__, name);
         spin_unlock_irqrestore(&tx->user_count_lock, flags);
         return -ENODEV;
     }
-    ASCDPRT("%s: %s=%d, %s=%d\n", __FUNCTION__,\
+    ASCDPRT("%s: %s=%d, %s=%d\n", __func__,\
                         tx->cfg.name, asc_tx_refer(tx, NULL), path, asc_tx_refer(tx, name));
     /*count is not 0, so do nothing*/
     if(asc_tx_refer(tx, NULL) != 0){
-        ASCPRT("%s:asc_tx_refer user count is not 0\n", __FUNCTION__);
+        ASCPRT("%s:asc_tx_refer user count is not 0\n", __func__);
         spin_unlock_irqrestore(&tx->user_count_lock, flags);
         return 0;
     }
@@ -1759,7 +1759,7 @@ int asc_tx_auto_ready(const char *name, int sync)
     unsigned long flags = 0;
 	
     if (!name) {
-        ASCPRT("%s:Invalid name\n", __FUNCTION__);
+        ASCPRT("%s:Invalid name\n", __func__);
         return -EINVAL;
     }
     
@@ -1774,7 +1774,7 @@ int asc_tx_auto_ready(const char *name, int sync)
 	
     spin_lock_irqsave(&tx->user_count_lock, flags);
     if(atomic_read(&user->count) == 0){
-        ASCDPRT("%s: %s=%d, %s=%d\n", __FUNCTION__,\
+        ASCDPRT("%s: %s=%d, %s=%d\n", __func__,\
                          tx->cfg.name, asc_tx_refer(tx, NULL), ASC_TX_AUTO_USER, asc_tx_refer(tx, ASC_TX_AUTO_USER));
         atomic_inc(&user->count);
     }
@@ -1826,13 +1826,13 @@ int asc_tx_auto_ready(const char *name, int sync)
                     if(timeout > msecs_to_jiffies(ASC_TX_WAIT_READY_TIME)){
                         /*unlikely,unless sleeping has some unknow bug*/
                         ASCDPRT("why come here . %s %s now is ready,but wait time expire\n",
-                                    __FUNCTION__, tx->cfg.name);
+                                    __func__, tx->cfg.name);
                         break;
                     }
                     if(atomic_read(&tx->sleeping)){
                         /*sleep handle is on the way,we should wait another 20ms for it done*/
                         ASCDPRT("%s %s sleep handle is on the way,should wait it finish\n",
-                                    __FUNCTION__, tx->cfg.name);
+                                    __func__, tx->cfg.name);
                         continue;
                     }else{
                         /*likely,cp is ready now*/
@@ -1850,7 +1850,7 @@ int asc_tx_auto_ready(const char *name, int sync)
                     try++;
                 }else{
                     ret = -EBUSY;
-                    ASCDPRT(" %s %s wait cp ready failed\n", __FUNCTION__, tx->cfg.name);
+                    ASCDPRT(" %s %s wait cp ready failed\n", __func__, tx->cfg.name);
                     break;
                 }
              }while(1);
@@ -1871,7 +1871,7 @@ int asc_tx_ready_count(const char *name, int inc)
 	int do_sleep;
 	
     if (!name) {
-        ASCPRT("%s:Invalid name\n", __FUNCTION__);
+        ASCPRT("%s:Invalid name\n", __func__);
         return -EINVAL;
     }
     
@@ -1887,7 +1887,7 @@ int asc_tx_ready_count(const char *name, int inc)
 		if (tx->ready_hold == 0 && atomic_read(&tx->delay_sleep)){
 			atomic_set(&tx->delay_sleep, 0);
 			spin_unlock_irqrestore(&tx->slock, flags);
-			ASCPRT("%s:asc_tx_put_ready for %s name\n", __FUNCTION__, tx->cfg.name);
+			ASCPRT("%s:asc_tx_put_ready for %s name\n", __func__, tx->cfg.name);
 			snprintf(path, ASC_NAME_LEN, "%s.%s", tx->cfg.name, ASC_TX_AUTO_USER);
 			asc_tx_put_ready(path, 0);	
 			return 0;
@@ -1903,7 +1903,7 @@ static void asc_rx_handle_reset(struct asc_rx_handle *rx)
 {
     unsigned long flags;
 
-    ASCDPRT("%s %s\n", __FUNCTION__, rx->cfg.name);
+    ASCDPRT("%s %s\n", __func__, rx->cfg.name);
     del_timer(&rx->timer);
     wake_unlock(&rx->wlock);
     asc_rx_indicate_sleep(rx);
@@ -1970,7 +1970,7 @@ int asc_rx_add_user(const char *name, struct asc_infor *infor)
             }
         }
     }else{
-        ASCPRT("%s error: user %s already exist!!\n", __FUNCTION__, infor->name);
+        ASCPRT("%s error: user %s already exist!!\n", __func__, infor->name);
         ret = -EINVAL;
     }
 error:
@@ -1998,7 +1998,7 @@ void asc_rx_del_user(const char *path)
         memcpy(hname, path, min(name - path, ASC_NAME_LEN - 1));
         name++;
     }else{
-        ASCPRT("%s: Invalid path %s\n",__FUNCTION__, path);
+        ASCPRT("%s: Invalid path %s\n",__func__, path);
         return ;
     }
 
@@ -2036,7 +2036,7 @@ int asc_rx_confirm_ready(const char *name, int ready)
 
     rx = asc_rx_handle_lookup(name);
     if(!rx){
-        ASCDPRT("%s: name %s is unknow\n", __FUNCTION__, name);
+        ASCDPRT("%s: name %s is unknow\n", __func__, name);
         return -ENODEV;
     }
 
@@ -2190,7 +2190,7 @@ static ssize_t asc_refer_show(struct kobject *kobj, struct kobj_attribute *attr,
         s += sprintf(s, "%d\n", asc_tx_refer(tx, ASC_TX_SYSFS_USER));
         return s - buf;
     }else{
-        ASCPRT("%s read error\n", __FUNCTION__);
+        ASCPRT("%s read error\n", __func__);
         return -EINVAL;
     }
 
@@ -2251,7 +2251,7 @@ static ssize_t asc_state_show(struct kobject *kobj, struct kobj_attribute *attr,
         s += sprintf(s, "%s\n", tx->table[atomic_read(&tx->state)].name);
         return s - buf;
     }else{
-        ASCPRT("%s read error\n", __FUNCTION__);
+        ASCPRT("%s read error\n", __func__);
         return -EINVAL;
     }
 
@@ -2284,7 +2284,7 @@ static ssize_t asc_auto_ready_show(struct kobject *kobj, struct kobj_attribute *
         s += sprintf(s, "%d\n", tx->auto_delay);
         return s - buf;
     }else{
-        ASCPRT("%s read error\n", __FUNCTION__);
+        ASCPRT("%s read error\n", __func__);
         return -EINVAL;
     }
 
@@ -2322,7 +2322,7 @@ static ssize_t asc_auto_ready_store(struct kobject *kobj, struct kobj_attribute 
         }
         error = asc_tx_auto_ready(tx->cfg.name, 1);
     }else{
-        ASCPRT("%s read error\n", __FUNCTION__);
+        ASCPRT("%s read error\n", __func__);
         error = -EINVAL;
     }
 
@@ -2382,7 +2382,7 @@ static ssize_t asc_confirm_ready_store(struct kobject *kobj, struct kobj_attribu
 
         error = asc_rx_confirm_ready(rx->cfg.name, !!val);
     }else{
-        ASCPRT("%s read error\n", __FUNCTION__);
+        ASCPRT("%s read error\n", __func__);
         error = -EINVAL;
     }
 
@@ -2468,7 +2468,7 @@ int asc_rx_register_handle(struct asc_config *cfg)
     struct asc_rx_handle *rx = NULL;
 
     if(NULL == asc_work_queue){
-        ASCPRT("%s: error Asc has not been init\n", __FUNCTION__);
+        ASCPRT("%s: error Asc has not been init\n", __func__);
         return -EINVAL;
     }
     
@@ -2477,7 +2477,7 @@ int asc_rx_register_handle(struct asc_config *cfg)
     }
     
     if(((cfg->gpio_wake) & 0xFFFF) < 0){
-        ASCPRT("%s: config %s gpio is invalid.\n", __FUNCTION__, cfg->name);
+        ASCPRT("%s: config %s gpio is invalid.\n", __func__, cfg->name);
         return -EINVAL;
     }
     
@@ -2541,7 +2541,7 @@ int asc_tx_register_handle(struct asc_config *cfg)
     struct asc_tx_handle *tx = NULL;
    
     if(NULL == asc_work_queue){
-        ASCPRT("%s: error Asc has not been init\n", __FUNCTION__);
+        ASCPRT("%s: error Asc has not been init\n", __func__);
         return -EINVAL;
     }
 
@@ -2550,7 +2550,7 @@ int asc_tx_register_handle(struct asc_config *cfg)
     }
     //by yfu   
     if(((cfg->gpio_wake) & 0xFFFF) < 0){
-        ASCPRT("%s: config %s gpio is invalid.\n", __FUNCTION__, cfg->name);
+        ASCPRT("%s: config %s gpio is invalid.\n", __func__, cfg->name);
         return -EINVAL;
     }
     

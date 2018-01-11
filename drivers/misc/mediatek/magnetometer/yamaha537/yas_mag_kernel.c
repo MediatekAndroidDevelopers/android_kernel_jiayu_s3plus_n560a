@@ -151,7 +151,7 @@ static int yas_device_write(int32_t type, uint8_t addr, const uint8_t *buf,
 			for(i=0; i<=(len+1); i=i+8)
 			{
 				trans_len = ((i+8)<=(len+1)) ? 8 : (len+1-i);
-				MSE_LOG("%s   trans_len = %d\n", __FUNCTION__,trans_len);
+				MSE_LOG("%s   trans_len = %d\n", __func__,trans_len);
 				ret = i2c_master_send(this_client, &tmp[i], trans_len);
 				if(ret < 0)
 					break;
@@ -167,7 +167,7 @@ static int yas_device_write(int32_t type, uint8_t addr, const uint8_t *buf,
 			ret = i2c_master_send(this_client, (char *)(st->dma_pa), len+1);
 			if(ret < 0)
 			{
-				MAGN_ERR("%s i2c_master_send failed! ret = %d\n",__FUNCTION__, ret);
+				MAGN_ERR("%s i2c_master_send failed! ret = %d\n",__func__, ret);
 			}
 		}
 	}
@@ -176,7 +176,7 @@ static int yas_device_write(int32_t type, uint8_t addr, const uint8_t *buf,
 	mutex_unlock(&yas537_i2c_mutex);
 	if(ret < 0)
 		return ret;
-    //MSE_LOG("%s   successful\n", __FUNCTION__);
+    //MSE_LOG("%s   successful\n", __func__);
 	return 0;
 }
 
@@ -232,7 +232,7 @@ static int yas_device_read(int32_t type, uint8_t addr, uint8_t *buf, int len)
 			err = i2c_master_send(this_client, buf,1);
 			if(err < 0)
 			{
-				MSE_ERR("%s  i2c_master_send failed err = %d\n", __FUNCTION__, err);
+				MSE_ERR("%s  i2c_master_send failed err = %d\n", __func__, err);
 				mutex_unlock(&yas537_i2c_mutex);
 				return err;
 			}
@@ -240,13 +240,13 @@ static int yas_device_read(int32_t type, uint8_t addr, uint8_t *buf, int len)
 			for(i=0; i<=len; i=i+8)
 			{
 				trans_len = ((i+8)<=len) ? 8 : (len-i);
-				MSE_LOG("%s   trans_len = %d\n", __FUNCTION__,trans_len);
+				MSE_LOG("%s   trans_len = %d\n", __func__,trans_len);
 
 				err = i2c_master_recv(this_client, &buf[i], trans_len);
 
 				if(err < 0)
 				{
-					MSE_ERR("%s  i2c_master_recv failed err = %d\n", __FUNCTION__, err);
+					MSE_ERR("%s  i2c_master_recv failed err = %d\n", __func__, err);
 					mutex_unlock(&yas537_i2c_mutex);
 					return err;
 				}
@@ -271,7 +271,7 @@ static int yas_device_read(int32_t type, uint8_t addr, uint8_t *buf, int len)
 		}
 	}
 //#endif
-//	MSE_LOG("%s   successful\n", __FUNCTION__);
+//	MSE_LOG("%s   successful\n", __func__);
 
 	mutex_unlock(&yas537_i2c_mutex);
 	return 0;
@@ -996,7 +996,7 @@ static int yas_probe(struct i2c_client *i2c,
 			st->dma_va = (char *)dma_alloc_coherent(&(this_client->dev), 1024, &(st->dma_pa), GFP_KERNEL);
 			if(unlikely(NULL==st->dma_va))
 			{
-				MAGN_ERR("%s  dma_alloc_coherent failed!\n",__FUNCTION__);
+				MAGN_ERR("%s  dma_alloc_coherent failed!\n",__func__);
 			}
 		}
 	}

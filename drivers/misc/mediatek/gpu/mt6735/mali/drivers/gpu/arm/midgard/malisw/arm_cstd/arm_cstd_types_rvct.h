@@ -183,7 +183,7 @@ typedef uint32_t                    bool_t;
  * larger string you must use a printf-like function with a @c @%s template
  * which is populated with @c CSTD_FUNC
  */
-#define CSTD_FUNC            __FUNCTION__
+#define CSTD_FUNC            __func__
 
 /**
  * @}

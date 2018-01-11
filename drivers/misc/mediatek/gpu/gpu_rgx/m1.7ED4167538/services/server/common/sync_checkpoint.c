@@ -371,7 +371,7 @@ SyncCheckpointResolveFence(PVRSRV_FENCE_KM hFence, IMG_UINT32 *pui32NumSyncCheck
 
 	if (!g_pfnFenceResolve)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)", __func__));
 		PVR_LOG_ERROR(eError, "g_pfnFenceResolve is NULL");
 		eError = PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED;
 	}
@@ -388,7 +388,7 @@ SyncCheckpointCreateFence(const IMG_CHAR *pszFenceName, PVRSRV_TIMELINE_KM hTime
 
 	if (!g_pfnFenceCreate)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: ERROR (eError=PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED)", __func__));
 		PVR_LOG_ERROR(eError, "g_pfnFenceCreate is NULL");
 		eError = PVRSRV_ERROR_SYNC_NATIVESYNC_NOT_REGISTERED;
 	}
@@ -527,7 +527,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncCheckpointContextDestroy(PSYNC_CHECKPOINT_CONTEXT 
 	iRf = OSAtomicRead(&psContext->hCheckpointCount);
 	if (iRf != 0)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s <%p> attempted with active references (iRf=%d), may be the result of a race", __FUNCTION__, (void*)psContext, iRf));
+		PVR_DPF((PVR_DBG_ERROR, "%s <%p> attempted with active references (iRf=%d), may be the result of a race", __func__, (void*)psContext, iRf));
 		eError = PVRSRV_ERROR_UNABLE_TO_DESTROY_CONTEXT;
 	}
 	else
@@ -827,7 +827,7 @@ void SyncCheckpointErrorFromUFO(PSYNC_CHECKPOINT_CONTEXT psSyncContext,
 	IMG_BOOL bFound = IMG_FALSE;
 	PDLLIST_NODE psNode;
 
-	PVR_DPF((PVR_DBG_ERROR, "%s: Entry (ui32FWAddr=%d) >",__FUNCTION__, ui32FwAddr));
+	PVR_DPF((PVR_DBG_ERROR, "%s: Entry (ui32FWAddr=%d) >",__func__, ui32FwAddr));
 
 	OSLockAcquire(psContext->hCheckpointListLock);
 	psNode = dllist_get_next_node(&psContext->sCheckpointList);
@@ -844,7 +844,7 @@ void SyncCheckpointErrorFromUFO(PSYNC_CHECKPOINT_CONTEXT psSyncContext,
 	}
 	OSLockRelease(psContext->hCheckpointListLock);
 
-	PVR_DPF((PVR_DBG_ERROR, "%s: Exit <",__FUNCTION__));
+	PVR_DPF((PVR_DBG_ERROR, "%s: Exit <",__func__));
 }
 
 static void _SyncCheckpointState(PDLLIST_NODE psNode,
@@ -959,7 +959,7 @@ SyncCheckpointRecordRemove(PSYNC_CHECKPOINT_RECORD_HANDLE hRecord)
 
 	if (psContext->uiCheckpointRecordFreeIdx >= PVRSRV_FULL_SYNC_TRACKING_HISTORY_LEN)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: freed sync record index out of range", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: freed sync record index out of range", __func__));
 		psContext->uiCheckpointRecordFreeIdx = 0;
 	}
 	ppFreedSync = &psContext->apsCheckpointRecordsFreed[psContext->uiCheckpointRecordFreeIdx];

@@ -195,7 +195,7 @@ sme_log_event(ul_client_t *pcli,
                 /* Check if this is a confirm for EAPOL M4 frame and we need to send transmistted ind*/
                 if (interfacePriv->m4_sent && (cfm->HostTag == interfacePriv->m4_hostTag))
                 {
-                    unifi_trace(priv, UDBG1, "%s: Sending M4 Transmit CFM\n", __FUNCTION__);
+                    unifi_trace(priv, UDBG1, "%s: Sending M4 Transmit CFM\n", __func__);
                     CsrWifiRouterCtrlM4TransmittedIndSend(priv->CSR_WIFI_SME_IFACEQUEUE, 0,
                             interfaceTag,
                             peerMacAddress,
@@ -211,7 +211,7 @@ sme_log_event(ul_client_t *pcli,
                         result,
                         (cfm->HostTag & 0x3fffffff), cfm->Rate);
                 } else {
-                    unifi_trace(priv, UDBG1, "%s: M4 received from netdevice\n", __FUNCTION__);
+                    unifi_trace(priv, UDBG1, "%s: M4 received from netdevice\n", __func__);
                 }
                 return;
             }

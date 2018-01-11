@@ -124,7 +124,7 @@ static int __init mt_power_gs_init(void)
 	mt_power_gs_dir = proc_mkdir("mt_power_gs", NULL);
 
 	if (!mt_power_gs_dir)
-		printk("[%s]: mkdir /proc/mt_power_gs failed\n", __FUNCTION__);
+		printk("[%s]: mkdir /proc/mt_power_gs failed\n", __func__);
 
 	return 0;
 }

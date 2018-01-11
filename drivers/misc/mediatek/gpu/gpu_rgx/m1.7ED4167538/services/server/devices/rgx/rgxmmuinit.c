@@ -835,7 +835,7 @@ static IMG_UINT64 RGXDerivePDEProt8(IMG_UINT32 uiProtFlags, IMG_UINT32 uiLog2Dat
 			default:
 				PVR_DPF((PVR_DBG_ERROR,
 						 "%s:%d: in function<%s>: Invalid parameter log2_page_size. Expected {12, 14, 16, 18, 20, 21}. Got [%u]",
-						 __FILE__, __LINE__, __FUNCTION__, uiLog2DataPageSize));
+						 __FILE__, __LINE__, __func__, uiLog2DataPageSize));
 		}
 	}
 	return ret_value;

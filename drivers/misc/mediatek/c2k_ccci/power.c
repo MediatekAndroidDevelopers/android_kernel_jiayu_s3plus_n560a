@@ -117,7 +117,7 @@ extern int dump_c2k_sdio_status(struct sdio_modem *modem);
 static void modem_signal_user(int event)
 {
     if(cmdata && cmdata->fasync){
-        printk("%s: evnet %d.\n",__FUNCTION__, (short)event);
+        printk("%s: evnet %d.\n",__func__, (short)event);
         kill_fasync(&cmdata->fasync, SIGIO, event);
     }
 }
@@ -268,7 +268,7 @@ ssize_t modem_power_store(
     }else if(!strncmp(buf, "off", strlen("off"))){
         power = 0;
     }else{
-        printk("%s: input %s is invalid.\n", __FUNCTION__, buf);
+        printk("%s: input %s is invalid.\n", __func__, buf);
         return n;
     }
 
@@ -700,7 +700,7 @@ EXPORT_SYMBOL(modem_unregister_notifier);
 
 static irqreturn_t modem_reset_indication_irq(int irq, void *data)
 {
-    printk("[C2K MODEM] %s %d \n",__FUNCTION__,__LINE__);
+    printk("[C2K MODEM] %s %d \n",__func__,__LINE__);
 
 #ifndef CONFIG_EVDO_DT_VIA_SUPPORT
 	c2k_gpio_to_ls(GPIO_C2K_MDM_RST_IND);
@@ -709,13 +709,13 @@ static irqreturn_t modem_reset_indication_irq(int irq, void *data)
     if(GPIO_C2K_VALID(GPIO_C2K_MDM_RST_IND)){
         //c2k_gpio_set_irq_type(GPIO_C2K_MDM_RST_IND, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING);
         if(c2k_gpio_get_value(GPIO_C2K_MDM_RST_IND)){
-            printk("[C2K] %s %d ON, md is off now...\n",__FUNCTION__,__LINE__);
+            printk("[C2K] %s %d ON, md is off now...\n",__func__,__LINE__);
 			wake_lock_timeout(&cmdata->wlock, MDM_RST_LOCK_TIME * HZ);
 //#ifdef CONFIG_EVDO_DT_VIA_SUPPORT
             modem_notify_event(MDM_EVT_NOTIFY_RESET_ON);
 //#endif
         }else{
-            printk("%s %d OFF, md is on now...\n",__FUNCTION__,__LINE__);
+            printk("%s %d OFF, md is on now...\n",__func__,__LINE__);
 //#ifdef CONFIG_EVDO_DT_VIA_SUPPORT
             modem_notify_event(MDM_EVT_NOTIFY_RESET_OFF);
 //#endif
@@ -749,7 +749,7 @@ static int modem_userspace_notifier(int msg, void *data)
      char *hd = (char *)data;
 
      if(!hd) {
-        printk(KERN_ERR "%s:error sync user\n", __FUNCTION__);
+        printk(KERN_ERR "%s:error sync user\n", __func__);
         return -ENODEV;
      }
 
@@ -780,7 +780,7 @@ static int modem_userspace_notifier(int msg, void *data)
             break;
 
          default:
-            printk("%s unknow message %d\n", __FUNCTION__, msg);
+            printk("%s unknow message %d\n", __func__, msg);
     }
 
     return ret;
@@ -801,7 +801,7 @@ static int modem_sync_init(void)
         cfg.polar = 1;
         ret = asc_tx_register_handle(&cfg);
         if(ret < 0){
-            printk("%s: fail to regist tx handle %s\n", __FUNCTION__, CBP_TX_HD_NAME);
+            printk("%s: fail to regist tx handle %s\n", __func__, CBP_TX_HD_NAME);
             goto end_sync_init;
         }
     }
@@ -815,7 +815,7 @@ static int modem_sync_init(void)
         cfg.polar = 1;
         ret = asc_rx_register_handle(&cfg);
         if(ret < 0){
-            printk("%s: fail to regist rx handle %s\n", __FUNCTION__, USB_RX_HD_NAME);
+            printk("%s: fail to regist rx handle %s\n", __func__, USB_RX_HD_NAME);
             goto end_sync_init;
         }
         memset(&user, 0, sizeof(struct asc_infor));
@@ -824,7 +824,7 @@ static int modem_sync_init(void)
         snprintf(user.name, ASC_NAME_LEN, USB_RX_USER_NAME);
         ret = asc_rx_add_user(USB_RX_HD_NAME, &user);
         if(ret < 0){
-            printk("%s: fail to regist rx user %s\n", __FUNCTION__, USB_RX_USER_NAME);
+            printk("%s: fail to regist rx user %s\n", __func__, USB_RX_USER_NAME);
             goto end_sync_init;
         }
     }
@@ -838,7 +838,7 @@ static int modem_sync_init(void)
         cfg.polar = 1;
         ret = asc_rx_register_handle(&cfg);
         if(ret < 0){
-            printk("%s: fail to regist rx handle %s\n", __FUNCTION__, UART_RX_HD_NAME);
+            printk("%s: fail to regist rx handle %s\n", __func__, UART_RX_HD_NAME);
             goto end_sync_init;
         }
 
@@ -848,14 +848,14 @@ static int modem_sync_init(void)
         snprintf(user.name, ASC_NAME_LEN, UART_RX_USER_NAME);
         ret = asc_rx_add_user(UART_RX_HD_NAME, &user);
         if(ret < 0){
-            printk("%s: fail to regist rx user %s\n", __FUNCTION__, UART_RX_USER_NAME);
+            printk("%s: fail to regist rx user %s\n", __func__, UART_RX_USER_NAME);
             goto end_sync_init;
         }
     }
 
 end_sync_init:
     if(ret){
-        printk("%s: error\n", __FUNCTION__);
+        printk("%s: error\n", __func__);
     }
     return ret;
 }

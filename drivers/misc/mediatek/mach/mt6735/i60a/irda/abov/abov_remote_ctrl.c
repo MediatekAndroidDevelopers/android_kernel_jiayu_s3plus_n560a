@@ -40,9 +40,9 @@
 #define GPIO_VDDIR_EN               (GPIO4 | 0x80000000)
 
 #define REM_TAG                  "[Remote_ctl] "
-#define REM_FUN(f)               printk(KERN_ERR REM_TAG"%s\n",   __FUNCTION__)
+#define REM_FUN(f)               printk(KERN_ERR REM_TAG"%s\n",   __func__)
 #define REM_LOG(fmt, args...)    printk(KERN_ERR REM_TAG fmt,     ##args)
-#define REM_ERR(fmt, args...)    printk(KERN_ERR REM_TAG"%s %d :  "fmt, __FUNCTION__, __LINE__, ##args)
+#define REM_ERR(fmt, args...)    printk(KERN_ERR REM_TAG"%s %d :  "fmt, __func__, __LINE__, ##args)
 
 #define REMOTE_DEVICE "remote_ctrl"
 

@@ -1304,12 +1304,12 @@ static void trace_init_cmdlines(void)
 #ifdef CONFIG_MTK_EXTMEM
 	map_pid_to_cmdline = (unsigned *) extmem_malloc_page_align(SIZEOF_MAP_PID_TO_CMDLINE);
 	if(map_pid_to_cmdline == NULL) {
-		pr_err("%s[%s] ext memory alloc failed!!!\n", __FILE__, __FUNCTION__);
+		pr_err("%s[%s] ext memory alloc failed!!!\n", __FILE__, __func__);
 		map_pid_to_cmdline = (unsigned *)vmalloc(SIZEOF_MAP_PID_TO_CMDLINE);
 	}
 	map_cmdline_to_pid = (unsigned *) extmem_malloc_page_align(SIZEOF_MAP_CMDLINE_TO_PID);
 	if(map_pid_to_cmdline == NULL) {
-		pr_warning("%s[%s] ext memory alloc failed!!!\n", __FILE__, __FUNCTION__);
+		pr_warning("%s[%s] ext memory alloc failed!!!\n", __FILE__, __func__);
 		map_cmdline_to_pid = (unsigned *)vmalloc(SIZEOF_MAP_CMDLINE_TO_PID);
 	}
 	memset(map_pid_to_cmdline, NO_CMDLINE_MAP, SIZEOF_MAP_PID_TO_CMDLINE);

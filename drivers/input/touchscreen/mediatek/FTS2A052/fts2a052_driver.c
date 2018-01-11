@@ -3074,7 +3074,7 @@ static int tpd_local_init(void)
 #ifdef TPD_HAVE_BUTTON     
     	tpd_button_setting(TPD_KEY_COUNT, tpd_keys_local, tpd_keys_dim_local);// initialize tpd button data
 #endif    
-	TPD_DMESG("end %s, %d\n", __FUNCTION__, __LINE__);  
+	TPD_DMESG("end %s, %d\n", __func__, __LINE__);  
 	tpd_type_cap = 1;
 	
 //set tp resulution 
@@ -3088,7 +3088,7 @@ static int tpd_local_init(void)
 static void tpd_resume( struct early_suspend *h )
 {
   int rc = 0;
-	TPD_DMESG("[st_tpd] %s\n", __FUNCTION__);
+	TPD_DMESG("[st_tpd] %s\n", __func__);
 	/*power up touch*/	
 #ifdef TPD_POWER_SOURCE_CUSTOM
 	hwPowerOn(TPD_POWER_SOURCE_CUSTOM,VOL_3300,"CTP");
@@ -3162,7 +3162,7 @@ static void tpd_resume( struct early_suspend *h )
 static void tpd_suspend( struct early_suspend *h )
 {
  
-	TPD_DMESG("[st_tpd] %s\n", __FUNCTION__);
+	TPD_DMESG("[st_tpd] %s\n", __func__);
 	
 	old_buttons = 0;		
 	mt_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);

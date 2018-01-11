@@ -487,7 +487,7 @@ _SetupCleanup_FreeMMUMapping(PVRSRV_DEVICE_NODE *psDevNode,
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: Failed to get memory for deferred page table cleanup. "
 				 "Freeing tables immediately",
-				 __FUNCTION__));
+				 __func__));
 		goto e1;
 	}
 

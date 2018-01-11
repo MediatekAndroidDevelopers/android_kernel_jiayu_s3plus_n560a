@@ -45,7 +45,7 @@
 #define LOG_2 LOG_INF("preview 1280*960@30fps; video 2560*1920@30fps; capture 5M@30fps\n")
 /****************************   Modify end    *******************************************/
 
-#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
 

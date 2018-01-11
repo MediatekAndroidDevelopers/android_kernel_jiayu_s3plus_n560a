@@ -40,8 +40,8 @@
 /*----------------------------------------------------------------------------*/
 
 #define APM_TAG                  "[ALS/PS] "
-#define APM_FUN()                printk( APM_TAG"%s\n", __FUNCTION__)
-#define APM_ERR(fmt, args...)    printk( APM_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define APM_FUN()                printk( APM_TAG"%s\n", __func__)
+#define APM_ERR(fmt, args...)    printk( APM_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define APM_LOG(fmt, args...)    printk( APM_TAG fmt, ##args)
 #define APM_DBG(fmt, args...)    printk( fmt, ##args)
 
@@ -348,11 +348,11 @@ int apm_16d_write_als(struct i2c_client *client, u8 data)
 	if(ret < 0)
 	{
 		APM_ERR("write als = %d\n", ret);
-		printk("[%s] 123 i2c addr = 0x%x, als_cmd = 0x%x, data = 0x%x\n", __FUNCTION__, client->addr, obj->addr.als_cmd, data);
+		printk("[%s] 123 i2c addr = 0x%x, als_cmd = 0x%x, data = 0x%x\n", __func__, client->addr, obj->addr.als_cmd, data);
 		return -EFAULT;
 	}
         else
-       printk("[%s] cc_i2c addr = 0x%x,cc_ als_cmd = 0x%x, cc_data = 0x%x\n", __FUNCTION__, client->addr, obj->addr.als_cmd, data);
+       printk("[%s] cc_i2c addr = 0x%x,cc_ als_cmd = 0x%x, cc_data = 0x%x\n", __func__, client->addr, obj->addr.als_cmd, data);
 
 	return 0;
 }
@@ -382,12 +382,12 @@ int apm_16d_read_ps(struct i2c_client *client, int *data)
 
 	apm_16d_master_recv(client, obj->addr.ps_cmd, buf, 1);
 	//apm_16d_master_recv(client, client->addr, buf, 1);
-	printk("[%s] read ps cmd = 0x%x\n", __FUNCTION__, buf[0]);
+	printk("[%s] read ps cmd = 0x%x\n", __func__, buf[0]);
 	
 	//buf[0]=obj->addr.status;
 	apm_16d_master_recv(client, obj->addr.status, buf, 1);
 	//apm_16d_master_recv(client, client->addr, buf, 1);
-	printk("[%s] read apm status = 0x%x\n", __FUNCTION__, buf[0]);
+	printk("[%s] read apm status = 0x%x\n", __func__, buf[0]);
 #endif
 	
 	return 0;
@@ -454,7 +454,7 @@ static void apm_16d_power(struct alsps_hw *hw, unsigned int on)
 	static unsigned int power_on = 0;
 
 #if (defined(DCT_H958))
-	printk("[%s] line = %d on = %d\n", __FUNCTION__, __LINE__, on);
+	printk("[%s] line = %d on = %d\n", __func__, __LINE__, on);
         if(power_on == on)
         {
 	        APM_LOG("ignore power control: %d\n", on);
@@ -1020,7 +1020,7 @@ static ssize_t apm_16d_show_als(struct device_driver *ddri, char *buf)
 		int dat;
 #endif
 		
-		printk("\n[%s]---line = %d----\n",__FUNCTION__, __LINE__);
+		printk("\n[%s]---line = %d----\n",__func__, __LINE__);
 
 
 	if(!apm_16d_obj)
@@ -2020,7 +2020,7 @@ static long apm_16d_unlocked_ioctl(struct file *file, unsigned int cmd,
 		#endif
 
 		default:
-			APM_ERR("%s not supported = 0x%04x", __FUNCTION__, cmd);
+			APM_ERR("%s not supported = 0x%04x", __func__, cmd);
 			err = -ENOIOCTLCMD;
 			break;
 	}
@@ -2049,7 +2049,7 @@ static int apm_16d_i2c_suspend(struct i2c_client *client, pm_message_t msg)
 	int err;
 	APM_FUN();
 	
-printk("[%s] line  =%d called \n",__FUNCTION__, __LINE__);
+printk("[%s] line  =%d called \n",__func__, __LINE__);
 	if(msg.event == PM_EVENT_SUSPEND)
 	{
 		if(!obj)
@@ -2084,7 +2084,7 @@ static int apm_16d_i2c_resume(struct i2c_client *client)
 	struct apm_16d_priv *obj = i2c_get_clientdata(client);
 	int err;
 	APM_FUN();
-	printk("[%s] line  =%d called \n",__FUNCTION__, __LINE__);
+	printk("[%s] line  =%d called \n",__func__, __LINE__);
 	if(!obj)
 	{
 		APM_ERR("null pointer!!\n");
@@ -2137,7 +2137,7 @@ static void apm_16d_early_suspend(struct early_suspend *h)
 		APM_ERR("disable als fail: %d\n", err);
 	}
 #endif
-printk("[%s] line  =%d called \n",__FUNCTION__, __LINE__);
+printk("[%s] line  =%d called \n",__func__, __LINE__);
 }
 /*----------------------------------------------------------------------------*/
 static void apm_16d_late_resume(struct early_suspend *h)
@@ -2167,7 +2167,7 @@ static void apm_16d_late_resume(struct early_suspend *h)
 		}
 	}
 #endif
-printk("[%s] line  =%d called \n",__FUNCTION__, __LINE__);
+printk("[%s] line  =%d called \n",__func__, __LINE__);
 }
 
 int apm_16d_ps_operate(void* self, uint32_t command, void* buff_in, int size_in,
@@ -2373,7 +2373,7 @@ static int apm_16d_i2c_probe(struct i2c_client *client, const struct i2c_device_
 		goto exit;
 	}
 
-	printk("\n\n[%s] amp_16d chip addr = 0x%x\n\n",__FUNCTION__, client->addr);
+	printk("\n\n[%s] amp_16d chip addr = 0x%x\n\n",__func__, client->addr);
 	memset(obj, 0, sizeof(*obj));
 	apm_16d_obj = obj;
 	#if defined(CONFIG_MTK_AUTO_DETECT_ALSPS)

@@ -37,7 +37,7 @@ int vdecwriteFile(int fp, char *buf, int writelen);
 
 extern void vHEVCInitROM(UINT32 u4InstID);
 
-#define x_alloc_aligned_verify_mem(u4Size, u4Align, fgChannelA) x_alloc_aligned_verify_mem_ex(u4Size, u4Align, fgChannelA, __FUNCTION__, __LINE__)
+#define x_alloc_aligned_verify_mem(u4Size, u4Align, fgChannelA) x_alloc_aligned_verify_mem_ex(u4Size, u4Align, fgChannelA, __func__, __LINE__)
 
 #if VMMU_SUPPORT
 static const UCHAR *g_pu1AllocSA = VMMU_SA; // need 64k align

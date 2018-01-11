@@ -132,7 +132,7 @@ static void *_DebugFSStatisticSeqStart(struct seq_file *psSeqFile, loff_t *puiPo
 			/* take reference on psStatData (for duration of stat iteration) */
 			if (!_RefStatEntry((void*)psStatData))
 			{
-				PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called for '%s' but failed to take ref on stat entry, returning -EIO(%d)", __FUNCTION__, psStatData->pvDebugFSEntry->psEntry->d_iname, -EIO));
+				PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called for '%s' but failed to take ref on stat entry, returning -EIO(%d)", __func__, psStatData->pvDebugFSEntry->psEntry->d_iname, -EIO));
 				return NULL;
 			}
 		}
@@ -148,7 +148,7 @@ static void *_DebugFSStatisticSeqStart(struct seq_file *psSeqFile, loff_t *puiPo
 	}
 	else
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL", __FUNCTION__));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL", __func__));
 	}
 
 	return NULL;
@@ -177,13 +177,13 @@ static void _DebugFSStatisticSeqStop(struct seq_file *psSeqFile, void *pvData)
 			if (psStatData->pvData)
 			{
 				/* psStatData->ui32RefCount is zero */
-				PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData->ui32RefCount is %d", __FUNCTION__, psStatData->ui32RefCount));
+				PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData->ui32RefCount is %d", __func__, psStatData->ui32RefCount));
 			}
 		}
 	}
 	else
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL", __FUNCTION__));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL", __func__));
 	}
 }
 
@@ -204,7 +204,7 @@ static void *_DebugFSStatisticSeqNext(struct seq_file *psSeqFile,
 			}
 			else
 			{
-				PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called with puiPosition NULL", __FUNCTION__));
+				PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called with puiPosition NULL", __func__));
 			}
 		}
 		else
@@ -215,7 +215,7 @@ static void *_DebugFSStatisticSeqNext(struct seq_file *psSeqFile,
 	}
 	else
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL", __FUNCTION__));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL", __func__));
 	}
 
 	return NULL;
@@ -232,7 +232,7 @@ static int _DebugFSStatisticSeqShow(struct seq_file *psSeqFile, void *pvData)
 	}
 	else
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL, returning -ENODATA(%d)", __FUNCTION__, -ENODATA));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called when psStatData is NULL, returning -ENODATA(%d)", __func__, -ENODATA));
 	}
 
 	return -ENODATA;
@@ -290,7 +290,7 @@ static int _DebugFSFileOpen(struct inode *psINode, struct file *psFile)
 					{
 						/* Drop ref if we failed to open seq file */
 						_UnrefAndMaybeDestroyDebugFSEntry(&psPrivData->psDebugFSEntry);
-						PVR_DPF((PVR_DBG_ERROR, "%s: Failed to seq_open psFile, returning %d", __FUNCTION__, iResult));
+						PVR_DPF((PVR_DBG_ERROR, "%s: Failed to seq_open psFile, returning %d", __func__, iResult));
 					}
 				}
 			}
@@ -340,7 +340,7 @@ static ssize_t _DebugFSFileWrite(struct file *psFile,
 
 	if (psPrivData->pfnWrite == NULL)
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called for file '%s', which does not have pfnWrite defined, returning -EIO(%d)", __FUNCTION__, psFile->f_path.dentry->d_iname, -EIO));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called for file '%s', which does not have pfnWrite defined, returning -EIO(%d)", __func__, psFile->f_path.dentry->d_iname, -EIO));
 		return -EIO;
 	}
 
@@ -380,7 +380,7 @@ int PVRDebugFSInit(void)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 			 "%s: Cannot create '%s' debugfs root directory",
-			 __FUNCTION__, PVR_DEBUGFS_DIR_NAME));
+			 __func__, PVR_DEBUGFS_DIR_NAME));
 
 		return -ENOMEM;
 	}
@@ -432,7 +432,7 @@ int PVRDebugFSCreateEntryDir(IMG_CHAR *pszName,
 
 	if (pszName == NULL || ppsNewDir == NULL)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s:   Invalid param", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s:   Invalid param", __func__));
 		return -EINVAL;
 	}
 
@@ -442,7 +442,7 @@ int PVRDebugFSCreateEntryDir(IMG_CHAR *pszName,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 			 "%s: Cannot allocate memory for '%s' pvr_debugfs structure",
-			 __FUNCTION__, pszName));
+			 __func__, pszName));
 		return -ENOMEM;
 	}
 
@@ -453,7 +453,7 @@ int PVRDebugFSCreateEntryDir(IMG_CHAR *pszName,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 			 "%s: Cannot create '%s' debugfs directory",
-			 __FUNCTION__, pszName));
+			 __func__, pszName));
 
 		OSFreeMemNoStats(psNewDir);
 		return -ENOMEM;
@@ -579,7 +579,7 @@ int PVRDebugFSCreateEntry(const char *pszName,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 			 "%s: Cannot create debugfs '%s' file",
-			 __FUNCTION__, pszName));
+			 __func__, pszName));
 
 		return PTR_ERR(psEntry);
 	}
@@ -714,7 +714,7 @@ static IMG_BOOL _RefDirEntry(PVR_DEBUGFS_DIR_DATA *psDirEntry)
 	else
 	{
 		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to ref psDirEntry '%s'"
-		        " when ui32RefCount is zero", __FUNCTION__,
+		        " when ui32RefCount is zero", __func__,
 		        psDirEntry->psDir->d_iname));
 	}
 
@@ -747,7 +747,7 @@ static void _UnrefAndMaybeDestroyDirEntryWhileLocked(PVR_DEBUGFS_DIR_DATA **ppsD
 	else
 	{
 		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to unref psDirEntry '%s'"
-		        " when ui32RefCount is zero", __FUNCTION__,
+		        " when ui32RefCount is zero", __func__,
 		        psDirEntry->psDir->d_iname));
 	}
 }
@@ -817,7 +817,7 @@ static void _UnrefAndMaybeDestroyDebugFSEntry(PVR_DEBUGFS_ENTRY_DATA **ppsDebugF
 	}
 	else
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to unref psDebugFSEntry '%s' when ui32RefCount is zero", __FUNCTION__, psDebugFSEntry->psEntry->d_iname));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to unref psDebugFSEntry '%s' when ui32RefCount is zero", __func__, psDebugFSEntry->psEntry->d_iname));
 	}
 
 	mutex_unlock(&gDebugFSLock);
@@ -839,7 +839,7 @@ static IMG_BOOL _RefStatEntry(PVR_DEBUGFS_DRIVER_STAT *psStatEntry)
 	}
 	else
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to ref psStatEntry '%s' when ui32RefCount is zero", __FUNCTION__, psStatEntry->pvDebugFSEntry->psEntry->d_iname));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to ref psStatEntry '%s' when ui32RefCount is zero", __func__, psStatEntry->pvDebugFSEntry->psEntry->d_iname));
 	}
 
 	mutex_unlock(&gDebugFSLock);
@@ -882,7 +882,7 @@ static IMG_BOOL _UnrefAndMaybeDestroyStatEntry(PVR_DEBUGFS_DRIVER_STAT *psStatEn
 	}
 	else
 	{
-		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to unref psStatEntry '%s' when ui32RefCount is zero", __FUNCTION__, psStatEntry->pvDebugFSEntry->psEntry->d_iname));
+		PVR_DPF((PVR_DEBUGFS_PVR_DPF_LEVEL, "%s: Called to unref psStatEntry '%s' when ui32RefCount is zero", __func__, psStatEntry->pvDebugFSEntry->psEntry->d_iname));
 		mutex_unlock(&gDebugFSLock);
 	}
 

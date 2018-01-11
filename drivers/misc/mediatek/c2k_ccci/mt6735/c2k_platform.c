@@ -517,7 +517,7 @@ void set_ap_ready(int value)
 		reg_value &= ~AP_READY_BIT;		//set 0 to indicate ap ready
 	
 	c2k_write32(infra_ao_base, INFRA_AO_C2K_SPM_CTRL, reg_value);
-	printk("[C2K]%s: set ap ready %d\n", __FUNCTION__, value);
+	printk("[C2K]%s: set ap ready %d\n", __func__, value);
 }
 
 void set_ap_wake_cp(int value)

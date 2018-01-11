@@ -68,8 +68,8 @@
 #endif
 
 #define MSE_TAG                 "[Msensor] "
-#define MSE_FUN(f)              printk(KERN_ERR MSE_TAG"%s\n", __FUNCTION__)
-#define MSE_ERR(fmt, args...)   printk(KERN_ERR MSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define MSE_FUN(f)              printk(KERN_ERR MSE_TAG"%s\n", __func__)
+#define MSE_ERR(fmt, args...)   printk(KERN_ERR MSE_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define MSE_LOG(fmt, args...)   printk(KERN_INFO MSE_TAG fmt, ##args)
 
 static struct i2c_client *this_client = NULL;
@@ -630,7 +630,7 @@ static int FctShipmntTestProcess_Body(void)
 	
 	// Set to PowerDown mode 
 	if (AKECS_SetMode(AK8975_MODE_POWERDOWN) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
@@ -640,7 +640,7 @@ static int FctShipmntTestProcess_Body(void)
 		i2cData[0] = AK8975_REG_I2CDIS;
 		i2cData[1] = 0x1B;
 		if (AKI2C_TxData(i2cData, 2) < 0) {
-			AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+			AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 			return 0;
 		}
 	}
@@ -648,7 +648,7 @@ static int FctShipmntTestProcess_Body(void)
 	// Read values from WIA to ASTC.
 	i2cData[0] = AK8975_REG_WIA;
 	if (AKI2C_RxData(i2cData, 7) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
@@ -663,7 +663,7 @@ static int FctShipmntTestProcess_Body(void)
     // our i2c only most can read 8 byte  at one time ,
     i2cData[7]= AK8975_REG_HZL;
 	if (AKI2C_RxData((i2cData+7), 6) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	TEST_DATA(TLIMIT_NO_RST_HZL,  TLIMIT_TN_RST_HZL,  (int)i2cData[7],  TLIMIT_LO_RST_HZL,  TLIMIT_HI_RST_HZL,  &pf_total);
@@ -676,7 +676,7 @@ static int FctShipmntTestProcess_Body(void)
 	// Read values from I2CDIS.
 	i2cData[0] = AK8975_REG_I2CDIS;
 	if (AKI2C_RxData(i2cData, 1) < 0 ) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	if(CSPEC_SPI_USE == 1){
@@ -687,14 +687,14 @@ static int FctShipmntTestProcess_Body(void)
 	
 	// Set to FUSE ROM access mode
 	if (AKECS_SetMode(AK8975_MODE_FUSE_ACCESS) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
 	// Read values from ASAX to ASAZ
 	i2cData[0] = AK8975_FUSE_ASAX;
 	if (AKI2C_RxData(i2cData, 3) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	asax = (int)i2cData[0];
@@ -716,13 +716,13 @@ static int FctShipmntTestProcess_Body(void)
 	// Read values. CNTL
 	i2cData[0] = AK8975_REG_CNTL;
 	if (AKI2C_RxData(i2cData, 1)< 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
 	// Set to PowerDown mode 
 	if (AKECS_SetMode(AK8975_MODE_POWERDOWN) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
@@ -736,7 +736,7 @@ static int FctShipmntTestProcess_Body(void)
 	
 	// Set to SNG measurement pattern (Set CNTL register) 
 	if (AKECS_SetMode(AK8975_MODE_SNG_MEASURE) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
@@ -746,7 +746,7 @@ static int FctShipmntTestProcess_Body(void)
 	// ST1 + (HXL + HXH) + (HYL + HYH) + (HZL + HZH) + ST2
 	// = 1 + (1 + 1) + (1 + 1) + (1 + 1) + 1 = 8 bytes
 	if (AKECS_GetData(i2cData,SENSOR_DATA_SIZE) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 
@@ -768,13 +768,13 @@ static int FctShipmntTestProcess_Body(void)
 	i2cData[0] = AK8975_REG_ASTC;
 	i2cData[1] = 0x40;
 	if (AKI2C_TxData(i2cData, 2) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
 	// Set to Self-test mode (Set CNTL register)
 	if (AKECS_SetMode(AK8975_MODE_SELF_TEST) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	
@@ -784,7 +784,7 @@ static int FctShipmntTestProcess_Body(void)
 	// ST1 + (HXL + HXH) + (HYL + HYH) + (HZL + HZH) + ST2
 	// = 1 + (1 + 1) + (1 + 1) + (1 + 1) + 1 = 8Byte
 	if (AKECS_GetData(i2cData,SENSOR_DATA_SIZE) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 		
@@ -863,7 +863,7 @@ static int FctShipmntTestProcess_Body(void)
 	i2cData[0] = AK8975_REG_ASTC;
 	i2cData[1] = 0x00;
 	if (AKI2C_TxData(i2cData, 2) < 0) {
-		AKMDBG("%s:%d Error.\n", __FUNCTION__, __LINE__);
+		AKMDBG("%s:%d Error.\n", __func__, __LINE__);
 		return 0;
 	}
 	AKMDBG("pf_total = %d\n",pf_total );
@@ -1415,7 +1415,7 @@ static long akm8975_unlocked_ioctl(struct file *file, unsigned int cmd,unsigned 
 			break;
 			
 		default:
-			printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;		
 		}

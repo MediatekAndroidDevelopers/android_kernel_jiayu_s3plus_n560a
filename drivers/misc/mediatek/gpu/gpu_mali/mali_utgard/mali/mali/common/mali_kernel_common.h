@@ -112,7 +112,7 @@
 
 #define MALI_PRINT_ERROR(args) do{ \
 		MALI_PRINTF(("Mali: ERR: %s\n" ,__FILE__)); \
-		MALI_PRINTF(("           %s()%4d\n           ", __FUNCTION__, __LINE__)) ; \
+		MALI_PRINTF(("           %s()%4d\n           ", __func__, __LINE__)) ; \
 		MALI_PRINTF(args); \
 		MALI_PRINTF(("\n")); \
 	} while(0)

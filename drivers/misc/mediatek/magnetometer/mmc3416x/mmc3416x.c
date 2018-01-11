@@ -1094,7 +1094,7 @@ static int mmc3416x_release(struct inode *inode, struct file *file)
 			break;
 			
 		default:
-			printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;		
 		}

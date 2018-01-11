@@ -28,7 +28,7 @@
 #define LCM_PRINT printk
 #endif
 
-#define LCM_PRINT_FUNC()  LCM_PRINT("LCM35510" "`%s:%d [%s] " "\n", __FILE__, __LINE__, __FUNCTION__)
+#define LCM_PRINT_FUNC()  LCM_PRINT("LCM35510" "`%s:%d [%s] " "\n", __FILE__, __LINE__, __func__)
 
 // ---------------------------------------------------------------------------
 //  Local Variables

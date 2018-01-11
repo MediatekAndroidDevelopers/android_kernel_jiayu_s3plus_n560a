@@ -1028,7 +1028,7 @@ void vVDEC_HAL_MPEG_VDec_DumpReg(UINT32 u4VDecID, BOOL fgBefore)
     //return;
     //#endif
 
-    printk("<vdec> %s, %d!\n", __FUNCTION__, __LINE__);
+    printk("<vdec> %s, %d!\n", __func__, __LINE__);
 
     //_tRecFileInfo.fpFile = fopen(_bFileStr1[_u4VDecID][2],"a+t");
 #if 1

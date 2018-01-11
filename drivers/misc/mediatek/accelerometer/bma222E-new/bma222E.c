@@ -185,8 +185,8 @@ static struct acc_init_info bma222_init_info = {
 /*----------------------------------------------------------------------------*/
 #ifdef GSE_DUBUG
 #define GSE_TAG                  "[Gsensor] "
-#define GSE_FUN(f)               printk(GSE_TAG"%s\n", __FUNCTION__)
-#define GSE_ERR(fmt, args...)    printk(GSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define GSE_FUN(f)               printk(GSE_TAG"%s\n", __func__)
+#define GSE_ERR(fmt, args...)    printk(GSE_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define GSE_LOG(fmt, args...)    printk(GSE_TAG fmt, ##args)
 #else 
 #define GSE_TAG                 
@@ -1353,7 +1353,7 @@ static ssize_t show_chip_orientation(struct device_driver *ddri, char *pbBuf)
     ssize_t          _tLength = 0;
     struct acc_hw   *_ptAccelHw = get_cust_acc_hw();
 
-    GSE_LOG("[%s] default direction: %d\n", __FUNCTION__, _ptAccelHw->direction);
+    GSE_LOG("[%s] default direction: %d\n", __func__, _ptAccelHw->direction);
 
     _tLength = snprintf(pbBuf, PAGE_SIZE, "default direction = %d\n", _ptAccelHw->direction);
 
@@ -1375,7 +1375,7 @@ static ssize_t store_chip_orientation(struct device_driver *ddri, const char *pb
             GSE_ERR("ERR: fail to set direction\n");
     }
 
-    GSE_LOG("[%s] set direction: %d\n", __FUNCTION__, _nDirection);
+    GSE_LOG("[%s] set direction: %d\n", __func__, _nDirection);
 
     return (tCount);
 }

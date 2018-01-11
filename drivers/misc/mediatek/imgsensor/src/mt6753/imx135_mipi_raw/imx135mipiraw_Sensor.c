@@ -47,7 +47,7 @@
 
 //#define LOG_INF(format, args...)    pr_debug(PFX format,  ##args)
 //#define LOG_INF(format, args...)    pr_debug(MyTag format,  ##args)
-#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
 

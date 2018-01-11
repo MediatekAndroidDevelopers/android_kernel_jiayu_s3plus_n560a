@@ -303,8 +303,8 @@ static SCP_SENSOR_HUB_DATA_P userData = NULL;
 static uint *userDataLen = NULL;
 /*----------------------------------------------------------------------------*/
 #define SCP_TAG                  "[sensorHub] "
-#define SCP_FUN(f)               printk(KERN_ERR SCP_TAG"%s\n", __FUNCTION__)
-#define SCP_ERR(fmt, args...)    printk(KERN_ERR SCP_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define SCP_FUN(f)               printk(KERN_ERR SCP_TAG"%s\n", __func__)
+#define SCP_ERR(fmt, args...)    printk(KERN_ERR SCP_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define SCP_LOG(fmt, args...)    printk(KERN_ERR SCP_TAG fmt, ##args)
 /*--------------------SCP_sensorHub power control function----------------------------------*/
 static void SCP_sensorHub_power(struct sensorHub_hw *hw, unsigned int on) 
@@ -757,7 +757,7 @@ int SCP_sensorHub_req_send(SCP_SENSOR_HUB_DATA_P data, uint *len, unsigned int w
 
     if (in_interrupt())
     {
-        SCP_ERR("Can't do %s in interrupt context!!\n", __FUNCTION__);
+        SCP_ERR("Can't do %s in interrupt context!!\n", __func__);
         return -1;
     }
     

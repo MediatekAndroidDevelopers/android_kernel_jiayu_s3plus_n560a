@@ -372,7 +372,7 @@ static int __init mrdump_init_log(void)
 	/* Preserved last result */
 	mrdump_result = vmalloc(PAGE_ALIGN(sizeof(struct mrdump_cblock_result)));
 	if (mrdump_result == NULL) {
-		printk(KERN_ERR "%s: cannot allocate result memory\n", __FUNCTION__);
+		printk(KERN_ERR "%s: cannot allocate result memory\n", __func__);
 		return -EINVAL;
 	}
 	memset(mrdump_result, 0, sizeof(struct mrdump_cblock_result));
@@ -381,7 +381,7 @@ static int __init mrdump_init_log(void)
 	kobj = kset_find_obj(module_kset, KBUILD_MODNAME);
 	if (kobj) {
 		if (sysfs_create_group(kobj, &attr_group)) {
-			printk(KERN_ERR "%s: sysfs  create sysfs failed\n", __FUNCTION__);
+			printk(KERN_ERR "%s: sysfs  create sysfs failed\n", __func__);
 			goto error;
 		}
 	}
@@ -410,12 +410,12 @@ static int __init mrdump_init(void)
 
 	printk(KERN_ERR "MT-RAMDUMP init control block %p\n", mrdump_cb_init);
 	if (mrdump_cb_init == NULL) {
-		printk(KERN_ERR "%s: No control block memory found\n", __FUNCTION__);
+		printk(KERN_ERR "%s: No control block memory found\n", __func__);
 		return -EINVAL;
 	}
 	if ((0 != memcmp(mrdump_cb_init->sig, MRDUMP_VERSION, 8)) && (0 != memcmp(mrdump_cb_init->sig, MRDUMP_LK_DUMP, 8))) {
 		mrdump_enable = 0;
-		printk(KERN_ERR "%s: MT-RAMDUMP init failed. Version not matched.\n", __FUNCTION__);
+		printk(KERN_ERR "%s: MT-RAMDUMP init failed. Version not matched.\n", __func__);
 		return -EINVAL;
 	}
 

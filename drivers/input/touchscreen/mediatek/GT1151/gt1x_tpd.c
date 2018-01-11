@@ -503,7 +503,7 @@ static int tpd_irq_registration(void)
 		GTP_ERROR("tpd request_irq can not find touch eint device node!.");
 		ret = -1;
 	}
-	GTP_INFO("[%s]irq:%d, debounce:%d-%d:", __FUNCTION__, touch_irq, ints[0], ints[1]);
+	GTP_INFO("[%s]irq:%d, debounce:%d-%d:", __func__, touch_irq, ints[0], ints[1]);
 	return ret;
 }
 #endif
@@ -962,7 +962,7 @@ static int tpd_local_init(void)
 	tpd->dev->id.product = convert_productname(gt1x_version.product_id);
 	tpd->dev->id.version = (gt1x_version.patch_id >> 8);
 
-	GTP_INFO("end %s, %d\n", __FUNCTION__, __LINE__);
+	GTP_INFO("end %s, %d\n", __func__, __LINE__);
 	tpd_type_cap = 1;
 
 	return 0;

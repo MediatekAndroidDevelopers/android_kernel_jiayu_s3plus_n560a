@@ -26,9 +26,9 @@ typedef bool                MBOOL;
 #define MFALSE              false
 //-----------------------------------------------------------------------------
 #define LOG_TAG "SYSRAM"
-#define LOG_MSG(fmt, arg...)    pr_debug(LOG_TAG "[%s]"          fmt "\r\n", __FUNCTION__,           ##arg)
-#define LOG_WRN(fmt, arg...)    pr_warn (LOG_TAG "[%s]WRN(%5d):" fmt "\r\n", __FUNCTION__, __LINE__, ##arg)
-#define LOG_ERR(fmt, arg...)    pr_err  (LOG_TAG "[%s]ERR(%5d):" fmt "\r\n", __FUNCTION__, __LINE__, ##arg)
+#define LOG_MSG(fmt, arg...)    pr_debug(LOG_TAG "[%s]"          fmt "\r\n", __func__,           ##arg)
+#define LOG_WRN(fmt, arg...)    pr_warn (LOG_TAG "[%s]WRN(%5d):" fmt "\r\n", __func__, __LINE__, ##arg)
+#define LOG_ERR(fmt, arg...)    pr_err  (LOG_TAG "[%s]ERR(%5d):" fmt "\r\n", __func__, __LINE__, ##arg)
 #define LOG_DMP(fmt, arg...)    pr_err  (LOG_TAG ""              fmt,                                ##arg)
 //-----------------------------------------------------------------------------
 #define SYSRAM_DEBUG_DEFAULT    (0xFFFFFFFF)

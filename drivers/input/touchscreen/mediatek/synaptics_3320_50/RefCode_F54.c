@@ -2249,7 +2249,7 @@ int ImageTest(int mode, char *buf)
 		// Assign report type for Full Raw Image
 
 		data = 20;//raw capacitance mode
-		TOUCH_INFO_MSG("[Touch][%s] raw capacitance mode!\n", __FUNCTION__);
+		TOUCH_INFO_MSG("[Touch][%s] raw capacitance mode!\n", __func__);
 
 		Write8BitRegisters(F54DataBase, &data, 1);
 		//mode setting
@@ -2276,7 +2276,7 @@ int DeltaTest(char *buf)
 
 	// Assign report type for Full Raw Image
 	data = 0x02;//delta mode
-	TOUCH_INFO_MSG("[Touch][%s] delta mode!\n", __FUNCTION__);
+	TOUCH_INFO_MSG("[Touch][%s] delta mode!\n", __func__);
 
 	Write8BitRegisters(F54DataBase, &data, 1);
 
@@ -2296,7 +2296,7 @@ int NoiseDeltaTest(char *buf)
 	memset(NoiseDeltaMin, 0, TRX_MAX * TRX_MAX * sizeof(short));
 	memset(NoiseDeltaMax, 0, TRX_MAX * TRX_MAX * sizeof(short));
 
-	TOUCH_INFO_MSG("[Touch][%s] Noise Delta mode!\n", __FUNCTION__);
+	TOUCH_INFO_MSG("[Touch][%s] Noise Delta mode!\n", __func__);
 
 	// Assign report type for Full Raw Image
 	data = 0x02;//delta mode

@@ -184,13 +184,13 @@ static int slp_suspend_ops_prepare(void)
 extern void mtkpasr_phaseone_ops(void);
 static int slp_suspend_ops_prepare_late(void)
 {
-	slp_notice("[%s]\n",__FUNCTION__);
+	slp_notice("[%s]\n",__func__);
 	mtkpasr_phaseone_ops();
 	return 0;
 }
 static void slp_suspend_ops_wake(void)
 {
-	slp_notice("[%s]\n",__FUNCTION__);
+	slp_notice("[%s]\n",__func__);
 }
 
 /* PASR/DPD SW operations */
@@ -206,7 +206,7 @@ static int enter_pasrdpd(void)
 	u32 sr = 0, dpd = 0;
 
     	slp_notice("@@@@@@@@@@@@@@@@@@@@\n");
-	slp_crit2("[%s]\n",__FUNCTION__);
+	slp_crit2("[%s]\n",__func__);
     	slp_notice("@@@@@@@@@@@@@@@@@@@@\n");
 	
 	/* Setup SPM wakeup event firstly */
@@ -223,22 +223,22 @@ static int enter_pasrdpd(void)
 		/* Should configure SR */
 		if (mtkpasr_enable_sr == 0) {
 			sr = 0x0;
-			slp_crit2("[%s][%d] No configuration on SR\n",__FUNCTION__,__LINE__);
+			slp_crit2("[%s][%d] No configuration on SR\n",__func__,__LINE__);
 		}
 		/* Configure PASR */
 		enter_pasr_dpd_config((sr & 0xFF), (sr >> 0x8));
 		//if (mrw_error) {
-		//	printk(KERN_ERR "[%s][%d] PM: Failed to configure MRW PASR [%d]!\n",__FUNCTION__,__LINE__,mrw_error);
+		//	printk(KERN_ERR "[%s][%d] PM: Failed to configure MRW PASR [%d]!\n",__func__,__LINE__,mrw_error);
 		//}
 	}
-	slp_crit2("Bye [%s]\n",__FUNCTION__);
+	slp_crit2("Bye [%s]\n",__func__);
 
 	return error;
 }
 static void leave_pasrdpd(void)
 {
   	slp_notice("@@@@@@@@@@@@@@@@@@@@\n");
-	slp_crit2("[%s]\n",__FUNCTION__);
+	slp_crit2("[%s]\n",__func__);
    	slp_notice("@@@@@@@@@@@@@@@@@@@@\n");
 
 	/* Disable PASR */
@@ -249,7 +249,7 @@ static void leave_pasrdpd(void)
 	/* End PASR/DPD SW operations */
 	pasr_exit();
 	
-	slp_crit2("Bye [%s]\n",__FUNCTION__);
+	slp_crit2("Bye [%s]\n",__func__);
 }
 #endif
 

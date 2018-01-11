@@ -459,7 +459,7 @@ int f_compare_fragment_pattern(struct sk_buff *dl_skb, unsigned int que_num)
 	buf = dl_skb->data;
 	pkt_len = dl_skb->len;
 
-	KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] recv one packet que_num=%d, len=%d!!\n",__FUNCTION__,__LINE__,que_num,pkt_len));
+	KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] recv one packet que_num=%d, len=%d!!\n",__func__,__LINE__,que_num,pkt_len));
 
 
 	/*start packet of this fragment transfer, assume 1st packet contain whole packet header*/
@@ -477,8 +477,8 @@ int f_compare_fragment_pattern(struct sk_buff *dl_skb, unsigned int que_num)
 		    p_frag_ctrl->xfered_len = 0;
 		    return RET_FAIL;
 	    }
-	    KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] auto-test transfer start!!\n",__FUNCTION__,__LINE__));
-		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] expect_len=%d, cur_len=%d, cur_pkt_cnt=%d!!\n",__FUNCTION__,__LINE__
+	    KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] auto-test transfer start!!\n",__func__,__LINE__));
+		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] expect_len=%d, cur_len=%d, cur_pkt_cnt=%d!!\n",__func__,__LINE__
 							,p_frag_ctrl->expected_xfer_len,p_frag_ctrl->xfered_len, p_frag_ctrl->xfered_pkt_idx));
 
 		data_char = pAtHeader->RndSeed;
@@ -501,8 +501,8 @@ int f_compare_fragment_pattern(struct sk_buff *dl_skb, unsigned int que_num)
         first_gpd_of_pkt = true;
         
 	} else {
-		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] auto-test in progress!!\n",__FUNCTION__,__LINE__));
-		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] expect_len=%d, cur_len=%d, cur_pkt_cnt=%d!!\n",__FUNCTION__,__LINE__
+		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] auto-test in progress!!\n",__func__,__LINE__));
+		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] expect_len=%d, cur_len=%d, cur_pkt_cnt=%d!!\n",__func__,__LINE__
 							,p_frag_ctrl->expected_xfer_len,p_frag_ctrl->xfered_len, p_frag_ctrl->xfered_pkt_idx));
 		p_frag_ctrl->xfered_len += dl_skb->len;
 		p_frag_ctrl->xfered_pkt_idx ++;
@@ -523,18 +523,18 @@ int f_compare_fragment_pattern(struct sk_buff *dl_skb, unsigned int que_num)
 
 
 	if (pkt_len == 0) {
-		KAL_DBGPRINT(KAL, DBG_ERROR,("[ERR][%s:%d] Zero Pkt received que_num=%d , pkt_len=%d!!\n",__FUNCTION__,__LINE__, que_num , pkt_len));
+		KAL_DBGPRINT(KAL, DBG_ERROR,("[ERR][%s:%d] Zero Pkt received que_num=%d , pkt_len=%d!!\n",__func__,__LINE__, que_num , pkt_len));
         return RET_FAIL;
 	}
 
 	/*means latest fragment packet of this auto-test transfer*/
 	if (p_frag_ctrl->xfered_len == p_frag_ctrl->expected_xfer_len) {
-		KAL_DBGPRINT(KAL, DBG_TRACE,( "[TRACE][%s:%d] auto-test end!!\n",__FUNCTION__,__LINE__));
-		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] expect_len=%d, cur_len=%d, cur_pkt_cnt=%d!!\n",__FUNCTION__,__LINE__
+		KAL_DBGPRINT(KAL, DBG_TRACE,( "[TRACE][%s:%d] auto-test end!!\n",__func__,__LINE__));
+		KAL_DBGPRINT(KAL, DBG_TRACE,("[TRACE][%s:%d] expect_len=%d, cur_len=%d, cur_pkt_cnt=%d!!\n",__func__,__LINE__
 							,p_frag_ctrl->expected_xfer_len,p_frag_ctrl->xfered_len, p_frag_ctrl->xfered_pkt_idx));
 
 		if (p_frag_ctrl->xfered_len < sizeof(AT_PKT_HEADER)) {
-			KAL_DBGPRINT(KAL, DBG_WARN,("[WARN][%s:%d] que_num=%d , pkt_len=%d length less than header!!\n",__FUNCTION__,__LINE__, que_num , pkt_len));		
+			KAL_DBGPRINT(KAL, DBG_WARN,("[WARN][%s:%d] que_num=%d , pkt_len=%d length less than header!!\n",__func__,__LINE__, que_num , pkt_len));		
 			ret = RET_SUCCESS;
 		}
 		/*set xfered_len as 0 to start another auto-test transfer*/
@@ -548,7 +548,7 @@ int f_compare_fragment_pattern(struct sk_buff *dl_skb, unsigned int que_num)
         // TODO: Remove this [else if] when Tx header can be auto removed by HW
         if (dl_skb->len != (recv_frag_ctrl[que_idx].max_frag_unit_sz - 4) ) {
 			KAL_DBGPRINT(KAL, DBG_ERROR,("[ERR][%s:%d] fragment length error , recv_len=%d, expected allow_len=(%d-4) (Because Tx Header)!!\n",
-										__FUNCTION__,__LINE__,dl_skb->len,recv_frag_ctrl[que_idx].max_frag_unit_sz));
+										__func__,__LINE__,dl_skb->len,recv_frag_ctrl[que_idx].max_frag_unit_sz));
 			ret = RET_FAIL;
 		}
         first_gpd_of_pkt = false;
@@ -557,7 +557,7 @@ int f_compare_fragment_pattern(struct sk_buff *dl_skb, unsigned int que_num)
     else { /*if not the end of the fragment transfer, the usb transfer size should be == rgpd/bd allow length*/
 		if (dl_skb->len != recv_frag_ctrl[que_idx].max_frag_unit_sz) {
 			KAL_DBGPRINT(KAL, DBG_ERROR,("[ERR][%s:%d] fragment length error , recv_len=%d, expected allow_len=%d!!\n",
-										__FUNCTION__,__LINE__,dl_skb->len,recv_frag_ctrl[que_idx].max_frag_unit_sz));
+										__func__,__LINE__,dl_skb->len,recv_frag_ctrl[que_idx].max_frag_unit_sz));
 			ret = RET_FAIL;
 		}
 	}
@@ -692,7 +692,7 @@ int f_wait_recv_pkt_cnt(unsigned int expect_num , unsigned int timeout_ms)
 			}
 		}
 		if (recv_th_rslt != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] f_wait_recv_pkt_cnt compare fail\n", __FUNCTION__, __LINE__));		
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] f_wait_recv_pkt_cnt compare fail\n", __func__, __LINE__));		
 			return RET_FAIL;
 		}
 		KAL_SLEEP_MSEC(1) ;
@@ -700,12 +700,12 @@ int f_wait_recv_pkt_cnt(unsigned int expect_num , unsigned int timeout_ms)
 		if (msg_delay > 1000) {
 			msg_delay = 0;
 			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] f_wait_recv_pkt_cnt waiting for %d ms, expect=%d pkts , cur=%d pkts \n",
-														__FUNCTION__, __LINE__, idx, expect_num,cur_pkt_num ));
+														__func__, __LINE__, idx, expect_num,cur_pkt_num ));
 		}
 	}
 
 	if (idx >= timeout_ms) {
-		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] f_wait_recv_pkt_cnt timeout\n", __FUNCTION__, __LINE__));		
+		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] f_wait_recv_pkt_cnt timeout\n", __func__, __LINE__));		
 		ret = RET_FAIL;
 	}
 
@@ -764,7 +764,7 @@ int f_ul_rgpd_allow_len_tst(unsigned int txq_no ,athif_ul_rgpd_format_t *p_rgpd_
 		total_allow_len = p_rgpd_format->rgpd_allow_len;
 	}
 	if (total_allow_len == 0) {
-		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s : %d] RGPD allow length configure err\n",__FUNCTION__ ,__LINE__));		
+		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s : %d] RGPD allow length configure err\n",__func__ ,__LINE__));		
 		return RET_FAIL;
 	}
 
@@ -799,7 +799,7 @@ int f_ul_rgpd_allow_len_tst(unsigned int txq_no ,athif_ul_rgpd_format_t *p_rgpd_
 			break;
 		}
 		if (recv_th_rslt != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 			ret = RET_FAIL;
 			break;
 		}			
@@ -809,10 +809,10 @@ int f_ul_rgpd_allow_len_tst(unsigned int txq_no ,athif_ul_rgpd_format_t *p_rgpd_
 		/*wait loopback data*/
 		ret = f_wait_recv_pkt_cnt(pkt_cnt, 10000);
 		if (ret != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __func__));
 		}
 		if (recv_th_rslt != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 			ret = RET_FAIL;					
 		}
 		recv_th_rslt = RET_SUCCESS;
@@ -887,7 +887,7 @@ int f_small_pkt_lb(lb_data_pattern_e pattern)
 				    break;
 			    }
 			if (recv_th_rslt != RET_SUCCESS) {
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 				ret = RET_FAIL;
 				break;
 			}			
@@ -896,11 +896,11 @@ int f_small_pkt_lb(lb_data_pattern_e pattern)
 			/*wait loopback data*/			
 			ret = f_wait_recv_pkt_cnt(max_size-min_size , 10000);
 			if (ret != RET_SUCCESS) {
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __FUNCTION__));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __func__));
 				break;
 			}
 			if (recv_th_rslt != RET_SUCCESS) {
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 				ret = RET_FAIL;					
 				break;
 			}
@@ -1021,11 +1021,11 @@ int f_tx_rx_ep0_perf_lb(unsigned int loop, unsigned int offset, unsigned int pkt
 
 		if (pktSize > MAX_UL_PKT_SIZE) {
 			pktSize = MAX_UL_PKT_SIZE;
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __FUNCTION__,pktSize));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __func__,pktSize));
 		}
 		if (pktSize == 0) {
 			pktSize = 100;
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __FUNCTION__,pktSize));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __func__,pktSize));
 		}
 		
 		transferdata+=pktSize;
@@ -1038,7 +1038,7 @@ int f_tx_rx_ep0_perf_lb(unsigned int loop, unsigned int offset, unsigned int pkt
 			break;
 		}
 		if (recv_th_rslt != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 			ret = RET_FAIL;
 			break;
 		}
@@ -1048,23 +1048,23 @@ int f_tx_rx_ep0_perf_lb(unsigned int loop, unsigned int offset, unsigned int pkt
 			if (chk_payload) {
 				ret = f_wait_recv_pkt_cnt(packetnum , 100000);
 				if (ret != RET_SUCCESS) {
-					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __FUNCTION__));
+					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __func__));
 					break;
 				}
 				if (recv_th_rslt != RET_SUCCESS) {
-					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 					ret = RET_FAIL;					
 					break;
 				}
 				if (cmp_pattern == ATCASE_LB_DATA_FRAGMENT) {
 					if (packetnum != recv_total_pkt_cnt_agg) {
-						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv fragment pattern pkt number mismatch expect=%d, recv=%d\n", __FUNCTION__,packetnum , recv_total_pkt_cnt_agg));
+						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv fragment pattern pkt number mismatch expect=%d, recv=%d\n", __func__,packetnum , recv_total_pkt_cnt_agg));
 						ret = RET_FAIL;					
 						break;
 					}
 				} else {
 					if (packetnum != recv_total_pkt_cnt) {
-						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv auto pattern pkt number mismatch expect=%d, recv=%d\n", __FUNCTION__,packetnum , recv_total_pkt_cnt));
+						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv auto pattern pkt number mismatch expect=%d, recv=%d\n", __func__,packetnum , recv_total_pkt_cnt));
 						ret = RET_FAIL;					
 						break;
 					}
@@ -1077,9 +1077,9 @@ int f_tx_rx_ep0_perf_lb(unsigned int loop, unsigned int offset, unsigned int pkt
 			diff_ms += (diff_t.tv_nsec / 1000000);
  			performance = ((unsigned int)transferdata / (unsigned int)diff_ms);
 
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __FUNCTION__, performance ));
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __FUNCTION__, transferdata));
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __FUNCTION__, diff_ms));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __func__, performance ));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __func__, transferdata));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __func__, diff_ms));
 
 			recv_total_pkt_cnt = 0;
 			recv_total_pkt_cnt_agg = 0;
@@ -1162,9 +1162,9 @@ int f_rx_perf_tst(unsigned int loop, unsigned int offset, unsigned int pkt_num,
 				diff_ms = (1000 * diff_t.tv_sec) ;
 				diff_ms += (diff_t.tv_nsec / 1000000);
 	 			performance = ((unsigned int)recv_total_bytes_cnt / (unsigned int)diff_ms);
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __FUNCTION__, performance ));
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __FUNCTION__, recv_total_bytes_cnt));
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __FUNCTION__, diff_ms));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __func__, performance ));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __func__, recv_total_bytes_cnt));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __func__, diff_ms));
 
 	        	/*reset the profile variable*/
 				recv_total_pkt_cnt = 0;
@@ -1193,14 +1193,14 @@ int f_rx_perf_tst(unsigned int loop, unsigned int offset, unsigned int pkt_num,
 			diff_ms = (1000 * diff_t.tv_sec) ;
 			diff_ms += (diff_t.tv_nsec / 1000000);
 			if (diff_ms > 120*1000) {
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] wait recv timeout %d ms , recv_cnt=%d\n", __FUNCTION__,diff_ms, recv_total_pkt_cnt));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] wait recv timeout %d ms , recv_cnt=%d\n", __func__,diff_ms, recv_total_pkt_cnt));
 				ret = RET_FAIL;
 				break;
 			}
 			 KAL_SLEEP_MSEC(0);
 		}
 		if (ret != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] fail , loop=%d, recv_cnt=%d\n", __FUNCTION__,loop , recv_total_pkt_cnt));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] fail , loop=%d, recv_cnt=%d\n", __func__,loop , recv_total_pkt_cnt));
 			break;
 		}
 				
@@ -1319,12 +1319,12 @@ int f_ul_cs_err_tst(unsigned int cs_len, unsigned int is_bd)
             
 			if ((device_int_st->UL0_INTR_Status & 0xFFFFFF00) != 0) {
 				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] cs err intr cmp fail, is_bd=%d, cs_len=%d ,q_num=%d, ul_int=%x !\n"
-													,__FUNCTION__,__LINE__,is_bd, cs_len, q_num, device_int_st->UL0_INTR_Status));
+													,__func__,__LINE__,is_bd, cs_len, q_num, device_int_st->UL0_INTR_Status));
 				ret = RET_FAIL;
 				return ret;
 			} else {
 				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] cs err intr cmp success, is_bd=%d, cs_len=%d ,q_num=%d !\n"
-													,__FUNCTION__,__LINE__,is_bd, cs_len, q_num));
+													,__func__,__LINE__,is_bd, cs_len, q_num));
 			}
 		}		
 
@@ -1346,12 +1346,12 @@ int f_ul_cs_err_tst(unsigned int cs_len, unsigned int is_bd)
 			/*the rx/rx err interrupt info is bit-map*/
 			if ((device_int_st->UL0_INTR_Status & 0xFFFFFF00) != ORG_SDIO_TXQ_CHKSUM_ERR(q_num)){
 				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] cs err intr cmp fail, is_bd=%d, cs_len=%d ,q_num=%d, ul_int=%x !\n"
-													,__FUNCTION__,__LINE__,is_bd, cs_len, q_num, device_int_st->UL0_INTR_Status));
+													,__func__,__LINE__,is_bd, cs_len, q_num, device_int_st->UL0_INTR_Status));
 				ret = RET_FAIL;
 				return ret;
 			} else {
 				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] cs err intr cmp success, is_bd=%d, cs_len=%d ,q_num=%d !\n"
-													,__FUNCTION__,__LINE__,is_bd, cs_len, q_num));
+													,__func__,__LINE__,is_bd, cs_len, q_num));
 			}
 		}		
 
@@ -1366,9 +1366,9 @@ int f_ul_cs_err_tst(unsigned int cs_len, unsigned int is_bd)
 			p_rgpd_rslt = (athif_local_rgpd_rslt_t *)athif_result_save_t->buf;
 			//don't care fail count, because some GPD HWO=1
 			if ((p_rgpd_rslt->correct_cnt != cs_err_position) || (p_rgpd_rslt->free_cnt != expect_free_cnt)) {
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] q_num=%d, local_rgpd_result fail !\n",__FUNCTION__,__LINE__, q_num));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] q_num=%d, local_rgpd_result fail !\n",__func__,__LINE__, q_num));
 				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] fail_cnt=%d, correct_cnt=%d, free_cnt=%d !\n",
-							__FUNCTION__,__LINE__, p_rgpd_rslt->fail_cnt, p_rgpd_rslt->correct_cnt, p_rgpd_rslt->free_cnt));
+							__func__,__LINE__, p_rgpd_rslt->fail_cnt, p_rgpd_rslt->correct_cnt, p_rgpd_rslt->free_cnt));
 				ret = RET_FAIL;			
 				return ret;
 			}
@@ -1513,11 +1513,11 @@ int f_dl_cs_err_tst(unsigned int cs_len, unsigned int is_bd)
 
 		/*wait expected received pkt count*/
 		if (ret = f_wait_recv_pkt_cnt(cs_err_position , 100000) == RET_FAIL) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] wait recv pkt cnt timeout, expect %d pkts !\n",__FUNCTION__,__LINE__, valid_pkt_cnt));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] wait recv pkt cnt timeout, expect %d pkts !\n",__func__,__LINE__, valid_pkt_cnt));
 			return ret;
 		} else {
 			if (recv_th_rslt != RET_SUCCESS) {
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] recv packet payload compare fail !\n",__FUNCTION__,__LINE__));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] recv packet payload compare fail !\n",__func__,__LINE__));
 				return RET_FAIL;
 			}
 		}
@@ -1531,7 +1531,7 @@ int f_dl_cs_err_tst(unsigned int cs_len, unsigned int is_bd)
         else { //compare expected interrupt information
 			p_tgpd_rslt = athif_result_save_t->buf;
 			if ((p_tgpd_rslt->sent_cnt != cs_err_position) || (p_tgpd_rslt->free_cnt != expect_free_cnt)) {
-				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] q_num=%d, local_rgpd_result fail !\n",__FUNCTION__,__LINE__, q_num));
+				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] q_num=%d, local_rgpd_result fail !\n",__func__,__LINE__, q_num));
 				ret = RET_FAIL;			
 				return ret;
 			}
@@ -1548,12 +1548,12 @@ int f_dl_cs_err_tst(unsigned int cs_len, unsigned int is_bd)
             
 			if (device_int_st->DL0_INTR_Status & 0x00FF0000 != ORG_SDIO_RXQ_CHKSUM_ERR(q_num)) {
 				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] checksum test fail, cs_len=%d, is_bd=%d ,q_num=%d ,dl0_int=%x !\n"
-													,__FUNCTION__,__LINE__, cs_len, is_bd, q_num, device_int_st->DL0_INTR_Status));
+													,__func__,__LINE__, cs_len, is_bd, q_num, device_int_st->DL0_INTR_Status));
 				ret = RET_FAIL;
 				return ret;
 			} else {
 				KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] checksum test success, cs_len=%d, is_bd=%d ,q_num=%d !\n"
-													,__FUNCTION__,__LINE__, cs_len, is_bd, q_num));
+													,__func__,__LINE__, cs_len, is_bd, q_num));
 			}
 		}
         cmd.cmd = SDIO_AT_RESET_DL_QUEUE;
@@ -1688,11 +1688,11 @@ int tx_perf_hw_limit(unsigned int loop, unsigned int offset, unsigned int pkt_md
         
 	        if (pktSize > MAX_UL_PKT_SIZE) {
 	        	pktSize = MAX_UL_PKT_SIZE;
-	        	KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __FUNCTION__,pktSize));
+	        	KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __func__,pktSize));
 	        }
 	        if (pktSize == 0) {
 	        	pktSize = 100;
-	        	KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __FUNCTION__,pktSize));
+	        	KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pktSize error len=%d \n", __func__,pktSize));
 	        }
     
             tx_header_temp = (sdio_tx_sdu_header *)buf_pt;
@@ -1842,7 +1842,7 @@ int tx_perf_hw_limit(unsigned int loop, unsigned int offset, unsigned int pkt_md
         Tx_avail_GPD[tx_ep] -= pkt_no_thistime;
 
 		if (recv_th_rslt != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 			ret = RET_FAIL;
 			break;
 		}
@@ -1857,9 +1857,9 @@ int tx_perf_hw_limit(unsigned int loop, unsigned int offset, unsigned int pkt_md
 			diff_ms += (diff_t.tv_nsec / 1000000);
  			performance = ((unsigned int)transferdata / (unsigned int)diff_ms);
 
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __FUNCTION__, performance ));
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __FUNCTION__, transferdata));
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __FUNCTION__, diff_ms));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __func__, performance ));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __func__, transferdata));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __func__, diff_ms));
 
 			recv_total_pkt_cnt = 0;
 			recv_total_pkt_cnt_agg = 0;
@@ -1914,7 +1914,7 @@ int f_brom_pkt_lb(lb_data_pattern_e pattern, unsigned int min_size, unsigned int
 			    break;
 		    }
 		if (recv_th_rslt != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 			ret = RET_FAIL;
 			break;
 		}			
@@ -1924,10 +1924,10 @@ int f_brom_pkt_lb(lb_data_pattern_e pattern, unsigned int min_size, unsigned int
 		/*wait loopback data*/			
 		ret = f_wait_recv_pkt_cnt(max_size-min_size , 10000);
 		if (ret != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __func__));
 		}
 		if (recv_th_rslt != RET_SUCCESS) {
-			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+			KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 			ret = RET_FAIL;					
 		}
 		recv_th_rslt = RET_SUCCESS;

@@ -153,7 +153,7 @@ void find_task_to_clear(IPC_TASK task_table[], unsigned int to_id)
     {
         if (task_table[i].to_id==to_id)
         {
-            CCCI_DBG_MSG(ctl_b->m_md_id, "ipc", "%s: task->to_id(%d:%d)\n", __FUNCTION__, i, task_table[i].to_id);
+            CCCI_DBG_MSG(ctl_b->m_md_id, "ipc", "%s: task->to_id(%d:%d)\n", __func__, i, task_table[i].to_id);
             
             if (task==NULL)  
             {    
@@ -164,7 +164,7 @@ void find_task_to_clear(IPC_TASK task_table[], unsigned int to_id)
             if (time_after(task->jiffies,task_table[i].jiffies))
             {
                 task=task_table+i;                
-                CCCI_DBG_MSG(ctl_b->m_md_id, "ipc", "%s: select task->to_id(%d:%d)\n", __FUNCTION__, i, task_table[i].to_id);
+                CCCI_DBG_MSG(ctl_b->m_md_id, "ipc", "%s: select task->to_id(%d:%d)\n", __func__, i, task_table[i].to_id);
             } else if  (task->jiffies==task_table[i].jiffies) {
                 CCCI_DBG_MSG(ctl_b->m_md_id, "ipc", "[Error]Wrong time stamp(%ld, %ld), select task->to_id(%d:%d)\n", 
                     task->jiffies, task_table[i].jiffies, tmp, task->to_id);
@@ -554,7 +554,7 @@ static int ccci_ipc_open(struct inode *inode, struct file *file)
         CCCI_MSG_INF(md_id, "ipc", "[Error]Wrong minor num %d.\n",index);
         return -EINVAL;
     }
-    CCCI_DBG_MSG(md_id, "ipc", "%s: register task%d\n", __FUNCTION__, index);
+    CCCI_DBG_MSG(md_id, "ipc", "%s: register task%d\n", __func__, index);
     nonseekable_open(inode,file);
     file->private_data = ctl_b->ipc_task+index;
     atomic_inc(&((ctl_b->ipc_task+index)->user));
@@ -642,7 +642,7 @@ static ssize_t ccci_ipc_write(struct file *file, const char __user *buf, size_t 
 
     if (count < sizeof(ipc_ilm_t))
     {
-        CCCI_MSG_INF(md_id, "ipc", "%s: [Error]Write len(%d) < ipc_ilm_t\n", __FUNCTION__, count);
+        CCCI_MSG_INF(md_id, "ipc", "%s: [Error]Write len(%d) < ipc_ilm_t\n", __func__, count);
         ret = -EINVAL;
         goto out;
     }
@@ -650,19 +650,19 @@ static ssize_t ccci_ipc_write(struct file *file, const char __user *buf, size_t 
     ilm = kmalloc(count, GFP_KERNEL);
     if (ilm == NULL)
     {
-        CCCI_MSG_INF(md_id, "ipc", "%s: kmalloc fail!\n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "ipc", "%s: kmalloc fail!\n", __func__);
         ret = -ENOMEM;
         goto out;
     }
     if (copy_from_user(ilm, buf, count))
     {
-        CCCI_MSG_INF(md_id, "ipc", "%s: copy_from_user fail!\n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "ipc", "%s: copy_from_user fail!\n", __func__);
         ret = -EFAULT;
         goto out_free;
     }
     if ((id_map = local_MD_id_2_unify_id(ilm->dest_mod_id)) == NULL)
     {
-        CCCI_MSG_INF(md_id, "ipc", "%s: [Error]Invalid Dest MD id (%d)\n", __FUNCTION__, ilm->dest_mod_id);
+        CCCI_MSG_INF(md_id, "ipc", "%s: [Error]Invalid Dest MD id (%d)\n", __func__, ilm->dest_mod_id);
         ret = -EINVAL;
         goto out_free;
     }
@@ -695,7 +695,7 @@ static ssize_t ccci_ipc_write(struct file *file, const char __user *buf, size_t 
     task->to_id = ilm->dest_mod_id;
     task->ilm_p->src_mod_id = task - ctl_b->ipc_task;
 
-    CCCI_DBG_MSG(md_id, "ipc", "%s: src=%d, dst=%d, data_len=%d\n", __FUNCTION__, 
+    CCCI_DBG_MSG(md_id, "ipc", "%s: src=%d, dst=%d, data_len=%d\n", __func__, 
         task->ilm_p->src_mod_id, task->to_id, count);
 
     if (count > sizeof(ipc_ilm_t))
@@ -713,7 +713,7 @@ static ssize_t ccci_ipc_write(struct file *file, const char __user *buf, size_t 
     ret = ccci_ipc_write_stream(md_id, CCCI_IPC_TX, task->ilm_phy_addr, sizeof(ipc_ilm_t), id_map->extq_id);
     if (ret != sizeof(ccci_msg_t))
     {
-        CCCI_MSG_INF(md_id, "ipc", "%s: ccci_ipc_write_stream fail: %d\n", __FUNCTION__, ret);
+        CCCI_MSG_INF(md_id, "ipc", "%s: ccci_ipc_write_stream fail: %d\n", __func__, ret);
         clear_bit(CCCI_TASK_PENDING, &task->flag);
         ret = -EAGAIN;
         goto out_free;
@@ -788,7 +788,7 @@ static int ccci_ipc_release(struct inode *inode, struct file *file)
         spin_unlock_irqrestore(&task->lock, flags);
     }
     clear_bit(CCCI_TASK_PENDING, &task->flag);
-    CCCI_DBG_MSG(0, "ipc", "%s\n", __FUNCTION__);
+    CCCI_DBG_MSG(0, "ipc", "%s\n", __func__);
     
     return 0;
 }

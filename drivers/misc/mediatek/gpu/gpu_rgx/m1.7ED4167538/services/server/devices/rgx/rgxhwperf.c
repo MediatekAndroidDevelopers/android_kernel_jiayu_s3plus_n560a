@@ -571,7 +571,7 @@ PVRSRV_ERROR RGXHWPerfInitOnDemandResources(void)
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to allocate kernel fw hwperf buffer (%u)",
-					__FUNCTION__, eError));
+					__func__, eError));
 		goto e0;
 	}
 
@@ -590,7 +590,7 @@ PVRSRV_ERROR RGXHWPerfInitOnDemandResources(void)
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: Failed to acquire kernel hwperf buffer (%u)",
-					 __FUNCTION__, eError));
+					 __func__, eError));
 		goto e0;
 	}
 
@@ -775,7 +775,7 @@ static PVRSRV_ERROR RGXHWPerfCtrlHostBuffer(PVRSRV_DEVICE_NODE *psDeviceNode,
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Initialization of on-demand HWPerfHost"
-			        " resources failed", __FUNCTION__));
+			        " resources failed", __func__));
 			OSLockRelease(psDevice->hLockHWPerfHostStream);
 			return eError;
 		}
@@ -2470,7 +2470,7 @@ PVRSRV_ERROR RGXHWPerfOpen(
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Initialization of on-demand HWPerfFW"
-			        " resources failed", __FUNCTION__));
+			        " resources failed", __func__));
 			OSLockRelease(gpsRgxDevInfo->hHWPerfLock);
 			goto e0;
 		}
@@ -2484,7 +2484,7 @@ PVRSRV_ERROR RGXHWPerfOpen(
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Initialization of on-demand HWPerfHost"
-			        " resources failed", __FUNCTION__));
+			        " resources failed", __func__));
 			OSLockRelease(gpsRgxDevInfo->hLockHWPerfHostStream);
 			goto e0;
 		}

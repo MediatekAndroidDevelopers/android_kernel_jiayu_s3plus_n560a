@@ -415,7 +415,7 @@ do {	\
 	} \
 } while(0)
 
-#define MSG_FUNC_ENTRY(f)	MSG(FUC, "<FUN_ENT>: %s\n", __FUNCTION__)
+#define MSG_FUNC_ENTRY(f)	MSG(FUC, "<FUN_ENT>: %s\n", __func__)
 #else
 #define MSG(evt, fmt, args...) do{}while(0)
 #define MSG_FUNC_ENTRY(f)	   do{}while(0)

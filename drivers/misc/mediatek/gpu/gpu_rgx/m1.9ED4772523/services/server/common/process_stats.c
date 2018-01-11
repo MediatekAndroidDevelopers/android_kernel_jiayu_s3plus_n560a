@@ -1728,7 +1728,7 @@ _PVRSRVStatsAddMemAllocRecord(PVRSRV_MEM_ALLOC_TYPE eAllocType,
 	if (psProcessStats == NULL)
 	{
 #if defined(PVRSRV_DEBUG_LINUX_MEMORY_STATS)
-		PVR_DPF((PVR_DBG_ERROR, "%s UNABLE TO CREATE process_stats entry for pid %d [%s] (" IMG_SIZE_FMTSPEC " bytes)", __FUNCTION__, currentPid, OSGetCurrentProcessName(), uiBytes));
+		PVR_DPF((PVR_DBG_ERROR, "%s UNABLE TO CREATE process_stats entry for pid %d [%s] (" IMG_SIZE_FMTSPEC " bytes)", __func__, currentPid, OSGetCurrentProcessName(), uiBytes));
 #endif
 		if (psRecord != NULL)
 		{
@@ -2112,12 +2112,12 @@ PVRSRVStatsIncrMemAllocStatAndTrack(PVRSRV_MEM_ALLOC_TYPE eAllocType,
 		}
 		else
 		{
-			PVR_DPF((PVR_DBG_ERROR, "*** %s : @ line %d HASH_Insert() failed!!", __FUNCTION__, __LINE__));
+			PVR_DPF((PVR_DBG_ERROR, "*** %s : @ line %d HASH_Insert() failed!!", __func__, __LINE__));
 		}
 	}
 	else
 	{
-		PVR_DPF((PVR_DBG_ERROR, "*** %s : @ line %d Failed to alloc memory for psNewTrackingHashEntry!!", __FUNCTION__, __LINE__));
+		PVR_DPF((PVR_DBG_ERROR, "*** %s : @ line %d Failed to alloc memory for psNewTrackingHashEntry!!", __func__, __LINE__));
 	}
 }
 
@@ -2843,9 +2843,9 @@ ProcessStatsPrintElements(void *pvFile,
 		else
 		{
 #if !defined(PVRSRV_USE_BRIDGE_LOCK)
-			PVR_DPF((PVR_DBG_ERROR, "%s: Called with psProcessStats->iMemRefCount=%d", __FUNCTION__, OSAtomicRead(&psProcessStats->iMemRefCount)));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Called with psProcessStats->iMemRefCount=%d", __func__, OSAtomicRead(&psProcessStats->iMemRefCount)));
 #else
-			PVR_DPF((PVR_DBG_ERROR, "%s: Called with psProcessStats->ui32MemRefCount=%d", __FUNCTION__, psProcessStats->ui32MemRefCount));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Called with psProcessStats->ui32MemRefCount=%d", __func__, psProcessStats->ui32MemRefCount));
 #endif
 		}
 		ui32StatNumber++;

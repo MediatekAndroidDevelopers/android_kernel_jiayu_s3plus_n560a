@@ -68,18 +68,18 @@ MUINT32 strobeInit_sub_sid2_part2(FLASHLIGHT_FUNCTION_STRUCT **pfFunc);
 #else
 	#define PFX "[KD_CAMERA_FLASHLIGHT]"
 	#define PK_DBG_NONE(fmt, arg...)    do {} while (0)
-	#define PK_DBG_FUNC(fmt, arg...)    printk(KERN_INFO PFX "%s: " fmt, __FUNCTION__ ,##arg)
+	#define PK_DBG_FUNC(fmt, arg...)    printk(KERN_INFO PFX "%s: " fmt, __func__ ,##arg)
 
-	#define PK_WARN(fmt, arg...)        printk(KERN_WARNING PFX "%s: " fmt, __FUNCTION__ ,##arg)
-	#define PK_NOTICE(fmt, arg...)      printk(KERN_NOTICE PFX "%s: " fmt, __FUNCTION__ ,##arg)
-	#define PK_INFO(fmt, arg...)        printk(KERN_INFO PFX "%s: " fmt, __FUNCTION__ ,##arg)
-	#define PK_TRC_FUNC(f)              printk(PFX "<%s>\n", __FUNCTION__);
+	#define PK_WARN(fmt, arg...)        printk(KERN_WARNING PFX "%s: " fmt, __func__ ,##arg)
+	#define PK_NOTICE(fmt, arg...)      printk(KERN_NOTICE PFX "%s: " fmt, __func__ ,##arg)
+	#define PK_INFO(fmt, arg...)        printk(KERN_INFO PFX "%s: " fmt, __func__ ,##arg)
+	#define PK_TRC_FUNC(f)              printk(PFX "<%s>\n", __func__);
 	#define PK_TRC_VERBOSE(fmt, arg...) printk(PFX fmt, ##arg)
 
 	#define DEBUG_KD_STROBE
 	#ifdef DEBUG_KD_STROBE
 	#define logI PK_DBG_FUNC
-	#define logE(fmt, arg...)         printk(KERN_ERR PFX "%s: " fmt, __FUNCTION__ ,##arg)
+	#define logE(fmt, arg...)         printk(KERN_ERR PFX "%s: " fmt, __func__ ,##arg)
 	#else
 	#define logI(a,...)
 	#define logE(a,...)

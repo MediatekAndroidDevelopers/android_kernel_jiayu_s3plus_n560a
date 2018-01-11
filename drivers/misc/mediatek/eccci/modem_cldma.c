@@ -960,7 +960,7 @@ static inline void cldma_stop(struct ccci_modem *md)
     int ret, count;
     unsigned long flags;
     int qno;
-    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __FUNCTION__, __builtin_return_address(0));
+    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __func__, __builtin_return_address(0));
     spin_lock_irqsave(&md_ctrl->cldma_timeout_lock, flags);
     // stop all Tx and Rx queues
     count = 0;
@@ -1030,7 +1030,7 @@ static inline void cldma_stop_for_ee(struct ccci_modem *md)
     int ret,count;
     unsigned long flags;
 
-    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __FUNCTION__, __builtin_return_address(0));
+    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __func__, __builtin_return_address(0));
     spin_lock_irqsave(&md_ctrl->cldma_timeout_lock, flags);
     // stop all Tx and Rx queues, but non-stop Rx ones
     count = 0;
@@ -1094,7 +1094,7 @@ static inline void cldma_reset(struct ccci_modem *md)
     struct md_cd_ctrl *md_ctrl = (struct md_cd_ctrl *)md->private_data;
 	volatile unsigned int SO_CFG;
     
-    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __FUNCTION__, __builtin_return_address(0));
+    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __func__, __builtin_return_address(0));
     cldma_stop(md);
     // enable OUT DMA
     cldma_write32(md_ctrl->cldma_ap_ao_base, CLDMA_AP_SO_CFG, cldma_read32(md_ctrl->cldma_ap_ao_base, CLDMA_AP_SO_CFG)|0x01);
@@ -1148,7 +1148,7 @@ static inline void cldma_start(struct ccci_modem *md)
     int i;
     unsigned long flags;
     
-    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __FUNCTION__, __builtin_return_address(0));
+    CCCI_INF_MSG(md->index, TAG, "%s from %ps\n", __func__, __builtin_return_address(0));
     spin_lock_irqsave(&md_ctrl->cldma_timeout_lock, flags);
     // set start address
     for(i=0; i<QUEUE_LEN(md_ctrl->txq); i++) {

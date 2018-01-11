@@ -72,7 +72,7 @@ DevmemXPDumpLoadMem(DEVMEMX_PHYSDESC *psMemDescPhys,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 		         "%s: failed with error %d",
-		         __FUNCTION__, eError));
+		         __func__, eError));
 	}
 }
 

@@ -204,7 +204,7 @@ bool CPUcheck_maincodeok_turnonCPU(struct net_device *dev)
 	return rt_status;
 
 CPUCheckMainCodeOKAndTurnOnCPU_Fail:
-	RT_TRACE(COMP_ERR, "ERR in %s()\n", __FUNCTION__);
+	RT_TRACE(COMP_ERR, "ERR in %s()\n", __func__);
 	rt_status = FALSE;
 	return rt_status;
 }
@@ -233,7 +233,7 @@ bool CPUcheck_firmware_ready(struct net_device *dev)
 	return rt_status;
 
 CPUCheckFirmwareReady_Fail:
-	RT_TRACE(COMP_ERR, "ERR in %s()\n", __FUNCTION__);
+	RT_TRACE(COMP_ERR, "ERR in %s()\n", __func__);
 	rt_status = false;
 	return rt_status;
 
@@ -393,7 +393,7 @@ bool init_firmware(struct net_device *dev)
 	return rt_status;
 
 download_firmware_fail:
-	RT_TRACE(COMP_ERR, "ERR in %s()\n", __FUNCTION__);
+	RT_TRACE(COMP_ERR, "ERR in %s()\n", __func__);
 	rt_status = FALSE;
 	return rt_status;
 

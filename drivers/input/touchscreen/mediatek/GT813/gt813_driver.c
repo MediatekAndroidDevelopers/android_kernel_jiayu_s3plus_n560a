@@ -1049,7 +1049,7 @@ static int tpd_local_init(void)
     tpd->dev->id.product = tpd_info.product_id;
     tpd->dev->id.version = (tpd_info.version_2 << 8 ) | tpd_info.version_1;
 
-    TPD_DMESG("end %s, %d\n", __FUNCTION__, __LINE__);  
+    TPD_DMESG("end %s, %d\n", __func__, __LINE__);  
     tpd_type_cap = 1;
 
     return 0;

@@ -2520,7 +2520,7 @@ static int tpd_irq_registration(unsigned int irq, irq_handler_t handler, unsigne
 		printk("tpd request_irq can not find touch eint device node!.");
 		ret = -1;
 	}
-	printk("[%s]irq:%d, debounce:%d-%d:", __FUNCTION__, irq, ints[0], ints[1]);
+	printk("[%s]irq:%d, debounce:%d-%d:", __func__, irq, ints[0], ints[1]);
 	return ret;
 }
 #endif
@@ -3519,7 +3519,7 @@ static int tpd_local_init(void)
     tpd->dev->id.product = tpd_info.pid;
     tpd->dev->id.version = tpd_info.vid;
 
-    TPD_DMESG("end %s, %d\n", __FUNCTION__, __LINE__);
+    TPD_DMESG("end %s, %d\n", __func__, __LINE__);
     tpd_type_cap = 1;
 #if GTP_SUPPORT_I2C_DMA
 		tpd->dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);

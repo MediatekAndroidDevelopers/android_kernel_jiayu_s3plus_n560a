@@ -118,7 +118,7 @@ csr_io_rw_direct(struct mmc_card *card, int write, uint8_t fn,
     } else {
         if (cmd.resp[0] & R5_ERROR) {
             printk(KERN_ERR "%s: r5 error 0x%02x\n",
-                   __FUNCTION__, cmd.resp[0]);
+                   __func__, cmd.resp[0]);
             return -EIO;
         }
         if (cmd.resp[0] & R5_FUNCTION_NUMBER)
@@ -474,7 +474,7 @@ CsrSdioInterruptEnable(CsrSdioFunction *function)
     _sdio_release_host(func);
 
     if (err) {
-        printk(KERN_ERR "unifi: %s: error %d writing IENx\n", __FUNCTION__, err);
+        printk(KERN_ERR "unifi: %s: error %d writing IENx\n", __func__, err);
         return ConvertSdioToCsrSdioResult(err);
     }
 #endif
@@ -500,7 +500,7 @@ CsrSdioInterruptDisable(CsrSdioFunction *function)
     _sdio_release_host(func);
 
     if (err) {
-        printk(KERN_ERR "unifi: %s: error %d writing IENx\n", __FUNCTION__, err);
+        printk(KERN_ERR "unifi: %s: error %d writing IENx\n", __func__, err);
         return ConvertSdioToCsrSdioResult(err);
     }
 #endif
@@ -980,7 +980,7 @@ uf_sdio_mmc_power_event(struct notifier_block *this, unsigned long event, void *
     switch (event) {
         case PM_POST_HIBERNATION:
         case PM_POST_SUSPEND:
-            printk(KERN_INFO "%s:%d resume\n", __FUNCTION__, __LINE__ );
+            printk(KERN_INFO "%s:%d resume\n", __func__, __LINE__ );
             if (sdio_func_drv && sdio_func_drv->resume) {
                 sdio_func_drv->resume(notifier_ctx->sdio_ctx);
             }
@@ -988,7 +988,7 @@ uf_sdio_mmc_power_event(struct notifier_block *this, unsigned long event, void *
 
         case PM_HIBERNATION_PREPARE:
         case PM_SUSPEND_PREPARE:
-            printk(KERN_INFO "%s:%d suspend\n", __FUNCTION__, __LINE__ );
+            printk(KERN_INFO "%s:%d suspend\n", __func__, __LINE__ );
             if (sdio_func_drv && sdio_func_drv->suspend) {
                 sdio_func_drv->suspend(notifier_ctx->sdio_ctx);
             }
@@ -1065,7 +1065,7 @@ uf_glue_sdio_probe(struct sdio_func *func,
 #ifdef CONFIG_PM
     /* Register to get PM events */
     if (uf_sdio_mmc_register_pm_notifier(sdio_ctx) == NULL) {
-        unifi_error(NULL, "%s: Failed to register for PM events\n", __FUNCTION__);
+        unifi_error(NULL, "%s: Failed to register for PM events\n", __func__);
     }
 #endif
 

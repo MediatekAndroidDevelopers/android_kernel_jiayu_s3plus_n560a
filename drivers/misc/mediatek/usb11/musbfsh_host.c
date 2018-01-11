@@ -401,7 +401,7 @@ static void musbfsh_advance_schedule(struct musbfsh *musbfsh, struct urb *urb,
 	 /*
 	 if(((unsigned int)(long)&qh->hep->urb_list)< 0xc0000000)
 	 {
-		 printk(KERN_ERR"hank:%s(%d)urb=0x%x,qh=0x%x,qh->hep=0x%x,&qh->hep->urb_list=0x%x\n",__FUNCTION__,__LINE__,
+		 printk(KERN_ERR"hank:%s(%d)urb=0x%x,qh=0x%x,qh->hep=0x%x,&qh->hep->urb_list=0x%x\n",__func__,__LINE__,
             (unsigned int)(long)urb,(unsigned int)(long)qh,(unsigned int)(long)qh->hep,(unsigned int)(long)&qh->hep->urb_list);
 		 return ;
 	 }

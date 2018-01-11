@@ -41,7 +41,7 @@
 #define LOG_1 LOG_INF("IMX179,MIPI 4LANE\n")
 #define LOG_2 LOG_INF("preview 1640*1232@30fps,256Mbps/lane; video 3280*2464@30fps,256Mbps/lane; capture 8M@30fps,256MbpsMbps/lane\n")
 /****************************   Modify end    *******************************************/
-#define LOG_INF(format, args...)	pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)	pr_debug(PFX "[%s] " format, __func__, ##args)
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
 static kal_uint8  test_pattern_flag=0;

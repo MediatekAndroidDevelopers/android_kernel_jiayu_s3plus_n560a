@@ -11,7 +11,7 @@
 
 
 #define PFX "mn34152_pdafotp"
-#define LOG_INF(format, args...)	xlog_printk(ANDROID_LOG_INFO   , PFX, "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)	xlog_printk(ANDROID_LOG_INFO   , PFX, "[%s] " format, __func__, ##args)
 
 #include "kd_camera_hw.h"
 #include "kd_imgsensor.h"

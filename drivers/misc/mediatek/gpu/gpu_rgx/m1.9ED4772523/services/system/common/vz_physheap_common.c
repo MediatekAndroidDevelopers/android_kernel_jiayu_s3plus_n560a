@@ -287,7 +287,7 @@ PVRSRV_ERROR SysVzGetPhysHeapAddrSize(PVRSRV_DEVICE_CONFIG *psDevConfig,
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					 "%s: VMM/PVZ pfnGetDevPhysHeapAddrSize() must be implemented (%s)",
-					__FUNCTION__,
+					__func__,
 					PVRSRVGetErrorStringKM(eError)));
 		}
 
@@ -321,7 +321,7 @@ PVRSRV_ERROR SysVzGetPhysHeapOrigin(PVRSRV_DEVICE_CONFIG *psDevConfig,
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					 "%s: VMM/PVZ pfnGetDevPhysHeapOrigin() must be implemented (%s)",
-					__FUNCTION__,
+					__func__,
 					PVRSRVGetErrorStringKM(eError)));
 		}
 

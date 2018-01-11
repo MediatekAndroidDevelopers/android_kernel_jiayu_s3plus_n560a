@@ -197,7 +197,7 @@ PVRSRV_ERROR RGXPrePowerState (IMG_HANDLE				hDevHandle,
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"%s: Failed to set Power sync prim",
-				__FUNCTION__));
+				__func__));
 			return eError;
 		}
 
@@ -627,7 +627,7 @@ PVRSRV_ERROR RGXDustCountChange(IMG_HANDLE				hDevHandle,
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to set Power sync prim",
-			__FUNCTION__));
+			__func__));
 		return eError;
 	}
 
@@ -835,7 +835,7 @@ PVRSRV_ERROR RGXForcedIdleRequest(IMG_HANDLE hDevHandle, IMG_BOOL bDeviceOffPerm
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to set Power sync prim",
-			__FUNCTION__));
+			__func__));
 		return eError;
 	}
 	sPowCmd.eCmdType = RGXFWIF_KCCB_CMD_POW;
@@ -911,7 +911,7 @@ PVRSRV_ERROR RGXCancelForcedIdleRequest(IMG_HANDLE hDevHandle)
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to set Power sync prim",
-			__FUNCTION__));
+			__func__));
 		goto ErrorExit;
 	}
 

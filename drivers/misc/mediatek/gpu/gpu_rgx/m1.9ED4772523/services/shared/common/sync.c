@@ -259,7 +259,7 @@ SyncPrimBlockImport(RA_PERARENA_HANDLE hArena,
 	/* Check we've not be called with an unexpected size */
 	if (!hArena || sizeof(IMG_UINT32) != uSize)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input params", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input params", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto e0;
 	}
@@ -322,7 +322,7 @@ SyncPrimBlockUnimport(RA_PERARENA_HANDLE hArena,
 
 	if (!psContext || !psSyncBlock || uiBase != psSyncBlock->uiSpanBase)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input params", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input params", __func__));
 		return;
 	}
 
@@ -380,7 +380,7 @@ static void SyncPrimLocalFree(SYNC_PRIM *psSyncInt)
 			                                        psSyncInt->u.sLocal.hRecord);
 			if (PVRSRV_OK != eError)
 			{
-				PVR_DPF((PVR_DBG_ERROR, "%s: failed to remove SyncRecord", __FUNCTION__));
+				PVR_DPF((PVR_DBG_ERROR, "%s: failed to remove SyncRecord", __func__));
 			}
 		}
 		else
@@ -733,13 +733,13 @@ IMG_INTERNAL void SyncPrimContextDestroy(PSYNC_PRIM_CONTEXT hSyncPrimContext)
 	SYNC_PRIM_CONTEXT *psContext = hSyncPrimContext;
 	if (1 != OSAtomicRead(&psContext->hRefCount))
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s attempted with active references, may be the result of a race", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s attempted with active references, may be the result of a race", __func__));
 	}
 #if defined(PVRSRV_FORCE_UNLOAD_IF_BAD_STATE)
 #if defined(__KERNEL__)
 	if (PVRSRVGetPVRSRVData()->eServicesState != PVRSRV_SERVICES_STATE_OK)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Forcing context destruction due to bad driver state.", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Forcing context destruction due to bad driver state.", __func__));
 		OSAtomicWrite(&psContext->hRefCount, 1);
 	}
 #endif
@@ -819,7 +819,7 @@ static PVRSRV_ERROR _SyncPrimAlloc(PSYNC_PRIM_CONTEXT hSyncPrimContext,
 					szClassName);
 		if (PVRSRV_OK != eError)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: failed to add SyncRecord", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: failed to add SyncRecord", __func__));
 		}
 	}
 	else
@@ -902,7 +902,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncPrimFree(PVRSRV_CLIENT_SYNC_PRIM *psSync)
 
 	if (!psSync)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: null sync pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: null sync pointer", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto err_out;
 	}
@@ -922,7 +922,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncPrimFree(PVRSRV_CLIENT_SYNC_PRIM *psSync)
 			Either the client has given us a bad pointer or there is an
 			error in this module
 		*/
-		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync type", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync type", __func__));
 		eError = PVRSRV_ERROR_INVALID_SYNC_PRIM;
 		goto err_out;
 	}
@@ -940,7 +940,7 @@ SyncPrimNoHwUpdate(PVRSRV_CLIENT_SYNC_PRIM *psSync, IMG_UINT32 ui32Value)
 
 	if (!psSync)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: null sync pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: null sync pointer", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto err_out;
 	}
@@ -965,7 +965,7 @@ SyncPrimSet(PVRSRV_CLIENT_SYNC_PRIM *psSync, IMG_UINT32 ui32Value)
 
 	if (!psSync)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: null sync pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: null sync pointer", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto err_out;
 	}
@@ -1011,7 +1011,7 @@ IMG_INTERNAL PVRSRV_ERROR SyncPrimLocalGetHandleAndOffset(PVRSRV_CLIENT_SYNC_PRI
 	else
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: psSync not a Local sync prim (%d)",
-			__FUNCTION__, psSyncInt->eType));
+			__func__, psSyncInt->eType));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto err_out;
 	}
@@ -1029,7 +1029,7 @@ SyncPrimGetFirmwareAddr(PVRSRV_CLIENT_SYNC_PRIM *psSync, IMG_UINT32 *pui32FwAddr
 	*pui32FwAddr = 0;
 	if (!psSync)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto err_out;
 	}
@@ -1048,7 +1048,7 @@ SyncPrimGetFirmwareAddr(PVRSRV_CLIENT_SYNC_PRIM *psSync, IMG_UINT32 *pui32FwAddr
 		/* Either the client has given us a bad pointer or there is an
 		 * error in this module
 		 */
-		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync type", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync type", __func__));
 		eError = PVRSRV_ERROR_INVALID_SYNC_PRIM;
 		goto err_out;
 	}
@@ -1278,7 +1278,7 @@ PVRSRV_ERROR SyncPrimOpCreate(IMG_UINT32 ui32SyncCount,
 	/* Check the pointer setup went ok */
 	if (!(pcPtr == (((IMG_CHAR *) psNewCookie) + ui32TotalAllocSize)))
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: cookie setup failed", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: cookie setup failed", __func__));
 		eError = PVRSRV_ERROR_INTERNAL_ERROR;
 		goto e2;
 	}
@@ -1475,7 +1475,7 @@ PVRSRV_ERROR SyncPrimOpReady(PSYNC_OP_COOKIE psCookie,
 	PVRSRV_ERROR eError;
 	if (!psCookie)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto e0;
 	}
@@ -1493,7 +1493,7 @@ PVRSRV_ERROR SyncPrimOpReady(PSYNC_OP_COOKIE psCookie,
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					 "%s: Failed to do sync check in server (Error = %d)",
-					 __FUNCTION__, eError));
+					 __func__, eError));
 			goto e0;
 		}
 	}
@@ -1550,7 +1550,7 @@ PVRSRV_ERROR SyncPrimOpDestroy(PSYNC_OP_COOKIE psCookie)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 			"%s: Failed to destroy SyncPrimOp (Error = %d)",
-			 __FUNCTION__, eError));
+			 __func__, eError));
 		goto err_out;
 	}
 
@@ -1705,7 +1705,7 @@ PVRSRV_ERROR SyncPrimServerGetStatus(IMG_UINT32 ui32SyncCount,
 	}
 	if (!hBridge)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid Sync connection\n", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid Sync connection\n", __func__));
 		eError = PVRSRV_ERROR_INVALID_SYNC_PRIM;
 		goto e0;
 	}
@@ -1774,7 +1774,7 @@ SyncPrimIsServerSync(PVRSRV_CLIENT_SYNC_PRIM *psSync, IMG_BOOL *pbServerSync)
 
 	if (!psSync)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto e0;
 	}
@@ -1792,7 +1792,7 @@ SyncPrimIsServerSync(PVRSRV_CLIENT_SYNC_PRIM *psSync, IMG_BOOL *pbServerSync)
 		/* Either the client has given us a bad pointer or there is an
 		 * error in this module
 		 */
-		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync type", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync type", __func__));
 		eError = PVRSRV_ERROR_INVALID_SYNC_PRIM;
 		goto e0;
 	}
@@ -1808,7 +1808,7 @@ IMG_HANDLE SyncPrimGetServerHandle(PVRSRV_CLIENT_SYNC_PRIM *psSync)
 
 	if (!psSync)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __func__));
 		goto e0;
 	}
 	psSyncInt = IMG_CONTAINER_OF(psSync, SYNC_PRIM, sCommon);
@@ -1819,7 +1819,7 @@ IMG_HANDLE SyncPrimGetServerHandle(PVRSRV_CLIENT_SYNC_PRIM *psSync)
 	else
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: invalid sync type (%d)",
-			__FUNCTION__, psSyncInt->eType));
+			__func__, psSyncInt->eType));
 		goto e0;
 	}
 e0:
@@ -1835,7 +1835,7 @@ PVRSRV_ERROR SyncPrimServerQueueOp(PVRSRV_CLIENT_SYNC_PRIM_OP *psSyncOp)
 
 	if (!psSyncOp)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: invalid input pointer", __func__));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
 		goto e0;
 	}
@@ -1844,13 +1844,13 @@ PVRSRV_ERROR SyncPrimServerQueueOp(PVRSRV_CLIENT_SYNC_PRIM_OP *psSyncOp)
 	if (psSyncInt->eType != SYNC_PRIM_TYPE_SERVER)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: invalid sync type (%d)",
-			__FUNCTION__, psSyncInt->eType));
+			__func__, psSyncInt->eType));
 		eError = PVRSRV_ERROR_INVALID_SYNC_PRIM;
 		goto e0;
 	}
 	if (0 == psSyncOp->ui32Flags)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: no sync flags", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: no sync flags", __func__));
 		eError = PVRSRV_ERROR_INVALID_SYNC_PRIM;
 		goto e0;
 	}
@@ -1901,7 +1901,7 @@ IMG_INTERNAL void SyncPrimPDump(PVRSRV_CLIENT_SYNC_PRIM *psSync)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -1935,7 +1935,7 @@ IMG_INTERNAL void SyncPrimPDumpValue(PVRSRV_CLIENT_SYNC_PRIM *psSync, IMG_UINT32
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -1976,7 +1976,7 @@ IMG_INTERNAL void SyncPrimPDumpPol(PVRSRV_CLIENT_SYNC_PRIM *psSync,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }
@@ -1998,7 +1998,7 @@ IMG_INTERNAL void SyncPrimOpPDumpPol(PSYNC_OP_COOKIE psCookie,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
 	
     PVR_ASSERT(eError == PVRSRV_OK);
@@ -2049,7 +2049,7 @@ IMG_INTERNAL void SyncPrimPDumpCBP(PVRSRV_CLIENT_SYNC_PRIM *psSync,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: failed with error %d",
-				__FUNCTION__, eError));
+				__func__, eError));
 	}
     PVR_ASSERT(eError == PVRSRV_OK);
 }

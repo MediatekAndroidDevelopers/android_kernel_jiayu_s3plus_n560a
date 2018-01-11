@@ -1369,7 +1369,7 @@ __blockdev_direct_IO(int rw, struct kiocb *iocb, struct inode *inode,
 	unsigned long nr_segs, get_block_t get_block, dio_iodone_t end_io,
 	dio_submit_t submit_io,	int flags)
 {
-    //printk("%s:%d:DENIS \n", __FUNCTION__, __LINE__);
+    //printk("%s:%d:DENIS \n", __func__, __LINE__);
 	/*
 	 * The block device state is needed in the end to finally
 	 * submit everything.  Since it's likely to be cache cold

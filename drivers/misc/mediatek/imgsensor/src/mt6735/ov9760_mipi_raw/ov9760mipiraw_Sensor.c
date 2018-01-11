@@ -42,7 +42,7 @@
 #define LOG_1 LOG_INF("OV9760,MIPI 1LANE\n")
 #define LOG_2 LOG_INF("preview 1470*1100@30fps,256Mbps/lane\n")
 /****************************   Modify end    *******************************************/
-#define LOG_INF(format, args...)	printk(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)	printk(PFX "[%s] " format, __func__, ##args)
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
 static kal_uint8  test_pattern_flag=0;

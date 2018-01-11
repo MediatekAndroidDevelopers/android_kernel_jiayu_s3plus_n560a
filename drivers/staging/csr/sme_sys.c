@@ -1715,7 +1715,7 @@ static void CsrWifiRouterCtrlResetStationRecordList(unifi_priv_t *priv, u16 inte
          * we expect the entries should be zero here if mode is set as NONE
          */
         unifi_trace(priv, UDBG3, "In %s controlled port entries = %d, uncontrolled port entries = %d\n",
-                   __FUNCTION__, interfacePriv->controlled_data_port.entries_in_use,
+                   __func__, interfacePriv->controlled_data_port.entries_in_use,
                    interfacePriv->uncontrolled_data_port.entries_in_use);
     }
 }
@@ -2558,12 +2558,12 @@ uf_send_ba_err_wq(struct work_struct *work)
     priv = ba_session->interfacePriv->privPtr;
 
     if (ba_session->interfacePriv->InterfaceTag >= CSR_WIFI_NUM_INTERFACES) {
-        unifi_error(priv, "%s: invalid interfaceTag\n", __FUNCTION__);
+        unifi_error(priv, "%s: invalid interfaceTag\n", __func__);
         return;
     }
 
     unifi_warning(priv, "%s: Calling CsrWifiRouterCtrlBlockAckErrorIndSend(%d, %d, %d, %d, %x:%x:%x:%x:%x:%x, %d)\n",
-                    __FUNCTION__,
+                    __func__,
                     priv->CSR_WIFI_SME_IFACEQUEUE,
                     0,
                     ba_session->interfacePriv->InterfaceTag,
@@ -2601,7 +2601,7 @@ static void ba_session_terminate_timer_func(unsigned long data)
     priv = ba_session->interfacePriv->privPtr;
 
     if (ba_session->interfacePriv->InterfaceTag >= CSR_WIFI_NUM_INTERFACES) {
-        unifi_error(priv, "%s: invalid interfaceTag\n", __FUNCTION__);
+        unifi_error(priv, "%s: invalid interfaceTag\n", __func__);
         return;
     }
 
@@ -2622,25 +2622,25 @@ u8 blockack_session_stop(unifi_priv_t *priv,
     int i;
 
     if (interfaceTag >= CSR_WIFI_NUM_INTERFACES) {
-        unifi_error(priv, "%s: bad interfaceTag = %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: bad interfaceTag = %d\n", __func__, interfaceTag);
         return FALSE;
     }
 
     interfacePriv = priv->interfacePriv[interfaceTag];
 
     if(!interfacePriv) {
-        unifi_error(priv, "%s: bad interfacePriv\n", __FUNCTION__);
+        unifi_error(priv, "%s: bad interfacePriv\n", __func__);
         return FALSE;
     }
 
     if(tID > 15) {
-        unifi_error(priv, "%s: bad tID = %d\n", __FUNCTION__, tID);
+        unifi_error(priv, "%s: bad tID = %d\n", __func__, tID);
         return FALSE;
     }
 
     if((role != CSR_WIFI_ROUTER_CTRL_BLOCK_ACK_ORIGINATOR) &&
         (role != CSR_WIFI_ROUTER_CTRL_BLOCK_ACK_RECIPIENT)) {
-        unifi_error(priv, "%s: bad role = %d\n", __FUNCTION__, role);
+        unifi_error(priv, "%s: bad role = %d\n", __func__, role);
         return FALSE;
         }
 
@@ -2662,7 +2662,7 @@ u8 blockack_session_stop(unifi_priv_t *priv,
         }
 
         if (!ba_session_rx || (ba_session_idx == MAX_SUPPORTED_BA_SESSIONS_RX)) {
-            unifi_error(priv, "%s: bad ba_session for Rx [tID=%d]\n", __FUNCTION__, tID);
+            unifi_error(priv, "%s: bad ba_session for Rx [tID=%d]\n", __func__, tID);
             return FALSE;
         }
 
@@ -2692,7 +2692,7 @@ u8 blockack_session_stop(unifi_priv_t *priv,
         }
 
         if (!ba_session_tx || (ba_session_idx == MAX_SUPPORTED_BA_SESSIONS_TX)) {
-            unifi_error(priv, "%s: bad ba_session for Tx [tID=%d]\n", __FUNCTION__, tID);
+            unifi_error(priv, "%s: bad ba_session for Tx [tID=%d]\n", __func__, tID);
             return FALSE;
         }
         interfacePriv->ba_session_tx[ba_session_idx] = NULL;
@@ -2710,7 +2710,7 @@ void CsrWifiRouterCtrlBlockAckDisableReqHandler(void* drvpriv, CsrWifiFsmEvent* 
     u8 r;
     unifi_priv_t *priv = (unifi_priv_t*)drvpriv;
 
-    unifi_trace(priv, UDBG6, "%s: in ok\n", __FUNCTION__);
+    unifi_trace(priv, UDBG6, "%s: in ok\n", __func__);
 
     down(&priv->ba_mutex);
     r = blockack_session_stop(priv,
@@ -2725,7 +2725,7 @@ void CsrWifiRouterCtrlBlockAckDisableReqHandler(void* drvpriv, CsrWifiFsmEvent* 
                                             req->interfaceTag,
                                             r?CSR_RESULT_SUCCESS:CSR_RESULT_FAILURE);
 
-    unifi_trace(priv, UDBG6, "%s: out ok\n", __FUNCTION__);
+    unifi_trace(priv, UDBG6, "%s: out ok\n", __func__);
 }
 
 
@@ -2746,31 +2746,31 @@ u8 blockack_session_start(unifi_priv_t *priv,
 
 
     if (interfaceTag >= CSR_WIFI_NUM_INTERFACES) {
-        unifi_error(priv, "%s: bad interfaceTag = %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: bad interfaceTag = %d\n", __func__, interfaceTag);
         return FALSE;
     }
 
     interfacePriv = priv->interfacePriv[interfaceTag];
 
     if(!interfacePriv) {
-        unifi_error(priv, "%s: bad interfacePriv\n", __FUNCTION__);
+        unifi_error(priv, "%s: bad interfacePriv\n", __func__);
         return FALSE;
     }
 
     if(tID > 15)
     {
-        unifi_error(priv, "%s: bad tID=%d\n", __FUNCTION__, tID);
+        unifi_error(priv, "%s: bad tID=%d\n", __func__, tID);
         return FALSE;
     }
 
     if(wind_size > MAX_BA_WIND_SIZE) {
-        unifi_error(priv, "%s: bad wind_size = %d\n", __FUNCTION__, wind_size);
+        unifi_error(priv, "%s: bad wind_size = %d\n", __func__, wind_size);
         return FALSE;
     }
 
     if(role != CSR_WIFI_ROUTER_CTRL_BLOCK_ACK_ORIGINATOR &&
        role != CSR_WIFI_ROUTER_CTRL_BLOCK_ACK_RECIPIENT) {
-        unifi_error(priv, "%s: bad role = %d\n", __FUNCTION__, role);
+        unifi_error(priv, "%s: bad role = %d\n", __func__, role);
         return FALSE;
     }
 
@@ -2778,7 +2778,7 @@ u8 blockack_session_start(unifi_priv_t *priv,
 		"%s: ba session with peer= (%pM)\n", __func__,
 		macAddress.a);
 
-    unifi_warning(priv, "%s: ba session for tID=%d timeout=%d role=%d wind_size=%d start_sn=%d\n", __FUNCTION__,
+    unifi_warning(priv, "%s: ba session for tID=%d timeout=%d role=%d wind_size=%d start_sn=%d\n", __func__,
                   tID,
                   timeout,
                   role,
@@ -2793,7 +2793,7 @@ u8 blockack_session_start(unifi_priv_t *priv,
             ba_session_tx = interfacePriv->ba_session_tx[ba_session_idx];
             if (ba_session_tx) {
                 if ((!memcmp(ba_session_tx->macAddress.a, macAddress.a, ETH_ALEN)) && (ba_session_tx->tID == tID)){
-                    unifi_warning(priv, "%s: ba_session for Tx already exists\n", __FUNCTION__);
+                    unifi_warning(priv, "%s: ba_session for Tx already exists\n", __func__);
                     return TRUE;
                 }
             }
@@ -2809,14 +2809,14 @@ u8 blockack_session_start(unifi_priv_t *priv,
             }
         }
         if (ba_session_idx == MAX_SUPPORTED_BA_SESSIONS_TX){
-            unifi_error(priv, "%s: All ba_session used for Tx, NO free session available\n", __FUNCTION__);
+            unifi_error(priv, "%s: All ba_session used for Tx, NO free session available\n", __func__);
             return FALSE;
         }
 
         /* create and populate the new BA session structure */
         ba_session_tx = kzalloc(sizeof(ba_session_tx_struct), GFP_KERNEL);
         if (!ba_session_tx) {
-            unifi_error(priv, "%s: kmalloc failed for ba_session_tx\n", __FUNCTION__);
+            unifi_error(priv, "%s: kmalloc failed for ba_session_tx\n", __func__);
             return FALSE;
         }
 
@@ -2832,7 +2832,7 @@ u8 blockack_session_start(unifi_priv_t *priv,
             ba_session_rx = interfacePriv->ba_session_rx[ba_session_idx];
             if (ba_session_rx) {
                 if ((!memcmp(ba_session_rx->macAddress.a, macAddress.a, ETH_ALEN)) && (ba_session_rx->tID == tID)){
-                    unifi_warning(priv, "%s: ba_session for Rx[tID = %d] already exists\n", __FUNCTION__, tID);
+                    unifi_warning(priv, "%s: ba_session for Rx[tID = %d] already exists\n", __func__, tID);
 
                     if(ba_session_rx->wind_size == wind_size &&
                         ba_session_rx->timeout == timeout &&
@@ -2883,7 +2883,7 @@ u8 blockack_session_start(unifi_priv_t *priv,
             }
         }
         if (ba_session_idx == MAX_SUPPORTED_BA_SESSIONS_RX){
-            unifi_error(priv, "%s: All ba_session used for Rx, NO free session available\n", __FUNCTION__);
+            unifi_error(priv, "%s: All ba_session used for Rx, NO free session available\n", __func__);
             return FALSE;
         }
 
@@ -2905,7 +2905,7 @@ u8 blockack_session_start(unifi_priv_t *priv,
 
         ba_session_rx = kzalloc(sizeof(ba_session_rx_struct), GFP_KERNEL);
         if (!ba_session_rx) {
-            unifi_error(priv, "%s: kmalloc failed for ba_session_rx\n", __FUNCTION__);
+            unifi_error(priv, "%s: kmalloc failed for ba_session_rx\n", __func__);
             return FALSE;
         }
 
@@ -2916,7 +2916,7 @@ u8 blockack_session_start(unifi_priv_t *priv,
         ba_session_rx->buffer = kzalloc(ba_session_rx->wind_size*sizeof(frame_desc_struct), GFP_KERNEL);
         if (!ba_session_rx->buffer) {
             kfree(ba_session_rx);
-            unifi_error(priv, "%s: kmalloc failed for buffer\n", __FUNCTION__);
+            unifi_error(priv, "%s: kmalloc failed for buffer\n", __func__);
             return FALSE;
         }
 
@@ -2944,7 +2944,7 @@ void CsrWifiRouterCtrlBlockAckEnableReqHandler(void* drvpriv, CsrWifiFsmEvent* m
     u8 r;
     unifi_priv_t *priv = (unifi_priv_t*)drvpriv;
 
-    unifi_trace(priv, UDBG6, ">>%s\n", __FUNCTION__);
+    unifi_trace(priv, UDBG6, ">>%s\n", __func__);
     down(&priv->ba_mutex);
     r = blockack_session_start(priv,
                                req->interfaceTag,
@@ -2961,7 +2961,7 @@ void CsrWifiRouterCtrlBlockAckEnableReqHandler(void* drvpriv, CsrWifiFsmEvent* m
                                            req->clientData,
                                            req->interfaceTag,
                                            r?CSR_RESULT_SUCCESS:CSR_RESULT_FAILURE);
-    unifi_trace(priv, UDBG6, "<<%s: r=%d\n", __FUNCTION__, r);
+    unifi_trace(priv, UDBG6, "<<%s: r=%d\n", __func__, r);
 
 }
 
@@ -2975,7 +2975,7 @@ void CsrWifiRouterCtrlWapiMulticastFilterReqHandler(void* drvpriv, CsrWifiFsmEve
 
     if (CSR_WIFI_ROUTER_CTRL_MODE_STA == interfacePriv->interfaceMode) {
 
-        unifi_trace(priv, UDBG6, ">>%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, ">>%s\n", __func__);
 
         unifi_trace(priv, UDBG1, "CsrWifiRouterCtrlWapiMulticastFilterReq: req->status = %d\n", req->status);
 
@@ -2983,10 +2983,10 @@ void CsrWifiRouterCtrlWapiMulticastFilterReqHandler(void* drvpriv, CsrWifiFsmEve
         * status 0 - Filter off */
         priv->wapi_multicast_filter = req->status;
 
-        unifi_trace(priv, UDBG6, "<<%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "<<%s\n", __func__);
     } else {
 
-    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __FUNCTION__,interfacePriv->interfaceMode);
+    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __func__,interfacePriv->interfaceMode);
 
     }
 #elif defined(UNIFI_DEBUG)
@@ -3006,7 +3006,7 @@ void CsrWifiRouterCtrlWapiUnicastFilterReqHandler(void* drvpriv, CsrWifiFsmEvent
 
     if (CSR_WIFI_ROUTER_CTRL_MODE_STA == interfacePriv->interfaceMode) {
 
-        unifi_trace(priv, UDBG6, ">>%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, ">>%s\n", __func__);
 
         unifi_trace(priv, UDBG1, "CsrWifiRouterCtrlWapiUnicastFilterReq: req->status= %d\n", req->status);
 
@@ -3019,10 +3019,10 @@ void CsrWifiRouterCtrlWapiUnicastFilterReqHandler(void* drvpriv, CsrWifiFsmEvent
          * status 0 - Filter OFF */
         priv->wapi_unicast_filter = req->status;
 
-        unifi_trace(priv, UDBG6, "<<%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "<<%s\n", __func__);
     } else {
 
-    	 unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __FUNCTION__,interfacePriv->interfaceMode);
+    	 unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __func__,interfacePriv->interfaceMode);
 
     }
 #elif defined(UNIFI_DEBUG)
@@ -3060,17 +3060,17 @@ void CsrWifiRouterCtrlWapiRxPktReqHandler(void* drvpriv, CsrWifiFsmEvent* msg)
 
     if (CSR_WIFI_ROUTER_CTRL_MODE_STA == interfacePriv->interfaceMode) {
 
-    	unifi_trace(priv, UDBG6, ">>%s\n", __FUNCTION__);
+    	unifi_trace(priv, UDBG6, ">>%s\n", __func__);
 
 
         if (req->dataLength == 0 || req->data == NULL) {
-             unifi_error(priv, "CsrWifiRouterCtrlWapiRxPktReq: invalid request\n",__FUNCTION__);
+             unifi_error(priv, "CsrWifiRouterCtrlWapiRxPktReq: invalid request\n",__func__);
              return;
         }
 
         res = unifi_net_data_malloc(priv, &bulkdata.d[0], req->dataLength);
         if (res != CSR_RESULT_SUCCESS) {
-             unifi_error(priv, "CsrWifiRouterCtrlWapiRxPktReq: Could not allocate net data\n",__FUNCTION__);
+             unifi_error(priv, "CsrWifiRouterCtrlWapiRxPktReq: Could not allocate net data\n",__func__);
              return;
         }
 
@@ -3086,7 +3086,7 @@ void CsrWifiRouterCtrlWapiRxPktReqHandler(void* drvpriv, CsrWifiFsmEvent* msg)
 	          unifi_error(priv,"CsrWifiRouterCtrlWapiRxPktReqHandler: Unknown signal with reception status = %d\n",pkt_ind->ReceptionStatus);
 	          return;
         } else {
-	          unifi_trace(priv, UDBG4,"CsrWifiRouterCtrlWapiRxPktReqHandler: MIC verified , RX_SUCCESS \n",__FUNCTION__);
+	          unifi_trace(priv, UDBG4,"CsrWifiRouterCtrlWapiRxPktReqHandler: MIC verified , RX_SUCCESS \n",__func__);
 	          pkt_ind->ReceptionStatus = CSR_RX_SUCCESS;
 	          write_pack(&signal, req->signal, &(req->signalLength));
         }
@@ -3111,9 +3111,9 @@ void CsrWifiRouterCtrlWapiRxPktReqHandler(void* drvpriv, CsrWifiFsmEvent* msg)
               unifi_net_data_free(priv, &bulkdata.d[0]);
         }
 
-        unifi_trace(priv, UDBG6, "<<%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "<<%s\n", __func__);
     } else {
-    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __FUNCTION__,interfacePriv->interfaceMode);
+    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __func__,interfacePriv->interfaceMode);
     }
 #elif defined(UNIFI_DEBUG)
     /*WAPI Disabled*/
@@ -3139,18 +3139,18 @@ void CsrWifiRouterCtrlWapiUnicastTxPktReqHandler(void* drvpriv, CsrWifiFsmEvent*
 
     if (CSR_WIFI_ROUTER_CTRL_MODE_STA == interfacePriv->interfaceMode) {
 
-        unifi_trace(priv, UDBG6, ">>%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, ">>%s\n", __func__);
 
         if (priv == NULL) {
-            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler : invalid priv\n",__FUNCTION__);
+            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler : invalid priv\n",__func__);
             return;
         }
         if (priv->smepriv == NULL) {
-            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler : invalid sme priv\n",__FUNCTION__);
+            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler : invalid sme priv\n",__func__);
             return;
         }
         if (req->data == NULL) {
-            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler: invalid request\n",__FUNCTION__);
+            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler: invalid request\n",__func__);
             return;
         } else {
             /* If it is QoS data (type = data subtype = QoS), frame header contains QoS control field */
@@ -3159,7 +3159,7 @@ void CsrWifiRouterCtrlWapiUnicastTxPktReqHandler(void* drvpriv, CsrWifiFsmEvent*
             }
         }
         if ( !(req->dataLength>(macHeaderLengthInBytes+appendedCryptoFields)) ) {
-            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler: invalid dataLength\n",__FUNCTION__);
+            unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler: invalid dataLength\n",__func__);
             return;
         }
 
@@ -3174,7 +3174,7 @@ void CsrWifiRouterCtrlWapiUnicastTxPktReqHandler(void* drvpriv, CsrWifiFsmEvent*
          */
         result = unifi_net_data_malloc(priv, &bulkdata.d[0], req->dataLength);
         if (result != CSR_RESULT_SUCCESS) {
-             unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler: Could not allocate net data\n",__FUNCTION__);
+             unifi_error(priv, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler: Could not allocate net data\n",__func__);
              return;
         }
         memcpy((void*)bulkdata.d[0].os_data_ptr, req->data, req->dataLength);
@@ -3213,11 +3213,11 @@ void CsrWifiRouterCtrlWapiUnicastTxPktReqHandler(void* drvpriv, CsrWifiFsmEvent*
              unifi_trace(priv, UDBG1, "CsrWifiRouterCtrlWapiUnicastTxPktReqHandler: (Packet Drop), dropped count = %x\n", interfacePriv->stats.tx_dropped);
         }
 
-        unifi_trace(priv, UDBG6, "<<%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "<<%s\n", __func__);
 
     } else {
 
-    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __FUNCTION__,interfacePriv->interfaceMode);
+    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __func__,interfacePriv->interfaceMode);
 
     }
 #elif defined(UNIFI_DEBUG)
@@ -3238,16 +3238,16 @@ void CsrWifiRouterCtrlWapiFilterReqHandler(void* drvpriv, CsrWifiFsmEvent* msg)
 
     if (CSR_WIFI_ROUTER_CTRL_MODE_STA == interfacePriv->interfaceMode) {
 
-        unifi_trace(priv, UDBG6, ">>%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, ">>%s\n", __func__);
 
         unifi_trace(priv, UDBG1, "CsrWifiRouterCtrlWapiFilterReq: req->isWapiConnected [0/1] = %d \n",req->isWapiConnected);
 
         priv->isWapiConnection = req->isWapiConnected;
 
-        unifi_trace(priv, UDBG6, "<<%s\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "<<%s\n", __func__);
     } else {
 
-    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __FUNCTION__,interfacePriv->interfaceMode);
+    	unifi_warning(priv, "%s is NOT applicable for interface mode - %d\n", __func__,interfacePriv->interfaceMode);
 
     }
 #endif

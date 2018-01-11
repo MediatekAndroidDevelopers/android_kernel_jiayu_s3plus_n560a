@@ -138,7 +138,7 @@ do { if(rt_global_debug_component & component) \
 #define assert(expr) \
 	if (!(expr)) {                                  \
 		printk( "Assertion failed! %s,%s,%s,line=%d\n", \
-		#expr,__FILE__,__FUNCTION__,__LINE__);          \
+		#expr,__FILE__,__func__,__LINE__);          \
 	}
 //wb added to debug out data buf
 //if you want print DATA buffer related BA, please set ieee80211_debug_level to DATA|BA
@@ -147,7 +147,7 @@ do { if(rt_global_debug_component & component) \
 		{       \
 			int i;                                  \
 			u8* pdata = (u8*) data;                 \
-			printk(KERN_DEBUG RTL819xU_MODULE_NAME ": %s()\n", __FUNCTION__);   \
+			printk(KERN_DEBUG RTL819xU_MODULE_NAME ": %s()\n", __func__);   \
 			for(i=0; i<(int)(datalen); i++)                 \
 			{                                               \
 				printk("%2x ", pdata[i]);               \

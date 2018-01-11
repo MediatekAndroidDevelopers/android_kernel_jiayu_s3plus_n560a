@@ -152,8 +152,8 @@ static bool sensor_power = false;
 
 /*----------------------------------------------------------------------------*/
 #define BAR_TAG                  "[Barometer] "
-#define BAR_FUN(f)               printk(KERN_INFO BAR_TAG"%s\n", __FUNCTION__)
-#define BAR_ERR(fmt, args...)    printk(KERN_ERR BAR_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define BAR_FUN(f)               printk(KERN_INFO BAR_TAG"%s\n", __func__)
+#define BAR_ERR(fmt, args...)    printk(KERN_ERR BAR_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define BAR_LOG(fmt, args...)    printk(KERN_INFO BAR_TAG fmt, ##args)
 /*----------------------------------------------------------------------------*/
 /*

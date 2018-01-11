@@ -380,8 +380,8 @@ static int PS_MAX_XTALK = 50000;
 
 /*----------------------------------------------------------------------------*/
 #define APS_TAG                  "[ALS/PS] "
-#define APS_FUN(f)               printk(KERN_INFO APS_TAG"%s\n", __FUNCTION__)
-#define APS_ERR(fmt, args...)    printk(KERN_ERR  APS_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define APS_FUN(f)               printk(KERN_INFO APS_TAG"%s\n", __func__)
+#define APS_ERR(fmt, args...)    printk(KERN_ERR  APS_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define APS_LOG(fmt, args...)    printk(KERN_INFO APS_TAG fmt, ##args)
 #define APS_DBG(fmt, args...)    printk(KERN_INFO fmt, ##args)
 #define FTM_CUST_ALSPS "/data/epl2182"
@@ -2120,7 +2120,7 @@ static ssize_t epl2182_store_ps_polling(struct device_driver *ddri, const char *
     obj_ps.sensor_operate = epl2182_ps_operate;
 
     if(hwmsen_attach(ID_PROXIMITY, &obj_ps))    {
-        APS_ERR("[%s]: attach fail !\n", __FUNCTION__);
+        APS_ERR("[%s]: attach fail !\n", __func__);
     }
 	//Arima alvinchen 20140922 added for ALS/PS cali (From Elan IceFang) ---
 #else
@@ -2559,7 +2559,7 @@ static long epl2182_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned
 
 
         default:
-            APS_ERR("%s not supported = 0x%04x \r\n", __FUNCTION__, cmd);
+            APS_ERR("%s not supported = 0x%04x \r\n", __func__, cmd);
             err = -ENOIOCTLCMD;
             break;
     }

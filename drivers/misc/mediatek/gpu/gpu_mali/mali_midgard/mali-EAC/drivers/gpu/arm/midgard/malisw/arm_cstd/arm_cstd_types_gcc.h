@@ -86,7 +86,7 @@ typedef uint32_t                bool_t;
 #if (0 == CSTD_TOOLCHAIN_RVCT_GCC_MODE)
 	#define CSTD_FUNC           __func__
 #else
-	#define CSTD_FUNC           __FUNCTION__
+	#define CSTD_FUNC           __func__
 #endif
 
 #endif /* End (_ARM_CSTD_TYPES_GCC_H_) */

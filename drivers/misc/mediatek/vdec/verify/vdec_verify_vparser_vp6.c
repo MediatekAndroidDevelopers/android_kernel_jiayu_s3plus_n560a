@@ -282,7 +282,7 @@ INT32 i4VP6_Parse_Frame_Header(UINT32 u4BsId, UINT32 u4InstID, VDEC_INFO_VP6_FRM
     UINT32 u4Datain;//, u4VldBit;
     UINT32 u4FrameHeader;
 
-    printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVP6VLD(u4InstID, 0xF0), __FUNCTION__, __LINE__);
+    printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVP6VLD(u4InstID, 0xF0), __func__, __LINE__);
     //u4VDecReadVldRPtr(u4BsId, u4InstID, &u4VldBit, PHYSICAL((UINT32)_pucVFifo[u4InstID]));
 
     prVDecVp6FrmHdr->u2Buff2Offset = 0;
@@ -394,7 +394,7 @@ INT32 i4VP6_Parse_Frame_Header(UINT32 u4BsId, UINT32 u4InstID, VDEC_INFO_VP6_FRM
         i4VDEC_HAL_VP6_InitBarrelShifter2(1, u4InstID, &rVp6BSInitPrm, prVDecVp6FrmHdr);
         u4VDEC_HAL_VP6_InitBoolCoder(1, u4InstID, 0);  //vp56_init_range_decoder(&s->cc, buf+coeff_offset, buf_size-coeff_offset);
         u4VDEC_HAL_VP6_VDec_SetByteCount(1, u4InstID, prVDecVp6FrmHdr->u4FrameSize - prVDecVp6FrmHdr->u2Buff2Offset);
-        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __FUNCTION__, __LINE__);
+        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __func__, __LINE__);
         //u4VDEC_HAL_VP6_InitBoolCoder(u4BsId, u4InstID, 0);  //vp56_init_range_decoder(&s->cc, buf+coeff_offset, buf_size-coeff_offset);
         //s->ccp = &s->cc;
     }
@@ -460,12 +460,12 @@ INT32 i4VP6_Parse_Intra_Header(UINT32 u4BsId, UINT32 u4InstID, VDEC_INFO_VP6_FRM
     if (prVDecVp6FrmHdr->u2Buff2Offset)
     {
         u4VDEC_HAL_VP6_VDec_SetByteCount(u4BsId, u4InstID, prVDecVp6FrmHdr->u2Buff2Offset - 6);
-        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __FUNCTION__, __LINE__);
+        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __func__, __LINE__);
     }
     else
     {
         u4VDEC_HAL_VP6_VDec_SetByteCount(u4BsId, u4InstID, prVDecVp6FrmHdr->u4FrameSize - 6);
-        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __FUNCTION__, __LINE__);
+        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __func__, __LINE__);
     }
 #endif
 
@@ -513,12 +513,12 @@ INT32 i4VP6_Parse_Inter_Header(UINT32 u4BsId, UINT32 u4InstID, VDEC_INFO_VP6_FRM
     if (prVDecVp6FrmHdr->u2Buff2Offset)
     {
         u4VDEC_HAL_VP6_VDec_SetByteCount(u4BsId, u4InstID, prVDecVp6FrmHdr->u2Buff2Offset - 1);
-        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __FUNCTION__, __LINE__);
+        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __func__, __LINE__);
     }
     else
     {
         u4VDEC_HAL_VP6_VDec_SetByteCount(u4BsId, u4InstID, prVDecVp6FrmHdr->u4FrameSize - 1);
-        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __FUNCTION__, __LINE__);
+        printk("<vdec> u4VDEC_HAL_VP6_VDec_SetByteCount  @(%s, %d)\n", __func__, __LINE__);
     }
 #endif
 
@@ -1514,7 +1514,7 @@ void vVP6WrData2PC(UINT32 u4InstID, UCHAR *ptAddr, UINT32 u4Size, BOOL *fgNextFr
 
             {
                 //UINT8 *p = (UINT8 *)u4NonSwapYBase;
-                //printk("<vdec> data test addr=0x%08x, @(%s, %d)===============\n", p, __FUNCTION__, __LINE__);
+                //printk("<vdec> data test addr=0x%08x, @(%s, %d)===============\n", p, __func__, __LINE__);
                 //printk("<vdec> %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
                 //    p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
             }
@@ -1578,7 +1578,7 @@ void vVP6WrData2PC(UINT32 u4InstID, UCHAR *ptAddr, UINT32 u4Size, BOOL *fgNextFr
 
         {
             //UINT8 *p = (UINT8 *)u4NonSwapYBase;
-            //printk("<vdec> data test addr=0x%08x, @(%s, %d)===============\n", p, __FUNCTION__, __LINE__);
+            //printk("<vdec> data test addr=0x%08x, @(%s, %d)===============\n", p, __func__, __LINE__);
             //printk("%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
             //    p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
         }

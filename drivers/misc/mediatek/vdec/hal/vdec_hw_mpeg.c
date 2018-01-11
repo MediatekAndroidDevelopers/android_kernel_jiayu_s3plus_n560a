@@ -374,7 +374,7 @@ void vVLDDoDec(UINT32 u4VDecID, VDEC_INFO_DEC_PRM_T *prDecPrm, BOOL fgBPic, BOOL
     }
 #endif
 
-    printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVLD(u4VDecID, 0x00), __FUNCTION__, __LINE__);
+    printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVLD(u4VDecID, 0x00), __func__, __LINE__);
     // Process Decode
 #if VDEC_UFO_ENABLE   //here, bypass pp out(UFO need to turn on pp out but bypass it)
     UINT32 u4Reg;
@@ -2002,7 +2002,7 @@ void vVDecMpegCommSetting(UINT32 u4VDecID, VDEC_INFO_DEC_PRM_T *prDecPrm)
 
         if ((prDecPrm->u4PicW > 16) && (prDecPrm->u4PicH > 16)) //when width or height is less than 16,should be set MC out @mtk40343
         {
-            printk("<vdec> PP enable %s, %d!\n", __FUNCTION__, __LINE__);
+            printk("<vdec> PP enable %s, %d!\n", __func__, __LINE__);
             vVDecWriteMC(u4VDecID, RW_MC_PP_ENABLE, 1);
             vVDecWriteMC(u4VDecID, 0x834, u4VDecReadMC(u4VDecID, 0x834) & (~(0x1))); // pp out buffer enable
             vVDecWriteMC(u4VDecID, RW_MC_PP_DBLK_MODE, 0);//turn off de-blocking

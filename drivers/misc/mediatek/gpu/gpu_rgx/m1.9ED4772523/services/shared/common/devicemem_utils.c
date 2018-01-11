@@ -335,7 +335,7 @@ void _DevmemImportStructAcquire(DEVMEM_IMPORT *psImport)
 	PVR_ASSERT(iRefCount != 1);
 
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psImport,
 					iRefCount-1,
 					iRefCount);
@@ -348,7 +348,7 @@ void _DevmemImportStructRelease(DEVMEM_IMPORT *psImport)
 	PVR_ASSERT(iRefCount >= 0);
 
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psImport,
 					iRefCount+1,
 					iRefCount);
@@ -438,7 +438,7 @@ void _DevmemMemDescInit(DEVMEM_MEMDESC *psMemDesc,
 										  IMG_DEVMEM_SIZE_T uiSize)
 {
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					0,
 					1);
@@ -465,7 +465,7 @@ void _DevmemMemDescAcquire(DEVMEM_MEMDESC *psMemDesc)
 
 	iRefCount = OSAtomicIncrement(&psMemDesc->hRefCount);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					iRefCount-1,
 					iRefCount);
@@ -481,7 +481,7 @@ void _DevmemMemDescRelease(DEVMEM_MEMDESC *psMemDesc)
 	PVR_ASSERT(iRefCount >= 0);
 
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					iRefCount+1,
 					iRefCount);
@@ -535,7 +535,7 @@ PVRSRV_ERROR _DevmemValidateParams(IMG_DEVMEM_SIZE_T uiSize,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 		         "%s: Zero on Alloc and Poison on Alloc are mutually exclusive.",
-		         __FUNCTION__));
+		         __func__));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
 
@@ -543,7 +543,7 @@ PVRSRV_ERROR _DevmemValidateParams(IMG_DEVMEM_SIZE_T uiSize,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 		         "%s: The requested alignment is not a power of two.",
-		         __FUNCTION__));
+		         __func__));
 		return PVRSRV_ERROR_INVALID_PARAMS;
  	}
 
@@ -551,7 +551,7 @@ PVRSRV_ERROR _DevmemValidateParams(IMG_DEVMEM_SIZE_T uiSize,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 		         "%s: Please request a non-zero size value.",
-		         __FUNCTION__));
+		         __func__));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
 
@@ -652,7 +652,7 @@ void _DevmemImportStructInit(DEVMEM_IMPORT *psImport,
 								 DEVMEM_PROPERTIES_T uiProperties)
 {
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psImport,
 					0,
 					1);
@@ -690,7 +690,7 @@ PVRSRV_ERROR _DevmemImportStructDevMap(DEVMEM_HEAP *psHeap,
 
 	OSLockAcquire(psDeviceImport->hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psImport,
 					psDeviceImport->ui32RefCount,
 					psDeviceImport->ui32RefCount+1);
@@ -921,7 +921,7 @@ void _DevmemImportStructDevUnmap(DEVMEM_IMPORT *psImport)
 
 	OSLockAcquire(psDeviceImport->hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psImport,
 					psDeviceImport->ui32RefCount,
 					psDeviceImport->ui32RefCount-1);
@@ -989,7 +989,7 @@ PVRSRV_ERROR _DevmemImportStructCPUMap(DEVMEM_IMPORT *psImport)
 
 	OSLockAcquire(psCPUImport->hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psImport,
 					psCPUImport->ui32RefCount,
 					psCPUImport->ui32RefCount+1);
@@ -1037,7 +1037,7 @@ void _DevmemImportStructCPUUnmap(DEVMEM_IMPORT *psImport)
 
 	OSLockAcquire(psCPUImport->hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psImport,
 					psCPUImport->ui32RefCount,
 					psCPUImport->ui32RefCount-1);

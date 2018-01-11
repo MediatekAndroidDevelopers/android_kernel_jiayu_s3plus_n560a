@@ -426,7 +426,7 @@ static int melfas_touch_event_handler(void *unused)
 
 			for (i = 0; i < read_num; i = i + FINGER_EVENT_SZ) {
 				Touch_Type = (buf[i] >> 5) & 0x03;
-                		//TPD_DMESG("%s : touch type = %d, buf[i] = %x \n",__FUNCTION__,Touch_Type, buf[i]);
+                		//TPD_DMESG("%s : touch type = %d, buf[i] = %x \n",__func__,Touch_Type, buf[i]);
                 		/* touch type is panel */
                 		if (Touch_Type == MMS_TOUCH_KEY_EVENT) {
                     			touchkey_handler((buf[i] & 0x0f),(bool)(buf[i] & 0x80));
@@ -824,7 +824,7 @@ int melfas_check_firmware(struct i2c_client *client)
     }
     else if (ret < 0)
     {
-        TPD_DMESG("[melfas_tpd] %s,%d: i2c read fail[%d] \n", __FUNCTION__, __LINE__, ret);
+        TPD_DMESG("[melfas_tpd] %s,%d: i2c read fail[%d] \n", __func__, __LINE__, ret);
         goto out;
     }
 
@@ -1059,7 +1059,7 @@ static int melfas_tpd_i2c_detect(struct i2c_client *client,
 static int melfas_tpd_local_init(void) 
 {
 
-	TPD_DMESG("[melfas_tpd] end %s, %d\n", __FUNCTION__, __LINE__);  
+	TPD_DMESG("[melfas_tpd] end %s, %d\n", __func__, __LINE__);  
 	if(i2c_add_driver(&melfas_tpd_i2c_driver)!= 0) {
         	TPD_DMESG("[melfas_tpd] unable to add i2c driver.\n");
         	return -1;

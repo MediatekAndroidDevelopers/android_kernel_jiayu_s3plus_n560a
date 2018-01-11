@@ -668,7 +668,7 @@ static int create_new_entry(struct fuse_conn *fc, struct fuse_req *req,
 			dput(alias);
 			iput(inode);
             
-            printk(KERN_ERR "fuse:%s: EBUSY caused from that the directory,'%s', has alias. Use FUSE_USERS to find the reason. \n", __FUNCTION__, entry->d_name.name);
+            printk(KERN_ERR "fuse:%s: EBUSY caused from that the directory,'%s', has alias. Use FUSE_USERS to find the reason. \n", __func__, entry->d_name.name);
             fuse_users(dir, entry);           
 			return -EBUSY;
 		}

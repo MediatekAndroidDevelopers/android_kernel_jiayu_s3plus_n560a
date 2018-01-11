@@ -894,7 +894,7 @@ static int kpd_pdrv_probe(struct platform_device *pdev)
 		kpd_delete_attr(&kpd_pdrv.driver);
 		return err;
 	}
-    pr_warn(KPD_SAY "%s Done\n", __FUNCTION__);
+    pr_warn(KPD_SAY "%s Done\n", __func__);
 	return 0;
 }
 

@@ -115,8 +115,8 @@
      *********************/
     #if DEBUG_SWITCH
         #define GSE_TAG                  "[Gsensor] "
-        #define GSE_FUN(f)               printk(KERN_INFO GSE_TAG"%s\n", __FUNCTION__)
-        #define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+        #define GSE_FUN(f)               printk(KERN_INFO GSE_TAG"%s\n", __func__)
+        #define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
         #define GSE_LOG(fmt, args...)    printk(KERN_NOTICE GSE_TAG fmt, ##args)
     #else
         #define GSE_TAG
@@ -130,8 +130,8 @@
      *********************/
     #if 0
         #define PS_TAG                  "[mCube/Psensor] "
-        #define PS_FUN(f)               printk(KERN_INFO PS_TAG"%s\n", __FUNCTION__)
-        #define PS_ERR(fmt, args...)    printk(KERN_ERR  PS_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+        #define PS_FUN(f)               printk(KERN_INFO PS_TAG"%s\n", __func__)
+        #define PS_ERR(fmt, args...)    printk(KERN_ERR  PS_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
         #define PS_LOG(fmt, args...)    printk(KERN_ERR PS_TAG fmt, ##args)
     #else
         #define PS_TAG
@@ -374,7 +374,7 @@ static signed char    s_bAccuracyStatus = SENSOR_STATUS_ACCURACY_MEDIUM;
                 _nTemp = nDataX;                                                      \
                 nDataX = nDataY;                                                      \
                 nDataY = -_nTemp;                                                     \
-                GSE_LOG("[%s] 3250 read remap\n", __FUNCTION__);                      \
+                GSE_LOG("[%s] 3250 read remap\n", __func__);                      \
             }                                                                         \
             else                                                                      \
             {                                                                         \
@@ -390,13 +390,13 @@ static signed char    s_bAccuracyStatus = SENSOR_STATUS_ACCURACY_MEDIUM;
                 _nTemp = nDataX;                                                      \
                 nDataX = -nDataY;                                                     \
                 nDataY = _nTemp;                                                      \
-                GSE_LOG("[%s] 3250 write remap\n", __FUNCTION__);                     \
+                GSE_LOG("[%s] 3250 write remap\n", __func__);                     \
             }                                                                         \
             else                                                                      \
             {                                                                         \
                 if (s_bMPOL & 0x01)    nDataX = -nDataX;                              \
                 if (s_bMPOL & 0x02)    nDataY = -nDataY;                              \
-                GSE_LOG("[%s] 35X0 remap [s_bMPOL: %d]\n", __FUNCTION__, s_bMPOL);    \
+                GSE_LOG("[%s] 35X0 remap [s_bMPOL: %d]\n", __func__, s_bMPOL);    \
             }
 
 #define IS_MCFM12()    ((0xC0 <= s_bHWID) && (s_bHWID <= 0xCF))
@@ -713,7 +713,7 @@ static void    mcube_load_cali(struct i2c_client *pt_i2c_client)
 {
     if (false == s_nIsCaliLoaded)
     {
-        GSE_LOG("[%s] loading cali file...\n", __FUNCTION__);
+        GSE_LOG("[%s] loading cali file...\n", __func__);
 
         if (MC3XXX_RETCODE_SUCCESS == mcube_read_cali_file(pt_i2c_client))
             s_nIsCaliLoaded = true;
@@ -938,7 +938,7 @@ static void MC3XXX_rbm(struct i2c_client *client, int enable)
 
     MC3XXX_i2c_read_block(client, 0x04, _baDataBuf, 0x01);
 
-    //GSE_LOG("[%s] REG(0x04): 0x%X, enable: %d\n", __FUNCTION__, _baDataBuf[0], enable);
+    //GSE_LOG("[%s] REG(0x04): 0x%X, enable: %d\n", __func__, _baDataBuf[0], enable);
 
     if (0x00 == (_baDataBuf[0] & 0x40))
     {
@@ -1051,7 +1051,7 @@ static int MC3XXX_ReadData_RBM(struct i2c_client *client, int data[MC3XXX_AXES_N
  *****************************************/
 static int MC3XXX_ValidateSensorIC(unsigned char *pbPCode, unsigned char *pbHwID)
 {
-    GSE_LOG("[%s] *pbPCode: 0x%02X, *pbHwID: 0x%02X\n", __FUNCTION__, *pbPCode, *pbHwID);
+    GSE_LOG("[%s] *pbPCode: 0x%02X, *pbHwID: 0x%02X\n", __func__, *pbPCode, *pbHwID);
 
     if (   (0x01 == *pbHwID)
         || (0x03 == *pbHwID)
@@ -1354,7 +1354,7 @@ static int    MC3XXX_ReadData(struct i2c_client *pt_i2c_client, s16 waData[MC3XX
     struct mc3xxx_i2c_data   *_pt_i2c_obj = ((struct mc3xxx_i2c_data*) i2c_get_clientdata(pt_i2c_client));
 	
 	if(atomic_read(&_pt_i2c_obj->trace) & MCUBE_TRC_INFO) {
-        GSE_LOG("[%s] s_nIsRBM_Enabled: %d\n", __FUNCTION__, s_nIsRBM_Enabled);
+        GSE_LOG("[%s] s_nIsRBM_Enabled: %d\n", __func__, s_nIsRBM_Enabled);
 	}
     if (NULL == pt_i2c_client)
     {
@@ -1378,7 +1378,7 @@ static int    MC3XXX_ReadData(struct i2c_client *pt_i2c_client, s16 waData[MC3XX
             waData[MC3XXX_AXIS_Y] = ((s8) _baData[1]);
             waData[MC3XXX_AXIS_Z] = ((s8) _baData[2]);
             if(atomic_read(&_pt_i2c_obj->trace) & MCUBE_TRC_INFO) {
-                GSE_LOG("[%s][low] X: %d, Y: %d, Z: %d\n", __FUNCTION__, waData[MC3XXX_AXIS_X], waData[MC3XXX_AXIS_Y], waData[MC3XXX_AXIS_Z]);
+                GSE_LOG("[%s][low] X: %d, Y: %d, Z: %d\n", __func__, waData[MC3XXX_AXIS_X], waData[MC3XXX_AXIS_Y], waData[MC3XXX_AXIS_Z]);
             }
 
             #ifdef _MC3XXX_SUPPORT_LRF_
@@ -1400,7 +1400,7 @@ static int    MC3XXX_ReadData(struct i2c_client *pt_i2c_client, s16 waData[MC3XX
             waData[MC3XXX_AXIS_Y] = ((signed short) ((_baData[2]) | (_baData[3]<<8)));
             waData[MC3XXX_AXIS_Z] = ((signed short) ((_baData[4]) | (_baData[5]<<8)));
                 if(atomic_read(&_pt_i2c_obj->trace) & MCUBE_TRC_INFO) {
-                    GSE_LOG("[%s][high] X: %d, Y: %d, Z: %d\n", __FUNCTION__, waData[MC3XXX_AXIS_X], waData[MC3XXX_AXIS_Y], waData[MC3XXX_AXIS_Z]);
+                    GSE_LOG("[%s][high] X: %d, Y: %d, Z: %d\n", __func__, waData[MC3XXX_AXIS_X], waData[MC3XXX_AXIS_Y], waData[MC3XXX_AXIS_Z]);
                 }
 			}
         if(atomic_read(&_pt_i2c_obj->trace) & MCUBE_TRC_INFO) {
@@ -1757,7 +1757,7 @@ static int MC3XXX_SetPowerMode(struct i2c_client *client, bool enable)
  *****************************************/
 static void MC3XXX_SetResolution(void)
 {
-    GSE_LOG("[%s]\n", __FUNCTION__);
+    GSE_LOG("[%s]\n", __func__);
 
     switch (s_bPCODE)
     {
@@ -1808,7 +1808,7 @@ static void MC3XXX_SetResolution(void)
          break;
     }
 
-    GSE_LOG("[%s] s_bResolution: %d\n", __FUNCTION__, s_bResolution);
+    GSE_LOG("[%s] s_bResolution: %d\n", __func__, s_bResolution);
 }
 
 /*****************************************
@@ -1818,7 +1818,7 @@ static void MC3XXX_SetSampleRate(struct i2c_client *pt_i2c_client)
 {
     unsigned char    _baDataBuf[2] = { 0 };
 
-    GSE_LOG("[%s]\n", __FUNCTION__);
+    GSE_LOG("[%s]\n", __func__);
 
     _baDataBuf[0] = MC3XXX_REG_SAMPLE_RATE;
     _baDataBuf[1] = 0x00;
@@ -1830,7 +1830,7 @@ static void MC3XXX_SetSampleRate(struct i2c_client *pt_i2c_client)
         _baData2Buf[0] = 0x2A;
         MC3XXX_i2c_read_block(pt_i2c_client, 0x2A, _baData2Buf, 1);
 
-        GSE_LOG("[%s] REG(0x2A) = 0x%02X\n", __FUNCTION__, _baData2Buf[0]);
+        GSE_LOG("[%s] REG(0x2A) = 0x%02X\n", __func__, _baData2Buf[0]);
 
         _baData2Buf[0] = (_baData2Buf[0] & 0xC0);
 
@@ -1841,7 +1841,7 @@ static void MC3XXX_SetSampleRate(struct i2c_client *pt_i2c_client)
         case 0x80:    _baDataBuf[0] = 0x09;                                                    break;
         case 0xC0:    _baDataBuf[0] = 0x0A;                                                    break;
 
-        default:      GSE_ERR("[%s] no chance to get here... check code!\n", __FUNCTION__);    break;
+        default:      GSE_ERR("[%s] no chance to get here... check code!\n", __func__);    break;
         }
     }
     else 
@@ -1876,7 +1876,7 @@ static void MC3XXX_ConfigRegRange(struct i2c_client *pt_i2c_client)
     if (res < 0)
         GSE_ERR("MC3XXX_ConfigRegRange fail \n");
 
-    GSE_LOG("[%s] set 0x%X\n", __FUNCTION__, _baDataBuf[1]);
+    GSE_LOG("[%s] set 0x%X\n", __func__, _baDataBuf[1]);
 }
 
 /*****************************************
@@ -1896,7 +1896,7 @@ static void MC3XXX_SetGain(void)
         }
     }
 
-    GSE_LOG("[%s] gain: %d / %d / %d\n", __FUNCTION__, gsensor_gain.x, gsensor_gain.y, gsensor_gain.z);
+    GSE_LOG("[%s] gain: %d / %d / %d\n", __func__, gsensor_gain.x, gsensor_gain.y, gsensor_gain.z);
 }
 
 /*****************************************
@@ -1906,7 +1906,7 @@ static int MC3XXX_Init(struct i2c_client *client, int reset_cali)
 {
     unsigned char    _baDataBuf[2] = { 0 };
 
-    GSE_LOG("[%s]\n", __FUNCTION__);
+    GSE_LOG("[%s]\n", __func__);
 
     #ifdef _MC3XXX_SUPPORT_POWER_SAVING_SHUTDOWN_POWER_
         if (MC3XXX_RETCODE_SUCCESS != _mc3xxx_i2c_auto_probe(client))
@@ -1915,7 +1915,7 @@ static int MC3XXX_Init(struct i2c_client *client, int reset_cali)
             return (MC3XXX_RETCODE_ERROR_I2C);
         }
 
-        //GSE_LOG("[%s] confirmed i2c addr: 0x%X\n", __FUNCTION__, client->addr);
+        //GSE_LOG("[%s] confirmed i2c addr: 0x%X\n", __func__, client->addr);
     #endif
 
     _baDataBuf[0] = 0x43;
@@ -1956,7 +1956,7 @@ static int MC3XXX_Init(struct i2c_client *client, int reset_cali)
         init_waitqueue_head(&wq_mc3xxx_open_status);
     #endif
 
-    GSE_LOG("[%s] init ok.\n", __FUNCTION__);
+    GSE_LOG("[%s] init ok.\n", __func__);
 
     return (MC3XXX_RETCODE_SUCCESS);
 }
@@ -2025,21 +2025,21 @@ static int MC3XXX_ReadSensorData(struct i2c_client *pt_i2c_client, char *pbBuf, 
 
     //output format: mg
     if(atomic_read(&_pt_i2c_obj->trace) & MCUBE_TRC_INFO) {
-        GSE_LOG("[%s] raw data: %d, %d, %d\n", __FUNCTION__, _pt_i2c_obj->data[MC3XXX_AXIS_X], _pt_i2c_obj->data[MC3XXX_AXIS_Y], _pt_i2c_obj->data[MC3XXX_AXIS_Z]);
+        GSE_LOG("[%s] raw data: %d, %d, %d\n", __func__, _pt_i2c_obj->data[MC3XXX_AXIS_X], _pt_i2c_obj->data[MC3XXX_AXIS_Y], _pt_i2c_obj->data[MC3XXX_AXIS_Z]);
     }
 	_naAccelData[(_pt_i2c_obj->cvt.map[MC3XXX_AXIS_X])] = (_pt_i2c_obj->cvt.sign[MC3XXX_AXIS_X] * _pt_i2c_obj->data[MC3XXX_AXIS_X]);
     _naAccelData[(_pt_i2c_obj->cvt.map[MC3XXX_AXIS_Y])] = (_pt_i2c_obj->cvt.sign[MC3XXX_AXIS_Y] * _pt_i2c_obj->data[MC3XXX_AXIS_Y]);
     _naAccelData[(_pt_i2c_obj->cvt.map[MC3XXX_AXIS_Z])] = (_pt_i2c_obj->cvt.sign[MC3XXX_AXIS_Z] * _pt_i2c_obj->data[MC3XXX_AXIS_Z]);
 
 	if(atomic_read(&_pt_i2c_obj->trace) & MCUBE_TRC_INFO) {
-        GSE_LOG("[%s] map data: %d, %d, %d!\n", __FUNCTION__, _naAccelData[MC3XXX_AXIS_X], _naAccelData[MC3XXX_AXIS_Y], _naAccelData[MC3XXX_AXIS_Z]);
+        GSE_LOG("[%s] map data: %d, %d, %d!\n", __func__, _naAccelData[MC3XXX_AXIS_X], _naAccelData[MC3XXX_AXIS_Y], _naAccelData[MC3XXX_AXIS_Z]);
 	}
 	_naAccelData[MC3XXX_AXIS_X] = (_naAccelData[MC3XXX_AXIS_X] * GRAVITY_EARTH_1000 / gsensor_gain.x);
     _naAccelData[MC3XXX_AXIS_Y] = (_naAccelData[MC3XXX_AXIS_Y] * GRAVITY_EARTH_1000 / gsensor_gain.y);
     _naAccelData[MC3XXX_AXIS_Z] = (_naAccelData[MC3XXX_AXIS_Z] * GRAVITY_EARTH_1000 / gsensor_gain.z);
 
 	if(atomic_read(&_pt_i2c_obj->trace) & MCUBE_TRC_INFO) {
-	    GSE_LOG("[%s] accel data: %d, %d, %d!\n", __FUNCTION__, _naAccelData[MC3XXX_AXIS_X], _naAccelData[MC3XXX_AXIS_Y], _naAccelData[MC3XXX_AXIS_Z]);
+	    GSE_LOG("[%s] accel data: %d, %d, %d!\n", __func__, _naAccelData[MC3XXX_AXIS_X], _naAccelData[MC3XXX_AXIS_Y], _naAccelData[MC3XXX_AXIS_Z]);
 	}
     sprintf(pbBuf, "%04x %04x %04x", _naAccelData[MC3XXX_AXIS_X], _naAccelData[MC3XXX_AXIS_Y], _naAccelData[MC3XXX_AXIS_Z]);
 
@@ -2335,11 +2335,11 @@ static void MC3XXX_SelfCheck(struct i2c_client *client, u8 *pUserBuf)
 #ifdef _MC3XXX_SUPPORT_PERIODIC_DOC_
 static int    MC3XXX_GetOpenStatus(void)
 {
-    //GSE_LOG("[%s] %d\n", __FUNCTION__, atomic_read(&s_t_mc3xxx_open_status));
+    //GSE_LOG("[%s] %d\n", __func__, atomic_read(&s_t_mc3xxx_open_status));
 
     wait_event_interruptible(wq_mc3xxx_open_status, (atomic_read(&s_t_mc3xxx_open_status) != 0));
 
-    //GSE_LOG("[%s] pass wait_event_interruptible: %d\n", __FUNCTION__, atomic_read(&s_t_mc3xxx_open_status));
+    //GSE_LOG("[%s] pass wait_event_interruptible: %d\n", __func__, atomic_read(&s_t_mc3xxx_open_status));
 
     return (atomic_read(&s_t_mc3xxx_open_status));
 }
@@ -2774,7 +2774,7 @@ static ssize_t show_regiter_map(struct device_driver *ddri, char *buf)
 static ssize_t store_regiter_map(struct device_driver *ddri, const char *buf, size_t count)
 {
     // reserved
-    //GSE_LOG("[%s] buf[0]: 0x%02X\n", __FUNCTION__, buf[0]);
+    //GSE_LOG("[%s] buf[0]: 0x%02X\n", __func__, buf[0]);
 
     return count;
 }
@@ -2787,7 +2787,7 @@ static ssize_t show_chip_orientation(struct device_driver *ptDevDrv, char *pbBuf
     ssize_t          _tLength = 0;
     struct acc_hw   *_ptAccelHw = get_cust_acc();
 
-    GSE_LOG("[%s] default direction: %d\n", __FUNCTION__, _ptAccelHw->direction);
+    GSE_LOG("[%s] default direction: %d\n", __func__, _ptAccelHw->direction);
 
     _tLength = snprintf(pbBuf, PAGE_SIZE, "default direction = %d\n", _ptAccelHw->direction);
 
@@ -2811,7 +2811,7 @@ static ssize_t store_chip_orientation(struct device_driver *ptDevDrv, const char
             GSE_ERR("ERR: fail to set direction\n");
     }
 
-    GSE_LOG("[%s] set direction: %d\n", __FUNCTION__, _nDirection);
+    GSE_LOG("[%s] set direction: %d\n", __func__, _nDirection);
 
     return (tCount);
 }
@@ -2855,7 +2855,7 @@ static ssize_t show_selfcheck_value(struct device_driver *ptDevDriver, char *pbB
 {
     struct i2c_client   *_pt_i2c_client = mc3xxx_i2c_client;
 
-    //GSE_LOG("[%s] 0x%02X\n", __FUNCTION__, pbBuf[0]);
+    //GSE_LOG("[%s] 0x%02X\n", __func__, pbBuf[0]);
 
     MC3XXX_MUTEX_LOCK();
     MC3XXX_SelfCheck(_pt_i2c_client, pbBuf);
@@ -2871,7 +2871,7 @@ static ssize_t show_selfcheck_value(struct device_driver *ptDevDriver, char *pbB
 static ssize_t store_selfcheck_value(struct device_driver *ddri, const char *buf, size_t count)
 {
     // reserved
-    //GSE_LOG("[%s] buf[0]: 0x%02X\n", __FUNCTION__, buf[0]);
+    //GSE_LOG("[%s] buf[0]: 0x%02X\n", __func__, buf[0]);
 
     return count;
 }
@@ -3827,7 +3827,7 @@ _I2C_AUTO_PROBE_RECHECK_:
     {
         client->addr = mc3xxx_i2c_auto_probe_addr[_nCount];
 
-        //GSE_LOG("[%s][%d] probing addr: 0x%X\n", __FUNCTION__, _nCount, client->addr);
+        //GSE_LOG("[%s][%d] probing addr: 0x%X\n", __func__, _nCount, client->addr);
 
         _baData1Buf[0] = 0;
         if (0 > MC3XXX_i2c_read_block(client, 0x3B, _baData1Buf, 1))
@@ -3837,7 +3837,7 @@ _I2C_AUTO_PROBE_RECHECK_:
 
         _naCheckCount[_nCount]++;
 
-        //GSE_LOG("[%s][%d] addr: 0x%X ok to read REG(0x3B): 0x%X\n", __FUNCTION__, _nCount, client->addr, _baData1Buf[0]);
+        //GSE_LOG("[%s][%d] addr: 0x%X ok to read REG(0x3B): 0x%X\n", __func__, _nCount, client->addr, _baData1Buf[0]);
 
         if (0x00 == _baData1Buf[0])
         {
@@ -3865,7 +3865,7 @@ _I2C_AUTO_PROBE_RECHECK_:
 
             MC3XXX_SaveDefaultOffset(client);
 
-            //GSE_LOG("[%s] addr: 0x%X confirmed ok to use. s_bPCODE: 0x%02X, s_bHWID: 0x%02X\n", __FUNCTION__, client->addr, s_bPCODE, s_bHWID);
+            //GSE_LOG("[%s] addr: 0x%X confirmed ok to use. s_bPCODE: 0x%02X, s_bHWID: 0x%02X\n", __func__, client->addr, s_bPCODE, s_bHWID);
 
             return (MC3XXX_RETCODE_SUCCESS);
         }
@@ -4008,7 +4008,7 @@ static int mc3xxx_i2c_probe(struct i2c_client *client, const struct i2c_device_i
         goto exit_init_failed;
     }
 
-    //GSE_LOG("[%s] 2nd confirmed i2c addr: 0x%X\n", __FUNCTION__, client->addr);
+    //GSE_LOG("[%s] 2nd confirmed i2c addr: 0x%X\n", __func__, client->addr);
 
     MC3XXX_i2c_read_block(client, 0x21, offset_buf, 6);
 

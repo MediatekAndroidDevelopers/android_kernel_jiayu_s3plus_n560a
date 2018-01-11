@@ -323,7 +323,7 @@ void verify_and_accomodate_tx_packet(unifi_priv_t *priv)
                     kfree(tx_q_item);
                     tx_q_item = NULL;
                     if (!priv->noOfPktQueuedInDriver) {
-                        unifi_error(priv, "packets queued in driver 0 still decrementing in %s\n", __FUNCTION__);
+                        unifi_error(priv, "packets queued in driver 0 still decrementing in %s\n", __func__);
                     } else {
                         /* protection provided by spinlock */
                         priv->noOfPktQueuedInDriver--;
@@ -331,7 +331,7 @@ void verify_and_accomodate_tx_packet(unifi_priv_t *priv)
                     }
                     /* Sta Record is available for all unicast (except genericMgt Frames) & in other case its NULL */
                     if (!staInfo->noOfPktQueued) {
-                        unifi_error(priv, "packets queued in driver per station is 0 still decrementing in %s\n", __FUNCTION__);
+                        unifi_error(priv, "packets queued in driver per station is 0 still decrementing in %s\n", __func__);
                     } else {
                         spin_lock(&priv->staRecord_lock);
                         staInfo->noOfPktQueued--;
@@ -642,7 +642,7 @@ void uf_handle_tim_cfm(unifi_priv_t *priv, CSR_MLME_SET_TIM_CONFIRM *cfm, u16 re
     /* Irrespective of interface the count maintained */
     static u8 retryCount = 0;
     unsigned long lock_flags;
-    unifi_trace(priv, UDBG3, "entering %s, handle = %x, timSetStatus = %x\n", __FUNCTION__, handle, timSetStatus);
+    unifi_trace(priv, UDBG3, "entering %s, handle = %x, timSetStatus = %x\n", __func__, handle, timSetStatus);
 
     if (interfaceTag >= CSR_WIFI_NUM_INTERFACES) {
         unifi_warning(priv, "bad interfaceTag = %x\n", interfaceTag);
@@ -818,7 +818,7 @@ void uf_handle_tim_cfm(unifi_priv_t *priv, CSR_MLME_SET_TIM_CONFIRM *cfm, u16 re
             unifi_warning(priv, "tim update request failed resultcode = %x\n", cfm->ResultCode);
     }
 
-    unifi_trace(priv, UDBG2, "leaving %s\n", __FUNCTION__);
+    unifi_trace(priv, UDBG2, "leaving %s\n", __func__);
 }
 
 /*
@@ -1698,9 +1698,9 @@ CsrResult uf_process_ma_packet_req(unifi_priv_t *priv,
             break;
         default:
             /* In case of STA/IBSS/P2PCLI/AMP, no checks needed send the packet down & return */
-            unifi_trace(priv, UDBG5, "In %s, interface mode is %x \n", __FUNCTION__, interfacePriv->interfaceMode);
+            unifi_trace(priv, UDBG5, "In %s, interface mode is %x \n", __func__, interfacePriv->interfaceMode);
             if (interfacePriv->interfaceMode == CSR_WIFI_ROUTER_CTRL_MODE_NONE) {
-                unifi_warning(priv, "In %s, interface mode NONE \n", __FUNCTION__);
+                unifi_warning(priv, "In %s, interface mode NONE \n", __func__);
             }
             if ((result = ul_send_signal_unpacked(priv, &signal, bulkdata))) {
                 status = CSR_RESULT_FAILURE;
@@ -1825,7 +1825,7 @@ CsrResult uf_process_ma_packet_req(unifi_priv_t *priv,
                     unifi_trace(priv, UDBG5, "data unicast PDU in uf_process_ma_packet_req \n");
                     /* check peer power state, list status & peer port status */
                     if(!staRecord) {
-                        unifi_error(priv, "In %s unicast but staRecord = NULL\n", __FUNCTION__);
+                        unifi_error(priv, "In %s unicast but staRecord = NULL\n", __func__);
                         return CSR_RESULT_FAILURE;
                     } else if (queuePacketDozing || isRouterBufferEnabled(priv,priority_q)|| !list_empty(&staRecord->dataPdu[priority_q]) || IS_DTIM_ACTIVE(interfacePriv->dtimActive,interfacePriv->multicastPduHostTag)) {
                         /* peer is in dozing mode, so queue packet in mgt frame list of station record */
@@ -3328,7 +3328,7 @@ void uf_prepare_send_cfm_list_for_queued_pkts(unifi_priv_t * priv,
         if (!(tx_q_item->transmissionControl & CSR_NO_CONFIRM_REQUIRED) &&
             (tx_q_item->leSenderProcessId != priv->netdev_client->sender_id)){
              unifi_trace(priv, UDBG1, "%s: SenderProcessID=%x host tag=%x transmission control=%x\n",
-                __FUNCTION__,
+                __func__,
                 tx_q_item->leSenderProcessId,
                 tx_q_item->hostTag,
                 tx_q_item->transmissionControl);
@@ -3373,7 +3373,7 @@ void uf_flush_list(unifi_priv_t * priv, struct list_head * list)
         kfree(tx_q_item);
         tx_q_item = NULL;
         if (!priv->noOfPktQueuedInDriver) {
-            unifi_error(priv, "packets queued in driver 0 still decrementing in %s\n", __FUNCTION__);
+            unifi_error(priv, "packets queued in driver 0 still decrementing in %s\n", __func__);
         } else {
             priv->noOfPktQueuedInDriver--;
         }

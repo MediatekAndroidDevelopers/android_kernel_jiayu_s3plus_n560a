@@ -182,7 +182,7 @@ int rawbulk_function_bind(struct usb_configuration *c, struct
     ep_out = usb_ep_autoconfig(gadget, (struct usb_endpoint_descriptor *)
             fn->fs_descs[BULKOUT_DESC]);
     if (!ep_out) {
-        printk(KERN_ERR "%s %d config ep_out error  \n", __FUNCTION__,__LINE__);
+        printk(KERN_ERR "%s %d config ep_out error  \n", __func__,__LINE__);
         return -ENOMEM;
     }
 
@@ -190,7 +190,7 @@ int rawbulk_function_bind(struct usb_configuration *c, struct
             fn->fs_descs[BULKIN_DESC]);
     if (!ep_in) {
         usb_ep_disable(ep_out);
-        printk(KERN_ERR "%s %d config ep_in error  \n", __FUNCTION__,__LINE__);
+        printk(KERN_ERR "%s %d config ep_in error  \n", __func__,__LINE__);
         return -ENOMEM;
     }
 

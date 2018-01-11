@@ -484,7 +484,7 @@ ccif_t* ccif_create_instance(ccif_hw_info_t *info, void* ctl_b, int md_id)
             
         case CCIF_VIR:
         default:
-            CCCI_MSG_INF(md_id, "cci", "%s: [error]invalid ccif type(%d)\n", __FUNCTION__, info->type);
+            CCCI_MSG_INF(md_id, "cci", "%s: [error]invalid ccif type(%d)\n", __func__, info->type);
             kfree(ccif);
             return NULL;
     }

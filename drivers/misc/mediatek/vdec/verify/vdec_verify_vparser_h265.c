@@ -1151,7 +1151,7 @@ void vHEVCResetFBAddr(UINT32 u4InstID, UINT32 u4FBindex)
         _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecH265DecPrm.prSPS->u4BitDepthChromaMinus8 > 0)
     {
         // Main10 profile, 10 bits mode
-        printk("[INFO][%s] Main10 prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __FUNCTION__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
+        printk("[INFO][%s] Main10 prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __func__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
         u4DramPicSize = u4DramPicSize * 5 / 4;
         if (bIsUFO)
         {
@@ -1172,7 +1172,7 @@ void vHEVCResetFBAddr(UINT32 u4InstID, UINT32 u4FBindex)
     else
     {
         // Main profile, 8 bits mode
-        printk("[INFO][%s] Main prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __FUNCTION__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
+        printk("[INFO][%s] Main prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __func__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
         if (bIsUFO)
         {
             u4UFOLenYsize = ((((u4DramPicSize + 255) >> 8) + 63) >> 6) << 6;
@@ -1259,7 +1259,7 @@ void vHEVCPartitionDPB(UINT32 u4InstID)
         _tVerMpvDecPrm[u4InstID].SpecDecPrm.rVDecH265DecPrm.prSPS->u4BitDepthChromaMinus8 > 0)
     {
         // Main10 profile, 10 bits mode
-        printk("[INFO][%s] Main10 prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __FUNCTION__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
+        printk("[INFO][%s] Main10 prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __func__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
         u4DramPicSize = u4DramPicSize * 5 / 4;
         if (bIsUFO)
         {
@@ -1280,7 +1280,7 @@ void vHEVCPartitionDPB(UINT32 u4InstID)
     else
     {
         // Main profile, 8 bits mode
-        printk("[INFO][%s] Main prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __FUNCTION__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
+        printk("[INFO][%s] Main prfile!!; LCU size: %d; Tile: %d; UFO: %d \n", __func__, max_cu_size, prPPS->bTilesEnabledFlag, bIsUFO);
         if (bIsUFO)
         {
             u4UFOLenYsize = ((((u4DramPicSize + 255) >> 8) + 63) >> 6) << 6;

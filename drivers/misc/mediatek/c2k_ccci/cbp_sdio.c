@@ -868,12 +868,12 @@ static int cbp_probe(struct platform_device *pdev)
 		sdio_tx_handle.polar = plat->gpio_sync_polar;
 		ret = asc_tx_register_handle(&sdio_tx_handle);
 		if(ret){
-			LOGPRT(LOG_ERR,  "%s %d asc_tx_register_handle failed.\n",__FUNCTION__,__LINE__);
+			LOGPRT(LOG_ERR,  "%s %d asc_tx_register_handle failed.\n",__func__,__LINE__);
 			goto err_ipc;
 		}
 		ret = asc_tx_add_user(sdio_tx_handle.name, &sdio_tx_user);
 		if(ret){
-			LOGPRT(LOG_ERR,  "%s %d asc_tx_add_user failed.\n",__FUNCTION__,__LINE__);
+			LOGPRT(LOG_ERR,  "%s %d asc_tx_add_user failed.\n",__func__,__LINE__);
 			goto err_ipc;
 		}
 
@@ -882,12 +882,12 @@ static int cbp_probe(struct platform_device *pdev)
 		sdio_rx_handle.polar = plat->gpio_sync_polar;
 		ret = asc_rx_register_handle(&sdio_rx_handle);
 		if(ret){
-			LOGPRT(LOG_ERR,  "%s %d asc_rx_register_handle failed.\n",__FUNCTION__,__LINE__);
+			LOGPRT(LOG_ERR,  "%s %d asc_rx_register_handle failed.\n",__func__,__LINE__);
 			goto err_ipc;
 		}
 		ret = asc_rx_add_user(sdio_rx_handle.name, &sdio_rx_user);
 		if(ret){
-			LOGPRT(LOG_ERR,  "%s %d asc_rx_add_user failed.\n",__FUNCTION__,__LINE__);
+			LOGPRT(LOG_ERR,  "%s %d asc_rx_add_user failed.\n",__func__,__LINE__);
 			goto err_ipc;
 		}
 		plat->ipc_enable = true;
@@ -1015,7 +1015,7 @@ static int cbp_pm_event(struct notifier_block *notifier, unsigned long pm_event,
 	struct cbp_platform_data *cdata = &cbp_data;
 	unsigned long flags;
 	
-	LOGPRT(LOG_NOTICE,"%s pm_event=%ld\n",__FUNCTION__,pm_event);
+	LOGPRT(LOG_NOTICE,"%s pm_event=%ld\n",__func__,pm_event);
 	switch(pm_event) {
 	case PM_HIBERNATION_PREPARE:
 		// This event is recieved when system is preparing to hibernation.
@@ -1033,7 +1033,7 @@ static int cbp_pm_event(struct notifier_block *notifier, unsigned long pm_event,
 			cdata->modem->status = MD_OFF;
 			spin_unlock_irqrestore(&cdata->modem->status_lock, flags);
 		}
-		LOGPRT(LOG_NOTICE,"[%s] ipoh occured\n", __FUNCTION__);
+		LOGPRT(LOG_NOTICE,"[%s] ipoh occured\n", __func__);
 		modem_reset_handler();
 		c2k_platform_restore_first_init();
 		LOGPRT(LOG_NOTICE,  "%s %d power off sdio host\n", __func__, __LINE__);

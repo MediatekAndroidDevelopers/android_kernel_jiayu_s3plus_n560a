@@ -1073,7 +1073,7 @@ static int mmc328x_unlocked_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 			
 		default:
-			printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;		
 		}

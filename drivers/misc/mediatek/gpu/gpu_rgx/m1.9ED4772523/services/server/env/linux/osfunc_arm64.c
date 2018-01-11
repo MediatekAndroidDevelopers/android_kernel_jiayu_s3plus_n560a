@@ -185,7 +185,7 @@ static inline void FlushRange(void *pvRangeAddrStart,
 			default:
 				PVR_DPF((PVR_DBG_ERROR,
 						"%s: Cache maintenance operation type %d is invalid",
-						__FUNCTION__, eCacheOp));
+						__func__, eCacheOp));
 				break;
 		}
 	}
@@ -209,7 +209,7 @@ PVRSRV_ERROR OSCPUOperation(PVRSRV_CACHE_OP uiCacheOp)
 		default:
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s: Global cache operation type %d is invalid",
-					__FUNCTION__, uiCacheOp));
+					__func__, uiCacheOp));
 			eError = PVRSRV_ERROR_INVALID_PARAMS;
 			PVR_ASSERT(0);
 			break;

@@ -134,7 +134,7 @@ PVRSRVRGXDebugMiscSetFWLogKM(
 	                            IMG_TRUE);
 	if(eError != PVRSRV_OK)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: RGXScheduleCommandfailed. Error:%u", __FUNCTION__, eError));
+		PVR_DPF((PVR_DBG_ERROR, "%s: RGXScheduleCommandfailed. Error:%u", __func__, eError));
 	}
 	else
 	{
@@ -142,7 +142,7 @@ PVRSRVRGXDebugMiscSetFWLogKM(
 		eError = RGXWaitForFWOp(psDevInfo, RGXFWIF_DM_GP, psDeviceNode->psSyncPrim, IMG_TRUE);
 		if (eError != PVRSRV_OK)
 		{
-			PVR_DPF((PVR_DBG_ERROR,"%s: Waiting for value aborted with error (%u)", __FUNCTION__, eError));
+			PVR_DPF((PVR_DBG_ERROR,"%s: Waiting for value aborted with error (%u)", __func__, eError));
 		}
 	}
 #endif

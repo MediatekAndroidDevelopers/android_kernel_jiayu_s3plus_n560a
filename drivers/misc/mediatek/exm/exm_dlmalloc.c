@@ -120,7 +120,7 @@ static void extmem_init(void) {
 		extmem_printk("[EXT_MEM] extmem_phys_base:0x%p,extmem_mspace_size: 0x%zx,extmem_mspace:0x%p\n", 
                 (void *)extmem_phys_base, extmem_mspace_size, extmem_mspace);
 		extmem_printk("[EXT_MEM] %s extmem current used: 0x%zx, peak used: 0x%zx\n",
-			__FUNCTION__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
+			__func__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
     }
 }
 #else
@@ -159,9 +159,9 @@ void* extmem_malloc(size_t bytes) {
 	void *mem = NULL;
     extmem_init();
 	mem = mspace_malloc(extmem_mspace, bytes);
-	extmem_printk("[EXT_MEM] %s mem:0x%p, size: 0x%zx\n", __FUNCTION__, mem, bytes);
+	extmem_printk("[EXT_MEM] %s mem:0x%p, size: 0x%zx\n", __func__, mem, bytes);
 	extmem_printk("[EXT_MEM] %s extmem current used: 0x%zx, peak used: 0x%zx\n",
-		__FUNCTION__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
+		__func__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
     return mem;
 }
 EXPORT_SYMBOL(extmem_malloc);
@@ -170,19 +170,19 @@ void* extmem_malloc_page_align(size_t bytes) {
 	void *mem = NULL;
     extmem_init();
 	mem = mspace_memalign(extmem_mspace, 1<<PAGE_SHIFT, bytes);
-    extmem_printk("[EXT_MEM] %s mem:0x%p, size: 0x%zx\n", __FUNCTION__, mem, bytes);
+    extmem_printk("[EXT_MEM] %s mem:0x%p, size: 0x%zx\n", __func__, mem, bytes);
 	extmem_printk("[EXT_MEM] %s extmem current used: 0x%zx, peak used: 0x%zx\n",
-		__FUNCTION__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
+		__func__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
     return mem;
 }
 EXPORT_SYMBOL(extmem_malloc_page_align);
 
 void extmem_free(void* mem) {
-    extmem_printk("[EXT_MEM] %s addr:0x%p\n", __FUNCTION__, mem);
+    extmem_printk("[EXT_MEM] %s addr:0x%p\n", __func__, mem);
     if (extmem_mspace != NULL) {
         mspace_free(extmem_mspace, mem);
 		extmem_printk("[EXT_MEM] %s extmem current used: 0x%zx, peak used: 0x%zx\n",
-			__FUNCTION__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
+			__func__, mspace_mem_used(extmem_mspace), mspace_mem_used_peak(extmem_mspace));
     }
 }
 EXPORT_SYMBOL(extmem_free);
@@ -191,7 +191,7 @@ static unsigned long get_phys_from_mspace(unsigned long va)
 {
 #ifdef CONFIG_OF
 	extmem_printk("[EXT_MEM] %s va: 0x%lx extmem_phys_base:0x%p extmem_mspace_base:0x%p\n",
-	               __FUNCTION__, va, (void *)extmem_phys_base, extmem_mspace_base);
+	               __func__, va, (void *)extmem_phys_base, extmem_mspace_base);
 	return ( va - (unsigned long)extmem_mspace_base + extmem_phys_base);
 #else
     return ( va - (unsigned long)extmem_mspace_base + get_max_phys_addr());
@@ -202,7 +202,7 @@ unsigned long get_virt_from_mspace(unsigned long pa)
 {
 #ifdef CONFIG_OF	
 	extmem_printk("[EXT_MEM] %s pa:0x%lx extmem_phys_base:0x%p extmem_mspace_base:0x%p\n",
-	               __FUNCTION__, pa, (void *)extmem_phys_base, extmem_mspace_base);
+	               __func__, pa, (void *)extmem_phys_base, extmem_mspace_base);
 	return ( pa - extmem_phys_base + (unsigned long)extmem_mspace_base);
 #else
     return ( pa - get_max_phys_addr() + (unsigned long)extmem_mspace_base);
@@ -232,7 +232,7 @@ size_t extmem_get_mem_size(unsigned long pgoff)
     mchunkptr p  = mem2chunk(va);
     size_t psize = chunksize(p) - TWO_SIZE_T_SIZES;
 
-    extmem_printk("[EXT_MEM] %s size: %zu\n", __FUNCTION__, psize);
+    extmem_printk("[EXT_MEM] %s size: %zu\n", __func__, psize);
     return psize;
 }
 EXPORT_SYMBOL(extmem_get_mem_size);
@@ -253,7 +253,7 @@ static int mtk_mspace_mmap_physical(struct exm_info *info, struct vm_area_struct
     va = extmem_malloc_page_align(size);
 
     if (!va) {
-        printk(KERN_ERR "[EXT_MEM] %s failed...\n", __FUNCTION__);
+        printk(KERN_ERR "[EXT_MEM] %s failed...\n", __func__);
         return -ENOMEM;
     }
 
@@ -277,7 +277,7 @@ static int mtk_mspace_mmap_physical(struct exm_info *info, struct vm_area_struct
 	extmem_printk("[EXT_MEM] pa:0x%lx, va:0x%p, vma->vm_pgoff:0x%lx, vm_start:0x%lx, vm_end:0x%lx, vm_page_prot:0x%zx\n", 
 	               pa, va, vma->vm_pgoff, vma->vm_start, vma->vm_end, (size_t)pgprot_val(vma->vm_page_prot));
 	if (ret) {
-		printk(KERN_ERR "[EXT_MEM] %s fail ret:%d\n", __FUNCTION__, ret);
+		printk(KERN_ERR "[EXT_MEM] %s fail ret:%d\n", __func__, ret);
 	}
 
     return ret;
@@ -352,7 +352,7 @@ static struct platform_driver mt_mspace_driver = {
 
 static int __init mt_mspace_init(void)
 {
-	extmem_printk("[EXT_MEM] %s\n", __FUNCTION__);
+	extmem_printk("[EXT_MEM] %s\n", __func__);
 	return platform_driver_register(&mt_mspace_driver);
 }
 

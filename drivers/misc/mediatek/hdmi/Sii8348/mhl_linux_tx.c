@@ -1732,7 +1732,7 @@ int mhl_tx_init(struct mhl_drv_info const *drv_info, struct i2c_client *client)
 
 
 	if (drv_info == NULL || client == NULL) {
-		pr_err("Null parameter passed to %s\n",__FUNCTION__);
+		pr_err("Null parameter passed to %s\n",__func__);
 		return -EINVAL;
 	}
 

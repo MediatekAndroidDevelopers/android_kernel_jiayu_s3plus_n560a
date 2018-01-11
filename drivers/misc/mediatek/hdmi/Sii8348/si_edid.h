@@ -799,7 +799,7 @@ typedef struct SI_PACK_THIS_STRUCT _HDMI_VIC_info_t
 #if 1//def ENABLE_EDID_DEBUG_PRINT //(
 void dump_EDID_block_impl(const char *pszFunction, int iLineNum,uint8_t override,uint8_t *pData,uint16_t length);
 void clear_EDID_block_impl(uint8_t *pData);
-#define DUMP_EDID_BLOCK(override,pData,length) dump_EDID_block_impl(__FUNCTION__,__LINE__,override,(uint8_t *)pData,length);
+#define DUMP_EDID_BLOCK(override,pData,length) dump_EDID_block_impl(__func__,__LINE__,override,(uint8_t *)pData,length);
 #define CLEAR_EDID_BLOCK(pData) clear_EDID_block_impl(pData);
 #else //)(
 #define DUMP_EDID_BLOCK(override,pData,length) /* nothing to do */

@@ -462,7 +462,7 @@ static inline int platform_read_i2c_block(struct i2c_adapter *i2c_bus
    
 	I2C_ReadBlock(page, offset,values, count);
 	///printk("%s:%d I2c read page:0x%02x,offset:0x%02x,values:0x%02X,count:0x%02X\n"
-    ///                ,__FUNCTION__,__LINE__, page, offset, values, count);
+    ///                ,__func__,__LINE__, page, offset, values, count);
     return 2;
     
 }
@@ -481,7 +481,7 @@ static inline int platform_write_i2c_block(struct i2c_adapter *i2c_bus
 
 	buffer = kmalloc(count + 1, GFP_KERNEL);
 	if (!buffer) {
-		printk("%s:%d buffer allocation failed\n",__FUNCTION__,__LINE__);
+		printk("%s:%d buffer allocation failed\n",__func__,__LINE__);
 		return -ENOMEM;
 	}
 
@@ -499,7 +499,7 @@ static inline int platform_write_i2c_block(struct i2c_adapter *i2c_bus
 
 	if (ret != 1) {
 		printk("%s:%d I2c write failed 0x%02x:0x%02x\n"
-				,__FUNCTION__,__LINE__, page, offset);
+				,__func__,__LINE__, page, offset);
 		ret = -EIO;
 	} else {
 		ret = 0;

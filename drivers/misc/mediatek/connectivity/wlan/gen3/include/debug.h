@@ -3631,13 +3631,13 @@ typedef enum _ENUM_DBG_MODULE_T {
 /* #define LOG_FUNC(_Fmt...)                kalDbgLog(DBG_CLASS_INFO, (_Fmt)); */
 #define LOG_FUNC                kalPrintTag
 
-/* If __FUNCTION__ is already defined by compiler, we just use it. */
+/* If __func__ is already defined by compiler, we just use it. */
 #define DEBUGFUNC(_Func)
 /* Disabled due to AOSP
-#if defined(__FUNCTION__)
+#if defined(__func__)
 #define DEBUGFUNC(_Func)
 #else
-    #define DEBUGFUNC(_Func) static const char __FUNCTION__[] = _Func;
+    #define DEBUGFUNC(_Func) static const char __func__[] = _Func;
 #endif
 */
 

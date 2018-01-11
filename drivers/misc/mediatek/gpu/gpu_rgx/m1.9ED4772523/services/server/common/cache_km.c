@@ -1157,7 +1157,7 @@ static INLINE void CacheOpExecRangeBased(PVRSRV_DEVICE_NODE *psDevNode,
 			break;
 		default:
 			PVR_DPF((PVR_DBG_ERROR,	"%s: Invalid cache operation type %d",
-					__FUNCTION__, uiCacheOp));
+					__func__, uiCacheOp));
 			break;
 	}
 
@@ -1194,7 +1194,7 @@ static INLINE void CacheOpExecRangeBasedVA(PVRSRV_DEVICE_NODE *psDevNode,
 			OSCPUCacheFlushRangeKM(psDevNode, pbStart, pbEnd, sCpuPhyAddrUnused, sCpuPhyAddrUnused);
 			break;
 		default:
-			PVR_DPF((PVR_DBG_ERROR,	"%s: Invalid cache operation type %d", __FUNCTION__, uiCacheOp));
+			PVR_DPF((PVR_DBG_ERROR,	"%s: Invalid cache operation type %d", __func__, uiCacheOp));
 			break;
 	}
 
@@ -2560,7 +2560,7 @@ PVRSRV_ERROR CacheOpExecKM (PPVRSRV_DEVICE_NODE psDevNode,
 				OSCPUCacheFlushRangeKM(psDevNode, pvVirtStart, pvVirtEnd, sCPUPhysStart, sCPUPhysEnd);
 				break;
 			default:
-				PVR_DPF((PVR_DBG_ERROR,	"%s: Invalid cache operation type %d", __FUNCTION__, uiCacheOp));
+				PVR_DPF((PVR_DBG_ERROR,	"%s: Invalid cache operation type %d", __func__, uiCacheOp));
 				break;
 		}
 		eError = PVRSRV_OK;

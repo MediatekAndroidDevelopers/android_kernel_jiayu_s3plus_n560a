@@ -367,7 +367,7 @@ BOOL fgOpenHDDFileEx(UINT32 u4InstID, char *strFileName , char *strMode, VDEC_IN
     else
     {
         //vVDecOutputDebugString("\n NULL \n");
-        printk("<vdec> %s(%s) return FALSE!!!!! @( %s, %d)\n", __FUNCTION__, strFileName, szFile, i4Line);
+        printk("<vdec> %s(%s) return FALSE!!!!! @( %s, %d)\n", __func__, strFileName, szFile, i4Line);
         return FALSE;
     }
 }

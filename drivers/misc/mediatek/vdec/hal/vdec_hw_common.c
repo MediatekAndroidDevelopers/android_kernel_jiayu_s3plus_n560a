@@ -52,7 +52,7 @@ int vdecwriteFile(int fp, char *buf, int writelen);
 extern int rand(void);
 
 extern BOOL fgWrMsg2PCEx(void *pvAddr, UINT32 u4Size, UINT32 u4Mode, VDEC_INFO_VERIFY_FILE_INFO_T *pFILE_INFO, const char *szFunction, INT32 i4Line);
-#define  fgWrMsg2PC(pvAddr, u4Size, u4Mode, pFILE_INFO)  fgWrMsg2PCEx(pvAddr, u4Size, u4Mode, pFILE_INFO, __FUNCTION__, __LINE__)
+#define  fgWrMsg2PC(pvAddr, u4Size, u4Mode, pFILE_INFO)  fgWrMsg2PCEx(pvAddr, u4Size, u4Mode, pFILE_INFO, __func__, __LINE__)
 extern void vVDecOutputDebugString(const CHAR *format, ...);
 #endif
 

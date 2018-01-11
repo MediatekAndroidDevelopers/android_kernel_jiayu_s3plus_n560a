@@ -177,7 +177,7 @@ PVRSRV_ERROR _DestroyTAContext(RGX_SERVER_RC_TA_DATA *psTAData,
 	else if (eError != PVRSRV_OK)
 	{
 		PVR_LOG(("%s: Unexpected error from RGXFWRequestCommonContextCleanUp (%s)",
-				__FUNCTION__,
+				__func__,
 				PVRSRVGetErrorStringKM(eError)));
 		return eError;
 	}
@@ -193,7 +193,7 @@ PVRSRV_ERROR _DestroyTAContext(RGX_SERVER_RC_TA_DATA *psTAData,
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"%s: Failed to map firmware render context state (%u)",
-					__FUNCTION__, eError));
+					__func__, eError));
 		}
 		else
 		{
@@ -228,7 +228,7 @@ PVRSRV_ERROR _Destroy3DContext(RGX_SERVER_RC_3D_DATA *ps3DData,
 	else if (eError != PVRSRV_OK)
 	{
 		PVR_LOG(("%s: Unexpected error from RGXFWRequestCommonContextCleanUp (%s)",
-				 __FUNCTION__,
+				 __func__,
 				 PVRSRVGetErrorStringKM(eError)));
 		return eError;
 	}
@@ -244,7 +244,7 @@ PVRSRV_ERROR _Destroy3DContext(RGX_SERVER_RC_3D_DATA *ps3DData,
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR,"%s: Failed to map firmware render context state (%u)",
-					__FUNCTION__, eError));
+					__func__, eError));
 		}
 		else
 		{
@@ -2866,7 +2866,7 @@ PVRSRV_ERROR PVRSRVRGXKickTA3DKM(RGX_SERVER_RENDER_CONTEXT	*psRenderContext,
 	{
 		if (!(paui32ServerTASyncFlags[i] & PVRSRV_CLIENT_SYNC_PRIM_OP_CHECK))
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Server fence (on TA) must fence", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Server fence (on TA) must fence", __func__));
 			return PVRSRV_ERROR_INVALID_SYNC_PRIM_OP;
 		}
 	}
@@ -2875,7 +2875,7 @@ PVRSRV_ERROR PVRSRVRGXKickTA3DKM(RGX_SERVER_RENDER_CONTEXT	*psRenderContext,
 	{
 		if (!(paui32Server3DSyncFlags[i] & PVRSRV_CLIENT_SYNC_PRIM_OP_CHECK))
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Server fence (on 3D) must fence", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Server fence (on 3D) must fence", __func__));
 			return PVRSRV_ERROR_INVALID_SYNC_PRIM_OP;
 		}
 	}
@@ -2890,7 +2890,7 @@ PVRSRV_ERROR PVRSRVRGXKickTA3DKM(RGX_SERVER_RENDER_CONTEXT	*psRenderContext,
 	*/
 	if (!bKickPR && ((ui32Client3DFenceCount != 0) || (ui32Server3DSyncPrims != 0)))
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: 3D fence (client or server) passed without a PR kick", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: 3D fence (client or server) passed without a PR kick", __func__));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
 
@@ -2906,14 +2906,14 @@ PVRSRV_ERROR PVRSRVRGXKickTA3DKM(RGX_SERVER_RENDER_CONTEXT	*psRenderContext,
 		if (!bKickTA)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Buffer sync only supported for kicks including a TA",
-					 __FUNCTION__));
+					 __func__));
 			return PVRSRV_ERROR_INVALID_PARAMS;
 		}
 
 		if (!bKickPR)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Buffer sync only supported for kicks including a PR",
-					 __FUNCTION__));
+					 __func__));
 			return PVRSRV_ERROR_INVALID_PARAMS;
 		}
 
@@ -2967,7 +2967,7 @@ PVRSRV_ERROR PVRSRVRGXKickTA3DKM(RGX_SERVER_RENDER_CONTEXT	*psRenderContext,
 											   &paui32ClientPRUpdateValue);
 		}
 #else
-		PVR_DPF((PVR_DBG_ERROR, "%s: Buffer sync not supported but got %u buffers", __FUNCTION__, ui32SyncPMRCount));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Buffer sync not supported but got %u buffers", __func__, ui32SyncPMRCount));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 #endif /* defined(SUPPORT_BUFFER_SYNC) */
 	}
@@ -2996,14 +2996,14 @@ PVRSRV_ERROR PVRSRVRGXKickTA3DKM(RGX_SERVER_RENDER_CONTEXT	*psRenderContext,
 		if (!bKickTA)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Native syncs only supported for kicks including a TA",
-				__FUNCTION__));
+				__func__));
 			eError = PVRSRV_ERROR_INVALID_PARAMS;
 			goto fail_fdsync;
 		}
 		if (!bKickPR)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Native syncs require a PR for all kicks",
-				__FUNCTION__));
+				__func__));
 			eError = PVRSRV_ERROR_INVALID_PARAMS;
 			goto fail_fdsync;
 		}
@@ -3467,7 +3467,7 @@ PVRSRV_ERROR PVRSRVRGXKickTA3DKM(RGX_SERVER_RENDER_CONTEXT	*psRenderContext,
 		if (i32UpdateFenceFD < 0)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to get install update sync fd",
-				__FUNCTION__));
+				__func__));
 			/* If we fail here, we cannot rollback the syncs as the hw already
 			 * has references to resources they may be protecting in the kick
 			 * so fallthrough */
@@ -3553,7 +3553,7 @@ PVRSRV_ERROR PVRSRVRGXSetRenderContextPriorityKM(CONNECTION_DATA *psConnection,
 									RGXFWIF_DM_TA);
 		if (eError != PVRSRV_OK)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the TA part of the rendercontext (%s)", __FUNCTION__, PVRSRVGetErrorStringKM(eError)));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the TA part of the rendercontext (%s)", __func__, PVRSRVGetErrorStringKM(eError)));
 			goto fail_tacontext;
 		}
 		psRenderContext->sTAData.ui32Priority = ui32Priority;
@@ -3568,7 +3568,7 @@ PVRSRV_ERROR PVRSRVRGXSetRenderContextPriorityKM(CONNECTION_DATA *psConnection,
 									RGXFWIF_DM_3D);
 		if (eError != PVRSRV_OK)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the 3D part of the rendercontext (%s)", __FUNCTION__, PVRSRVGetErrorStringKM(eError)));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to set the priority of the 3D part of the rendercontext (%s)", __func__, PVRSRVGetErrorStringKM(eError)));
 			goto fail_3dcontext;
 		}
 		psRenderContext->s3DData.ui32Priority = ui32Priority;

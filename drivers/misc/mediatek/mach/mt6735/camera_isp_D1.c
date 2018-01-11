@@ -76,10 +76,10 @@ typedef	bool				MBOOL;
 	#define	MFALSE				0
 #endif
 /* ----------------------------------------------------------------------------	*/
-/* #define LOG_MSG(fmt,	arg...)	   printk(KERN_ERR "[ISP][%s]" fmt,__FUNCTION__, ##arg)	*/
-/* #define LOG_DBG(fmt,	arg...)	   printk(KERN_ERR	"[ISP][%s]"	fmt,__FUNCTION__, ##arg) */
-/* #define LOG_WRN(fmt,	arg...)	   printk(KERN_ERR "[ISP][%s]Warning" fmt,__FUNCTION__,	##arg) */
-/* #define LOG_ERR(fmt,	arg...)	   printk(KERN_ERR	 "[ISP][%s]Err(%5d):" fmt, __FUNCTION__,__LINE__, ##arg) */
+/* #define LOG_MSG(fmt,	arg...)	   printk(KERN_ERR "[ISP][%s]" fmt,__func__, ##arg)	*/
+/* #define LOG_DBG(fmt,	arg...)	   printk(KERN_ERR	"[ISP][%s]"	fmt,__func__, ##arg) */
+/* #define LOG_WRN(fmt,	arg...)	   printk(KERN_ERR "[ISP][%s]Warning" fmt,__func__,	##arg) */
+/* #define LOG_ERR(fmt,	arg...)	   printk(KERN_ERR	 "[ISP][%s]Err(%5d):" fmt, __func__,__LINE__, ##arg) */
 
 #define MyTag "ISP "
 
@@ -939,7 +939,7 @@ static MUINT32 g_DmaErr_p1[nDMA_ERR] = {0};
 	}	  \
 } while	(0);
 #else
-#define IRQ_LOG_KEEPER(irq, ppb, logT, fmt, ...)  xlog_printk(ANDROID_LOG_DEBUG  , "KEEPER", "[%s] " fmt, __FUNCTION__, ##__VA_ARGS__)
+#define IRQ_LOG_KEEPER(irq, ppb, logT, fmt, ...)  xlog_printk(ANDROID_LOG_DEBUG  , "KEEPER", "[%s] " fmt, __func__, ##__VA_ARGS__)
 #endif
 
 #if	1

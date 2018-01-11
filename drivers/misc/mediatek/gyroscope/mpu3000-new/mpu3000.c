@@ -164,8 +164,8 @@ static bool sensor_power = false;
 /*----------------------------------------------------------------------------*/
 #if 0
 #define GYRO_TAG                  "[Mpu3000] "
-#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __FUNCTION__)
-#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __func__)
+#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define GYRO_LOG(fmt, args...)    printk(KERN_ERR GYRO_TAG fmt, ##args)
 #endif
 /*----------------------------------------------------------------------------*/

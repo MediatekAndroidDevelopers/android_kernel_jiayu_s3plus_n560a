@@ -487,7 +487,7 @@ static unsigned int lcm_esd_check(void)
   dsi_set_cmdq(array, 1, 1);
   read_reg_v2(0x0a, buffer, 1);
   printk("otm9605a lcm_esd_check %x %x\n",buffer[0],buffer[1]);
-  //printk("[%s] tek.xing esd check: id = %x\n", __FUNCTION__, id);
+  //printk("[%s] tek.xing esd check: id = %x\n", __func__, id);
 
   if(buffer[0] == 0x9c)//00 //9c
   {

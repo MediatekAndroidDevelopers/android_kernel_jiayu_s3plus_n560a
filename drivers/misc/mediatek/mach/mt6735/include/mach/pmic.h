@@ -32,7 +32,7 @@ do {					\
 #define PMICTAG                "[PMIC] "
 #ifdef PMIC_DEBUG
   #define PMICDEB(fmt, arg...)     printk(PMICTAG "cpuid=%d," fmt,raw_smp_processor_id(), ##arg)
-  #define PMICFUC(fmt, arg...)     printk(PMICTAG "cpuid=%d,%s\n", raw_smp_processor_id(), __FUNCTION__) 
+  #define PMICFUC(fmt, arg...)     printk(PMICTAG "cpuid=%d,%s\n", raw_smp_processor_id(), __func__) 
 #endif
 #define PMICLOG(fmt, arg...)   printk(PMICTAG fmt,##arg)
 #define PMICERR(fmt, arg...)   printk(KERN_ERR PMICTAG "ERROR,line=%d " fmt, __LINE__, ##arg)

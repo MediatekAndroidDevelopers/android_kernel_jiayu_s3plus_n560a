@@ -110,7 +110,7 @@ int vrtc_set_mmss(unsigned long nowtime)
 	} else {
 		printk(KERN_ERR
 		       "%s: Invalid vRTC value: write of %lx to vRTC failed\n",
-			__FUNCTION__, nowtime);
+			__func__, nowtime);
 		retval = -EINVAL;
 	}
 	return retval;

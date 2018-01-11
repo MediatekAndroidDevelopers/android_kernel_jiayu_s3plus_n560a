@@ -65,7 +65,7 @@ extern int unifi_debug;
     do {                                                            \
         if (!(cond)) {                                              \
             printk("Assertion failed in %s at %s:%d: %s\n",         \
-                    __FUNCTION__, __FILE__, __LINE__, #cond);        \
+                    __func__, __FILE__, __LINE__, #cond);        \
         }                                                           \
     } while (0)
 

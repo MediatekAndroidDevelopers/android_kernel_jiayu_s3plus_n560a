@@ -224,8 +224,8 @@ static struct alsps_init_info epl_sensor_init_info = {
 
 /*----------------------------------------------------------------------------*/
 #define APS_TAG                 	  	"[ALS/PS] "
-#define APS_FUN(f)              	  	printk(KERN_INFO APS_TAG"%s\n", __FUNCTION__)
-#define APS_ERR(fmt, args...)    	    printk(KERN_ERR  APS_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define APS_FUN(f)              	  	printk(KERN_INFO APS_TAG"%s\n", __func__)
+#define APS_ERR(fmt, args...)    	    printk(KERN_ERR  APS_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define APS_LOG(fmt, args...)    	    printk(KERN_INFO APS_TAG fmt, ##args)
 #define APS_DBG(fmt, args...)    	    printk(KERN_INFO fmt, ##args)
 
@@ -1173,7 +1173,7 @@ static int set_psensor_intr_threshold(uint16_t low_thd, uint16_t high_thd)
     low_msb  = (uint8_t) (low_thd >> 8);
     low_lsb  = (uint8_t) (low_thd & 0x00ff);
 
-    APS_LOG("%s: low_thd = %d, high_thd = %d \n", __FUNCTION__, low_thd, high_thd);
+    APS_LOG("%s: low_thd = %d, high_thd = %d \n", __func__, low_thd, high_thd);
 
     epl_sensor_I2C_Write(client, 0x0c, low_lsb);
     epl_sensor_I2C_Write(client, 0x0d, low_msb);
@@ -1199,7 +1199,7 @@ static int set_lsensor_intr_threshold(uint16_t low_thd, uint16_t high_thd)
     epl_sensor_I2C_Write(client, 0x0a, high_lsb);
     epl_sensor_I2C_Write(client, 0x0b, high_msb);
 
-    APS_LOG("%s: low_thd = %d, high_thd = %d \n", __FUNCTION__, low_thd, high_thd);
+    APS_LOG("%s: low_thd = %d, high_thd = %d \n", __func__, low_thd, high_thd);
 
     return 0;
 }
@@ -2195,7 +2195,7 @@ static void epl_sensor_intr_als_report_lux(void)
 
     if(epl_sensor.als.high_threshold < epl_sensor.als.low_threshold)
 	{
-	    APS_LOG("[%s]:recover default setting \r\n", __FUNCTION__);
+	    APS_LOG("[%s]:recover default setting \r\n", __func__);
 	    epl_sensor.als.high_threshold = obj->hw->als_threshold_high;
 	    epl_sensor.als.low_threshold = obj->hw->als_threshold_low;
 	}
@@ -2876,7 +2876,7 @@ static ssize_t epl_sensor_store_ir_contrl(struct device_driver *ddri, const char
         }
 
         data = epl_sensor.ps.ir_on_control | epl_sensor.ps.ir_mode | epl_sensor.ps.ir_drive;
-        APS_LOG("%s: 0x05 = 0x%x\n", __FUNCTION__, data);
+        APS_LOG("%s: 0x05 = 0x%x\n", __func__, data);
 
         epl_sensor_I2C_Write(obj->client, 0x05, epl_sensor.ps.ir_on_control | epl_sensor.ps.ir_mode | epl_sensor.ps.ir_drive);
          break;
@@ -2934,7 +2934,7 @@ static ssize_t epl_sensor_store_interrupt_type(struct device_driver *ddri, const
             {
                 epl_sensor.ps.interrupt_type = value & 0x03;
                 epl_sensor_I2C_Write(obj->client, 0x06, epl_sensor.interrupt_control | epl_sensor.ps.persist |epl_sensor.ps.interrupt_type);
-                APS_LOG("%s: 0x06 = 0x%x\n", __FUNCTION__, epl_sensor.interrupt_control | epl_sensor.ps.persist |epl_sensor.ps.interrupt_type);
+                APS_LOG("%s: 0x06 = 0x%x\n", __func__, epl_sensor.interrupt_control | epl_sensor.ps.persist |epl_sensor.ps.interrupt_type);
             }
             break;
 
@@ -2943,7 +2943,7 @@ static ssize_t epl_sensor_store_interrupt_type(struct device_driver *ddri, const
             {
                 epl_sensor.als.interrupt_type = value & 0x03;
                 epl_sensor_I2C_Write(obj->client, 0x07, epl_sensor.als.interrupt_channel_select | epl_sensor.als.persist | epl_sensor.als.interrupt_type);
-                APS_LOG("%s: 0x07 = 0x%x\n", __FUNCTION__, epl_sensor.als.interrupt_channel_select | epl_sensor.als.persist | epl_sensor.als.interrupt_type);
+                APS_LOG("%s: 0x07 = 0x%x\n", __func__, epl_sensor.als.interrupt_channel_select | epl_sensor.als.persist | epl_sensor.als.interrupt_type);
             }
             break;
     }
@@ -2972,14 +2972,14 @@ static ssize_t epl_sensor_store_integration(struct device_driver *ddri, const ch
             epl_sensor.ps.integration_time = (value & 0xf) << 2;
             epl_sensor_I2C_Write(obj->client, 0x03, epl_sensor.ps.integration_time | epl_sensor.ps.gain);
             epl_sensor_I2C_Read(obj->client, 0x03, 1);
-            APS_LOG("%s: 0x03 = 0x%x (0x%x)\n", __FUNCTION__, epl_sensor.ps.integration_time | epl_sensor.ps.gain, gRawData.raw_bytes[0]);
+            APS_LOG("%s: 0x03 = 0x%x (0x%x)\n", __func__, epl_sensor.ps.integration_time | epl_sensor.ps.gain, gRawData.raw_bytes[0]);
             break;
 
         case EPL_MODE_ALS: //als
             epl_sensor.als.integration_time = (value & 0xf) << 2;
             epl_sensor_I2C_Write(obj->client, 0x01, epl_sensor.als.integration_time | epl_sensor.als.gain);
             epl_sensor_I2C_Read(obj->client, 0x01, 1);
-            APS_LOG("%s: 0x01 = 0x%x (0x%x)\n", __FUNCTION__, epl_sensor.als.integration_time | epl_sensor.als.gain, gRawData.raw_bytes[0]);
+            APS_LOG("%s: 0x01 = 0x%x (0x%x)\n", __func__, epl_sensor.als.integration_time | epl_sensor.als.gain, gRawData.raw_bytes[0]);
             break;
 
     }
@@ -3008,14 +3008,14 @@ static ssize_t epl_sensor_store_adc(struct device_driver *ddri, const char *buf,
             epl_sensor.ps.adc = (value & 0x3) << 3;
             epl_sensor_I2C_Write(obj->client, 0x04, epl_sensor.ps.adc | epl_sensor.ps.cycle);
             epl_sensor_I2C_Read(obj->client, 0x04, 1);
-            APS_LOG("%s: 0x04 = 0x%x (0x%x)\n", __FUNCTION__, epl_sensor.ps.adc | epl_sensor.ps.cycle, gRawData.raw_bytes[0]);
+            APS_LOG("%s: 0x04 = 0x%x (0x%x)\n", __func__, epl_sensor.ps.adc | epl_sensor.ps.cycle, gRawData.raw_bytes[0]);
             break;
 
         case EPL_MODE_ALS: //als
             epl_sensor.als.adc = (value & 0x3) << 3;
             epl_sensor_I2C_Write(obj->client, 0x02, epl_sensor.als.adc | epl_sensor.als.cycle);
             epl_sensor_I2C_Read(obj->client, 0x02, 1);
-            APS_LOG("%s: 0x02 = 0x%x (0x%x)\n", __FUNCTION__, epl_sensor.als.adc | epl_sensor.als.cycle, gRawData.raw_bytes[0]);
+            APS_LOG("%s: 0x02 = 0x%x (0x%x)\n", __func__, epl_sensor.als.adc | epl_sensor.als.cycle, gRawData.raw_bytes[0]);
             break;
     }
 
@@ -3042,14 +3042,14 @@ static ssize_t epl_sensor_store_cycle(struct device_driver *ddri, const char *bu
             epl_sensor.ps.cycle = (value & 0x7);
             epl_sensor_I2C_Write(obj->client, 0x04, epl_sensor.ps.adc | epl_sensor.ps.cycle);
             epl_sensor_I2C_Read(obj->client, 0x04, 1);
-            APS_LOG("%s: 0x04 = 0x%x (0x%x)\n", __FUNCTION__, epl_sensor.ps.adc | epl_sensor.ps.cycle, gRawData.raw_bytes[0]);
+            APS_LOG("%s: 0x04 = 0x%x (0x%x)\n", __func__, epl_sensor.ps.adc | epl_sensor.ps.cycle, gRawData.raw_bytes[0]);
             break;
 
         case EPL_MODE_ALS: //als
             epl_sensor.als.cycle = (value & 0x7);
             epl_sensor_I2C_Write(obj->client, 0x02, epl_sensor.als.adc | epl_sensor.als.cycle);
             epl_sensor_I2C_Read(obj->client, 0x02, 1);
-            APS_LOG("%s: 0x02 = 0x%x (0x%x)\n", __FUNCTION__, epl_sensor.als.adc | epl_sensor.als.cycle, gRawData.raw_bytes[0]);
+            APS_LOG("%s: 0x02 = 0x%x (0x%x)\n", __func__, epl_sensor.als.adc | epl_sensor.als.cycle, gRawData.raw_bytes[0]);
             break;
     }
 
@@ -3094,7 +3094,7 @@ static ssize_t epl_sensor_store_ps_polling_mode(struct device_driver *ddri, cons
 #endif
     if(hwmsen_attach(ID_PROXIMITY, &obj_ps))
     {
-        APS_ERR("[%s]: attach fail !\n", __FUNCTION__);
+        APS_ERR("[%s]: attach fail !\n", __func__);
     }
 #else
 
@@ -3127,7 +3127,7 @@ static ssize_t epl_sensor_store_als_polling_mode(struct device_driver *ddri, con
 
     if(hwmsen_attach(ID_LIGHT, &obj_ps))
     {
-        APS_ERR("[%s]: attach fail !\n", __FUNCTION__);
+        APS_ERR("[%s]: attach fail !\n", __func__);
     }
 #endif
     epl_sensor_update_mode(epld->client);
@@ -3908,7 +3908,7 @@ static long epl_sensor_unlocked_ioctl(struct file *file, unsigned int cmd, unsig
     uint32_t enable;
     bool enable_ps = test_bit(CMC_BIT_PS, &obj->enable) && atomic_read(&obj->ps_suspend)==0;
     bool enable_als = test_bit(CMC_BIT_ALS, &obj->enable) && atomic_read(&obj->als_suspend)==0;
-    APS_LOG("%s cmd = 0x%04x", __FUNCTION__, cmd);
+    APS_LOG("%s cmd = 0x%04x", __func__, cmd);
     switch (cmd)
     {
         case ALSPS_SET_PS_MODE:
@@ -4233,7 +4233,7 @@ static long epl_sensor_unlocked_ioctl(struct file *file, unsigned int cmd, unsig
 			break;
 		/*------------------------------------------------------------------------------------------*/
         default:
-            APS_ERR("%s not supported = 0x%04x", __FUNCTION__, cmd);
+            APS_ERR("%s not supported = 0x%04x", __func__, cmd);
             err = -ENOIOCTLCMD;
             break;
     }
@@ -5103,7 +5103,7 @@ static int epl_sensor_i2c_probe(struct i2c_client *client, const struct i2c_devi
     alsps_init_flag = 0;
 #endif
 
-    APS_LOG("%s: OK\n", __FUNCTION__);
+    APS_LOG("%s: OK\n", __func__);
     return 0;
 
 exit_create_attr_failed:
@@ -5118,7 +5118,7 @@ exit:
 #if MTK_LTE
     alsps_init_flag = -1;
 #endif
-    APS_ERR("%s: err = %d\n", __FUNCTION__, err);
+    APS_ERR("%s: err = %d\n", __func__, err);
     return err;
 
 

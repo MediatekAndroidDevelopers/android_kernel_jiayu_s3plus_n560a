@@ -241,7 +241,7 @@ static void stp_uart_tty_close(struct tty_struct *tty)
  */
 static void stp_uart_tty_wakeup(struct tty_struct *tty)
 {
-	/* pr_debug("%s: start !!\n", __FUNCTION__); */
+	/* pr_debug("%s: start !!\n", __func__); */
 
 	/* clear_bit(TTY_DO_WRITE_WAKEUP, &tty->flags); */
 

@@ -214,7 +214,7 @@ static int tpd_local_init(void)
     memcpy(tpd_def_calmat, tpd_def_calmat_local, 8*4);    
 #endif  
 */
-    TPD_DMESG("TPD init done %s, %d\n", __FUNCTION__, __LINE__);  
+    TPD_DMESG("TPD init done %s, %d\n", __func__, __LINE__);  
         
     return TPD_OK; 
 }

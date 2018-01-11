@@ -1763,7 +1763,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck_BVNC_FWAgainstDriver(PVRSRV_RGXDEV_INF
 		if (!bCompatibleVersion)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible compatibility struct version of driver (%d) and firmware (%d).",
-					__FUNCTION__,
+					__func__,
 					sBVNC.ui32LayoutVersion,
 					psRGXFWInit->sRGXCompChecks.sFWBVNC.ui32LayoutVersion));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -1773,7 +1773,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck_BVNC_FWAgainstDriver(PVRSRV_RGXDEV_INF
 		if (!bCompatibleLenMax)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible V maxlen of driver (%d) and firmware (%d).",
-					__FUNCTION__,
+					__func__,
 					sBVNC.ui32VLenMax,
 					psRGXFWInit->sRGXCompChecks.sFWBVNC.ui32VLenMax));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -2040,7 +2040,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck_BVNC_HWAgainstDriver(PVRSRV_RGXDEV_INF
 		if (!bCompatibleVersion)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible compatibility struct version of HW (%d) and FW (%d).",
-					__FUNCTION__,
+					__func__,
 					sHWBVNC.ui32LayoutVersion,
 					sSWBVNC.ui32LayoutVersion));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -2050,7 +2050,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck_BVNC_HWAgainstDriver(PVRSRV_RGXDEV_INF
 		if (!bCompatibleLenMax)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible V maxlen of HW (%d) and FW (%d).",
-					__FUNCTION__,
+					__func__,
 					sHWBVNC.ui32VLenMax,
 					sSWBVNC.ui32VLenMax));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -2225,7 +2225,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck(PVRSRV_DEVICE_NODE *psDeviceNode)
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR,"%s: Failed to acquire kernel fw compatibility check info (%u)",
-				__FUNCTION__, eError));
+				__func__, eError));
 		return eError;
 	}
 
@@ -2248,7 +2248,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck(PVRSRV_DEVICE_NODE *psDeviceNode)
 		if (eError != PVRSRV_OK)
 		{
 			PVR_LOG(("%s: Reading RGX META register failed. Is the GPU correctly powered up? (%u)",
-					__FUNCTION__, eError));
+					__func__, eError));
 			goto chk_exit;
 		}
 
@@ -2256,7 +2256,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck(PVRSRV_DEVICE_NODE *psDeviceNode)
 		{
 			eError = PVRSRV_ERROR_META_THREAD0_NOT_ENABLED;
 			PVR_DPF((PVR_DBG_ERROR,"%s: RGX META is not running. Is the GPU correctly powered up? %d (%u)",
-					__FUNCTION__, psRGXFWInit->sRGXCompChecks.bUpdated, eError));
+					__func__, psRGXFWInit->sRGXCompChecks.bUpdated, eError));
 			goto chk_exit;
 		}
 	}
@@ -2265,7 +2265,7 @@ static PVRSRV_ERROR RGXDevInitCompatCheck(PVRSRV_DEVICE_NODE *psDeviceNode)
 	{
 		eError = PVRSRV_ERROR_TIMEOUT;
 		PVR_DPF((PVR_DBG_ERROR,"%s: Missing compatibility info from FW (%u)",
-				__FUNCTION__, eError));
+				__func__, eError));
 		goto chk_exit;
 	}
 #endif /* defined(NO_HARDWARE) */
@@ -2915,7 +2915,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleVersion)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible compatibility struct version of driver (%d) and firmware (%d).",
-			         __FUNCTION__,
+			         __func__,
 			         sBVNC.ui32LayoutVersion,
 			         psFirmwareBVNC->ui32LayoutVersion));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -2926,7 +2926,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleLenMax)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible V maxlen of driver (%d) and firmware (%d).",
-			         __FUNCTION__,
+			         __func__,
 			         sBVNC.ui32VLenMax,
 			         psFirmwareBVNC->ui32VLenMax));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -2937,7 +2937,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleBNC)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible driver BNC (%d._.%d.%d) / firmware BNC (%d._.%d.%d).",
-			         __FUNCTION__,
+			         __func__,
 			         RGX_BVNC_PACKED_EXTR_B(sBVNC),
 			         RGX_BVNC_PACKED_EXTR_N(sBVNC),
 			         RGX_BVNC_PACKED_EXTR_C(sBVNC),
@@ -2952,7 +2952,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleV)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible driver BVNC (%d.%s.%d.%d) / firmware BVNC (%d.%s.%d.%d).",
-			         __FUNCTION__,
+			         __func__,
 			         RGX_BVNC_PACKED_EXTR_B(sBVNC),
 			         RGX_BVNC_PACKED_EXTR_V(sBVNC),
 			         RGX_BVNC_PACKED_EXTR_N(sBVNC),
@@ -2969,7 +2969,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 	else
 	{
 		PVR_DPF((PVR_DBG_MESSAGE, "%s: COMPAT_TEST: driver BVNC (%d.%s.%d.%d) and firmware BVNC (%d.%s.%d.%d) match. [ OK ]",
-		         __FUNCTION__,
+		         __func__,
 		         RGX_BVNC_PACKED_EXTR_B(sBVNC),
 		         RGX_BVNC_PACKED_EXTR_V(sBVNC),
 		         RGX_BVNC_PACKED_EXTR_N(sBVNC),
@@ -2998,7 +2998,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleVersion)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible compatibility struct version of driver (%d) and client (%d).",
-					__FUNCTION__,
+					__func__,
 					sBVNC.ui32LayoutVersion,
 					psClientBVNC->ui32LayoutVersion));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -3009,7 +3009,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleLenMax)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible V maxlen of driver (%d) and client (%d).",
-					__FUNCTION__,
+					__func__,
 					sBVNC.ui32VLenMax,
 					psClientBVNC->ui32VLenMax));
 			eError = PVRSRV_ERROR_BVNC_MISMATCH;
@@ -3020,7 +3020,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleBNC)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible driver BNC (%d._.%d.%d) / client BNC (%d._.%d.%d).",
-					__FUNCTION__,
+					__func__,
 					RGX_BVNC_PACKED_EXTR_B(sBVNC),
 					RGX_BVNC_PACKED_EXTR_N(sBVNC),
 					RGX_BVNC_PACKED_EXTR_C(sBVNC),
@@ -3035,7 +3035,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 		if (!bCompatibleV)
 		{
 			PVR_LOG(("(FAIL) %s: Incompatible driver BVNC (%d.%s.%d.%d) / client BVNC (%d.%s.%d.%d).",
-					__FUNCTION__,
+					__func__,
 					RGX_BVNC_PACKED_EXTR_B(sBVNC),
 					RGX_BVNC_PACKED_EXTR_V(sBVNC),
 					RGX_BVNC_PACKED_EXTR_N(sBVNC),
@@ -3052,7 +3052,7 @@ PVRSRVRGXInitFirmwareKM(PVRSRV_DEVICE_NODE       *psDeviceNode,
 	else
 	{
 		PVR_DPF((PVR_DBG_MESSAGE, "%s: COMPAT_TEST: driver BVNC (%d.%s.%d.%d) and client BVNC (%d.%s.%d.%d) match. [ OK ]",
-				__FUNCTION__,
+				__func__,
 				RGX_BVNC_PACKED_EXTR_B(sBVNC),
 				RGX_BVNC_PACKED_EXTR_V(sBVNC),
 				RGX_BVNC_PACKED_EXTR_N(sBVNC),

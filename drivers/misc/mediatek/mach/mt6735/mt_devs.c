@@ -1284,7 +1284,7 @@ static void parse_dfo_tag(struct tag *t)
     int nr = ((t->hdr.size << 2) - sizeof(struct tag_header)) / sizeof(tag_dfo_boot);
     tag_dfo_boot *p = 0;
     p = &(t->u.dfo_data);
-    printk(KERN_ALERT"%s start\n", __FUNCTION__);
+    printk(KERN_ALERT"%s start\n", __func__);
     printk(KERN_ALERT"tag_header size: %d, tag_dfo_boot size: %d\n"
             "hdr.size: %d\n",
             sizeof(struct tag_header), sizeof(tag_dfo_boot),
@@ -2901,7 +2901,7 @@ static void display_early_memory_info(void)
 
 void __weak mtk_wcn_consys_memory_reserve(void)
 {
-    printk(KERN_ERR"weak reserve function: %s", __FUNCTION__);
+    printk(KERN_ERR"weak reserve function: %s", __func__);
 }
 
 void mt_reserve(void)

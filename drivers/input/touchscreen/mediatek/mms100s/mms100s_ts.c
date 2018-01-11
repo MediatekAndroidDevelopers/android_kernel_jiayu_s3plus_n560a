@@ -1059,7 +1059,7 @@ static int melfas_tpd_i2c_detect(struct i2c_client *client, struct i2c_board_inf
 static int melfas_tpd_local_init(void) 
 {
 
-	TPD_DMESG("[melfas_tpd] end %s, %d\n", __FUNCTION__, __LINE__);  
+	TPD_DMESG("[melfas_tpd] end %s, %d\n", __func__, __LINE__);  
     if(i2c_add_driver(&melfas_tpd_i2c_driver)!=0)
     {
         TPD_DMESG("[melfas_tpd] unable to add i2c driver.\n");

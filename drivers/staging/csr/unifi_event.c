@@ -233,7 +233,7 @@ static u8 check_routing_pkt_data_ind(unifi_priv_t *priv,
                 unifi_trace(priv, UDBG6, "check_routing_pkt_data_ind - MIC FAILURE : Control Port State - 0x%.4X \n",
                             uf_sme_port_state(priv,srcAddr,UF_CONTROLLED_PORT_Q,interfaceTag));
 
-                unifi_error(priv, "MIC failure in %s\n", __FUNCTION__);
+                unifi_error(priv, "MIC failure in %s\n", __func__);
 
                 /*Report the MIC failure to the SME*/
                 return TRUE;
@@ -242,14 +242,14 @@ static u8 check_routing_pkt_data_ind(unifi_priv_t *priv,
         else {
             /* Its AP Mode . Just Return */
             *freeBulkData = TRUE;
-            unifi_error(priv, "MIC failure in %s\n", __FUNCTION__);
+            unifi_error(priv, "MIC failure in %s\n", __func__);
             return TRUE;
          } /* AP mode */
     }/* MIC error */
 #else
     if (receptionStatus == CSR_MICHAEL_MIC_ERROR) {
         *freeBulkData = TRUE;
-        unifi_error(priv, "MIC failure in %s\n", __FUNCTION__);
+        unifi_error(priv, "MIC failure in %s\n", __func__);
         return TRUE;
     }
 #endif /*CSR_WIFI_SECURITY_WAPI_ENABLE*/

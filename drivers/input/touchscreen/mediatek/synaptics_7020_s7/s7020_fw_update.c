@@ -173,7 +173,7 @@ void SynaSetup(struct i2c_client *client)
     unsigned char address;
     unsigned char buffer[6];
 	memset(buffer, 0, sizeof(buffer));
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	for (address = 0xe9; address > 0xd0; address = address - 6)
 	{
@@ -233,7 +233,7 @@ void SynaInitialize(struct i2c_client *client)
 	uData[0] = 0;
 	uData[1] = 0;
 	
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	TPD_LOG("Initializing Reflash Process...\n");
 	uData[0] = 0x00;
@@ -259,7 +259,7 @@ void SynaReadFirmwareInfo(struct i2c_client *client)
 	uData[0] = 0;
 	uData[1] = 0;
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	TPD_LOG("Read Firmware Info\n");
 
@@ -279,7 +279,7 @@ void SynaReadConfigInfo(struct i2c_client *client)
 	unsigned char uData[2];
 	uData[0] = 0;
 	uData[1] = 0;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	TPD_LOG("Read Config Info\n");
 
@@ -298,7 +298,7 @@ void SynaReadBootloadID(struct i2c_client *client)
 	unsigned char uData[2];
 	uData[0] = 0;
 	uData[1] = 0;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	readRMI(client, SynaF34ReflashQuery_BootID, &uData[0], 2);
 	SynaBootloadID = uData[0] + uData[1] * 0x100;
@@ -309,7 +309,7 @@ void SynaReadBootloadID(struct i2c_client *client)
 void SynaWriteBootloadID(struct i2c_client *client)
 {
 	unsigned char uData[2];
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	uData[0] = SynaBootloadID % 0x100;
 	uData[1] = SynaBootloadID / 0x100;
@@ -364,7 +364,7 @@ int SynaEnableFlashing(struct i2c_client *client)
 	int ret;
 	unsigned char uData = 0;
 	unsigned char uStatus = 0;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	TPD_LOG("Enable Reflash...\n");
     
@@ -414,7 +414,7 @@ int SynaProgramConfiguration(struct i2c_client *client)
 	unsigned char *puData = (unsigned char *)&my_image_bin[0xb100];
 	
 	unsigned short blockNum;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	TPD_LOG("Program Configuration Section...\n");
 
@@ -444,7 +444,7 @@ int SynaFinalizeReflash(struct i2c_client *client)
 	int ret;
 	unsigned char uData = 0;
 	unsigned char uStatus = 0;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	TPD_LOG("Finalizing Reflash...\n");
 
@@ -490,7 +490,7 @@ int SynaFlashFirmwareWrite(struct i2c_client *client)
 	unsigned char *puFirmwareData = (unsigned char *)&my_image_bin[0x100];
 	unsigned char uData[2];
 	unsigned short blockNum;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	for (blockNum = 0; blockNum < SynaFirmwareBlockCount; ++blockNum)
 	{
@@ -520,7 +520,7 @@ int SynaProgramFirmware(struct i2c_client *client)
 {
 	int ret;
 	unsigned char uData;    
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	TPD_LOG("Program Firmware Section...\n");
 
@@ -548,7 +548,7 @@ int SynaProgramFirmware(struct i2c_client *client)
 int eraseConfigBlock(struct i2c_client *client)
 {
 	unsigned char uData;    
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	// Erase of config block is done by first entering into bootloader mode
 	SynaReadBootloadID(client);
@@ -574,7 +574,7 @@ void CRC_Calculate(unsigned short * data, unsigned short len)
     unsigned long Data_CRC = 0xffffffff;
     unsigned long sum1 = (unsigned long)(Data_CRC & 0xFFFF);
     unsigned long sum2 = (unsigned long)(Data_CRC >> 16);
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
     for (i = 0; i < len; i++)
     {
@@ -676,7 +676,7 @@ int ConfigBlockReflash(struct i2c_client *client)
 	uData[0] = 0;
 	uData[1] = 0;
 	
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
     SynaInitialize(client);
 	
@@ -733,7 +733,7 @@ int ConfigBlockReflash(struct i2c_client *client)
 int CompleteReflash(struct i2c_client *client)
 {   
 	int ret;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	SynaInitialize(client);
 	
 	SynaReadConfigInfo(client);
@@ -772,7 +772,7 @@ int CompleteReflash(struct i2c_client *client)
 int CompleteReflash_Lockdown(struct i2c_client *client)
 {   
 	int ret;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	
 	SynaInitialize(client);
 	

@@ -192,7 +192,7 @@ int register_to_logic_ch(int md_id, int ch, void (*func)(void*), void *owner)
         ch_info->m_owner = owner;
     } else {
         CCCI_MSG_INF(md_id, "cci", "%s fail: %s(ch%d) cb func has registered\n", \
-                    __FUNCTION__, ch_info->m_ch_name, ch_info->m_ch_id);
+                    __func__, ch_info->m_ch_name, ch_info->m_ch_id);
         ret = -CCCI_ERR_LOGIC_CH_HAS_REGISTERED;
     }
     spin_unlock_irqrestore(&ch_info->m_lock, flags);
@@ -207,7 +207,7 @@ int un_register_to_logic_ch(int md_id, int ch)
     logic_dispatch_ctl_block_t *ctl_b;
 
     if (unlikely(ch >= CCCI_MAX_CH_NUM)){
-        CCCI_MSG_INF(md_id, "cci", "%s fail: invalid logic ch%d\n", __FUNCTION__, ch);
+        CCCI_MSG_INF(md_id, "cci", "%s fail: invalid logic ch%d\n", __func__, ch);
         return -CCCI_ERR_INVALID_LOGIC_CHANNEL_ID;
     }
 
@@ -228,20 +228,20 @@ int un_register_to_logic_ch(int md_id, int ch)
 int get_logic_ch_data(logic_channel_info_t *ch_info, ccci_msg_t *msg)
 {
     if (unlikely(ch_info == NULL)){
-        CCCI_MSG("%s fail: get invalid ch info\n", __FUNCTION__);
+        CCCI_MSG("%s fail: get invalid ch info\n", __func__);
         return -CCCI_ERR_GET_NULL_POINTER;
     }
 
     if (unlikely(ch_info->m_attrs&L_CH_ATTR_TX)){
         CCCI_MSG_INF(ch_info->m_md_id, "cci", "%s fail: %s(ch%d) is tx \n", \
-                        __FUNCTION__, ch_info->m_ch_name, msg->channel);
+                        __func__, ch_info->m_ch_name, msg->channel);
         return -CCCI_ERR_GET_RX_DATA_FROM_TX_CHANNEL;
     }
 
     // check whether fifo is ready
     if (unlikely(!ch_info->m_kfifo_ready)){
         CCCI_MSG_INF(ch_info->m_md_id, "cci", "%s fail: %s(ch%d) kfifo not ready\n", \
-                        __FUNCTION__, ch_info->m_ch_name, msg->channel);
+                        __func__, ch_info->m_ch_name, msg->channel);
         return -CCCI_ERR_KFIFO_IS_NOT_READY;
     }
 
@@ -259,20 +259,20 @@ int get_logic_ch_data(logic_channel_info_t *ch_info, ccci_msg_t *msg)
 int get_logic_ch_data_len(logic_channel_info_t *ch_info)
 {
     if (unlikely(ch_info == NULL)){
-        CCCI_MSG("%s get invalid ch info\n", __FUNCTION__);
+        CCCI_MSG("%s get invalid ch info\n", __func__);
         return 0;
     }
 
     if (unlikely(ch_info->m_attrs&L_CH_ATTR_TX)){
         CCCI_MSG_INF(ch_info->m_md_id, "cci", "%s fail: %s(ch%d) is tx \n", \
-                        __FUNCTION__, ch_info->m_ch_name, ch_info->m_ch_id);
+                        __func__, ch_info->m_ch_name, ch_info->m_ch_id);
         return 0;
     }
 
     // check whether fifo is ready
     if (unlikely(!ch_info->m_kfifo_ready)){
         CCCI_MSG_INF(ch_info->m_md_id, "cci", "%s fail: %s(ch%d) kfifo not ready\n", \
-                        __FUNCTION__, ch_info->m_ch_name, ch_info->m_ch_id);
+                        __func__, ch_info->m_ch_name, ch_info->m_ch_id);
         return 0;
     }
 
@@ -287,7 +287,7 @@ logic_channel_info_t* get_logic_ch_info(int md_id, int ch_id)
     logic_dispatch_ctl_block_t *ctl_block;
 
     if (unlikely(ch_id >= CCCI_MAX_CH_NUM)){
-        CCCI_MSG_INF(md_id, "cci", "%s fail: invalid logic ch%d\n", __FUNCTION__, ch_id);
+        CCCI_MSG_INF(md_id, "cci", "%s fail: invalid logic ch%d\n", __func__, ch_id);
         return NULL;
     }
 
@@ -307,14 +307,14 @@ static int __logic_dispatch_push(ccif_msg_t *msg, void *ctl_b)
 
     if (unlikely(msg->channel >= CCCI_MAX_CH_NUM)){
         CCCI_MSG_INF(md_id, "cci", "%s get invalid logic ch id:%d\n", \
-                            __FUNCTION__, msg->channel);
+                            __func__, msg->channel);
         ret = -CCCI_ERR_INVALID_LOGIC_CHANNEL_ID;
         goto _out;
     }
 
     ch_info = &(ctl_block->m_logic_ch_table[msg->channel]);
     if (unlikely(ch_info->m_attrs&L_CH_ATTR_TX)){
-        CCCI_MSG_INF(md_id, "cci", "%s CH:%d %s is tx channel\n", __FUNCTION__, \
+        CCCI_MSG_INF(md_id, "cci", "%s CH:%d %s is tx channel\n", __func__, \
                             msg->channel, ch_info->m_ch_name);
         ret = -CCCI_ERR_PUSH_RX_DATA_TO_TX_CHANNEL;
         goto _out;
@@ -323,7 +323,7 @@ static int __logic_dispatch_push(ccif_msg_t *msg, void *ctl_b)
     // check whether fifo is ready
     if (!ch_info->m_kfifo_ready){
         CCCI_MSG_INF(md_id, "cci", "%s CH:%d %s's kfifo is not ready\n", \
-                            __FUNCTION__, msg->channel, ch_info->m_ch_name);
+                            __func__, msg->channel, ch_info->m_ch_name);
         ret = -CCCI_ERR_KFIFO_IS_NOT_READY;
         goto _out;
     }
@@ -432,7 +432,7 @@ int logic_layer_reset(int md_id)
     while ((CCIF_TOP_HALF_RUNNING&ccif->m_status)||ctl_b->m_running||ctl_b->m_has_pending_data){
         yield();
         if ((jiffies-ref_jiffies)>2*HZ){
-            CCCI_MSG_INF(ctl_b->m_md_id, "cci", "%s wait isr/tasklet more than 2 seconds\n", __FUNCTION__);
+            CCCI_MSG_INF(ctl_b->m_md_id, "cci", "%s wait isr/tasklet more than 2 seconds\n", __func__);
             break;
         }
     }
@@ -496,7 +496,7 @@ int ccci_message_send(int md_id, ccci_msg_t *msg, int retry_en)
     ccif = ctl_b->m_ccif;
 
     if(unlikely(ctl_b->m_freezed)){
-        CCCI_MSG_INF(md_id, "cci", "%s fail: ccci is freezed\n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "cci", "%s fail: ccci is freezed\n", __func__);
         ret = -CCCI_ERR_MD_NOT_READY;
         goto out;
     }
@@ -507,7 +507,7 @@ int ccci_message_send(int md_id, ccci_msg_t *msg, int retry_en)
             goto out;
         } else {
             CCCI_MSG_INF(md_id, "cci", "%s fail: invalid logic ch(%d)\n", \
-                        __FUNCTION__, msg->channel);
+                        __func__, msg->channel);
             ret = -CCCI_ERR_INVALID_LOGIC_CHANNEL_ID;
             goto out;
         }
@@ -675,21 +675,21 @@ int ccci_logic_ctlb_init(int md_id)
 
     // Channel number check
     if((sizeof(logic_ch_static_info_tab)/sizeof(logic_channel_static_info_t)) != CCCI_MAX_CH_NUM) {
-        CCCI_MSG_INF(md_id, "cci", "%s: channel max number mis-match fail\n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "cci", "%s: channel max number mis-match fail\n", __func__);
         return -CCCI_ERR_CHANNEL_NUM_MIS_MATCH;
     }
 
     // Allocate ctl block memory
     ctl_b = (logic_dispatch_ctl_block_t*)kzalloc(sizeof(logic_dispatch_ctl_block_t), GFP_KERNEL);
     if(ctl_b == NULL) {
-        CCCI_MSG_INF(md_id, "cci", "%s: alloc memory fail for logic_dispatch_ctlb\n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "cci", "%s: alloc memory fail for logic_dispatch_ctlb\n", __func__);
         return -CCCI_ERR_ALLOCATE_MEMORY_FAIL;
     }
     logic_dispatch_ctlb[md_id] = ctl_b;
 
     // Get CCIF HW info
     if(get_ccif_hw_info(md_id, &ccif_hw_inf) < 0) {
-        CCCI_MSG_INF(md_id, "cci", "%s: get ccif%d hw info fail\n", __FUNCTION__, md_id+1);
+        CCCI_MSG_INF(md_id, "cci", "%s: get ccif%d hw info fail\n", __func__, md_id+1);
         ret = -CCCI_ERR_CCIF_GET_HW_INFO_FAIL;
         goto _ccif_instance_create_fail;
     }
@@ -697,7 +697,7 @@ int ccci_logic_ctlb_init(int md_id)
     // Create ccif instance
     ccif = ccif_create_instance(&ccif_hw_inf, ctl_b, md_id);
     if(ccif == NULL) {
-        CCCI_MSG_INF(md_id, "cci", "%s: create ccif instance fail\n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "cci", "%s: create ccif instance fail\n", __func__);
         ret = -CCCI_ERR_CREATE_CCIF_INSTANCE_FAIL;
         goto _ccif_instance_create_fail;
     }
@@ -722,7 +722,7 @@ int ccci_logic_ctlb_init(int md_id)
         ch_info = &ctl_b->m_logic_ch_table[ch_id];
         
         if (ch_info->m_ch_id != CCCI_INVALID_CH_ID) {
-            CCCI_MSG_INF(md_id, "cci", "[Error]%s: ch%d has registered\n", __FUNCTION__, ch_id);
+            CCCI_MSG_INF(md_id, "cci", "[Error]%s: ch%d has registered\n", __func__, ch_id);
             ret = -CCCI_ERR_REPEAT_CHANNEL_ID;
             goto _ccif_logic_channel_init_fail;
         } else {
@@ -734,7 +734,7 @@ int ccci_logic_ctlb_init(int md_id)
             if(logic_ch_static_info_tab[i].m_kfifo_size) {
                 if (0 != kfifo_alloc(&ch_info->m_kfifo, sizeof(ccif_msg_t)*logic_ch_static_info_tab[i].m_kfifo_size, GFP_KERNEL)) {
                     CCCI_MSG_INF(md_id, "cci", "%s: alloc kfifo fail for %s(ch%d) \n", \
-                        __FUNCTION__, ch_info->m_ch_name, ch_id);
+                        __func__, ch_info->m_ch_name, ch_id);
                     
                     ch_info->m_kfifo_ready = 0;
                     ret = CCCI_ERR_ALLOCATE_MEMORY_FAIL;

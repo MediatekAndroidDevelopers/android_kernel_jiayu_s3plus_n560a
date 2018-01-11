@@ -31,13 +31,13 @@
 #ifdef CAM_CAL_DEBUG
 
 
-#define CAM_CALINF(fmt, arg...)    pr_debug("[%s] " fmt, __FUNCTION__, ##arg)
-#define CAM_CALDB(fmt, arg...)     pr_debug("[%s] " fmt, __FUNCTION__, ##arg)
-#define CAM_CALERR(fmt, arg...)    pr_err("[%s] " fmt, __FUNCTION__, ##arg)
+#define CAM_CALINF(fmt, arg...)    pr_debug("[%s] " fmt, __func__, ##arg)
+#define CAM_CALDB(fmt, arg...)     pr_debug("[%s] " fmt, __func__, ##arg)
+#define CAM_CALERR(fmt, arg...)    pr_err("[%s] " fmt, __func__, ##arg)
 #else
 #define CAM_CALINF(x,...)
 #define CAM_CALDB(x,...)
-#define CAM_CALERR(fmt, arg...)    pr_err("[%s] " fmt, __FUNCTION__, ##arg)
+#define CAM_CALERR(fmt, arg...)    pr_err("[%s] " fmt, __func__, ##arg)
 #endif
 
 static DEFINE_SPINLOCK(g_CAM_CALLock); // for SMP

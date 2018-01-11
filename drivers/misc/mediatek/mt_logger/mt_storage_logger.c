@@ -622,7 +622,7 @@ static int storage_logger_fs_rectime_threshold_write_proc(struct file *file, con
 	if (0 != local_logger_bs) {
 		fs_rectime_threshold = local_logger_bs;
 	}
-	/* printk(KERN_INFO " %s, %d - write file system threshold to fs_rectime with %d ms\n", __FUNCTION__, __LINE__, fs_rectime_threshold); */
+	/* printk(KERN_INFO " %s, %d - write file system threshold to fs_rectime with %d ms\n", __func__, __LINE__, fs_rectime_threshold); */
 	return count;
 }
 

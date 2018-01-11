@@ -21,7 +21,7 @@
 
 
 #define SENSOR_TAG                  "[Device Tree] "
-#define SENSOR_ERR(fmt, args...)    printk(KERN_ERR      SENSOR_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define SENSOR_ERR(fmt, args...)    printk(KERN_ERR      SENSOR_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define SENSOR_LOG(fmt, args...)    printk(KERN_ERR    SENSOR_TAG fmt, ##args)
 
 struct acc_hw * get_accel_dts_func(const char *name, struct acc_hw *hw)

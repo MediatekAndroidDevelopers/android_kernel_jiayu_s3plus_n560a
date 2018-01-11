@@ -30,7 +30,7 @@ void kree_pm_cpu_lowpower(volatile int *ppen_release, int logical_cpuid)
                               param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
 }
 
@@ -44,7 +44,7 @@ int kree_pm_cpu_dormant(int mode)
                               TZ_ParamTypes1(TZPT_VALUE_INPUT), param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
 
     return 0;
@@ -60,7 +60,7 @@ int kree_pm_device_ops(int state)
                               TZ_ParamTypes1(TZPT_VALUE_INPUT), param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
     return ret;
 }
@@ -75,7 +75,7 @@ int kree_pm_cpu_dormant_workaround_wake(int workaround_wake)
                               TZ_ParamTypes1(TZPT_VALUE_INPUT), param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
 
     return 0;

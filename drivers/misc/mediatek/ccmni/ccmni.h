@@ -142,7 +142,7 @@ do { \
 
 #define CCMNI_INF_MSG(idx, fmt, args...) printk(KERN_NOTICE "[ccci%d/net]" fmt, (idx+1), ##args)
 #define CCMNI_RAM_MSG(idx, fmt, args...) printk(KERN_DEBUG "[ccci%d/net]" fmt, (idx+1), ##args)
-#define CCMNI_ERR_MSG(idx, fmt, args...) printk(KERN_ERR "[ccci%d/net][Error:%d]%s:" fmt, (idx+1), __LINE__, __FUNCTION__, ##args)
+#define CCMNI_ERR_MSG(idx, fmt, args...) printk(KERN_ERR "[ccci%d/net][Error:%d]%s:" fmt, (idx+1), __LINE__, __func__, ##args)
 
 
 #endif // __CCCI_CCMNI_H__ 

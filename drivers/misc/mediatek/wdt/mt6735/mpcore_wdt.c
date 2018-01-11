@@ -70,7 +70,7 @@ static DEFINE_SPINLOCK(wdt_lock);
 #define mpcore_wdt_print(fmt, arg...) \
 do {\
 	printk(DEBUG_INFO fmt, ##arg);\
-	printk(DEBUG_INFO"%s, %d\n", __FUNCTION__, __LINE__);\
+	printk(DEBUG_INFO"%s, %d\n", __func__, __LINE__);\
 } while(0)
 #else
 #define mpcore_wdt_print(fmt, arg...) do{} while(0)
@@ -323,7 +323,7 @@ static int mpcore_wdt_open(struct inode *inode, struct file *file)
 {
 	struct mpcore_wdt *wdt = platform_get_drvdata(mpcore_wdt_dev);
   
-  mpcore_wdt_print("enter %s\n", __FUNCTION__);
+  mpcore_wdt_print("enter %s\n", __func__);
 	if (test_and_set_bit(0, &wdt->timer_alive))
 		return -EBUSY;
 
@@ -357,7 +357,7 @@ static int mpcore_wdt_release(struct inode *inode, struct file *file)
 	}
 	clear_bit(0, &wdt->timer_alive);
 	wdt->expect_close = 0;
-	mpcore_wdt_print("enter %s\n", __FUNCTION__);
+	mpcore_wdt_print("enter %s\n", __func__);
 	return 0;
 }
 
@@ -387,7 +387,7 @@ static ssize_t mpcore_wdt_write(struct file *file, const char *data,
 		}
 		mpcore_wdt_keepalive(wdt);
 	}
-	mpcore_wdt_print("enter %s\n", __FUNCTION__);
+	mpcore_wdt_print("enter %s\n", __func__);
 	return len;
 }
 

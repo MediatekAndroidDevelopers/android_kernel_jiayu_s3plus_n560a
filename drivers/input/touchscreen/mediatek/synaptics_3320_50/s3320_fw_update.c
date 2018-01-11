@@ -230,7 +230,7 @@ bool CheckFlashStatus(enum FlashCommand command, struct i2c_client *client)
 
 void SynaImageParser(struct i2c_client *client)
 {
-TPD_LOG("%s\n", __FUNCTION__);
+TPD_LOG("%s\n", __func__);
   // img file parsing
   SynaImageSize = ( (unsigned int)my_image_bin[0x08] | 
                     (unsigned int)my_image_bin[0x09] <<8 | 
@@ -263,7 +263,7 @@ void SynaBootloaderLock(struct i2c_client *client)
   unsigned short uBlockNum = 0;
   enum FlashCommand cmd;
 
-TPD_LOG("%s\n", __FUNCTION__);
+TPD_LOG("%s\n", __func__);
 
   if (my_image_bin[0x1E] == 0)
   {
@@ -343,7 +343,7 @@ void SynaScanPDT(struct i2c_client *client)
 	unsigned char address=0;
 	unsigned char uData[2]={0,};
 	unsigned char buffer[6]={0,};
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	for (address = 0xe9; address > 0xc0; address = address - 6)
 	{
@@ -400,7 +400,7 @@ void SynaInitialize(struct i2c_client *client)
 {	
 	u8 data;
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	TPD_LOG("\nInitializing Reflash Process...\n");
 
 	data = 0x00;
@@ -429,7 +429,7 @@ void SynaReadFirmwareInfo(struct i2c_client *client)
 	unsigned char uData[3] = {0,};
   unsigned char product_id[11] = {0,};
   int firmware_version = 0;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
   
   readRMI(client, SynaF01QueryBase + 11, product_id, 10);
   product_id[10] = '\0';
@@ -448,7 +448,7 @@ void SynaReadFirmwareInfo(struct i2c_client *client)
 void SynaReadBootloadID(struct i2c_client *client)
 {
 	unsigned char uData[2] = {0,};
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	readRMI(client, SynaF34ReflashQuery_BootID, &uData[0], 2);
 	SynaBootloadID = uData[0] | (uData[1] << 8);
@@ -459,7 +459,7 @@ void SynaReadBootloadID(struct i2c_client *client)
 void SynaWriteBootloadID(struct i2c_client *client)
 {
 	unsigned char uData[2];
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 
 	uData[0] = SynaBootloadID % 0x100;
 	uData[1] = SynaBootloadID / 0x100;
@@ -497,7 +497,7 @@ void SynaEnableFlashing(struct i2c_client *client)
 {
 	unsigned char uStatus = 0;
   enum FlashCommand cmd;
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	TPD_LOG("Enable Reflash...\n");
 
 	readRMI (client, SynaF01DataBase, &uStatus, 1);
@@ -622,7 +622,7 @@ void SynaFinalizeReflash(struct i2c_client *client)
     "CRC in progress\n"
     };
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	TPD_LOG("\nFinalizing Reflash...\n");
 
 	// Issue the "Reset" command to F01 command register to reset the chip
@@ -658,7 +658,7 @@ void SynaFlashFirmwareWrite(struct i2c_client *client)
 	unsigned short blockNum;
   enum FlashCommand cmd;
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	for (blockNum = 0; blockNum < SynaFirmwareBlockCount; ++blockNum)
 	{
     if (blockNum == 0)
@@ -699,7 +699,7 @@ void SynaFlashConfigWrite(struct i2c_client *client)
 	unsigned short blockNum;
   enum FlashCommand cmd;
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	for (blockNum = 0; blockNum < SynaConfigBlockCount; ++blockNum)
 	{
 		//Block by blcok, write the block number and data to the corresponding F34 data registers
@@ -732,7 +732,7 @@ void SynaFlashConfigWrite(struct i2c_client *client)
  */
 void SynaProgramFirmware(struct i2c_client *client)
 {
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	TPD_LOG("\nProgram Firmware Section...\n");
 
   eraseAllBlock(client);
@@ -746,7 +746,7 @@ void SynaProgramFirmware(struct i2c_client *client)
  */
 void SynaUpdateConfig(struct i2c_client *client)
 {
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	TPD_LOG("\nUpdate Config Section...\n");
 
   EraseConfigBlock(client);
@@ -760,7 +760,7 @@ void eraseAllBlock(struct i2c_client *client)
 { 
   enum FlashCommand cmd;
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	// Erase of config block is done by first entering into bootloader mode
 	SynaReadBootloadID(client);
 	SynaWriteBootloadID(client);
@@ -779,7 +779,7 @@ void EraseConfigBlock(struct i2c_client *client)
 {  
   enum FlashCommand cmd;
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	// Erase of config block is done by first entering into bootloader mode
 	SynaReadBootloadID(client);
 	SynaWriteBootloadID(client);
@@ -800,7 +800,7 @@ bool CheckTouchControllerType(struct i2c_client *client)
 	char controllerType[20]={0,};
 	unsigned char uData[4]={0,};
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	readRMI(client, (SynaF01QueryBase + 22), &SynaF01Query43Length, 1); //43
 
 	if ((SynaF01Query43Length & 0x0f) > 0)
@@ -827,7 +827,7 @@ bool CheckFimrwareRevision(struct i2c_client *client)
 	unsigned char uData[16];
 	char revision[106];
 
-	TPD_LOG("%s\n", __FUNCTION__);
+	TPD_LOG("%s\n", __func__);
 	readRMI((SynaF01QueryBase + 28 + SynaF01Query43Length), &uData[0], 16);
 
 	for (int i = 0; i < 0; i++)

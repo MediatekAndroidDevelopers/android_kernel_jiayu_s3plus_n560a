@@ -55,7 +55,7 @@ typedef enum _ENUM_DBG_MODULE_T {
 
 extern KAL_UINT64 g_eemcs_dbg_m[DBG_MODULE_NUM];
 
-#define FUNC_NAME __FUNCTION__
+#define FUNC_NAME __func__
 
 
 #if defined(EEMCS_DEBUG)   
@@ -64,11 +64,11 @@ extern KAL_UINT64 g_eemcs_dbg_m[DBG_MODULE_NUM];
         if (g_eemcs_dbg_m[DBG_##_mod##_IDX] & DBG_LEVEL_##_level) { \
             if (DBG_LEVEL_##_level == DBG_LEVEL_ERR) { \
                 LOG_FUNC("[EEMCS/"#_mod"] [Error:%d]%s:"_fmt"\n",\
-                         __LINE__,__FUNCTION__,##a); \
+                         __LINE__,__func__,##a); \
             } \
             else if (DBG_LEVEL_##_level == DBG_LEVEL_WAR) { \
                 LOG_FUNC("[EEMCS/"#_mod"] [Warn:%d]%s:"_fmt"\n",\
-                         __LINE__,__FUNCTION__,##a); \
+                         __LINE__,__func__,##a); \
             } \
             else { \
                 LOG_FUNC("[EEMCS/"#_mod"] "_fmt"\n",##a); \
@@ -89,12 +89,12 @@ extern KAL_UINT64 g_eemcs_dbg_m[DBG_MODULE_NUM];
 
 #define DEBUG_LOG_FUNCTION_ENTRY \
 do{   \
-    DBGLOG(FUNC,DBG,"[EEMCS]==> %s",__FUNCTION__);  \
+    DBGLOG(FUNC,DBG,"[EEMCS]==> %s",__func__);  \
 }while(0)
 
 #define DEBUG_LOG_FUNCTION_LEAVE \
 do{ \
-    DBGLOG(FUNC,DBG,"[EEMCS]<== %s",__FUNCTION__); \
+    DBGLOG(FUNC,DBG,"[EEMCS]<== %s",__func__); \
 }while(0)
 
 /*******************************************************************************

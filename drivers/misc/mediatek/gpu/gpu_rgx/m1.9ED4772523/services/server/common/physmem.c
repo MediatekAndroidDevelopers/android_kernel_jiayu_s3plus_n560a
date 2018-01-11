@@ -440,7 +440,7 @@ PhysmemNewRamBackedPMR(CONNECTION_DATA * psConnection,
 		/* In case a heap hasn't been acquired for this type, return invalid heap error */
 		PVR_DPF((PVR_DBG_ERROR, "%s: Requested allocation on device node (%p) from "
 		        "an invalid heap (HeapIndex=%d)",
-		        __FUNCTION__, psDevNode, ePhysHeapIdx));
+		        __func__, psDevNode, ePhysHeapIdx));
 		return PVRSRV_ERROR_INVALID_HEAP;
 	}
 

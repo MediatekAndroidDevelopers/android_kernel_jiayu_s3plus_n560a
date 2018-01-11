@@ -89,7 +89,7 @@ int scan_image_list(int md_id, char fmt[], int out_img_list[], int img_list_size
 
 unsigned int __weak get_sim_switch_type(void)
 {
-    CCCI_MSG("%s is not implement!!! line:%d\n", __FUNCTION__, __LINE__);;
+    CCCI_MSG("%s is not implement!!! line:%d\n", __func__, __LINE__);;
     return 0;
 }
 
@@ -819,14 +819,14 @@ static int ccci_vir_chr_open(struct inode *inode, struct file *file)
 
     ret = get_md_id_by_dev_major(major);
     if(ret < 0) {
-        CCCI_MSG("%s: get md id fail: %d\n", __FUNCTION__, ret);
+        CCCI_MSG("%s: get md id fail: %d\n", __func__, ret);
         goto out;
     }
     
     md_id = ret;
     ret = get_dev_id_by_md_id(md_id, "vir chr", NULL, &minor_start);
     if(ret < 0) {
-        CCCI_MSG_INF(md_id, "chr", "%s: get dev minor id fail: %d\n", __FUNCTION__, ret);
+        CCCI_MSG_INF(md_id, "chr", "%s: get dev minor id fail: %d\n", __func__, ret);
         goto out;
     }
     index = minor - minor_start;
@@ -834,13 +834,13 @@ static int ccci_vir_chr_open(struct inode *inode, struct file *file)
     client = find_get_vir_client(md_id, index, current->pid);
     CCCI_CHR_MSG(md_id, "Vchar(ch%d) open by %s\n", index, current->comm);
     if (IS_ERR(client)) {
-        CCCI_MSG_INF(md_id, "chr", "%s: find client fail \n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "chr", "%s: find client fail \n", __func__);
         ret = PTR_ERR(client);
         goto out;
     }
 
     if(atomic_read(&client->user)>1) {
-        CCCI_MSG_INF(md_id, "chr", "%s: [Error]multi-open, not support it\n", __FUNCTION__);
+        CCCI_MSG_INF(md_id, "chr", "%s: [Error]multi-open, not support it\n", __func__);
         return -EPERM;
     }
 
@@ -907,7 +907,7 @@ retry:
     if (ret == sizeof(buff)) {
         if (copy_to_user(u_buff, &buff,sizeof(buff))) {
             CCCI_MSG_INF(md_id, "chr", "%s: copy_to_user fail: %08X, %08X, %02d, %08X\n", 
-                    __FUNCTION__, buff.data0, buff.data1, buff.channel, buff.reserved);
+                    __func__, buff.data0, buff.data1, buff.channel, buff.reserved);
             ret= -EFAULT;
         }
     } else {
@@ -1349,7 +1349,7 @@ void ccci_vir_chrdev_exit(int md_id)
 
 int __weak ccci_set_md_sbp(int md_id, unsigned int md_sbp)
 {
-    CCCI_ERR("calling weak function %s(%d,%d)\n", __FUNCTION__, md_id, md_sbp);
+    CCCI_ERR("calling weak function %s(%d,%d)\n", __func__, md_id, md_sbp);
     return -1;
 }
 

@@ -436,7 +436,7 @@ _ScanObjectsInPagePool(struct shrinker *psShrinker, struct shrink_control *psShr
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s: Shrinker is unable to free unpinned pages. Error: %s (%d)",
-					 __FUNCTION__,
+					 __func__,
 					 PVRSRVGetErrorStringKM(eError),
 					 eError));
 			goto e_exit;
@@ -724,7 +724,7 @@ _FreeExcessPagesFromPool(void)
 										 psPagePoolEntry->uiItemsRemaining);
 				if (ret)
 				{
-					PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __FUNCTION__));
+					PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __func__));
 					eError = PVRSRV_ERROR_FAILED_TO_FREE_PAGES;
 					goto e_exit;
 				}
@@ -811,7 +811,7 @@ _FreePagesFromPoolUnlocked(IMG_UINT32 uiMaxPagesToFree,
 				ret = set_pages_array_wb(ppsPageArray, uiItemsToFree);
 				if (ret)
 				{
-					PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __FUNCTION__));
+					PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __func__));
 					eError = PVRSRV_ERROR_FAILED_TO_FREE_PAGES;
 					goto e_exit;
 				}
@@ -1032,7 +1032,7 @@ _SignalDeferFree(void)
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: Failed to get memory for deferred page pool cleanup. "
 				 "Trying to free pages immediately",
-				 __FUNCTION__));
+				 __func__));
 		goto e_oom_exit;
 	}
 
@@ -1057,7 +1057,7 @@ e_oom_exit:
 		{
 			PVR_DPF((PVR_DBG_ERROR,
 					 "%s: Unable to free pooled pages!",
-					 __FUNCTION__));
+					 __func__));
 		}
 		_PagePoolUnlock();
 
@@ -1621,7 +1621,7 @@ _AllocOSPages_Fast(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData)
 			{
 				/* Failed to alloc pages at required contiguity. Failed allocation */
 				PVR_DPF((PVR_DBG_ERROR, "%s: alloc_pages failed to honour request at %u of %u, flags = %x, order = %u (%s)",
-								__FUNCTION__,
+								__func__,
 								uiArrayIndex,
 								uiPagesToAlloc,
 								ui32GfpFlags,
@@ -1706,7 +1706,7 @@ _AllocOSPages_Sparse(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData,
 	ppsTempPageArray = OSAllocMem(sizeof(struct page*) * uiPagesToAlloc);
 	if (ppsTempPageArray == NULL)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Failed metadata allocation", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Failed metadata allocation", __func__));
 		eError = PVRSRV_ERROR_OUT_OF_MEMORY;
 		goto e_exit;
 	}
@@ -1720,7 +1720,7 @@ _AllocOSPages_Sparse(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData,
 		PVR_DPF((PVR_DBG_ERROR, 
 				 "%s: Trying to allocate more pages than this buffer can handle, "
 				 "Request + Allocated < Max! Request %u, Allocated %u, Max %u.",
-				 __FUNCTION__,
+				 __func__,
 				 uiPagesToAlloc,
 				 psPageArrayData->iNumPagesAllocated,
 				 psPageArrayData->uiTotalNumPages));
@@ -1747,7 +1747,7 @@ _AllocOSPages_Sparse(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData,
 		{
 			PVR_DPF((PVR_DBG_ERROR, 
 					 "%s: Given alloc index %u at %u is larger than page array %u.",
-					 __FUNCTION__,
+					 __func__,
 					 i,
 					 puiAllocIndices[i],
 					 psPageArrayData->uiTotalNumPages));
@@ -1788,7 +1788,7 @@ _AllocOSPages_Sparse(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData,
 				/* Failed to alloc pages at required contiguity. Failed allocation */
 				PVR_DPF((PVR_DBG_ERROR, 
 						 "%s: alloc_pages failed to honour request at %u of %u, flags = %x, order = %u",
-						 __FUNCTION__,
+						 __func__,
 						 i,
 						 uiPagesToAlloc,
 						 gfp_flags,
@@ -1958,7 +1958,7 @@ _FreeOSPage(IMG_UINT32 uiOrder,
 		ret = set_memory_wb((unsigned long)pvPageVAddr, 1);
 		if (ret)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attribute", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attribute", __func__));
 		}
 	}
 #else
@@ -1997,7 +1997,7 @@ _FreeOSPages_MemStats(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData,
 	IMG_UINT32 ui32PageIndex;
 	#endif
 
-	PVR_DPF((PVR_DBG_MESSAGE, "%s: psPageArrayData %p, ui32NumPages %u", __FUNCTION__, psPageArrayData, ui32NumPages));
+	PVR_DPF((PVR_DBG_MESSAGE, "%s: psPageArrayData %p, ui32NumPages %u", __func__, psPageArrayData, ui32NumPages));
 	PVR_ASSERT(psPageArrayData->iNumPagesAllocated != 0);
 
 	ppsPageArray = psPageArrayData->pagearray;
@@ -2052,7 +2052,7 @@ _FreeOSPages_Sparse(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData,
 	ppsTempPageArray = OSAllocMemNoStats(sizeof(struct page*) * uiTempArraySize);
 	if (ppsTempPageArray == NULL)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Failed free_pages metadata allocation", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Failed free_pages metadata allocation", __func__));
 		return PVRSRV_ERROR_OUT_OF_MEMORY;
 	}
 
@@ -2108,7 +2108,7 @@ _FreeOSPages_Sparse(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData,
 
 		if (iError)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __func__));
 		}
 	}
 #endif
@@ -2177,7 +2177,7 @@ _FreeOSPages_Fast(struct _PMR_OSPAGEARRAY_DATA_ *psPageArrayData)
 		ret = set_pages_array_wb(ppsPageArray, uiNumPages);
 		if (ret)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to reset page attributes", __func__));
 		}
 	}
 #endif
@@ -2520,7 +2520,7 @@ PVRSRV_ERROR PMRUnpinOSMem(PMR_IMPL_PRIVDATA pPriv)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 		         "%s: Not able to add allocation to unpinned list (%d).",
-		         __FUNCTION__,
+		         __func__,
 		         eError));
 
 		goto e_exit;
@@ -2572,7 +2572,7 @@ PVRSRV_ERROR PMRPinOSMem(PMR_IMPL_PRIVDATA pPriv,
 			eError = PVRSRV_ERROR_PMR_FAILED_TO_ALLOC_PAGES;
 			PVR_DPF((PVR_DBG_ERROR,
 					 "%s: Not able to Alloc Map Table.",
-					 __FUNCTION__));
+					 __func__));
 			goto e_exit_mapalloc_failure;
 		}
 
@@ -2591,7 +2591,7 @@ PVRSRV_ERROR PMRPinOSMem(PMR_IMPL_PRIVDATA pPriv,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: Not able to get new pages for unpinned allocation.",
-				 __FUNCTION__));
+				 __func__));
 
 		eError = PVRSRV_ERROR_PMR_FAILED_TO_ALLOC_PAGES;
 		goto e_exit;
@@ -2600,7 +2600,7 @@ PVRSRV_ERROR PMRPinOSMem(PMR_IMPL_PRIVDATA pPriv,
 	PVR_DPF((PVR_DBG_MESSAGE,
 			 "%s: Allocating new pages for unpinned allocation. "
 			 "Old content is lost!",
-			 __FUNCTION__));
+			 __func__));
 
 	eError = PVRSRV_ERROR_PMR_NEW_MEMORY;
 
@@ -2738,7 +2738,7 @@ PMRChangeSparseMemOSMem(PMR_IMPL_PRIVDATA pPriv,
 				eError = _AllocOSPages(psPMRPageArrayData, pai32AllocIndices, ui32AdtnlAllocPages);
 				if(PVRSRV_OK != eError)
 				{
-					PVR_DPF((PVR_DBG_MESSAGE, "%s: New Addtl Allocation of pages failed", __FUNCTION__));
+					PVR_DPF((PVR_DBG_MESSAGE, "%s: New Addtl Allocation of pages failed", __func__));
 					goto SparseMemChangeFailed;
 
 				}

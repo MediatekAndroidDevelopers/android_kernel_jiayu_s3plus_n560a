@@ -266,7 +266,7 @@ PVRSRV_ERROR OSPhyContigPagesClean(PVRSRV_DEVICE_NODE *psDevNode,
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				"%s: Invalid size params, uiOffset %u, uiLength %u",
-				__FUNCTION__,
+				__func__,
 				uiOffset,
 				uiLength));
 		eError = PVRSRV_ERROR_INVALID_PARAMS;
@@ -308,7 +308,7 @@ IMG_UINT32 OSCPUCacheAttributeSize(IMG_DCACHE_ATTRIBUTE eCacheAttribute)
 
 		default:
 			PVR_DPF((PVR_DBG_ERROR, "%s: Invalid cache attribute type %d",
-					__FUNCTION__, (IMG_UINT32)eCacheAttribute));
+					__func__, (IMG_UINT32)eCacheAttribute));
 			PVR_ASSERT(0);
 			break;
 	}
@@ -1523,7 +1523,7 @@ PVRSRV_ERROR PVROSFuncInit(void)
 		psTimerWorkQueue = create_workqueue("pvr_timer");
 		if (psTimerWorkQueue == NULL)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: couldn't create timer workqueue", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: couldn't create timer workqueue", __func__));
 			return PVRSRV_ERROR_UNABLE_TO_CREATE_THREAD;
 		}
 	}

@@ -288,7 +288,7 @@ _PMRCreate(PMR_SIZE_T uiLogicalSize,
 		if (uiLogicalSize != (uiChunkSize * ui32NumVirtChunks))
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Bad mapping size (uiLogicalSize = 0x%llx, uiChunkSize = 0x%llx, ui32NumVirtChunks = %d)",
-					__FUNCTION__, (unsigned long long)uiLogicalSize, (unsigned long long)uiChunkSize, ui32NumVirtChunks));
+					__func__, (unsigned long long)uiLogicalSize, (unsigned long long)uiChunkSize, ui32NumVirtChunks));
 			return PVRSRV_ERROR_PMR_BAD_MAPPINGTABLE_SIZE;
 		}
 
@@ -299,7 +299,7 @@ _PMRCreate(PMR_SIZE_T uiLogicalSize,
 			PVR_DPF((PVR_DBG_ERROR,
 					"%s: Bad chunk size, must be a multiple of the contiguity "
 					"(uiChunkSize = 0x%llx, uiLog2ContiguityGuarantee = %u)",
-					__FUNCTION__,
+					__func__,
 					(unsigned long long) uiChunkSize,
 					uiLog2ContiguityGuarantee));
 			return PVRSRV_ERROR_PMR_BAD_CHUNK_SIZE;
@@ -1390,7 +1390,7 @@ PMR_ReadBytes(PMR *psPMR,
 			{
 				PVR_DPF((PVR_DBG_ERROR,
 						 "%s: Failed to read chunk (eError = %s, uiRead = " IMG_SIZE_FMTSPEC " uiBytesToCopy = " IMG_SIZE_FMTSPEC ")",
-						 __FUNCTION__,
+						 __func__,
 						 PVRSRVGetErrorStringKM(eError),
 						 uiRead,
 						 uiBytesToCopy));
@@ -1402,7 +1402,7 @@ PMR_ReadBytes(PMR *psPMR,
 		{
 			PVR_DPF((PVR_DBG_WARNING,
 					"%s: Invalid phys offset at logical offset (" IMG_DEVMEM_OFFSET_FMTSPEC ") logical size (" IMG_DEVMEM_OFFSET_FMTSPEC ")",
-					__FUNCTION__,
+					__func__,
 					uiLogicalOffset,
 					psPMR->uiLogicalSize));
 			/* Fill invalid chunks with 0 */
@@ -1562,7 +1562,7 @@ PMR_WriteBytes(PMR *psPMR,
 			{
 				PVR_DPF((PVR_DBG_ERROR,
 						 "%s: Failed to read chunk (eError = %s, uiWrite = " IMG_SIZE_FMTSPEC " uiBytesToCopy = " IMG_SIZE_FMTSPEC ")",
-						 __FUNCTION__,
+						 __func__,
 						 PVRSRVGetErrorStringKM(eError),
 						 uiWrite,
 						 uiBytesToCopy));

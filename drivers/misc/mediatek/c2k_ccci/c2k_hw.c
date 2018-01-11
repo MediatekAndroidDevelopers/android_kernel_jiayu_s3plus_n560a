@@ -205,7 +205,7 @@ int c2k_gpio_to_irq(int gpio)
 
     des = gpio_des_find_by_gpio(gpio);
     if(NULL == des){
-        printk("%s: no irq for gpio %d\n", __FUNCTION__, gpio);
+        printk("%s: no irq for gpio %d\n", __func__, gpio);
         return -1;
     }else{
         return des->irq;
@@ -218,7 +218,7 @@ int c2k_irq_to_gpio(int irq)
 
     des = gpio_des_find_by_irq(irq);
     if(NULL == des){
-        printk("%s: no gpio for irq %d\n", __FUNCTION__, irq);
+        printk("%s: no gpio for irq %d\n", __func__, irq);
         return -1;
     }else{
         return des->gpio;
@@ -243,7 +243,7 @@ int c2k_irq_set_type(int irq, unsigned int type)
 
     des = gpio_des_find_by_irq(irq);
     if(NULL == des){
-        printk("%s: no gpio for irq %d\n", __FUNCTION__, irq);
+        printk("%s: no gpio for irq %d\n", __func__, irq);
         return -1;
     }else{
         des->irq_type = type;
@@ -258,7 +258,7 @@ int c2k_gpio_get_irq_type(int gpio)
 
     des = gpio_des_find_by_gpio(gpio);
     if(NULL == des){
-        printk("%s: no irqtype for gpio %d\n", __FUNCTION__, gpio);
+        printk("%s: no irqtype for gpio %d\n", __func__, gpio);
         return -1;
     }else{
         return des->irq_type;
@@ -272,7 +272,7 @@ int c2k_gpio_set_ls(int gpio, unsigned int ls)
 
     des = gpio_des_find_by_gpio(gpio);
     if(NULL == des){
-        printk("%s: no des for gpio %d\n", __FUNCTION__, gpio);
+        printk("%s: no des for gpio %d\n", __func__, gpio);
         return -1;
     }else{
         des->eint_ls = ls;;
@@ -286,7 +286,7 @@ int c2k_gpio_get_ls(int gpio)
 
     des = gpio_des_find_by_gpio(gpio);
     if(NULL == des){
-        printk("%s: no des for gpio %d\n", __FUNCTION__, gpio);
+        printk("%s: no des for gpio %d\n", __func__, gpio);
         return -1;
     }else{
         return des->eint_ls;
@@ -299,7 +299,7 @@ int c2k_gpio_to_ls(int gpio)
 
     des = gpio_des_find_by_gpio(gpio);
     if(NULL == des){
-        printk("%s: no des for gpio %d\n", __FUNCTION__, gpio);
+        printk("%s: no des for gpio %d\n", __func__, gpio);
         return -1;
     }else{
 		if (des->irq_type == IRQ_TYPE_EDGE_FALLING)
@@ -321,7 +321,7 @@ extern void set_ap_wake_cp(int value);
 int c2k_ap_ready_indicate(int value)
 {
 	if (value != 0 && value != 1){
-		printk("%s: invalid para %d\n", __FUNCTION__, value);
+		printk("%s: invalid para %d\n", __func__, value);
 		return (-1);
 	}
 	
@@ -333,7 +333,7 @@ int c2k_ap_ready_indicate(int value)
 int c2k_ap_wake_cp(int value)
 {
 	if (value != 0 && value != 1){
-		printk("%s: invalid para %d\n", __FUNCTION__, value);
+		printk("%s: invalid para %d\n", __func__, value);
 		return (-1);
 	}
 

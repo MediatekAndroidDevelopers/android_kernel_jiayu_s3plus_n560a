@@ -1131,7 +1131,7 @@ PMRChangeSparseMemLocalMem(PMR_IMPL_PRIVDATA pPriv,
 			eError = _AllocLMPages(psPMRPageArrayData, pai32AllocIndices);
 			if(PVRSRV_OK != eError)
 			{
-				PVR_DPF((PVR_DBG_ERROR, "%s: New Addtl Allocation of pages failed", __FUNCTION__));
+				PVR_DPF((PVR_DBG_ERROR, "%s: New Addtl Allocation of pages failed", __func__));
 				goto SparseMemChangeFailed;
 			}
 			/*Mark the corresponding pages of translation table as valid */
@@ -1224,12 +1224,12 @@ PMRChangeSparseMemLocalMem(PMR_IMPL_PRIVDATA pPriv,
 #if defined(DEBUG)
 	if(IMG_TRUE == bPoisonFail)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Error in poisoning the page", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Error in poisoning the page", __func__));
 	}
 
 	if(IMG_TRUE == bZeroFail)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Error in zeroing the page", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Error in zeroing the page", __func__));
 	}
 #endif
 

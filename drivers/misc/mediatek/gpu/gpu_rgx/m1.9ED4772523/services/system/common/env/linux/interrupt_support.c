@@ -67,7 +67,7 @@ static irqreturn_t SystemISRWrapper(int irq, void *dev_id)
 	}
 	else
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Missing interrupt data", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Missing interrupt data", __func__));
 	}
 
 	return IRQ_NONE;

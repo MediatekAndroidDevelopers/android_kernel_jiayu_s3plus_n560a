@@ -305,7 +305,7 @@ int efi_set_rtc_mmss(unsigned long nowtime)
 	} else {
 		printk(KERN_ERR
 		       "%s: Invalid EFI RTC value: write of %lx to EFI RTC failed\n",
-		       __FUNCTION__, nowtime);
+		       __func__, nowtime);
 		return -1;
 	}
 

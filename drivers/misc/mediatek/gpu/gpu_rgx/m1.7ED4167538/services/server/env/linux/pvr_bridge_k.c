@@ -826,7 +826,7 @@ PVRSRV_BridgeDispatchKM(struct drm_device __maybe_unused *dev, void *arg, struct
 
 	if(psConnection == NULL)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Connection is closed", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Connection is closed", __func__));
 		return -EFAULT;
 	}
 

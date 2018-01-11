@@ -576,7 +576,7 @@ uf_net_open(struct net_device *dev)
 
     /* If we haven't finished UniFi initialisation, we can't start */
     if (priv->init_progress != UNIFI_INIT_COMPLETED) {
-        unifi_warning(priv, "%s: unifi not ready, failing net_open\n", __FUNCTION__);
+        unifi_warning(priv, "%s: unifi not ready, failing net_open\n", __func__);
         return -EINVAL;
     }
 
@@ -601,7 +601,7 @@ uf_net_open(struct net_device *dev)
 #ifdef CSR_SUPPORT_WEXT
     if (interfacePriv->wait_netdev_change) {
         unifi_trace(priv, UDBG1, "%s: Waiting for NETDEV_CHANGE, assume connected\n",
-                    __FUNCTION__);
+                    __func__);
         interfacePriv->connected = UnifiConnected;
         interfacePriv->wait_netdev_change = FALSE;
     }
@@ -768,7 +768,7 @@ get_packet_priority(unifi_priv_t *priv, struct sk_buff *skb, const struct ethhdr
             break;
 #endif
         default:
-            unifi_trace(priv, UDBG3, " mode unknown in %s func, mode=%x\n", __FUNCTION__, interfaceMode);
+            unifi_trace(priv, UDBG3, " mode unknown in %s func, mode=%x\n", __func__, interfaceMode);
     }
     unifi_trace(priv, UDBG5, "priority = %x\n", priority);
 
@@ -1278,7 +1278,7 @@ int prepare_and_add_macheader(unifi_priv_t *priv, struct sk_buff *skb, struct sk
         csrResult = unifi_net_data_malloc(priv, &data_ptrs.d[0], skb->len + macHeaderLengthInBytes);
 
         if (csrResult != CSR_RESULT_SUCCESS) {
-            unifi_error(priv, " failed to allocate request_data. in %s func\n", __FUNCTION__);
+            unifi_error(priv, " failed to allocate request_data. in %s func\n", __func__);
             return -1;
         }
         newSkb = (struct sk_buff *)(data_ptrs.d[0].os_net_buf_ptr);
@@ -2152,7 +2152,7 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
     /* Sanity check that the VIF refers to a sensible interface */
     if (interfaceTag >= CSR_WIFI_NUM_INTERFACES)
     {
-        unifi_error(priv, "%s: MA-PACKET indication with bad interfaceTag %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: MA-PACKET indication with bad interfaceTag %d\n", __func__, interfaceTag);
         unifi_net_data_free(priv,&bulkdata->d[0]);
         return;
     }
@@ -2160,13 +2160,13 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
     /* Sanity check that the VIF refers to an allocated netdev */
     if (!interfacePriv->netdev_registered)
     {
-        unifi_error(priv, "%s: MA-PACKET indication with unallocated interfaceTag %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: MA-PACKET indication with unallocated interfaceTag %d\n", __func__, interfaceTag);
         unifi_net_data_free(priv, &bulkdata->d[0]);
         return;
     }
 
     if (bulkdata->d[0].data_length == 0) {
-        unifi_warning(priv, "%s: MA-PACKET indication with zero bulk data\n", __FUNCTION__);
+        unifi_warning(priv, "%s: MA-PACKET indication with zero bulk data\n", __func__);
         unifi_net_data_free(priv,&bulkdata->d[0]);
         return;
     }
@@ -2189,7 +2189,7 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
 
     dataFrameType =((frameControl & 0x00f0) >> 4);
     unifi_trace(priv, UDBG6,
-                "%s: Receive Data Frame Type %d \n", __FUNCTION__,dataFrameType);
+                "%s: Receive Data Frame Type %d \n", __func__,dataFrameType);
 
     switch(dataFrameType)
     {
@@ -2285,7 +2285,7 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
             CsrWifiMacAddress peerMacAddress;
             /* Unknown data PDU */
             memcpy(peerMacAddress.a,sa,ETH_ALEN);
-            unifi_trace(priv, UDBG1, "%s: Unexpected frame from peer = %x:%x:%x:%x:%x:%x\n", __FUNCTION__,
+            unifi_trace(priv, UDBG1, "%s: Unexpected frame from peer = %x:%x:%x:%x:%x:%x\n", __func__,
             sa[0], sa[1],sa[2], sa[3], sa[4],sa[5]);
             CsrWifiRouterCtrlUnexpectedFrameIndSend(priv->CSR_WIFI_SME_IFACEQUEUE,0,interfaceTag,peerMacAddress);
             unifi_net_data_free(priv, &bulkdata->d[0]);
@@ -2298,19 +2298,19 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
             CsrWifiMacAddress peerMacAddress;
             memcpy(peerMacAddress.a,sa,ETH_ALEN);
             unifi_trace(priv, UDBG3, "%s: Port is not open: unexpected frame from peer = %x:%x:%x:%x:%x:%x\n",
-                        __FUNCTION__, sa[0], sa[1],sa[2], sa[3], sa[4],sa[5]);
+                        __func__, sa[0], sa[1],sa[2], sa[3], sa[4],sa[5]);
 
             CsrWifiRouterCtrlUnexpectedFrameIndSend(priv->CSR_WIFI_SME_IFACEQUEUE,0,interfaceTag,peerMacAddress);
             interfacePriv->stats.rx_dropped++;
             unifi_net_data_free(priv, &bulkdata->d[0]);
-            unifi_notice(priv, "%s: Dropping packet, proto=0x%04x, %s port\n", __FUNCTION__,
+            unifi_notice(priv, "%s: Dropping packet, proto=0x%04x, %s port\n", __func__,
                          proto, queue ? "Controlled" : "Un-controlled");
             return;
         }
 
          /* Qos NULL/Data NULL  are freed here and not processed further */
         if((dataFrameType == QOS_DATA_NULL) || (dataFrameType == DATA_NULL)){
-            unifi_trace(priv, UDBG5, "%s: Null Frame Received and Freed\n", __FUNCTION__);
+            unifi_trace(priv, UDBG5, "%s: Null Frame Received and Freed\n", __func__);
             unifi_net_data_free(priv, &bulkdata->d[0]);
             return;
         }
@@ -2356,7 +2356,7 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
         interfacePriv->stats.rx_dropped++;
         unifi_net_data_free(priv, &bulkdata->d[0]);
         unifi_notice(priv, "%s: Dropping packet, proto=0x%04x, %s port\n",
-                     __FUNCTION__, proto, queue ? "controlled" : "uncontrolled");
+                     __func__, proto, queue ? "controlled" : "uncontrolled");
         return;
     } else if ( (port_action == CSR_WIFI_ROUTER_CTRL_PORT_ACTION_8021X_PORT_CLOSED_BLOCK) ||
                    (interfacePriv->connected != UnifiConnected) ) {
@@ -2369,7 +2369,7 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
                 GFP_KERNEL);
         if (rx_q_item == NULL) {
             unifi_error(priv, "%s: Failed to allocate %d bytes for rx packet record\n",
-                        __FUNCTION__, sizeof(rx_buffered_packets_t));
+                        __func__, sizeof(rx_buffered_packets_t));
             interfacePriv->stats.rx_dropped++;
             unifi_net_data_free(priv, &bulkdata->d[0]);
             return;
@@ -2382,7 +2382,7 @@ unifi_rx(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_data_param_t *bulkdata)
         memcpy(rx_q_item->sa.a, sa, ETH_ALEN);
         memcpy(rx_q_item->da.a, da, ETH_ALEN);
         unifi_trace(priv, UDBG2, "%s: Blocked skb=%p, bulkdata=%p\n",
-                    __FUNCTION__, rx_q_item->skb, &rx_q_item->bulkdata);
+                    __func__, rx_q_item->skb, &rx_q_item->bulkdata);
 
         if (queue == UF_CONTROLLED_PORT_Q) {
             rx_list = &interfacePriv->rx_controlled_list;
@@ -2415,7 +2415,7 @@ static void process_ma_packet_cfm(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
     /* Sanity check that the VIF refers to a sensible interface */
     if (interfaceTag >= CSR_WIFI_NUM_INTERFACES)
     {
-        unifi_error(priv, "%s: MA-PACKET confirm with bad interfaceTag %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: MA-PACKET confirm with bad interfaceTag %d\n", __func__, interfaceTag);
         return;
     }
 #ifdef CSR_SUPPORT_SME
@@ -2429,7 +2429,7 @@ static void process_ma_packet_cfm(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
         CsrWifiMacAddress peerMacAddress;
         memcpy(peerMacAddress.a, interfacePriv->m4_signal.u.MaPacketRequest.Ra.x, ETH_ALEN);
 
-        unifi_trace(priv, UDBG1, "%s: Sending M4 Transmit CFM\n", __FUNCTION__);
+        unifi_trace(priv, UDBG1, "%s: Sending M4 Transmit CFM\n", __func__);
         CsrWifiRouterCtrlM4TransmittedIndSend(priv->CSR_WIFI_SME_IFACEQUEUE, 0,
                                               interfaceTag,
                                               peerMacAddress,
@@ -2485,7 +2485,7 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
     /* Sanity check that the VIF refers to a sensible interface */
     if (interfaceTag >= CSR_WIFI_NUM_INTERFACES)
     {
-        unifi_error(priv, "%s: MA-PACKET indication with bad interfaceTag %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: MA-PACKET indication with bad interfaceTag %d\n", __func__, interfaceTag);
         unifi_net_data_free(priv,&bulkdata->d[0]);
         return;
     }
@@ -2493,13 +2493,13 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
     /* Sanity check that the VIF refers to an allocated netdev */
     if (!interfacePriv->netdev_registered)
     {
-        unifi_error(priv, "%s: MA-PACKET indication with unallocated interfaceTag %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: MA-PACKET indication with unallocated interfaceTag %d\n", __func__, interfaceTag);
         unifi_net_data_free(priv, &bulkdata->d[0]);
         return;
     }
 
     if (bulkdata->d[0].data_length == 0) {
-        unifi_warning(priv, "%s: MA-PACKET indication with zero bulk data\n", __FUNCTION__);
+        unifi_warning(priv, "%s: MA-PACKET indication with zero bulk data\n", __func__);
         unifi_net_data_free(priv,&bulkdata->d[0]);
         return;
     }
@@ -2508,7 +2508,7 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
     /* MIC failure is already taken care of so no need to send the PDUs which are not successfully received in non-monitor mode*/
     if(pkt_ind->ReceptionStatus != CSR_RX_SUCCESS)
     {
-        unifi_warning(priv, "%s: MA-PACKET indication with status = %d\n",__FUNCTION__, pkt_ind->ReceptionStatus);
+        unifi_warning(priv, "%s: MA-PACKET indication with status = %d\n",__func__, pkt_ind->ReceptionStatus);
         unifi_net_data_free(priv,&bulkdata->d[0]);
         return;
     }
@@ -2543,24 +2543,24 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
          (le16_to_cpu(*((u16*)(bulkdata->d[0].os_data_ptr + IEEE802_11_SEQUENCE_CONTROL_OFFSET))) >> 4) & 0xfff);
     if(frameType == IEEE802_11_FRAMETYPE_CONTROL){
 #ifdef CSR_SUPPORT_SME
-        unifi_trace(priv, UDBG6, "%s: Received Control Frame\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "%s: Received Control Frame\n", __func__);
 
         if((frameControl & 0x00f0) == 0x00A0){
             /* This is a PS-POLL request */
             u8 pmBit = (frameControl & 0x1000)?0x01:0x00;
-            unifi_trace(priv, UDBG6, "%s: Received PS-POLL Frame\n", __FUNCTION__);
+            unifi_trace(priv, UDBG6, "%s: Received PS-POLL Frame\n", __func__);
 
             uf_process_ps_poll(priv,sa,da,pmBit,interfaceTag);
         }
         else {
-            unifi_warning(priv, "%s: Non PS-POLL control frame is received\n", __FUNCTION__);
+            unifi_warning(priv, "%s: Non PS-POLL control frame is received\n", __func__);
         }
 #endif
         unifi_net_data_free(priv,&bulkdata->d[0]);
         return;
     }
     if(frameType != IEEE802_11_FRAMETYPE_DATA) {
-        unifi_warning(priv, "%s: Non control Non Data frame is received\n",__FUNCTION__);
+        unifi_warning(priv, "%s: Non control Non Data frame is received\n",__func__);
         unifi_net_data_free(priv,&bulkdata->d[0]);
         return;
     }
@@ -2575,7 +2575,7 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
             CsrWifiMacAddress peerMacAddress;
             /* Unknown data PDU */
             memcpy(peerMacAddress.a,sa,ETH_ALEN);
-            unifi_trace(priv, UDBG1, "%s: Unexpected frame from peer = %x:%x:%x:%x:%x:%x\n", __FUNCTION__,
+            unifi_trace(priv, UDBG1, "%s: Unexpected frame from peer = %x:%x:%x:%x:%x:%x\n", __func__,
             sa[0], sa[1],sa[2], sa[3], sa[4],sa[5]);
             CsrWifiRouterCtrlUnexpectedFrameIndSend(priv->CSR_WIFI_SME_IFACEQUEUE,0,interfaceTag,peerMacAddress);
             unifi_net_data_free(priv, &bulkdata->d[0]);
@@ -2616,7 +2616,7 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
                 else{
                     qosControl = CSR_GET_UINT16_FROM_LITTLE_ENDIAN(pData->os_data_ptr + 24);
                 }
-                unifi_trace(priv, UDBG5, "%s: Check if U-APSD operations are triggered for qosControl: 0x%x\n",__FUNCTION__,qosControl);
+                unifi_trace(priv, UDBG5, "%s: Check if U-APSD operations are triggered for qosControl: 0x%x\n",__func__,qosControl);
                 uf_process_wmm_deliver_ac_uapsd(priv,srcStaInfo,qosControl,interfaceTag);
             }
         }
@@ -2648,7 +2648,7 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
                         frame_desc.signal = *signal;
                         frame_desc.sn = (le16_to_cpu(*((u16*)(bulkdata->d[0].os_data_ptr + IEEE802_11_SEQUENCE_CONTROL_OFFSET))) >> 4) & 0xfff;
                         frame_desc.active = TRUE;
-                        unifi_trace(priv, UDBG6, "%s: calling process_ba_frame (session=%d)\n", __FUNCTION__, ba_session_idx);
+                        unifi_trace(priv, UDBG6, "%s: calling process_ba_frame (session=%d)\n", __func__, ba_session_idx);
                         process_ba_frame(priv, interfacePriv, ba_session, &frame_desc);
                         up(&priv->ba_mutex);
                         process_ba_complete(priv, interfacePriv);
@@ -2658,7 +2658,7 @@ static void process_ma_packet_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, bulk_d
         }
         if (ba_session_idx == MAX_SUPPORTED_BA_SESSIONS_RX){
             up(&priv->ba_mutex);
-            unifi_trace(priv, UDBG6, "%s: calling process_amsdu()", __FUNCTION__);
+            unifi_trace(priv, UDBG6, "%s: calling process_amsdu()", __func__);
             process_amsdu(priv, signal, bulkdata);
         }
     } else {
@@ -2951,7 +2951,7 @@ static void
     frameControl = le16_to_cpu(*((u16*)dot11_hdr_ptr));
     qos_control_ptr = dot11_hdr_ptr + (((frameControl & IEEE802_11_FC_TO_DS_MASK) && (frameControl & IEEE802_11_FC_FROM_DS_MASK))?30: 24);
     if(!(*qos_control_ptr & IEEE802_11_QC_A_MSDU_PRESENT)) {
-        unifi_trace(priv, UDBG6, "%s: calling unifi_rx()", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "%s: calling unifi_rx()", __func__);
         unifi_rx(priv, signal, bulkdata);
         return;
     }
@@ -2963,7 +2963,7 @@ static void
     while(length > (offset + sizeof(struct ethhdr) + sizeof(llc_snap_hdr_t))) {
         subframe_body_length = ntohs(((struct ethhdr*)ptr)->h_proto);
         if(subframe_body_length > IEEE802_11_MAX_DATA_LEN) {
-            unifi_error(priv, "%s: bad subframe_body_length = %d\n", __FUNCTION__, subframe_body_length);
+            unifi_error(priv, "%s: bad subframe_body_length = %d\n", __func__, subframe_body_length);
             break;
         }
         subframe_length = sizeof(struct ethhdr) + subframe_body_length;
@@ -2972,7 +2972,7 @@ static void
         csrResult = unifi_net_data_malloc(priv, &subframe_bulkdata.d[0], dot11_hdr_size + subframe_body_length);
 
         if (csrResult != CSR_RESULT_SUCCESS) {
-            unifi_error(priv, "%s: unifi_net_data_malloc failed\n", __FUNCTION__);
+            unifi_error(priv, "%s: unifi_net_data_malloc failed\n", __func__);
             break;
         }
 
@@ -2992,7 +2992,7 @@ static void
         memcpy((u8*)subframe_bulkdata.d[0].os_data_ptr + dot11_hdr_size,
                 ptr + sizeof(struct ethhdr),
                              subframe_body_length);
-        unifi_trace(priv, UDBG6, "%s: calling unifi_rx. length = %d subframe_length = %d\n", __FUNCTION__, length, subframe_length);
+        unifi_trace(priv, UDBG6, "%s: calling unifi_rx. length = %d subframe_length = %d\n", __func__, length, subframe_length);
         unifi_rx(priv, signal, &subframe_bulkdata);
 
         subframe_length = (subframe_length + 3)&(~0x3);
@@ -3037,16 +3037,16 @@ static void update_expected_sn(unifi_priv_t *priv,
     u16 gap;
 
     gap = (sn - ba_session->expected_sn) & 0xFFF;
-    unifi_trace(priv, UDBG6, "%s: process the frames up to new_expected_sn = %d gap = %d\n", __FUNCTION__, sn, gap);
+    unifi_trace(priv, UDBG6, "%s: process the frames up to new_expected_sn = %d gap = %d\n", __func__, sn, gap);
     for(j = 0; j < gap && j < ba_session->wind_size; j++) {
         i = SN_TO_INDEX(ba_session, ba_session->expected_sn);
-        unifi_trace(priv, UDBG6, "%s: process the slot index = %d\n", __FUNCTION__, i);
+        unifi_trace(priv, UDBG6, "%s: process the slot index = %d\n", __func__, i);
         if(ba_session->buffer[i].active) {
             add_frame_to_ba_complete(priv, interfacePriv, &ba_session->buffer[i]);
-            unifi_trace(priv, UDBG6, "%s: process the frame at index = %d expected_sn = %d\n", __FUNCTION__, i, ba_session->expected_sn);
+            unifi_trace(priv, UDBG6, "%s: process the frame at index = %d expected_sn = %d\n", __func__, i, ba_session->expected_sn);
             FREE_BUFFER_SLOT(ba_session, i);
         } else {
-            unifi_trace(priv, UDBG6, "%s: empty slot at index = %d\n", __FUNCTION__, i);
+            unifi_trace(priv, UDBG6, "%s: empty slot at index = %d\n", __func__, i);
             ADVANCE_EXPECTED_SN(ba_session);
         }
     }
@@ -3063,7 +3063,7 @@ static void complete_ready_sequence(unifi_priv_t *priv,
     i = SN_TO_INDEX(ba_session, ba_session->expected_sn);
     while (ba_session->buffer[i].active) {
         add_frame_to_ba_complete(priv, interfacePriv, &ba_session->buffer[i]);
-        unifi_trace(priv, UDBG6, "%s: completed stored frame(expected_sn=%d) at i = %d\n", __FUNCTION__, ba_session->expected_sn, i);
+        unifi_trace(priv, UDBG6, "%s: completed stored frame(expected_sn=%d) at i = %d\n", __func__, ba_session->expected_sn, i);
         FREE_BUFFER_SLOT(ba_session, i);
         i = SN_TO_INDEX(ba_session, ba_session->expected_sn);
     }
@@ -3098,24 +3098,24 @@ static int consume_frame_or_get_buffer_index(unifi_priv_t *priv,
         }
 
         sn_temp = ba_session->expected_sn + ba_session->wind_size;
-        unifi_trace(priv, UDBG6, "%s: new frame: sn=%d\n", __FUNCTION__, sn);
+        unifi_trace(priv, UDBG6, "%s: new frame: sn=%d\n", __func__, sn);
         if(!(((sn - sn_temp) & 0xFFF) > 2048)) {
             u16 new_expected_sn;
-            unifi_trace(priv, UDBG6, "%s: frame is out of window\n", __FUNCTION__);
+            unifi_trace(priv, UDBG6, "%s: frame is out of window\n", __func__);
             sn_temp = (sn - ba_session->wind_size) & 0xFFF;
             new_expected_sn = (sn_temp + 1) & 0xFFF;
             update_expected_sn(priv, interfacePriv, ba_session, new_expected_sn);
         }
         i = -1;
         if (sn == ba_session->expected_sn) {
-            unifi_trace(priv, UDBG6, "%s: sn = ba_session->expected_sn = %d\n", __FUNCTION__, sn);
+            unifi_trace(priv, UDBG6, "%s: sn = ba_session->expected_sn = %d\n", __func__, sn);
             ADVANCE_EXPECTED_SN(ba_session);
             add_frame_to_ba_complete(priv, interfacePriv, frame_desc);
         } else {
             i = SN_TO_INDEX(ba_session, sn);
-            unifi_trace(priv, UDBG6, "%s: sn(%d) != ba_session->expected_sn(%d), i = %d\n", __FUNCTION__, sn, ba_session->expected_sn, i);
+            unifi_trace(priv, UDBG6, "%s: sn(%d) != ba_session->expected_sn(%d), i = %d\n", __func__, sn, ba_session->expected_sn, i);
             if (ba_session->buffer[i].active) {
-                unifi_trace(priv, UDBG6, "%s: free frame at i = %d\n", __FUNCTION__, i);
+                unifi_trace(priv, UDBG6, "%s: free frame at i = %d\n", __func__, i);
                 i = -1;
                 unifi_net_data_free(priv, &frame_desc->bulkdata.d[0]);
             }
@@ -3123,10 +3123,10 @@ static int consume_frame_or_get_buffer_index(unifi_priv_t *priv,
     } else {
         i = -1;
         if(!ba_session->trigger_ba_after_ssn){
-            unifi_trace(priv, UDBG6, "%s: frame before ssn, pass it up: sn=%d\n", __FUNCTION__, sn);
+            unifi_trace(priv, UDBG6, "%s: frame before ssn, pass it up: sn=%d\n", __func__, sn);
             add_frame_to_ba_complete(priv, interfacePriv, frame_desc);
         }else{
-            unifi_trace(priv, UDBG6, "%s: old frame, drop: sn=%d, expected_sn=%d\n", __FUNCTION__, sn, ba_session->expected_sn);
+            unifi_trace(priv, UDBG6, "%s: old frame, drop: sn=%d, expected_sn=%d\n", __func__, sn, ba_session->expected_sn);
             unifi_net_data_free(priv, &frame_desc->bulkdata.d[0]);
         }
     }
@@ -3146,16 +3146,16 @@ static void process_ba_frame(unifi_priv_t *priv,
     if (ba_session->timeout) {
         mod_timer(&ba_session->timer, (jiffies + usecs_to_jiffies((ba_session->timeout) * 1024)));
     }
-    unifi_trace(priv, UDBG6, "%s: got frame(sn=%d)\n", __FUNCTION__, sn);
+    unifi_trace(priv, UDBG6, "%s: got frame(sn=%d)\n", __func__, sn);
 
     i = consume_frame_or_get_buffer_index(priv, interfacePriv, ba_session, sn, frame_desc);
     if(i >= 0) {
-        unifi_trace(priv, UDBG6, "%s: store frame(sn=%d) at i = %d\n", __FUNCTION__, sn, i);
+        unifi_trace(priv, UDBG6, "%s: store frame(sn=%d) at i = %d\n", __func__, sn, i);
         ba_session->buffer[i] = *frame_desc;
         ba_session->buffer[i].recv_time = CsrTimeGet(NULL);
         ba_session->occupied_slots++;
     } else {
-        unifi_trace(priv, UDBG6, "%s: frame consumed - sn = %d\n", __FUNCTION__, sn);
+        unifi_trace(priv, UDBG6, "%s: frame consumed - sn = %d\n", __func__, sn);
     }
     complete_ready_sequence(priv, interfacePriv, ba_session);
 }
@@ -3168,7 +3168,7 @@ static void process_ba_complete(unifi_priv_t *priv, netInterface_priv_t *interfa
 
     for(i = 0; i < interfacePriv->ba_complete_index; i++) {
         frame_desc = &interfacePriv->ba_complete[i];
-        unifi_trace(priv, UDBG6, "%s: calling process_amsdu()\n", __FUNCTION__);
+        unifi_trace(priv, UDBG6, "%s: calling process_amsdu()\n", __func__);
         process_amsdu(priv, &frame_desc->signal, &frame_desc->bulkdata);
     }
     interfacePriv->ba_complete_index = 0;
@@ -3274,14 +3274,14 @@ static void process_ma_packet_error_ind(unifi_priv_t *priv, CSR_SIGNAL *signal, 
     /* Sanity check that the VIF refers to a sensible interface */
     if (interfaceTag >= CSR_WIFI_NUM_INTERFACES)
     {
-        unifi_error(priv, "%s: MaPacketErrorIndication indication with bad interfaceTag %d\n", __FUNCTION__, interfaceTag);
+        unifi_error(priv, "%s: MaPacketErrorIndication indication with bad interfaceTag %d\n", __func__, interfaceTag);
         return;
     }
 
     interfacePriv = priv->interfacePriv[interfaceTag];
     UserPriority = pkt_err_ind->UserPriority;
     if(UserPriority > 15) {
-        unifi_error(priv, "%s: MaPacketErrorIndication indication with bad UserPriority=%d\n", __FUNCTION__, UserPriority);
+        unifi_error(priv, "%s: MaPacketErrorIndication indication with bad UserPriority=%d\n", __func__, UserPriority);
     }
     sn = pkt_err_ind->SequenceNumber;
 

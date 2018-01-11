@@ -505,7 +505,7 @@ void _SyncConnectionRef(SYNC_CONNECTION_DATA *psSyncConnectionData)
 	OSLockRelease(psSyncConnectionData->hLock);	
 
 	SYNC_REFCOUNT_PRINT("%s: Sync connection %p, refcount = %d",
-						__FUNCTION__, psSyncConnectionData, ui32RefCount);
+						__func__, psSyncConnectionData, ui32RefCount);
 }
 
 static
@@ -520,7 +520,7 @@ void _SyncConnectionUnref(SYNC_CONNECTION_DATA *psSyncConnectionData)
 	if (ui32RefCount == 0)
 	{
 		SYNC_REFCOUNT_PRINT("%s: Sync connection %p, refcount = %d",
-							__FUNCTION__, psSyncConnectionData, ui32RefCount);
+							__func__, psSyncConnectionData, ui32RefCount);
 
 		PVR_ASSERT(dllist_is_empty(&psSyncConnectionData->sListHead));
 		OSLockDestroy(psSyncConnectionData->hLock);
@@ -529,7 +529,7 @@ void _SyncConnectionUnref(SYNC_CONNECTION_DATA *psSyncConnectionData)
 	else
 	{
 		SYNC_REFCOUNT_PRINT("%s: Sync connection %p, refcount = %d",
-							__FUNCTION__, psSyncConnectionData, ui32RefCount);
+							__func__, psSyncConnectionData, ui32RefCount);
 	}
 }
 
@@ -585,7 +585,7 @@ void _SyncPrimitiveBlockRef(SYNC_PRIMITIVE_BLOCK *psSyncBlk)
 	OSLockRelease(psSyncBlk->hLock);
 
 	SYNC_REFCOUNT_PRINT("%s: Sync block %p, refcount = %d",
-						__FUNCTION__, psSyncBlk, ui32RefCount);
+						__func__, psSyncBlk, ui32RefCount);
 }
 
 static
@@ -602,7 +602,7 @@ void _SyncPrimitiveBlockUnref(SYNC_PRIMITIVE_BLOCK *psSyncBlk)
 		PVRSRV_DEVICE_NODE *psDevNode = psSyncBlk->psDevNode;
 
 		SYNC_REFCOUNT_PRINT("%s: Sync block %p, refcount = %d (remove)",
-							__FUNCTION__, psSyncBlk, ui32RefCount);
+							__func__, psSyncBlk, ui32RefCount);
 
 		_SyncConnectionRemoveBlock(psSyncBlk);
 		OSLockDestroy(psSyncBlk->hLock);
@@ -613,7 +613,7 @@ void _SyncPrimitiveBlockUnref(SYNC_PRIMITIVE_BLOCK *psSyncBlk)
 	else
 	{
 		SYNC_REFCOUNT_PRINT("%s: Sync block %p, refcount = %d",
-							__FUNCTION__, psSyncBlk, ui32RefCount);
+							__func__, psSyncBlk, ui32RefCount);
 	}
 }
 
@@ -739,7 +739,7 @@ _ServerSyncRef(SERVER_SYNC_PRIMITIVE *psSync)
 	OSLockRelease(psSync->hLock);
 
 	SYNC_REFCOUNT_PRINT("%s: Server sync %p, refcount = %d",
-						__FUNCTION__, psSync, ui32RefCount);
+						__func__, psSync, ui32RefCount);
 }
 
 static void
@@ -758,7 +758,7 @@ _ServerSyncUnref(SERVER_SYNC_PRIMITIVE *psSync)
 
 		(void)SyncPrimGetFirmwareAddr(psSync->psSync, &ui32SyncAddr);
 		SYNC_REFCOUNT_PRINT("%s: Server sync %p, refcount = %d",
-			__FUNCTION__, psSync, ui32RefCount);
+			__func__, psSync, ui32RefCount);
 		HTBLOGK(HTB_SF_SYNC_SERVER_UNREF, ui32SyncAddr);
 
 		/* Remove the sync from the global list */
@@ -776,7 +776,7 @@ _ServerSyncUnref(SERVER_SYNC_PRIMITIVE *psSync)
 	else
 	{
 		SYNC_REFCOUNT_PRINT("%s: Server sync %p, refcount = %d",
-							__FUNCTION__, psSync, ui32RefCount);
+							__func__, psSync, ui32RefCount);
 	}
 }
 
@@ -858,7 +858,7 @@ PVRSRVServerSyncAllocKM(CONNECTION_DATA * psConnection,
 	OSLockRelease(psDevNode->hSyncServerListLock);
 
 	HTBLOGK(HTB_SF_SYNC_SERVER_ALLOC, *pui32SyncPrimVAddr);
-	SYNC_UPDATES_PRINT("%s: sync: %p, fwaddr: %8.8X", __FUNCTION__, psNewSync, *pui32SyncPrimVAddr);
+	SYNC_UPDATES_PRINT("%s: sync: %p, fwaddr: %8.8X", __func__, psNewSync, *pui32SyncPrimVAddr);
 	*ppsSync = psNewSync;
 	return PVRSRV_OK;
 
@@ -1198,7 +1198,7 @@ PVRSRVServerSyncQueueSWOpKM(SERVER_SYNC_PRIMITIVE *psSync,
 	{
 		if (*pbFenceRequired)
 		{
-			SYNC_UPDATES_PRINT("%s: sync: %p, fence: %d, value: %d", __FUNCTION__, psSync, *pui32FenceValue, *pui32UpdateValue);
+			SYNC_UPDATES_PRINT("%s: sync: %p, fence: %d, value: %d", __func__, psSync, *pui32FenceValue, *pui32UpdateValue);
 		}
 	}
 
@@ -1273,7 +1273,7 @@ PVRSRVServerSyncQueueHWOpKM(SERVER_SYNC_PRIMITIVE *psSync,
 	}
 	OSLockRelease(psSync->hLock);
 
-	SYNC_UPDATES_PRINT("%s: sync: %p, fence: %d, value: %d", __FUNCTION__, psSync, *pui32FenceValue, *pui32UpdateValue);
+	SYNC_UPDATES_PRINT("%s: sync: %p, fence: %d, value: %d", __func__, psSync, *pui32FenceValue, *pui32UpdateValue);
 
 	return PVRSRV_OK;
 }
@@ -1281,7 +1281,7 @@ PVRSRVServerSyncQueueHWOpKM(SERVER_SYNC_PRIMITIVE *psSync,
 IMG_BOOL ServerSyncFenceIsMet(SERVER_SYNC_PRIMITIVE *psSync,
 							   IMG_UINT32 ui32FenceValue)
 {
-	SYNC_UPDATES_PRINT("%s: sync: %p, value(%d) == fence(%d)?", __FUNCTION__, psSync, *psSync->psSync->pui32LinAddr, ui32FenceValue);
+	SYNC_UPDATES_PRINT("%s: sync: %p, value(%d) == fence(%d)?", __func__, psSync, *psSync->psSync->pui32LinAddr, ui32FenceValue);
 	return (*psSync->psSync->pui32LinAddr == ui32FenceValue);
 }
 
@@ -1292,7 +1292,7 @@ ServerSyncCompleteOp(SERVER_SYNC_PRIMITIVE *psSync,
 {
 	if (bDoUpdate)
 	{
-		SYNC_UPDATES_PRINT("%s: sync: %p (%d) = %d", __FUNCTION__, psSync, *psSync->psSync->pui32LinAddr, ui32UpdateValue);
+		SYNC_UPDATES_PRINT("%s: sync: %p (%d) = %d", __func__, psSync, *psSync->psSync->pui32LinAddr, ui32UpdateValue);
 
 		*psSync->psSync->pui32LinAddr = ui32UpdateValue;
 	}
@@ -1506,7 +1506,7 @@ PVRSRVSyncPrimOpTakeKM(SERVER_OP_COOKIE *psServerCookie,
 		(ui32ServerSyncCount != psServerCookie->ui32ServerSyncCount))
 	{
 		/* The bridge layer should have stopped us getting here but check in case */
-		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync counts", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Invalid sync counts", __func__));
 		return PVRSRV_ERROR_INVALID_PARAMS;
 	}
 
@@ -1566,7 +1566,7 @@ PVRSRVSyncPrimOpReadyKM(SERVER_OP_COOKIE *psServerCookie,
 
 	if (!psServerCookie->bActive)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Operation cookie not active (no take operation performed)", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Operation cookie not active (no take operation performed)", __func__));
 
 		bReady = IMG_FALSE;
 		eError = PVRSRV_ERROR_BAD_SYNC_STATE;
@@ -1668,7 +1668,7 @@ PVRSRVSyncPrimOpCompleteKM(SERVER_OP_COOKIE *psServerCookie)
 	/* Check the client is playing ball */
 	if (!bReady)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: sync op still not ready", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: sync op still not ready", __func__));
 
 		return PVRSRV_ERROR_BAD_SYNC_STATE;
 	}
@@ -1687,7 +1687,7 @@ PVRSRVSyncPrimOpDestroyKM(SERVER_OP_COOKIE *psServerCookie)
 	{
 		if (PVRSRVSyncPrimOpCompleteKM(psServerCookie) == PVRSRV_ERROR_BAD_SYNC_STATE)
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: Not ready, ask for retry", __FUNCTION__));
+			PVR_DPF((PVR_DBG_ERROR, "%s: Not ready, ask for retry", __func__));
 			return PVRSRV_ERROR_RETRY;
 		}
 	}
@@ -1765,7 +1765,7 @@ PVRSRVSyncPrimOpPDumpPolKM(SERVER_OP_COOKIE *psServerCookie,
 
 	if (!psServerCookie->bActive)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Operation cookie not active (no take operation performed)", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Operation cookie not active (no take operation performed)", __func__));
 
 		eError = PVRSRV_ERROR_BAD_SYNC_STATE;
 		goto e0;

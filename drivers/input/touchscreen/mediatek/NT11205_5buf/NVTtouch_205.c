@@ -1508,7 +1508,7 @@ int tpd_local_init(void)
 	tpd_nt11205_key_init();
 #endif
 
-    TPD_DMESG("end %s, %d\n", __FUNCTION__, __LINE__);
+    TPD_DMESG("end %s, %d\n", __func__, __LINE__);
 
     tpd_type_cap = 1;
 

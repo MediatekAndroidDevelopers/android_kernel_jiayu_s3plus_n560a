@@ -68,9 +68,9 @@
 
 #define DEBUG_BREATHLIGHT
 #ifdef DEBUG_BREATHLIGHT
-#define BL_DBG(fmt, arg...) printk(PFX "%s: " fmt, __FUNCTION__ ,##arg)
-#define BL_TRC(fmt, arg...) printk(PFX "<%s>\n", __FUNCTION__);
-#define BL_ERR(fmt, arg...) printk(PFX "%s: " fmt, __FUNCTION__ ,##arg)
+#define BL_DBG(fmt, arg...) printk(PFX "%s: " fmt, __func__ ,##arg)
+#define BL_TRC(fmt, arg...) printk(PFX "<%s>\n", __func__);
+#define BL_ERR(fmt, arg...) printk(PFX "%s: " fmt, __func__ ,##arg)
 #else
 #define BL_DBG(a,...)
 #define BL_TRC(a,...)

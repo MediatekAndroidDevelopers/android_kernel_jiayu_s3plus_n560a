@@ -663,7 +663,7 @@ DECLARE_WORK(leave_loop, leave_loop_func);
 
 int32_t my_irq_callback(unsigned long data)
 {
-    CMDQ_MSG("%s data=%d\n", __FUNCTION__, data);
+    CMDQ_MSG("%s data=%d\n", __func__, data);
 
     ++gLoopCount;
 

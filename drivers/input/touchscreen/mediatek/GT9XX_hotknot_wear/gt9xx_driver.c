@@ -3279,7 +3279,7 @@ static int tpd_local_init(void)
     tpd->dev->id.product = tpd_info.pid;
     tpd->dev->id.version = tpd_info.vid;
 
-    GTP_INFO("end %s, %d\n", __FUNCTION__, __LINE__);
+    GTP_INFO("end %s, %d\n", __func__, __LINE__);
     tpd_type_cap = 1;
 
     return 0;
@@ -3597,7 +3597,7 @@ static void tpd_suspend(struct early_suspend *h)
     s32 ret = -1;
     u8 buf[3] = {0x81, 0xaa, 0};
 
-    GTP_INFO("mtk-tpd: %s start\n", __FUNCTION__);
+    GTP_INFO("mtk-tpd: %s start\n", __func__);
 
 #ifdef TPD_PROXIMITY
     if (tpd_proximity_flag == 1)
@@ -3684,7 +3684,7 @@ static void tpd_resume(struct early_suspend *h)
 {
     s32 ret = -1;
 
-    printk("mtk-tpd: %s start\n", __FUNCTION__);
+    printk("mtk-tpd: %s start\n", __func__);
 #ifdef TPD_PROXIMITY
 
     if (tpd_proximity_flag == 1)
@@ -3752,7 +3752,7 @@ static void tpd_resume(struct early_suspend *h)
     queue_delayed_work(gtp_charger_check_workqueue, &gtp_charger_check_work, clk_tick_cnt);
 #endif
     tpd_halt = 0;
-    printk("mtk-tpd: %s end\n", __FUNCTION__);
+    printk("mtk-tpd: %s end\n", __func__);
 }
 
 static struct tpd_driver_t tpd_device_driver =

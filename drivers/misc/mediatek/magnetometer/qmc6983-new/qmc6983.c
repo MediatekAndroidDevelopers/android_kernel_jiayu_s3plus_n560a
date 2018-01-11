@@ -79,8 +79,8 @@
 #endif
 
 #define MSE_TAG					"[Msensor] "
-#define MSE_FUN(f)				printk(MSE_TAG"QMC6983---%s\n", __FUNCTION__)
-#define MSE_ERR(fmt, args...)		printk(KERN_ERR MSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define MSE_FUN(f)				printk(MSE_TAG"QMC6983---%s\n", __func__)
+#define MSE_ERR(fmt, args...)		printk(KERN_ERR MSE_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define MSE_LOG(fmt, args...)		printk(MSE_TAG fmt, ##args)
 
 
@@ -1303,7 +1303,7 @@ static int qmc6983_compat_ioctl(struct file *file, unsigned int cmd,unsigned lon
              }
              break;
          default:
-             printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+             printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
              return -ENOIOCTLCMD;
              break;
     }
@@ -1560,7 +1560,7 @@ static int qmc6983_unlocked_ioctl(struct file *file, unsigned int cmd,unsigned l
 			break;
 
 		default:
-			printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;
 		}

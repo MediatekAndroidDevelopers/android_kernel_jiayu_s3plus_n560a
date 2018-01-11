@@ -689,7 +689,7 @@ static int __init smb_init(void)
     smb_dir = proc_mkdir("smb", NULL);
     if (!smb_dir)
     {
-        smb_print("[%s]: mkdir /proc/smb failed\n", __FUNCTION__);
+        smb_print("[%s]: mkdir /proc/smb failed\n", __func__);
     }
     else
     {

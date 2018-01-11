@@ -1511,8 +1511,8 @@ BMC050_S16 bmm050api_compensate_Z(BMC050_S16 mdata_z, BMC050_U16 data_R)
 #define BMM050_BUFSIZE  0x20
 
 #define MSE_TAG					"[Msensor] "
-#define MSE_FUN(f)				printk(KERN_ERR MSE_TAG"%s\n", __FUNCTION__)
-#define MSE_ERR(fmt, args...)		printk(KERN_ERR MSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define MSE_FUN(f)				printk(KERN_ERR MSE_TAG"%s\n", __func__)
+#define MSE_ERR(fmt, args...)		printk(KERN_ERR MSE_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define MSE_LOG(fmt, args...)		printk(KERN_INFO MSE_TAG fmt, ##args)
 
 static struct i2c_client *this_client = NULL;
@@ -2354,7 +2354,7 @@ static long bmm050_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned 
 			break;
 			
 		default:
-			MSE_ERR( "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			MSE_ERR( "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;		
 		}

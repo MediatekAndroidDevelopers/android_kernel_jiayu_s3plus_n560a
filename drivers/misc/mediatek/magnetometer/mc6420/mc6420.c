@@ -67,8 +67,8 @@
  **************************/
 #if 0
     #define MSE_TAG                  "[MSENSOR] "
-    #define MSE_FUN(f)               printk(KERN_INFO MSE_TAG "[%s]", __FUNCTION__)
-    #define MSE_ERR(fmt, args...)    printk(KERN_ERR  MSE_TAG "[%s] %d: "fmt, __FUNCTION__, __LINE__, ##args)
+    #define MSE_FUN(f)               printk(KERN_INFO MSE_TAG "[%s]", __func__)
+    #define MSE_ERR(fmt, args...)    printk(KERN_ERR  MSE_TAG "[%s] %d: "fmt, __func__, __LINE__, ##args)
     #define MSE_LOG(fmt, args...)    printk(KERN_INFO MSE_TAG fmt, ##args)
     #define MSE_VER(fmt, args...)    ((void)0)
 #else
@@ -252,7 +252,7 @@ mCubeResult_t    mCube_SensorWrite(void *pDevID, u8 *pbDataBuf, int nDataLength)
 
     if (0 > hwmsen_write_block(s_ptMcmag_i2c_client, pbDataBuf[0], &pbDataBuf[1], (nDataLength - 1)))
     {
-        MSE_ERR("[%s] ERR: i2c write block fail\n", __FUNCTION__);
+        MSE_ERR("[%s] ERR: i2c write block fail\n", __func__);
         return (MCUBE_FAILURE);
     }
 
@@ -269,7 +269,7 @@ mCubeResult_t    mCube_SensorRead(void *pDevID, u8 bCmd, int nRcvBufLength, u8 *
 
     if (0 > hwmsen_read_block(s_ptMcmag_i2c_client, bCmd, pbRcvBuf, nRcvBufLength))
     {
-        MSE_ERR("[%s] ERR: i2c read fail\n", __FUNCTION__);
+        MSE_ERR("[%s] ERR: i2c read fail\n", __func__);
         return (MCUBE_FAILURE);
     }
     

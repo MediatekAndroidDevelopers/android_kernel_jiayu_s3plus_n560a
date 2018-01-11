@@ -59,7 +59,7 @@ PVRSRV_ERROR SysVzPvzConnectionInit(void)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s:  OSLockCreate failed (%s)",
-				__FUNCTION__,
+				__func__,
 				PVRSRVGetErrorStringKM(eError)));
 	}
 
@@ -72,7 +72,7 @@ PVRSRV_ERROR SysVzPvzConnectionInit(void)
 
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: Unable to create PVZ connection (%s)",
-				__FUNCTION__,
+				__func__,
 				PVRSRVGetErrorStringKM(eError)));
 	}
 

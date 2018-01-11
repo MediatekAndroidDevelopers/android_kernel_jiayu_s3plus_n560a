@@ -782,7 +782,7 @@ static void si_mhl_tx_prune_edid(edid_3d_data_p mhl_edid_3d_data)
 	pb_limit = (uint8_t *)(p_CEA_extension+1);
 
     MHL_TX_EDID_INFO(mhl_edid_3d_data->dev_context,
-			"mhl_tx: %s\n",__FUNCTION__);
+			"mhl_tx: %s\n",__func__);
     p_data_u.puc_data_block = (uint8_t *)p_CEA_extension + p_CEA_extension->byte_offset_to_18_byte_descriptors;
 
 	DUMP_EDID_BLOCK(0,p_EDID_block_0,sizeof(*p_EDID_block_0))  /* no semicolon needed here */

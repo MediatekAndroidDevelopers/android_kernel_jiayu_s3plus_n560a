@@ -1176,7 +1176,7 @@ static bool mtk_nand_check_RW_count(u16 u2WriteSize)
         timeout--;
         if (0 == timeout)
         {
-            printk(KERN_INFO "[%s] timeout\n", __FUNCTION__);
+            printk(KERN_INFO "[%s] timeout\n", __func__);
             return false;
         }
     }
@@ -1473,7 +1473,7 @@ static bool mtk_nand_dma_read_data(struct mtd_info *mtd, u8 * buf, u32 length)
     {
         if (!wait_for_completion_timeout(&g_comp_AHB_Done, 2))
         {
-            MSG(READ, "wait for completion timeout happened @ [%s]: %d\n", __FUNCTION__, __LINE__);
+            MSG(READ, "wait for completion timeout happened @ [%s]: %d\n", __func__, __LINE__);
             dump_nfi();
             g_running_dma = 0;
             return false;
@@ -1484,7 +1484,7 @@ static bool mtk_nand_dma_read_data(struct mtd_info *mtd, u8 * buf, u32 length)
             timeout--;
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] poll BYTELEN error\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] poll BYTELEN error\n", __func__);
                 g_running_dma = 0;
                 return false;   //4  // AHB Mode Time Out!
             }
@@ -1496,7 +1496,7 @@ static bool mtk_nand_dma_read_data(struct mtd_info *mtd, u8 * buf, u32 length)
             timeout--;
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] poll nfi_intr error\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] poll nfi_intr error\n", __func__);
                 dump_nfi();
                 g_running_dma = 0;
                 return false;   //4  // AHB Mode Time Out!
@@ -1508,7 +1508,7 @@ static bool mtk_nand_dma_read_data(struct mtd_info *mtd, u8 * buf, u32 length)
             timeout--;
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] poll BYTELEN error\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] poll BYTELEN error\n", __func__);
                 dump_nfi();
                 g_running_dma = 0;
                 return false;   //4  // AHB Mode Time Out!
@@ -1554,7 +1554,7 @@ static bool mtk_nand_mcu_read_data(u8 * buf, u32 length)
             }
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] timeout\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] timeout\n", __func__);
                 dump_nfi();
                 return false;
             }
@@ -1574,7 +1574,7 @@ static bool mtk_nand_mcu_read_data(u8 * buf, u32 length)
             }
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] timeout\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] timeout\n", __func__);
                 dump_nfi();
                 return false;
             }
@@ -1653,7 +1653,7 @@ static bool mtk_nand_dma_write_data(struct mtd_info *mtd, u8 * pDataBuf, u32 u4S
     {
         if (!wait_for_completion_timeout(&g_comp_AHB_Done, 2))
         {
-            MSG(READ, "wait for completion timeout happened @ [%s]: %d\n", __FUNCTION__, __LINE__);
+            MSG(READ, "wait for completion timeout happened @ [%s]: %d\n", __func__, __LINE__);
             dump_nfi();
             g_running_dma = 0;
             return false;
@@ -1667,7 +1667,7 @@ static bool mtk_nand_dma_write_data(struct mtd_info *mtd, u8 * pDataBuf, u32 u4S
             timeout--;
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] poll BYTELEN error\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] poll BYTELEN error\n", __func__);
                 g_running_dma = 0;
                 return false;   //4  // AHB Mode Time Out!
             }
@@ -1709,7 +1709,7 @@ static bool mtk_nand_mcu_write_data(struct mtd_info *mtd, const u8 * buf, u32 le
             }
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] timeout\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] timeout\n", __func__);
                 dump_nfi();
                 return false;
             }
@@ -1729,7 +1729,7 @@ static bool mtk_nand_mcu_write_data(struct mtd_info *mtd, const u8 * buf, u32 le
             }
             if (0 == timeout)
             {
-                printk(KERN_ERR "[%s] timeout\n", __FUNCTION__);
+                printk(KERN_ERR "[%s] timeout\n", __func__);
                 dump_nfi();
                 return false;
             }
@@ -2749,7 +2749,7 @@ static int mtk_nand_read_oob_raw(struct mtd_info *mtd, uint8_t * buf, int page_a
 
     if (len >  NAND_MAX_OOBSIZE || len % OOB_AVAI_PER_SECTOR || !buf)
     {
-        printk(KERN_WARNING "[%s] invalid parameter, len: %d, buf: %p\n", __FUNCTION__, len, buf);
+        printk(KERN_WARNING "[%s] invalid parameter, len: %d, buf: %p\n", __func__, len, buf);
         return -EINVAL;
     }
     if (len > spare_per_sector)
@@ -2895,7 +2895,7 @@ static int mtk_nand_write_oob_raw(struct mtd_info *mtd, const uint8_t * buf, int
 
     if (len >  NAND_MAX_OOBSIZE || len % OOB_AVAI_PER_SECTOR || !buf)
     {
-        printk(KERN_WARNING "[%s] invalid parameter, len: %d, buf: %p\n", __FUNCTION__, len, buf);
+        printk(KERN_WARNING "[%s] invalid parameter, len: %d, buf: %p\n", __func__, len, buf);
         return -EINVAL;
     }
 
@@ -3040,7 +3040,7 @@ int mtk_nand_read_oob_hw(struct mtd_info *mtd, struct nand_chip *chip, int page)
 
     if (mtk_nand_read_oob_raw(mtd, chip->oob_poi, page, mtd->oobsize))
     {
-        // printk(KERN_ERR "[%s]mtk_nand_read_oob_raw return failed\n", __FUNCTION__);
+        // printk(KERN_ERR "[%s]mtk_nand_read_oob_raw return failed\n", __func__);
         return -EIO;
     }
 #ifdef TESTTIME
@@ -3048,7 +3048,7 @@ int mtk_nand_read_oob_hw(struct mtd_info *mtd, struct nand_chip *chip, int page)
     if (!readoobflag)
     {
         readoobflag = 1;
-        printk(KERN_ERR "[%s] time is %llu", __FUNCTION__, time2);
+        printk(KERN_ERR "[%s] time is %llu", __func__, time2);
     }
 #endif
 
@@ -3437,7 +3437,7 @@ static int mtk_nand_probe(struct platform_device *pdev)
 
     if (pdev->num_resources != 4 || res[0].flags != IORESOURCE_MEM || res[1].flags != IORESOURCE_MEM || res[2].flags != IORESOURCE_IRQ || res[3].flags != IORESOURCE_IRQ)
     {
-        MSG(INIT, "%s: invalid resource type\n", __FUNCTION__);
+        MSG(INIT, "%s: invalid resource type\n", __func__);
         return -ENODEV;
     }
 

@@ -4134,12 +4134,12 @@ sub process {
 			     "switch default: should use break\n" . $herectx);
 		}
 
-# check for gcc specific __FUNCTION__
-		if ($line =~ /\b__FUNCTION__\b/) {
+# check for gcc specific __func__
+		if ($line =~ /\b__func__\b/) {
 			if (WARN("USE_FUNC",
-				 "__func__ should be used instead of gcc specific __FUNCTION__\n"  . $herecurr) &&
+				 "__func__ should be used instead of gcc specific __func__\n"  . $herecurr) &&
 			    $fix) {
-				$fixed[$linenr - 1] =~ s/\b__FUNCTION__\b/__func__/g;
+				$fixed[$linenr - 1] =~ s/\b__func__\b/__func__/g;
 			}
 		}
 

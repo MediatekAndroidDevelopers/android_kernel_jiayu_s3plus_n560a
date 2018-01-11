@@ -13,7 +13,7 @@
     #define FH_MSG(fmt, args...) \
     do {    \
     		printk( FHTAG""fmt" <- %s(): L<%d>  PID<%s><%d>\n", \
-                	##args ,__FUNCTION__,__LINE__,current->comm,current->pid);\
+                	##args ,__func__,__LINE__,current->comm,current->pid);\
     } while(0);
 
     #define FH_MSG_DEBUG   FH_MSG

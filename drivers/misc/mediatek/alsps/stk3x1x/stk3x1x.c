@@ -65,8 +65,8 @@
 #define stk3x1x_DEV_NAME     "stk3x1x"
 /*----------------------------------------------------------------------------*/
 #define APS_TAG                  "[ALS/PS] "
-#define APS_FUN(f)               printk(APS_TAG"%s\n", __FUNCTION__)
-#define APS_ERR(fmt, args...)    printk(APS_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define APS_FUN(f)               printk(APS_TAG"%s\n", __func__)
+#define APS_ERR(fmt, args...)    printk(APS_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define APS_LOG(fmt, args...)    printk(APS_TAG fmt, ##args)
 #define APS_DBG(fmt, args...)    printk(fmt, ##args)                 
 /******************************************************************************
@@ -1015,7 +1015,7 @@ static int stk3x1x_enable_ps(struct i2c_client *client, int enable)
 		}		
 	}
 
-	APS_LOG("%s: enable=%d\n", __FUNCTION__, enable);	
+	APS_LOG("%s: enable=%d\n", __func__, enable);	
 	cur &= (~(0x45)); 
 	if(enable)
 	{
@@ -1074,7 +1074,7 @@ static int stk3x1x_enable_ps(struct i2c_client *client, int enable)
 				sensor_data.values[0] = err;
 				sensor_data.value_divide = 1;
 				sensor_data.status = SENSOR_STATUS_ACCURACY_MEDIUM;
-				APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__FUNCTION__, obj->ps,sensor_data.values[0]);
+				APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__func__, obj->ps,sensor_data.values[0]);
 				if((err = hwmsen_get_interrupt_data(ID_PROXIMITY, &sensor_data)))
 				{	
 					APS_ERR("call hwmsen_get_interrupt_data fail = %d\n", err);
@@ -1220,7 +1220,7 @@ static void stk3x1x_eint_work(struct work_struct *work)
 		sensor_data.values[0] = stk3x1x_get_als_value(obj, obj->als);
 		sensor_data.value_divide = 1;
 		sensor_data.status = SENSOR_STATUS_ACCURACY_MEDIUM;
-		APS_LOG("%s:als raw 0x%x -> value 0x%x \n", __FUNCTION__, obj->als,sensor_data.values[0]);
+		APS_LOG("%s:als raw 0x%x -> value 0x%x \n", __func__, obj->als,sensor_data.values[0]);
 		//let up layer to know
 		if((err = hwmsen_get_interrupt_data(ID_LIGHT, &sensor_data)))
 		{
@@ -1241,7 +1241,7 @@ static void stk3x1x_eint_work(struct work_struct *work)
 		sensor_data.values[0] = (flag_reg & STK_FLG_NF_MASK)? 1 : 0;
 		sensor_data.value_divide = 1;
 		sensor_data.status = SENSOR_STATUS_ACCURACY_MEDIUM;
-		APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__FUNCTION__, obj->ps,sensor_data.values[0]);
+		APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__func__, obj->ps,sensor_data.values[0]);
 		//let up layer to know
 		if((err = hwmsen_get_interrupt_data(ID_PROXIMITY, &sensor_data)))
 		{	
@@ -2304,7 +2304,7 @@ static int stk3x1x_ioctl(struct inode *inode, struct file *file, unsigned int cm
 				goto err_out;
 			}
 #ifdef STK_PS_POLLING_LOG	
-			APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__FUNCTION__, obj->ps, dat);			
+			APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__func__, obj->ps, dat);			
 #endif			
 			if(copy_to_user(ptr, &dat, sizeof(dat)))
 			{
@@ -2493,7 +2493,7 @@ static int stk3x1x_ioctl(struct inode *inode, struct file *file, unsigned int cm
 			/*------------------------------------------------------------------------------------------*/
 		
 		default:
-			APS_ERR("%s not supported = 0x%04x", __FUNCTION__, cmd);
+			APS_ERR("%s not supported = 0x%04x", __func__, cmd);
 			err = -ENOIOCTLCMD;
 			break;
 	}
@@ -2719,7 +2719,7 @@ int stk3x1x_ps_operate(void* self, uint32_t command, void* buff_in, int size_in,
 						sensor_data->value_divide = 1;
 						sensor_data->status = SENSOR_STATUS_ACCURACY_MEDIUM;
 #ifdef STK_PS_POLLING_LOG						
-						APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__FUNCTION__, obj->ps, sensor_data->values[0]);					
+						APS_LOG("%s:ps raw 0x%x -> value 0x%x \n",__func__, obj->ps, sensor_data->values[0]);					
 #endif				
 					}	
 				}				
@@ -2841,7 +2841,7 @@ static int stk3x1x_i2c_probe(struct i2c_client *client, const struct i2c_device_
 	struct hwmsen_object obj_ps, obj_als;
 	int err = 0;
 
-	APS_LOG("%s: driver version: %s\n", __FUNCTION__, DRIVER_VERSION);
+	APS_LOG("%s: driver version: %s\n", __func__, DRIVER_VERSION);
 
 	if(!(obj = kzalloc(sizeof(*obj), GFP_KERNEL)))
 	{
@@ -2883,18 +2883,18 @@ static int stk3x1x_i2c_probe(struct i2c_client *client, const struct i2c_device_
 	
 	if(obj->hw->polling_mode_ps == 0)
 	{
-		APS_LOG("%s: enable PS interrupt\n", __FUNCTION__);
+		APS_LOG("%s: enable PS interrupt\n", __func__);
 	}
 	obj->int_val |= STK_INT_PS_MODE1;
 	
 	if(obj->hw->polling_mode_als == 0)
 	{
 	  obj->int_val |= STK_INT_ALS;		
-	  APS_LOG("%s: enable ALS interrupt\n", __FUNCTION__);
+	  APS_LOG("%s: enable ALS interrupt\n", __func__);
 	}	
 
 	APS_LOG("%s: state_val=0x%x, psctrl_val=0x%x, alsctrl_val=0x%x, ledctrl_val=0x%x, wait_val=0x%x, int_val=0x%x\n", 
-		__FUNCTION__, atomic_read(&obj->state_val), atomic_read(&obj->psctrl_val), atomic_read(&obj->alsctrl_val), 
+		__func__, atomic_read(&obj->state_val), atomic_read(&obj->psctrl_val), atomic_read(&obj->alsctrl_val), 
 		obj->ledctrl_val, obj->wait_val, obj->int_val);
 	
 	APS_LOG("stk3x1x_i2c_probe() OK!\n");
@@ -2977,7 +2977,7 @@ static int stk3x1x_i2c_probe(struct i2c_client *client, const struct i2c_device_
 	register_early_suspend(&obj->early_drv);
 #endif
 
-	APS_LOG("%s: OK\n", __FUNCTION__);
+	APS_LOG("%s: OK\n", __func__);
 
 	return 0;
 
@@ -2990,7 +2990,7 @@ static int stk3x1x_i2c_probe(struct i2c_client *client, const struct i2c_device_
 	kfree(obj);
 	exit:
 	stk3x1x_i2c_client = NULL;           
-	APS_ERR("%s: err = %d\n", __FUNCTION__, err);
+	APS_ERR("%s: err = %d\n", __func__, err);
 	return err;
 }
 /*----------------------------------------------------------------------------*/

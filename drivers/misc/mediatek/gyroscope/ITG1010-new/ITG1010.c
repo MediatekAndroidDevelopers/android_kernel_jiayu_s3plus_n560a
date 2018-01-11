@@ -1254,7 +1254,7 @@ static ssize_t show_chip_orientation(struct device_driver *ddri, char *buf)
     ssize_t          _tLength = 0;
     struct gyro_hw   *_ptAccelHw = hw;
 
-   GYRO_LOG("[%s] default direction: %d\n", __FUNCTION__, _ptAccelHw->direction);
+   GYRO_LOG("[%s] default direction: %d\n", __func__, _ptAccelHw->direction);
 
     _tLength = snprintf(buf, PAGE_SIZE, "default direction = %d\n", _ptAccelHw->direction);
 
@@ -1275,7 +1275,7 @@ static ssize_t store_chip_orientation(struct device_driver *ddri, const char *bu
             GYRO_ERR("ERR: fail to set direction\n");
     }
 
-    GYRO_LOG("[%s] set direction: %d\n", __FUNCTION__, _nDirection);
+    GYRO_LOG("[%s] set direction: %d\n", __func__, _nDirection);
 
     return (tCount);
 }
@@ -1819,7 +1819,7 @@ static long ITG1010_compat_ioctl(struct file *file, unsigned int cmd, unsigned l
 			 break;	
 			 
 		 default:
-			 printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			 printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			 return -ENOIOCTLCMD;
 			 break;
 	}

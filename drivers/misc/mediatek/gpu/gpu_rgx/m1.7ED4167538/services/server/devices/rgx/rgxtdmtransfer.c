@@ -269,7 +269,7 @@ static PVRSRV_ERROR _DestroyTDMTransferContext(
 	else if (eError != PVRSRV_OK)
 	{
 		PVR_LOG(("%s: Unexpected error from RGXFWRequestCommonContextCleanUp (%s)",
-				 __FUNCTION__,
+				 __func__,
 				 PVRSRVGetErrorStringKM(eError)));
 	}
 
@@ -580,7 +580,7 @@ PVRSRV_ERROR PVRSRVRGXTDMSubmitTransferKM(
 											   &psAppendData);
 			if (err)
 			{
-				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to append buffer syncs (errno=%d)", __FUNCTION__, err));
+				PVR_DPF((PVR_DBG_ERROR, "%s: Failed to append buffer syncs (errno=%d)", __func__, err));
 				eError = (err == -ENOMEM) ? PVRSRV_ERROR_OUT_OF_MEMORY : PVRSRV_ERROR_INVALID_PARAMS;
 				goto fail_sync_append;
 			}
@@ -749,7 +749,7 @@ PVRSRV_ERROR PVRSRVRGXTDMSubmitTransferKM(
 		if (i32UpdateFenceFD < 0)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: Failed to get install update sync fd",
-				__FUNCTION__));
+				__func__));
 			/* If we fail here, we cannot rollback the syncs as the hw already
 			 * has references to resources they may be protecting in the kick
 			 * so fallthrough */

@@ -170,8 +170,8 @@ static bool sensor_power = false;
 /*----------------------------------------------------------------------------*/
 /*
 #define GYRO_TAG                  "[Gyroscope] "
-#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __FUNCTION__)
-#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __func__)
+#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define GYRO_LOG(fmt, args...)    printk(KERN_INFO GYRO_TAG fmt, ##args)
 */
 /*----------------------------------------------------------------------------*/
@@ -1764,7 +1764,7 @@ static long mpu6050_compat_ioctl(struct file *file, unsigned int cmd, unsigned l
 			 break;	
 			 
 		 default:
-			 printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			 printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			 return -ENOIOCTLCMD;
 			 break;
 	}

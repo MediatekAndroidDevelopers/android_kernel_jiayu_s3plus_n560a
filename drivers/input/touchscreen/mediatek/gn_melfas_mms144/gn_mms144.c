@@ -263,7 +263,7 @@ static int melfas_touch_event_handler(void *unused)
 				  {
 					REPORT_MT_DOWN(i, g_Mtouch_info[i].posX, g_Mtouch_info[i].posY, g_Mtouch_info[i].area, g_Mtouch_info[i].pressure);
 				  }
-                 TPD_DEBUG("[TSP] %s: Touch ID: %d, State : %d, x: %d, y: %d, z: %d w: %d\n", __FUNCTION__,
+                 TPD_DEBUG("[TSP] %s: Touch ID: %d, State : %d, x: %d, y: %d, z: %d w: %d\n", __func__,
                         i, (g_Mtouch_info[i].pressure > 0), g_Mtouch_info[i].posX, g_Mtouch_info[i].posY, g_Mtouch_info[i].pressure, g_Mtouch_info[i].area);
 
 
@@ -434,7 +434,7 @@ static int melfas_check_firmware(struct i2c_client *client, u8 *val)
 
     if (ret < 0)
     {
-        TPD_DMESG("[melfas_tpd] %s,%d: i2c read fail[%d] \n", __FUNCTION__, __LINE__, ret);
+        TPD_DMESG("[melfas_tpd] %s,%d: i2c read fail[%d] \n", __func__, __LINE__, ret);
     }
 	
 	return ret;
@@ -540,7 +540,7 @@ static int melfas_tpd_i2c_detect(struct i2c_client *client, struct i2c_board_inf
 static int melfas_tpd_local_init(void) 
 {
 
-	TPD_DMESG("[melfas_tpd] end %s, %d\n", __FUNCTION__, __LINE__);  
+	TPD_DMESG("[melfas_tpd] end %s, %d\n", __func__, __LINE__);  
     if(i2c_add_driver(&melfas_tpd_i2c_driver)!=0)
     {
         TPD_DMESG("[melfas_tpd] unable to add i2c driver.\n");

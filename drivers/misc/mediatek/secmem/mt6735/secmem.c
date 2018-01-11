@@ -49,7 +49,7 @@ do {    \
     }   \
 } while(0)
 
-#define MSG_FUNC() MSG(FUNC, "%s\n", __FUNCTION__)
+#define MSG_FUNC() MSG(FUNC, "%s\n", __func__)
 
 typedef struct {
     u32 id;

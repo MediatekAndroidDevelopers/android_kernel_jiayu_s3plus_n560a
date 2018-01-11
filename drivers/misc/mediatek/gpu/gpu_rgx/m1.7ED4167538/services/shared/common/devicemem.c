@@ -2060,7 +2060,7 @@ DevmemUnpin(DEVMEM_MEMDESC *psMemDesc)
 		         "%s: The passed allocation is not valid to unpin because "
 		         "there might be suballocations on it. Make sure you allocate a page multiple "
 		         "of the heap when using PVRSRVAllocDeviceMem()",
-		         __FUNCTION__));
+		         __func__));
 
 		goto e_exit;
 	}
@@ -2072,7 +2072,7 @@ DevmemUnpin(DEVMEM_MEMDESC *psMemDesc)
 		PVR_DPF((PVR_DBG_ERROR,
 		         "%s: There are still %u references on the CPU mapping. "
 		         "Please remove all CPU mappings before unpinning.",
-		         __FUNCTION__,
+		         __func__,
 		         psImport->sCPUImport.ui32RefCount));
 
 		goto e_exit;
@@ -2253,7 +2253,7 @@ DevmemMapToDevice(DEVMEM_MEMDESC *psMemDesc,
 	}
 
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					psMemDesc->sDeviceMemDesc.ui32RefCount,
 					psMemDesc->sDeviceMemDesc.ui32RefCount+1);
@@ -2350,7 +2350,7 @@ DevmemMapToDeviceAddress(DEVMEM_MEMDESC *psMemDesc,
 	}
 
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					psMemDesc->sDeviceMemDesc.ui32RefCount,
 					psMemDesc->sDeviceMemDesc.ui32RefCount+1);
@@ -2422,7 +2422,7 @@ DevmemAcquireDevVirtAddr(DEVMEM_MEMDESC *psMemDesc,
 
 	OSLockAcquire(psMemDesc->sDeviceMemDesc.hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					psMemDesc->sDeviceMemDesc.ui32RefCount,
 					psMemDesc->sDeviceMemDesc.ui32RefCount+1);
@@ -2453,7 +2453,7 @@ DevmemReleaseDevVirtAddr(DEVMEM_MEMDESC *psMemDesc)
 
 	OSLockAcquire(psMemDesc->sDeviceMemDesc.hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					psMemDesc->sDeviceMemDesc.ui32RefCount,
 					psMemDesc->sDeviceMemDesc.ui32RefCount-1);
@@ -2494,7 +2494,7 @@ DevmemAcquireCpuVirtAddr(DEVMEM_MEMDESC *psMemDesc,
 
 	OSLockAcquire(psMemDesc->sCPUMemDesc.hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					psMemDesc->sCPUMemDesc.ui32RefCount,
 					psMemDesc->sCPUMemDesc.ui32RefCount+1);
@@ -2539,7 +2539,7 @@ DevmemReleaseCpuVirtAddr(DEVMEM_MEMDESC *psMemDesc)
 
 	OSLockAcquire(psMemDesc->sCPUMemDesc.hLock);
 	DEVMEM_REFCOUNT_PRINT("%s (%p) %d->%d",
-					__FUNCTION__,
+					__func__,
 					psMemDesc,
 					psMemDesc->sCPUMemDesc.ui32RefCount,
 					psMemDesc->sCPUMemDesc.ui32RefCount-1);

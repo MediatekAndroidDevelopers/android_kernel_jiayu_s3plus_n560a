@@ -108,9 +108,9 @@ do {	\
             printk("[ext-md-ctl]" fmt , ##args); \
 } while(0)
 /*---------------------------------------------------------------------------*/
-#define EMD_FUNC_ENTER(f)		EMD_DBG_MSG(FUNC, "%s ++\n", __FUNCTION__)
+#define EMD_FUNC_ENTER(f)		EMD_DBG_MSG(FUNC, "%s ++\n", __func__)
 #define EMD_PM_MSG(fmt, args...)	EMD_DBG_MSG(MISC, fmt, ##args)
-#define EMD_FUNC_EXIT(f)		EMD_DBG_MSG(FUNC, "%s -- %d\n", __FUNCTION__, f)
+#define EMD_FUNC_EXIT(f)		EMD_DBG_MSG(FUNC, "%s -- %d\n", __func__, f)
 #define EMD_MISC_MSG(fmt, args...)	EMD_DBG_MSG(MISC, fmt, ##args)
 
 /******************************************************************************************

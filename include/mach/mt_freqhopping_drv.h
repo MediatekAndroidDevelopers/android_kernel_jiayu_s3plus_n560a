@@ -88,7 +88,7 @@ struct mt_fh_hal_driver* mt_get_fh_hal_drv(void);
 #define FH_BUG_ON(x) \
 do {    \
 		if((x)){ \
-			printk("BUGON %s:%d %s:%d\n",__FUNCTION__,__LINE__,current->comm,current->pid); \
+			printk("BUGON %s:%d %s:%d\n",__func__,__LINE__,current->comm,current->pid); \
         	} \
 } while(0);
 

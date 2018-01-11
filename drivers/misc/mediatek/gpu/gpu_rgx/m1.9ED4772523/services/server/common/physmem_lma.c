@@ -768,7 +768,7 @@ PMRSysPhysAddrLocalMem(PMR_IMPL_PRIVDATA pvPriv,
 		PVR_DPF((PVR_DBG_ERROR,
 		         "%s: Requested physical addresses from PMR "
 		         "for incompatible contiguity %u!",
-		         __FUNCTION__,
+		         __func__,
 		         ui32Log2PageSize));
 		return PVRSRV_ERROR_PMR_INCOMPATIBLE_CONTIGUITY;
 	}
@@ -1194,7 +1194,7 @@ PMRChangeSparseMemLocalMem(PMR_IMPL_PRIVDATA pPriv,
 			{
 				PVR_DPF((PVR_DBG_ERROR,
 				         "%s: New Addtl Allocation of pages failed",
-				         __FUNCTION__));
+				         __func__));
 				goto e0;
 			}
 
@@ -1294,12 +1294,12 @@ PMRChangeSparseMemLocalMem(PMR_IMPL_PRIVDATA pPriv,
 #if defined(DEBUG)
 	if(IMG_TRUE == bPoisonFail)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Error in poisoning the page", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Error in poisoning the page", __func__));
 	}
 
 	if(IMG_TRUE == bZeroFail)
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Error in zeroing the page", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Error in zeroing the page", __func__));
 	}
 #endif
 

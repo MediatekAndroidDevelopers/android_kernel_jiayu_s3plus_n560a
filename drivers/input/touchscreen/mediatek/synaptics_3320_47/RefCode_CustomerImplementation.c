@@ -207,7 +207,7 @@ void read_log(char *filename, const struct touch_platform_data *pdata)
 	printk("[s3528-read_log]read file open %s, fd : %d\n", (fd >= 0)? "success": "fail", fd);
 
 	if (fd >= 0) {
-		printk("[s3528-read_log]open read_log funcion in /sns/touch/cap_diff_test.txt\n",__FUNCTION__);
+		printk("[s3528-read_log]open read_log funcion in /sns/touch/cap_diff_test.txt\n",__func__);
 		while(sys_read(fd, buf, 1024)) {
 
 			printk("[s3528-read_log]sys_read success\n");

@@ -69,7 +69,7 @@ static int check_all_minfree(void *param, void *param2)
     int free_pages = global_page_state(NR_FREE_PAGES) +
         global_page_state(NR_FILE_PAGES) +
         global_page_state(NR_FILE_DIRTY);
-    printk(KERN_ALERT"%s\n", __FUNCTION__);
+    printk(KERN_ALERT"%s\n", __func__);
     printk(KERN_ALERT"=====================================\n");
     for_each_process(p) {
         //get_min_free_pages(p->pid);

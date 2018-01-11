@@ -1632,7 +1632,7 @@ INT32 i4VDEC_HAL_H265_DecStart(UINT32 u4VDecID, VDEC_INFO_DEC_PRM_T *prDecPrm)
 void vVDEC_HAL_H265_GetMbxMby(UINT32 u4VDecID, UINT32 *pu4Mbx, UINT32 *pu4Mby)
 {
     UINT32 u4RegReturnValue;
-    //DBG_H265_PRINTF(pfLogFile,"\n[Info] %s() \n", __FUNCTION__);
+    //DBG_H265_PRINTF(pfLogFile,"\n[Info] %s() \n", __func__);
     u4RegReturnValue = u4VDecReadHEVCVLD(u4VDecID, HEVC_LCU_POS_REG);
     *pu4Mbx = (u4RegReturnValue & 0x0000FFFF);
     *pu4Mby = ((u4RegReturnValue >> 16) & 0x0000FFFF);

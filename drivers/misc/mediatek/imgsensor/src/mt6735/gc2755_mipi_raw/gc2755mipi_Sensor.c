@@ -41,7 +41,7 @@
 #define LOG_2 LOG_INF("preview 1920*1080@30fps,864Mbps/lane; video 1920*1080@30fps,864Mbps/lane; capture 1920*1080@30fps,864Mbps/lane\n")
 /****************************   Modify end    *******************************************/
 
-#define LOG_INF(format, args...)    xlog_printk(ANDROID_LOG_INFO   , PFX, "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)    xlog_printk(ANDROID_LOG_INFO   , PFX, "[%s] " format, __func__, ##args)
 
 static DEFINE_SPINLOCK(imgsensor_drv_lock);
 kal_bool GC2755DuringTestPattern = KAL_FALSE;

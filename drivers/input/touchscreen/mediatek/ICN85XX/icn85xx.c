@@ -2707,11 +2707,11 @@ static int tpd_local_init(void)
 	icn85xx_i2c_dma_va = (u8 *)dma_alloc_coherent(&tpd->dev->dev, 4096, &icn85xx_i2c_dma_pa, GFP_KERNEL);
 	if(!icn85xx_i2c_dma_va)
 	{
-		printk(KERN_ERR "%s, TPD dma_alloc_coherent error!\n", __FUNCTION__);
+		printk(KERN_ERR "%s, TPD dma_alloc_coherent error!\n", __func__);
 	}
 	else
 	{
-		printk("%s, TPD dma_alloc_coherent success!\n", __FUNCTION__);
+		printk("%s, TPD dma_alloc_coherent success!\n", __func__);
 	}
    	 memset(icn85xx_i2c_dma_va, 0, 4096);
 	if(i2c_add_driver(&tpd_i2c_driver) != 0)
@@ -2731,7 +2731,7 @@ static int tpd_local_init(void)
 	tpd_button_setting(TPD_KEY_COUNT, tpd_keys_local, tpd_keys_dim_local);// initialize tpd button data
 #endif
 
-	TPD_DMESG("end %s, %d\n", __FUNCTION__, __LINE__);
+	TPD_DMESG("end %s, %d\n", __func__, __LINE__);
 	tpd_type_cap = 1;
 
 	return 0;

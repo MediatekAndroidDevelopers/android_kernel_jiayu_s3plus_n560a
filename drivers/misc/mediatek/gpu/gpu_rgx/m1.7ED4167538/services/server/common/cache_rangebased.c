@@ -666,7 +666,7 @@ static INLINE void CacheOpCPURangeBased(PVRSRV_DEVICE_NODE *psDevNode,
 			break;
 		default:
 			PVR_DPF((PVR_DBG_ERROR,	"%s: Invalid cache operation type %d",
-					__FUNCTION__, uiCacheOp));
+					__func__, uiCacheOp));
 			PVR_ASSERT(0);
 			break;
 	}
@@ -1028,7 +1028,7 @@ static INLINE PVRSRV_ERROR CacheOpCleanup(DLLIST_NODE *psListNode)
 	{
 		PVR_DPF((CACHEOP_DPFL,
 				"%s: performing sync cleanup",
-				__FUNCTION__));
+				__func__));
 		eError = CacheOpFree(psListNode);
 	}
 	else
@@ -1286,7 +1286,7 @@ static void CacheOpThread(void *pvData)
 	IMG_HANDLE  hOSEvent;
 	PVRSRV_ERROR eError;
 
-	PVR_DPF((CACHEOP_DPFL, "%s: thread starting...", __FUNCTION__));
+	PVR_DPF((CACHEOP_DPFL, "%s: thread starting...", __func__));
 
 	/* Store the process id (pid) of the CacheOp-up thread */
 	psPVRSRVData->CacheOpThreadPid = OSGetCurrentProcessID();
@@ -1302,15 +1302,15 @@ static void CacheOpThread(void *pvData)
 		eError = OSEventObjectWaitTimeout(hOSEvent, CACHEOP_THREAD_WAIT_TIMEOUT);
 		if (eError == PVRSRV_ERROR_TIMEOUT)
 		{
-			PVR_DPF((CACHEOP_DPFL, "%s: wait timeout", __FUNCTION__));
+			PVR_DPF((CACHEOP_DPFL, "%s: wait timeout", __func__));
 		}
 		else if (eError == PVRSRV_OK)
 		{
-			PVR_DPF((CACHEOP_DPFL, "%s: wait OK, signal received", __FUNCTION__));
+			PVR_DPF((CACHEOP_DPFL, "%s: wait OK, signal received", __func__));
 		}
 		else
 		{
-			PVR_DPF((PVR_DBG_ERROR, "%s: wait error %d", __FUNCTION__, eError));
+			PVR_DPF((PVR_DBG_ERROR, "%s: wait error %d", __func__, eError));
 		}
 
 		CacheOpExecQueuedList(psPVRSRVData);
@@ -1319,7 +1319,7 @@ static void CacheOpThread(void *pvData)
 	eError = OSEventObjectClose(hOSEvent);
 	PVR_LOG_IF_ERROR(eError, "OSEventObjectClose");
 
-	PVR_DPF((CACHEOP_DPFL, "%s: thread terminating...", __FUNCTION__));
+	PVR_DPF((CACHEOP_DPFL, "%s: thread terminating...", __func__));
 }
 
 static PVRSRV_ERROR CacheOpExecQueue (PMR **ppsPMR,
@@ -1337,7 +1337,7 @@ static PVRSRV_ERROR CacheOpExecQueue (PMR **ppsPMR,
 	{
 		PVR_DPF((CACHEOP_DPFL, 
 				"%s: driver unloading, performing CacheOp synchronously",
-				__FUNCTION__));
+				__func__));
 
 		for (ui32Idx = 0; ui32Idx < ui32NumCacheOps; ui32Idx++)
 		{
@@ -1369,7 +1369,7 @@ static PVRSRV_ERROR CacheOpExecQueue (PMR **ppsPMR,
 				{
 					PVR_DPF((CACHEOP_DPFL,
 							"%s: PVRSRV_CACHE_OP_INVALIDATE failed (%u)",
-							__FUNCTION__, eError));
+							__func__, eError));
 				}
 
 				/* Clear CacheOp fence dependencies if single entry; in a
@@ -1383,7 +1383,7 @@ static PVRSRV_ERROR CacheOpExecQueue (PMR **ppsPMR,
 			if (psCacheOpWorkItem == NULL)
 			{
 				PVR_DPF((CACHEOP_DPFL, "%s: OSAllocMem failed (%u)",
-						__FUNCTION__, eError));
+						__func__, eError));
 
 				/* Signal the CacheOp thread to ensure whatever was enqueued thus
 				   far (if any) gets processed even though we fail the request */
@@ -1400,7 +1400,7 @@ static PVRSRV_ERROR CacheOpExecQueue (PMR **ppsPMR,
 			if (eError != PVRSRV_OK)
 			{
 				PVR_DPF((CACHEOP_DPFL, "%s: PMRLockSysPhysAddresses failed (%u)",
-						__FUNCTION__, eError));
+						__func__, eError));
 
 				OSFreeMem(psCacheOpWorkItem);
 				psCacheOpWorkItem = NULL;
@@ -1533,7 +1533,7 @@ PVRSRV_ERROR CacheOpFence (RGXFWIF_DM eFenceOpType,
 		{
 			PVR_DPF((CACHEOP_DPFL,
 					"%s: failed to open update event object",
-					__FUNCTION__));
+					__func__));
 			goto e0;
 		}
 
@@ -1550,7 +1550,7 @@ PVRSRV_ERROR CacheOpFence (RGXFWIF_DM eFenceOpType,
 			eError = OSEventObjectWaitTimeout(hOSEvent, CACHEOP_FENCE_WAIT_TIMEOUT);
 			if (eError == PVRSRV_ERROR_TIMEOUT)
 			{
-				PVR_DPF((CACHEOP_DPFL, "%s: wait timeout", __FUNCTION__));
+				PVR_DPF((CACHEOP_DPFL, "%s: wait timeout", __func__));
 #if defined(CACHEOP_DEBUG)
 				/* This is a more accurate notion of fence check retries */
 				ui32RetryCount += 1;
@@ -1558,11 +1558,11 @@ PVRSRV_ERROR CacheOpFence (RGXFWIF_DM eFenceOpType,
 			}
 			else if (eError == PVRSRV_OK)
 			{
-				PVR_DPF((CACHEOP_DPFL, "%s: wait OK, signal received", __FUNCTION__));
+				PVR_DPF((CACHEOP_DPFL, "%s: wait OK, signal received", __func__));
 			}
 			else
 			{
-				PVR_DPF((PVR_DBG_ERROR, "%s: wait error %d", __FUNCTION__, eError));
+				PVR_DPF((PVR_DBG_ERROR, "%s: wait error %d", __func__, eError));
 			}
 
 			/* (Re)read latest completed CacheOp sequence number to fence */
@@ -1758,7 +1758,7 @@ PVRSRV_ERROR CacheOpQueue (IMG_UINT32 ui32NumCacheOps,
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: OSCPUOperation failed (%u)",
-					__FUNCTION__, eError));
+					__func__, eError));
 			goto e0;
 		}
 
@@ -1815,7 +1815,7 @@ PVRSRV_ERROR CacheOpFence (RGXFWIF_DM eFenceOpType,
 		if (eError != PVRSRV_OK)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: OSCPUOperation failed (%u)",
-					__FUNCTION__, eError));
+					__func__, eError));
 			goto e0;
 		}
 
@@ -1875,7 +1875,7 @@ PVRSRV_ERROR CacheOpSetTimeline (IMG_INT32 i32Timeline)
 	if (eError != PVRSRV_OK)
 	{
 		PVR_DPF((PVR_DBG_ERROR, "%s: OSCPUOperation failed (%u)",
-				__FUNCTION__, eError));
+				__func__, eError));
 		goto e0;
 	}
 
@@ -1925,7 +1925,7 @@ PVRSRV_ERROR CacheOpExec (PMR *psPMR,
 	{
 		PVR_DPF((CACHEOP_DPFL,
 				"%s: PMRLockSysPhysAddresses failed (%u)",
-				__FUNCTION__, eError));
+				__func__, eError));
 		goto e0;
 	}
 

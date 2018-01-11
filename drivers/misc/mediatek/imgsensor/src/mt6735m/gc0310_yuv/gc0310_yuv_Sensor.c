@@ -64,7 +64,7 @@ static DEFINE_SPINLOCK(GC0310_drv_lock);
 #define LOG_1 LOG_INF("GC0310,SERIAL CAM\n")
 /****************************   Modify end    *******************************************/
 
-#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
 
 #define GC0310_TEST_PATTERN_CHECKSUM (0x9db2de6e)
 

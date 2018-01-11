@@ -93,8 +93,8 @@ typedef struct _epl_raw_data
 
 /*----------------------------------------------------------------------------*/
 #define APS_TAG                  "[ALS/PS] "
-#define APS_FUN(f)               printk(KERN_INFO APS_TAG"%s\n", __FUNCTION__)
-#define APS_ERR(fmt, args...)    printk(KERN_ERR  APS_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define APS_FUN(f)               printk(KERN_INFO APS_TAG"%s\n", __func__)
+#define APS_ERR(fmt, args...)    printk(KERN_ERR  APS_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define APS_LOG(fmt, args...)    printk(KERN_DEBUG APS_TAG fmt, ##args)
 #define APS_DBG(fmt, args...)    printk(KERN_DEBUG fmt, ##args)
 #define FTM_CUST_ALSPS "/data/epl2182"
@@ -1275,7 +1275,7 @@ static long epl2182_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned
 
 
         default:
-            APS_ERR("%s not supported = 0x%04x", __FUNCTION__, cmd);
+            APS_ERR("%s not supported = 0x%04x", __func__, cmd);
             err = -ENOIOCTLCMD;
             break;
     }

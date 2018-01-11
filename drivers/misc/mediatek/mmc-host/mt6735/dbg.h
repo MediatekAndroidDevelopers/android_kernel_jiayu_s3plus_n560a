@@ -174,14 +174,14 @@ extern unsigned int sd_debug_zone[HOST_MAX_NUM];
 do {    \
     if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
 	pr_err(TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-		host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid); \
+		host->id,  ##args , __func__, __LINE__, current->comm, current->pid); \
     }   \
 } while(0)
 #if 1
 #define ERR_MSG(fmt, args...) \
 do { \
 	pr_err(TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-        host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid); \
+        host->id,  ##args , __func__, __LINE__, current->comm, current->pid); \
 } while(0); 
 #else
 #define MAX_PRINT_PERIOD            (500000000)  /* 500ms */
@@ -192,17 +192,17 @@ do { \
 		   print_nums++; \
 		   msdc_print_start_time = sched_clock(); \
 		   pr_err(TAG"MSDC",TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-		   		host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid); \
+		   		host->id,  ##args , __func__, __LINE__, current->comm, current->pid); \
 	   } else { \
 		   msdc_print_end_time = sched_clock();	\
 		   if ((msdc_print_end_time - msdc_print_start_time) >= MAX_PRINT_PERIOD){ \
 			   pr_err(TAG"MSDC",TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-					host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid); \
+					host->id,  ##args , __func__, __LINE__, current->comm, current->pid); \
 			   print_nums = 0; \
 		   } else {	\
 			   if (print_nums <= MAX_PRINT_NUMS_OVER_PERIOD){ \
 					pr_err(TAG"MSDC",TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-						host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid); \
+						host->id,  ##args , __func__, __LINE__, current->comm, current->pid); \
 					print_nums++;	\
 			   } \
 		   } \
@@ -212,7 +212,7 @@ do { \
 #define INIT_MSG(fmt, args...) \
 do { \
     pr_err(TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-		host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid); \
+		host->id,  ##args , __func__, __LINE__, current->comm, current->pid); \
 } while (0);
 #define SIMPLE_INIT_MSG(fmt, args...) \
 do { \
@@ -223,7 +223,7 @@ do { \
 #define INFO_MSG(fmt, args...) \
 do { \
 	pr_info(TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
-		host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid); \
+		host->id,  ##args , __func__, __LINE__, current->comm, current->pid); \
 } while(0);
 
 #if 0
@@ -231,7 +231,7 @@ do { \
 #define IRQ_MSG(fmt, args...) \
 do { \
     pr_err(TAG"%d -> "fmt" <- %s() : L<%d>\n", \
-		host->id,  ##args , __FUNCTION__, __LINE__); \
+		host->id,  ##args , __func__, __LINE__); \
 } while (0);
 #else
 #define IRQ_MSG(fmt, args...) \

@@ -65,8 +65,8 @@ extern int ReadF54BitRegisters(unsigned short regAddr, unsigned char *data, int 
 extern int get_limit(unsigned char Tx, unsigned char Rx, struct i2c_client client, const struct touch_platform_data *pdata, char *breakpoint, int limit_data[32][32]);
 
 #define TPD_TAG                  "[S3320] "
-#define TPD_FUN(f)               printk(KERN_ERR TPD_TAG"%s\n", __FUNCTION__)
-#define TPD_ERR(fmt, args...)    printk(KERN_ERR TPD_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define TPD_FUN(f)               printk(KERN_ERR TPD_TAG"%s\n", __func__)
+#define TPD_ERR(fmt, args...)    printk(KERN_ERR TPD_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define TPD_LOG(fmt, args...)    printk(KERN_ERR TPD_TAG fmt, ##args)
 
 #define TOUCH_INFO_MSG(fmt, args...) \

@@ -68,8 +68,8 @@ static int pa122_has_load_cal_file = 0;
 #define PA12200001_DEBUG
 #if defined(PA12200001_DEBUG)
 #define APS_TAG		"[ALS/PS] "
-#define APS_FUN(f)			printk(KERN_ERR APS_TAG"%s\n", __FUNCTION__)
-#define APS_ERR(fmt, args...)	printk(KERN_ERR  APS_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define APS_FUN(f)			printk(KERN_ERR APS_TAG"%s\n", __func__)
+#define APS_ERR(fmt, args...)	printk(KERN_ERR  APS_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define APS_LOG(fmt, args...)	printk(KERN_ERR APS_TAG fmt, ##args)
 #define APS_DBG(fmt, args...)	printk(KERN_ERR APS_TAG fmt, ##args)    
 #else
@@ -2089,7 +2089,7 @@ static long pa122_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned l
 				}
 				break;
 			default:
-				APS_ERR("%s not supported = 0x%04x", __FUNCTION__, cmd);
+				APS_ERR("%s not supported = 0x%04x", __func__, cmd);
 				err = -ENOIOCTLCMD;
 				break;
 		}

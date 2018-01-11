@@ -264,7 +264,7 @@ static INLINE void _RGXPrintCCBUtilisationWarning(RGX_CLIENT_CCB *psClientCCB,
 	}
 
 	PVR_LOG(("%s: Client CCB (%s) watermark (%u) hit %d%% of its allocation size (%u)",
-								__FUNCTION__,
+								__func__,
 								psClientCCB->szName,
 								psClientCCB->sUtilisation.ui32HighWaterMark,
 								psClientCCB->sUtilisation.ui32HighWaterMark * 100 / psClientCCB->ui32Size,
@@ -1144,7 +1144,7 @@ PVRSRV_ERROR RGXCmdHelperAcquireCmdCCB(IMG_UINT32 ui32CmdCount,
 		if ((asCmdHelperData[0].ui32PDumpFlags ^ asCmdHelperData[i].ui32PDumpFlags) & PDUMP_FLAGS_CONTINUOUS)
 		{
 			PVR_DPF((PVR_DBG_ERROR, "%s: PDump continuous is not consistent (%s != %s) for command %d",
-					 __FUNCTION__,
+					 __func__,
 					 PDUMP_IS_CONTINUOUS(asCmdHelperData[0].ui32PDumpFlags)?"IMG_TRUE":"IMG_FALSE",
 					 PDUMP_IS_CONTINUOUS(asCmdHelperData[i].ui32PDumpFlags)?"IMG_TRUE":"IMG_FALSE",
 					 ui32CmdCount));
@@ -1514,7 +1514,7 @@ void RGXCmdHelperReleaseCmdCCB(IMG_UINT32 ui32CmdCount,
 			{
 				PVR_DPF((PVR_DBG_ERROR,
 					"%s: Failed to read Server Sync FW address (%d)",
-					__FUNCTION__, eError));
+					__func__, eError));
 				PVR_ASSERT(eError == PVRSRV_OK);
 			}
 			if (bFence)

@@ -88,7 +88,7 @@
 #define KAL_SLEEP_MSEC(_Msec)                   msleep(_Msec)
 #define KAL_SLEEP_SEC(_sec)                     msleep(_sec * 1000)
 
-#define KAL_FUNC_NAME	__FUNCTION__
+#define KAL_FUNC_NAME	__func__
 
 /* Message verbosity: lower values indicate higher urgency */
 #define DBG_OFF                             0

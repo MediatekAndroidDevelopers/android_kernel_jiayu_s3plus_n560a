@@ -26,7 +26,7 @@
 #define ASSERT(expr)                                            \
     do {                                                        \
         if (!(expr))                                            \
-            AssertionFailed(__FUNCTION__,__FILE__, __LINE__);   \
+            AssertionFailed(__func__,__FILE__, __LINE__);   \
     } while (0)     ///< ASSERT definition
 
 /******************************************************************************

@@ -715,7 +715,7 @@ void init_debug_alloc_pool_aligned(void)
 {
 	debug_alloc_pool_aligned = extmem_malloc_page_align(SIZEOF_DEBUG_ALLOC_POOL_ALIGNED);
 	if(debug_alloc_pool_aligned == NULL) {
-		pr_warning("%s[%s] ext memory alloc failed!!!\n", __FILE__, __FUNCTION__);
+		pr_warning("%s[%s] ext memory alloc failed!!!\n", __FILE__, __func__);
 		debug_alloc_pool = (char *)vmalloc(SIZEOF_DEBUG_ALLOC_POOL_ALIGNED);
 	}
 	else {

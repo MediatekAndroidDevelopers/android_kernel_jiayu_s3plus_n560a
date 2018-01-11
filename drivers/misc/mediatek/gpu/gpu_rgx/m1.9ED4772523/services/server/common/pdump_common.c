@@ -943,7 +943,7 @@ static PDUMP_CONNECTION_DATA * _PDumpConnectionAcquire(PDUMP_CONNECTION_DATA *ps
 	OSLockRelease(psPDumpConnectionData->hLock);
 
 	PDUMP_REFCOUNT_PRINT("%s: PDump connection %p, refcount = %d",
-						 __FUNCTION__, psPDumpConnectionData, ui32RefCount);
+						 __func__, psPDumpConnectionData, ui32RefCount);
 
 	return psPDumpConnectionData;
 }
@@ -964,7 +964,7 @@ static void _PDumpConnectionRelease(PDUMP_CONNECTION_DATA *psPDumpConnectionData
 	}
 
 	PDUMP_REFCOUNT_PRINT("%s: PDump connection %p, refcount = %d",
-						 __FUNCTION__, psPDumpConnectionData, ui32RefCount);
+						 __func__, psPDumpConnectionData, ui32RefCount);
 }
 
 /**************************************************************************

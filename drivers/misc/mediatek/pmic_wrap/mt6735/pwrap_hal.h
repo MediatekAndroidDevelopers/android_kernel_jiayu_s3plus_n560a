@@ -13,8 +13,8 @@
 #ifdef PMIC_WRAP_DEBUG
   #define PWRAPDEB(fmt, arg...)     printk(PWRAPTAG "cpuid=%d," fmt,raw_smp_processor_id(), ##arg)
   //#define PWRAPLOG(fmt, arg...)   printk(PWRAPTAG fmt,##arg)
-  #define PWRAPFUC(fmt, arg...)     printk(PWRAPTAG "cpuid=%d,%s\n", raw_smp_processor_id(), __FUNCTION__)
-  //#define PWRAPFUC(fmt, arg...)   printk(PWRAPTAG "%s\n", __FUNCTION__)
+  #define PWRAPFUC(fmt, arg...)     printk(PWRAPTAG "cpuid=%d,%s\n", raw_smp_processor_id(), __func__)
+  //#define PWRAPFUC(fmt, arg...)   printk(PWRAPTAG "%s\n", __func__)
 #endif
 //typedef unsigned int        U32;
 //typedef signed int          S32;

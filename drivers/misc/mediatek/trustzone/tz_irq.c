@@ -102,7 +102,7 @@ void kree_irq_init(void)
     ret = KREE_CreateSession(TZ_TA_IRQ_UUID, &irq_session);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s: CreateSession error %d\n", __FUNCTION__, ret);
+        printk("%s: CreateSession error %d\n", __func__, ret);
         return;
     }
 }
@@ -128,7 +128,7 @@ int kree_set_fiq(int irq, unsigned long irq_flags)
                               param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
     return ret;
 }
@@ -145,7 +145,7 @@ static void __kree_enable_fiq(int irq, int enable)
                               param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
 }
 
@@ -170,7 +170,7 @@ void kree_query_fiq(int irq, int *enable, int *pending)
                               param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
         param[1].value.a = 0;
     }
 
@@ -225,7 +225,7 @@ void kree_irq_mask_all(unsigned int *pmask, unsigned int size)
                               param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
 }
 
@@ -241,6 +241,6 @@ void kree_irq_mask_restore(unsigned int *pmask, unsigned int size)
                               param);
     if (ret != TZ_RESULT_SUCCESS)
     {
-        printk("%s error: %s\n", __FUNCTION__, TZ_GetErrorString(ret));
+        printk("%s error: %s\n", __func__, TZ_GetErrorString(ret));
     }
 }

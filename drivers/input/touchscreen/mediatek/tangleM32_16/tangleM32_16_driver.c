@@ -382,7 +382,7 @@ static int tpd_i2c_probe(struct i2c_client *client, const struct i2c_device_id *
 }
 
 void tpd_eint_interrupt_handler(void) { 
-	TPD_DMESG("[mtk-tpd], %s\n", __FUNCTION__);
+	TPD_DMESG("[mtk-tpd], %s\n", __func__);
     TPD_DEBUG_PRINT_INT; tpd_flag=1; wake_up_interruptible(&waiter);
 } 
 static int tpd_i2c_remove(struct i2c_client *client) {return 0;}
@@ -459,7 +459,7 @@ static int touch_event_handler(void *unused) {
             msleep(20);
         }
 
-		TPD_DMESG("[mtk-tpd] %s: wait for touch event \n", __FUNCTION__);
+		TPD_DMESG("[mtk-tpd] %s: wait for touch event \n", __func__);
 
         wait_event_interruptible(waiter, tpd_flag != 0);
         
@@ -513,7 +513,7 @@ static int touch_event_handler(void *unused) {
 int tpd_local_init(void) 
 {
 	if(tpd_debuglog==1) {
-		TPD_DMESG("[mtk-tpd] %s\n", __FUNCTION__); 
+		TPD_DMESG("[mtk-tpd] %s\n", __func__); 
 	}
      if(i2c_add_driver(&tpd_i2c_driver)!=0) {
       TPD_DMESG("unable to add i2c driver.\n");
@@ -539,7 +539,7 @@ int tpd_local_init(void)
     memcpy(tpd_calmat, tpd_calmat_local, 8*4);
     memcpy(tpd_def_calmat, tpd_def_calmat_local, 8*4);	
 #endif  
-		TPD_DMESG("end %s, %d\n", __FUNCTION__, __LINE__);  
+		TPD_DMESG("end %s, %d\n", __func__, __LINE__);  
 		tpd_type_cap = 1;
     return 0;
 }
@@ -548,7 +548,7 @@ int tpd_local_init(void)
 void tpd_suspend(struct early_suspend *h)
 {
 	if(tpd_debuglog==1) {
-		TPD_DMESG("[mtk-tpd] %s\n", __FUNCTION__); 
+		TPD_DMESG("[mtk-tpd] %s\n", __func__); 
 	}
     tpd_halt = 1;
     mt_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
@@ -567,7 +567,7 @@ void tpd_suspend(struct early_suspend *h)
 void tpd_resume(struct early_suspend *h) 
 {
 	if(tpd_debuglog==1) {
-		TPD_DMESG("[mtk-tpd] %s\n", __FUNCTION__); 
+		TPD_DMESG("[mtk-tpd] %s\n", __func__); 
 	}
     #ifdef TPD_HAVE_POWER_ON_OFF
     msleep(100);

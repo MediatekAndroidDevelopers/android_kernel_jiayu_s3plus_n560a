@@ -1657,7 +1657,7 @@ static void mp_configure_port(struct uart_driver *drv, struct sb_uart_state *sta
 
 	if (!port->iobase && !port->mapbase && !port->membase)
 	{
-		DPRINTK("%s error \n",__FUNCTION__);
+		DPRINTK("%s error \n",__func__);
 		return;
 	}
 	flags = UART_CONFIG_TYPE;

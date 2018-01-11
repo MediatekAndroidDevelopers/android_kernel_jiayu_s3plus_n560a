@@ -277,9 +277,9 @@ static bool tilt_enable_status = false;
 
 #define GSE_TAG                  "[accel] "
 
-#define GSE_FUN(f)               printk(KERN_INFO GSE_TAG"%s\n", __FUNCTION__)
-#define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG "%s %d : " fmt, __FUNCTION__, __LINE__, ##args)
-#define GSE_LOG(fmt, args...)    printk(KERN_INFO GSE_TAG "%s %d : " fmt, __FUNCTION__, __LINE__, ##args)
+#define GSE_FUN(f)               printk(KERN_INFO GSE_TAG"%s\n", __func__)
+#define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG "%s %d : " fmt, __func__, __LINE__, ##args)
+#define GSE_LOG(fmt, args...)    printk(KERN_INFO GSE_TAG "%s %d : " fmt, __func__, __LINE__, ##args)
 
 /*----------------------------------------------------------------------------*/
 
@@ -1727,7 +1727,7 @@ static int lsm6ds3_enable_nodata(int en)
 		err = LSM6DS3_acc_SetPowerMode( priv->client, enable_status);					
 	}
 
-    GSE_LOG("%s OK!\n",__FUNCTION__);
+    GSE_LOG("%s OK!\n",__func__);
     return err;
 }
 
@@ -1778,7 +1778,7 @@ static int lsm6ds3_set_delay(u64 ns)
 		atomic_set(&priv->filter, 1);
 	}
 
-    GSE_LOG("%s (%d), chip only use 1024HZ \n",__FUNCTION__, value);
+    GSE_LOG("%s (%d), chip only use 1024HZ \n",__func__, value);
     return 0;
 }
 
@@ -1794,7 +1794,7 @@ static int lsm6ds3_get_data(int* x ,int* y,int* z, int* status)
 	}
 	if(atomic_read(&priv->trace) & ACCEL_TRC_DATA)
 	{
-		GSE_LOG("%s (%d),  \n",__FUNCTION__,__LINE__);
+		GSE_LOG("%s (%d),  \n",__func__,__LINE__);
 	}
 	memset(buff, 0, sizeof(buff));
 	LSM6DS3_ReadAccData(priv->client, buff, LSM6DS3_BUFSIZE);
@@ -2741,7 +2741,7 @@ static int lsm6ds3_local_init(void)
 	if(lsm6ds3_acc_init_flag == -1)
 	{
 		mutex_unlock(&lsm6ds3_init_mutex);
-		GSE_ERR("%s init failed!\n", __FUNCTION__);
+		GSE_ERR("%s init failed!\n", __func__);
 		return -1;
 	}
 	else
@@ -2785,7 +2785,7 @@ static int lsm6ds3_local_init(void)
 	mutex_unlock(&lsm6ds3_init_mutex);
 	return 0;
 lsm6ds3_local_init_failed:
-	GSE_ERR("%s init failed\n", __FUNCTION__);
+	GSE_ERR("%s init failed\n", __func__);
 	mutex_unlock(&lsm6ds3_init_mutex);
 	return res;
 
@@ -2854,7 +2854,7 @@ static int lsm6ds3_tilt_local_init(void)
 	if(lsm6ds3_acc_init_flag == -1)
 	{
 		mutex_unlock(&lsm6ds3_init_mutex);
-		GSE_ERR("%s init failed!\n", __FUNCTION__);
+		GSE_ERR("%s init failed!\n", __func__);
 		return -1;
 	}
 	else
@@ -2871,7 +2871,7 @@ static int lsm6ds3_tilt_local_init(void)
 	
 lsm6ds3_tilt_local_init_failed:
 	mutex_unlock(&lsm6ds3_init_mutex);
-	GSE_ERR("%s init failed!\n", __FUNCTION__);
+	GSE_ERR("%s init failed!\n", __func__);
 	return -1;
 }
 static int lsm6ds3_tilt_local_uninit(void)
@@ -2907,7 +2907,7 @@ static int lsm6ds3_step_c_local_init(void)
 	if(lsm6ds3_acc_init_flag == -1)
 	{
 		mutex_unlock(&lsm6ds3_init_mutex);
-		GSE_ERR("%s init failed!\n", __FUNCTION__);
+		GSE_ERR("%s init failed!\n", __func__);
 		return -1;
 	}
 	else
@@ -2946,7 +2946,7 @@ static int lsm6ds3_step_c_local_init(void)
 	
 lsm6ds3_step_c_local_init_failed:
 	mutex_unlock(&lsm6ds3_init_mutex);
-	GSE_ERR("%s init failed!\n", __FUNCTION__);
+	GSE_ERR("%s init failed!\n", __func__);
 	return res;
 
 }

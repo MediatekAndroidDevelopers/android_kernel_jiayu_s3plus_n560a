@@ -163,8 +163,8 @@ static char selftestRes[8]= {0};
 
 /*----------------------------------------------------------------------------*/
 #define GSE_TAG                  "[Gsensor] "
-#define GSE_FUN(f)               		printk(KERN_ERR GSE_TAG"%s\n", __FUNCTION__)
-#define GSE_ERR(fmt, args...)    	printk(KERN_ERR GSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define GSE_FUN(f)               		printk(KERN_ERR GSE_TAG"%s\n", __func__)
+#define GSE_ERR(fmt, args...)    	printk(KERN_ERR GSE_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define GSE_LOG(fmt, args...)    	printk(KERN_ERR GSE_TAG fmt, ##args)
 /*----------------------------------------------------------------------------*/
 static struct data_resolution mpu6050_data_resolution[] = {

@@ -603,7 +603,7 @@ PVRSRV_ERROR SysDevInit(void *pvOSDevice, PVRSRV_DEVICE_CONFIG **ppsDevConfig)
 	{
 		PVR_DPF((PVR_DBG_ERROR,
 				 "%s: Rogue register region isn't big enough (was %pa, required 0x%08x)",
-				 __FUNCTION__, &uiRegistersSize, SYS_RGX_REG_REGION_SIZE));
+				 __func__, &uiRegistersSize, SYS_RGX_REG_REGION_SIZE));
 
 		eError = PVRSRV_ERROR_PCI_REGION_TOO_SMALL;
 		goto ErrorDevDisable;
@@ -614,7 +614,7 @@ PVRSRV_ERROR SysDevInit(void *pvOSDevice, PVRSRV_DEVICE_CONFIG **ppsDevConfig)
 							resource_size(psSysData->registers),
 							SYS_RGX_DEV_NAME))
 	{
-		PVR_DPF((PVR_DBG_ERROR, "%s: Rogue register memory region not available", __FUNCTION__));
+		PVR_DPF((PVR_DBG_ERROR, "%s: Rogue register memory region not available", __func__));
 		eError = PVRSRV_ERROR_PCI_CALL_FAILED;
 
 		goto ErrorDevDisable;

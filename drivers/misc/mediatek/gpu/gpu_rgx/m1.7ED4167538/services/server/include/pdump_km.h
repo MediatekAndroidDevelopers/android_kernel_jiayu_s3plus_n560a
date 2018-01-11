@@ -92,14 +92,14 @@ typedef PVRSRV_ERROR (*PFN_PDUMP_TRANSITION)(void **pvData, IMG_BOOL bInto, IMG_
 /*! Macro used to record a panic in the PDump script stream */
 #define PDUMP_PANIC(_id, _msg) do \
 		{ PVRSRV_ERROR _eE;\
-			_eE = PDumpPanic(((RGX_PDUMP_PANIC_ ## _id) & 0xFFFF), _msg, __FUNCTION__, __LINE__);	\
+			_eE = PDumpPanic(((RGX_PDUMP_PANIC_ ## _id) & 0xFFFF), _msg, __func__, __LINE__);	\
 			PVR_LOG_IF_ERROR(_eE, "PDumpPanic");\
 		MSC_SUPPRESS_4127\
 		} while (0)
 
 /*! Macro used to record a driver error in the PDump script stream to invalidate the capture */
 #define PDUMP_ERROR(_err, _msg) do \
-		{   (void) PDumpCaptureError((_err), (_msg), __FUNCTION__, __LINE__);\
+		{   (void) PDumpCaptureError((_err), (_msg), __func__, __LINE__);\
 		MSC_SUPPRESS_4127\
 		} while (0)
 

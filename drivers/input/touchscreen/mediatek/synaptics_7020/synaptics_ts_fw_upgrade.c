@@ -172,7 +172,7 @@ void SynaSetup(struct synaptics_ts_data *ts)
 {
     unsigned char address;
     unsigned char buffer[6];
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     for (address = 0xe9; address > 0xd0; address = address - 6)
     {
@@ -230,7 +230,7 @@ void SynaInitialize(struct synaptics_ts_data *ts)
 {
     unsigned char uData[2];
 
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SYNAPTICS_INFO_MSG("Initializing Reflash Process...\n");
     uData[0] = 0x00;
@@ -256,7 +256,7 @@ void SynaReadFirmwareInfo(struct synaptics_ts_data *ts)
     uData[0] = 0;
     uData[1] = 0;
 
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SYNAPTICS_INFO_MSG("Read Firmware Info\n");
 
@@ -274,7 +274,7 @@ void SynaReadFirmwareInfo(struct synaptics_ts_data *ts)
 void SynaReadConfigInfo(struct synaptics_ts_data *ts)
 {
     unsigned char uData[2];
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SYNAPTICS_INFO_MSG("Read Config Info\n");
 
@@ -291,7 +291,7 @@ void SynaReadConfigInfo(struct synaptics_ts_data *ts)
 void SynaReadBootloadID(struct synaptics_ts_data *ts)
 {
     unsigned char uData[2];
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     readRMI(ts->client, SynaF34ReflashQuery_BootID, &uData[0], 2);
     SynaBootloadID = uData[0] + uData[1] * 0x100;
@@ -302,7 +302,7 @@ void SynaReadBootloadID(struct synaptics_ts_data *ts)
 void SynaWriteBootloadID(struct synaptics_ts_data *ts)
 {
     unsigned char uData[2];
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     uData[0] = SynaBootloadID % 0x100;
     uData[1] = SynaBootloadID / 0x100;
@@ -357,7 +357,7 @@ int SynaEnableFlashing(struct synaptics_ts_data *ts)
     int ret;
     unsigned char uData;
     unsigned char uStatus;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SYNAPTICS_INFO_MSG("Enable Reflash...\n");
 
@@ -407,7 +407,7 @@ int SynaProgramConfiguration(struct synaptics_ts_data *ts)
     unsigned char *puData = (unsigned char *)&my_image_bin[0xb100];
 
     unsigned short blockNum;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SYNAPTICS_INFO_MSG("Program Configuration Section...\n");
 
@@ -437,7 +437,7 @@ int SynaFinalizeReflash(struct synaptics_ts_data *ts)
     int ret;
     unsigned char uData;
     unsigned char uStatus;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SYNAPTICS_INFO_MSG("Finalizing Reflash...\n");
 
@@ -483,7 +483,7 @@ int SynaFlashFirmwareWrite(struct synaptics_ts_data *ts)
     unsigned char *puFirmwareData = (unsigned char *)&my_image_bin[0x100];
     unsigned char uData[2];
     unsigned short blockNum;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     for (blockNum = 0; blockNum < SynaFirmwareBlockCount; ++blockNum)
     {
@@ -513,7 +513,7 @@ int SynaProgramFirmware(struct synaptics_ts_data *ts)
 {
     int ret;
     unsigned char uData;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SYNAPTICS_INFO_MSG("Program Firmware Section...\n");
 
@@ -541,7 +541,7 @@ int SynaProgramFirmware(struct synaptics_ts_data *ts)
 int eraseConfigBlock(struct synaptics_ts_data *ts)
 {
     unsigned char uData;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     // Erase of config block is done by first entering into bootloader mode
     SynaReadBootloadID(ts);
@@ -567,7 +567,7 @@ void CRC_Calculate(unsigned short * data, unsigned short len)
     unsigned long Data_CRC = 0xffffffff;
     unsigned long sum1 = (unsigned long)(Data_CRC & 0xFFFF);
     unsigned long sum2 = (unsigned long)(Data_CRC >> 16);
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     for (i = 0; i < len; i++)
     {
@@ -663,7 +663,7 @@ int ConfigBlockReflash(struct synaptics_ts_data *ts)
 {
     int ret;
     unsigned char uData[2];
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SynaInitialize(ts);
 
@@ -720,7 +720,7 @@ int ConfigBlockReflash(struct synaptics_ts_data *ts)
 int CompleteReflash(struct synaptics_ts_data *ts)
 {
     int ret;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
     SynaInitialize(ts);
 
     SynaReadConfigInfo(ts);
@@ -759,7 +759,7 @@ int CompleteReflash(struct synaptics_ts_data *ts)
 int CompleteReflash_Lockdown(struct synaptics_ts_data *ts)
 {
     int ret;
-    SYNAPTICS_INFO_MSG("%s\n", __FUNCTION__);
+    SYNAPTICS_INFO_MSG("%s\n", __func__);
 
     SynaInitialize(ts);
 

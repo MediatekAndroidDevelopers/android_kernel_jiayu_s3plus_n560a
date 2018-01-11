@@ -179,8 +179,8 @@ extern struct acc_hw* get_cust_acc_hw(void);
 
 #ifdef  DEBUG
 #define GSE_TAG                  "[Gsensor] "
-#define GSE_FUN(f)               printk(GSE_TAG"%s\n", __FUNCTION__)
-#define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define GSE_FUN(f)               printk(GSE_TAG"%s\n", __func__)
+#define GSE_ERR(fmt, args...)    printk(KERN_ERR GSE_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define GSE_LOG(fmt, args...)    printk(GSE_TAG fmt, ##args)
 #else
 #define GSE_TAG
@@ -510,7 +510,7 @@ char cust_i2c_write_bytes(unsigned char addr, unsigned char regaddr, unsigned ch
 		res = cust_i2c_get_ack();
 		if(0 != res)
 		{
-			printk("MXC400X cust_i2c_write_bytes reg data error \n",__FUNCTION__,__LINE__);
+			printk("MXC400X cust_i2c_write_bytes reg data error \n",__func__,__LINE__);
 			return -1;
 		}
 	}
@@ -1946,7 +1946,7 @@ static long mxc400x_compat_ioctl(struct file *file, unsigned int cmd,
 				}
 				break;
 		default:
-			 printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			 printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			 return -ENOIOCTLCMD;
 			 break;
 	}

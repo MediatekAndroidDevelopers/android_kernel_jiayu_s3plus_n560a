@@ -1925,7 +1925,7 @@ extern BOOL fgVDecIsVLDFetchOk(UINT32 u4BSID, UINT32 u4VDecID);
 extern BOOL fgVDecWaitVldFetchOk(UINT32 u4BSID, UINT32 u4VDecID);
 extern UINT32 u4VDecVLDGetBitS(UINT32 u4BSID, UINT32 u4VDecID, UINT32 dShiftBit);
  
-#define u4VDecReadVldRPtr(u4BSID, u4VDecID, pu4Bits, u4VFIFOSa)  u4VDecReadVldRPtrEx(u4BSID, u4VDecID, pu4Bits, u4VFIFOSa, __FUNCTION__, __LINE__)
+#define u4VDecReadVldRPtr(u4BSID, u4VDecID, pu4Bits, u4VFIFOSa)  u4VDecReadVldRPtrEx(u4BSID, u4VDecID, pu4Bits, u4VFIFOSa, __func__, __LINE__)
  
  
 #if (CONFIG_DRV_ONLY || CONFIG_DRV_VERIFY_SUPPORT)
@@ -1940,8 +1940,8 @@ extern void vVDecSimDump(UINT32 u4VDecID, UINT32 u4OffsetAddr, UINT32 u4Addr, UI
 extern void vVDecSimWDump(const char *szFunction, UINT32 u4VDecID, const char *szOffset, UINT32 u4Addr, UINT32 u4Val, UINT32 u4BaseReg);
 extern void vVDecSimRDump(const char *szFunction, UINT32 u4VDecID, const char *szOffset, UINT32 u4Addr, UINT32 u4Val, UINT32 u4BaseReg);
  
-#define vVDecSimDumpW(u4VDecID, szOffset, u4Addr, u4Val) vVDecSimWDump(__FUNCTION__, u4VDecID, #szOffset, u4Addr, u4Val, szOffset)
-#define vVDecSimDumpR(u4VDecID, szOffset, u4Addr, u4Val) vVDecSimRDump(__FUNCTION__, u4VDecID, #szOffset, u4Addr, u4Val, szOffset)
+#define vVDecSimDumpW(u4VDecID, szOffset, u4Addr, u4Val) vVDecSimWDump(__func__, u4VDecID, #szOffset, u4Addr, u4Val, szOffset)
+#define vVDecSimDumpR(u4VDecID, szOffset, u4Addr, u4Val) vVDecSimRDump(__func__, u4VDecID, #szOffset, u4Addr, u4Val, szOffset)
  
 #else
 #define vVDecSimDumpW(u4VDecID, szOffset, u4Addr, u4Val)

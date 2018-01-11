@@ -1154,7 +1154,7 @@ static int __rb_allocate_pages(long nr_pages, struct list_head *pages, int cpu)
 #ifdef CONFIG_MTK_EXTMEM
 		bpage->page = extmem_malloc_page_align(PAGE_SIZE);
 		if(bpage->page == NULL) {
-			pr_err("%s[%s] ext memory alloc failed!!!\n", __FILE__, __FUNCTION__);
+			pr_err("%s[%s] ext memory alloc failed!!!\n", __FILE__, __func__);
     		goto free_pages;
     	}
 #else

@@ -158,7 +158,7 @@ ssize_t ssw_mode_store(struct kobject *kobj, const char *buffer, size_t size)
 
 	if (res != 1)
 	{
-		SSW_DBG("%s: expect 1 numbers\n", __FUNCTION__);
+		SSW_DBG("%s: expect 1 numbers\n", __func__);
 	}
 	else
 	{

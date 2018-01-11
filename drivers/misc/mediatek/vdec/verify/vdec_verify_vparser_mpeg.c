@@ -51,7 +51,7 @@ UINT32 u4VParserMPEG12(UINT32 u4InstID, BOOL fgInquiry)
     vVDEC_HAL_MPEG_SetMPEG4Flag(u4InstID, FALSE);
     // finding the first start code will be used
 
-    printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVLD(u4InstID, 0x00), __FUNCTION__, __LINE__);
+    printk("<vdec> Input window is 0x%x (%s, %d)\n", u4VDecReadVLD(u4InstID, 0x00), __func__, __LINE__);
 
     do
     {
@@ -76,7 +76,7 @@ UINT32 u4VParserMPEG12(UINT32 u4InstID, BOOL fgInquiry)
     if (_u4Datain[u4InstID] == SEQUENCE_HEADER_CODE)
     {
         u4Retry = 0;
-        printk("<vdec> SEQUENCE_HEADER_CODE\n" /*, __FUNCTION__, __LINE__*/);
+        printk("<vdec> SEQUENCE_HEADER_CODE\n" /*, __func__, __LINE__*/);
 
         do
         {
@@ -205,7 +205,7 @@ UINT32 u4VParserMPEG12(UINT32 u4InstID, BOOL fgInquiry)
     _u4Datain[u4InstID] = u4VDEC_HAL_MPEG_ShiftGetBitStream(_u4BSID[u4InstID], u4InstID, 0);
     if (_u4Datain[u4InstID] == GROUP_START_CODE)
     {
-        printk("<vdec> GROUP_START_CODE\n"/*, __FUNCTION__, __LINE__*/);
+        printk("<vdec> GROUP_START_CODE\n"/*, __func__, __LINE__*/);
 
         u4Retry = 0;
         do

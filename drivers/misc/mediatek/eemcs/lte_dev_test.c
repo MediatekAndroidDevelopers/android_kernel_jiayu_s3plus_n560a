@@ -359,7 +359,7 @@ unsigned int str_to_int(char *str)
 	unsigned int idx = 0 , len = 0;
 
 	len = strlen(str);
-	//printk(KERN_ERR "[%s] str len = %d \n", __FUNCTION__, len);
+	//printk(KERN_ERR "[%s] str len = %d \n", __func__, len);
 	for (idx = 0 ; idx < len ; idx ++) {
 		tmp = str[idx] - 0x30;
 		if (idx != 0) {
@@ -367,7 +367,7 @@ unsigned int str_to_int(char *str)
 		}
 		ret_int += tmp;
 	}
-	//printk(KERN_ERR "[%s] value = %d \n", __FUNCTION__, ret_int);
+	//printk(KERN_ERR "[%s] value = %d \n", __func__, ret_int);
 
 	return ret_int;
 }
@@ -379,7 +379,7 @@ unsigned int str_to_hex(char *str)
 	unsigned int idx = 0 , len = 0;
 
 	len = strlen(str);
-	//printk(KERN_ERR "[%s] str len = %d", __FUNCTION__, len);
+	//printk(KERN_ERR "[%s] str len = %d", __func__, len);
 	for (idx = 0 ; idx < len ; idx ++) {
 
         if( (str[idx] >= 0x30) && (str[idx] <= 0x39)){
@@ -398,7 +398,7 @@ unsigned int str_to_hex(char *str)
 		}
 		ret_int += tmp;
 	}
-	//printk(KERN_ERR "[%s] value = %d", __FUNCTION__, ret_int);
+	//printk(KERN_ERR "[%s] value = %d", __func__, ret_int);
 
 	return ret_int;
 }
@@ -1546,23 +1546,23 @@ static int t_dev_autotest_by_file(int argc, char** argv)
 	{ 
 		test_cmd[test_item] = strsep(&buf_ptr, "\r");
         if('#' == *test_cmd[test_item]){
-            printk("[%s] Test Item ignore (or comment): %s\r\n", __FUNCTION__, test_cmd[test_item]);
+            printk("[%s] Test Item ignore (or comment): %s\r\n", __func__, test_cmd[test_item]);
         }else{
-    		printk("[%s] Now perform Test Item %d : %s\r\n", __FUNCTION__, test_item, test_cmd[test_item]);
+    		printk("[%s] Now perform Test Item %d : %s\r\n", __func__, test_item, test_cmd[test_item]);
             jiffies_to_timespec(jiffies , &start_t);
 
             test_ret = call_function(test_cmd[test_item]);
             if(test_ret){
-                printk("[%s][ERR] Auto Regrassion Test fail at item %d !! \r\n", __FUNCTION__, test_item);
-                printk("[%s][ERR] Failed item : %s  \r\n", __FUNCTION__, test_cmd[test_item]);
+                printk("[%s][ERR] Auto Regrassion Test fail at item %d !! \r\n", __func__, test_item);
+                printk("[%s][ERR] Failed item : %s  \r\n", __func__, test_cmd[test_item]);
                 return ret;
             }else{
-                printk("[%s] Test Sucess at item %d ... \r\n", __FUNCTION__, test_item);
+                printk("[%s] Test Sucess at item %d ... \r\n", __func__, test_item);
             }
             
             jiffies_to_timespec(jiffies , &end_t);
 			diff_t = time_diff(start_t, end_t);
-            printk("[%s] This test is use %d seconds... \r\n", __FUNCTION__, diff_t.tv_sec);
+            printk("[%s] This test is use %d seconds... \r\n", __func__, diff_t.tv_sec);
             test_item++;
         }
         
@@ -1581,7 +1581,7 @@ static int t_dev_autotest_by_file(int argc, char** argv)
         
 	} while (buf_ptr);
 
-    printk("[%s] ALL Test Items is PASS, Congratulation!! \r\n", __FUNCTION__);
+    printk("[%s] ALL Test Items is PASS, Congratulation!! \r\n", __func__);
     return 0; 
     
 } 
@@ -1602,7 +1602,7 @@ static int t_dev_auto_regression(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 
@@ -1932,7 +1932,7 @@ static int t_dev_auto_debug(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     for (idx = 0; idx < 10; idx ++) {
@@ -2386,7 +2386,7 @@ static int t_dev_rw_reg(int argc, char** argv)
         if( idx<2 ){ arg[idx-1] = str_to_int(argv[idx]); }
         else {arg[idx-1] = str_to_hex(argv[idx]);}
         
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	};
 
     if( 0 == strcmp("r", argv[1]) ){
@@ -2970,7 +2970,7 @@ static int t_dev_txrx_basic(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	memset(&dl_cfg , 0 ,sizeof(athif_dl_tgpd_cfg_t));
@@ -2983,7 +2983,7 @@ static int t_dev_txrx_basic(int argc , char **argv)
 			for (idx = 0 ; idx < pkt_num ; idx ++) {
 				ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
 				if (ret != RET_SUCCESS) {
-					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] ATCASE_UL_BASIC_SEND fail !\n",__FUNCTION__));
+					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] ATCASE_UL_BASIC_SEND fail !\n",__func__));
 					/*send packet fail and retry*/
 					idx --;
 				}
@@ -3003,7 +3003,7 @@ static int t_dev_txrx_basic(int argc , char **argv)
 				}
 				ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
 				if (ret != RET_SUCCESS) {
-					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] ATCASE_UL_BASIC_SEND fail !\n",__FUNCTION__));
+					KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] ATCASE_UL_BASIC_SEND fail !\n",__func__));
 					/*send packet fail and retry*/
 					idx --;
 				}
@@ -3017,7 +3017,7 @@ static int t_dev_txrx_basic(int argc , char **argv)
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] ATCASE_UL_BASIC_SEND fail !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] ATCASE_UL_BASIC_SEND fail !\n",__func__));
 					    /*send packet fail and retry*/
 					    idx --;
 				    }
@@ -3889,7 +3889,7 @@ static int t_dev_tx_basic(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	for(test_que_no=0; test_que_no<HIF_MAX_ULQ_NUM; test_que_no++){
@@ -3897,10 +3897,10 @@ static int t_dev_tx_basic(int argc , char **argv)
 	        for(pkt_num=40; pkt_num<=40; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -3910,7 +3910,7 @@ static int t_dev_tx_basic(int argc , char **argv)
             }
 	    }
         //test print
-        printk(KERN_ERR "[%s] que[%d] test is passed \n",__FUNCTION__,test_que_no);
+        printk(KERN_ERR "[%s] que[%d] test is passed \n",__func__,test_que_no);
         
 	}
 
@@ -3947,7 +3947,7 @@ static int t_dev_tx_multique(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
         for(pkt_sz=arg[0]; pkt_sz<=arg[1]; pkt_sz++){
@@ -3957,11 +3957,11 @@ static int t_dev_tx_multique(int argc , char **argv)
                     test_que_no = rand_num % HIF_MAX_ULQ_NUM;
                      
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
                     
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -3998,7 +3998,7 @@ static int t_dev_simple_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
     
     cmd.cmd = ATHIF_CMD_PAUSE_RGPD_RL;
@@ -4047,12 +4047,12 @@ static int t_dev_simple_lb(int argc , char **argv)
 	        for(pkt_num=arg[2]; pkt_num<=arg[3]; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -4062,7 +4062,7 @@ static int t_dev_simple_lb(int argc , char **argv)
             }
             // test debug
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                        __FUNCTION__, test_que_no, pkt_sz));
+                        __func__, test_que_no, pkt_sz));
 	    }
 	}
 
@@ -4117,7 +4117,7 @@ static int t_dev_simple_lb_empty_enq(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		KAL_DBGPRINT(KAL, DBG_WARN,("[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]));
+		KAL_DBGPRINT(KAL, DBG_WARN,("[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]));
 	}
     
     cmd.cmd = ATHIF_CMD_PAUSE_RGPD_RL;
@@ -4166,12 +4166,12 @@ static int t_dev_simple_lb_empty_enq(int argc , char **argv)
 	        for(pkt_num=arg[2]; pkt_num<=arg[3]; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -4181,7 +4181,7 @@ static int t_dev_simple_lb_empty_enq(int argc , char **argv)
             }
             // test debug
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                        __FUNCTION__, test_que_no, pkt_sz));
+                        __func__, test_que_no, pkt_sz));
 	    }
 	}
 
@@ -4275,7 +4275,7 @@ static int t_dev_random_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     for(round=0; round<arg[0]; round++){
@@ -4301,7 +4301,7 @@ static int t_dev_random_lb(int argc , char **argv)
                 transferdata += pkt_sz;
                 
     		    if (ret != RET_SUCCESS) {
-    			    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+    			    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
     			    /*send packet fail and retry*/
                     idx --;
                     return ret;
@@ -4381,7 +4381,7 @@ static int t_dev_single_queue_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     cmd.cmd = ATHIF_CMD_PAUSE_RGPD_RL;
@@ -4446,12 +4446,12 @@ static int t_dev_single_queue_lb(int argc , char **argv)
                 for(pkt_sz=arg[3]; pkt_sz<=arg[4]; pkt_sz++){ 
                 
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;                  
@@ -4461,7 +4461,7 @@ static int t_dev_single_queue_lb(int argc , char **argv)
                 KAL_SLEEP_USEC(1) ;
                 // test debug
                 KAL_DBGPRINT(KAL, DBG_WARN, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                         __FUNCTION__, test_que_no, pkt_sz));
+                         __func__, test_que_no, pkt_sz));
             }
         }
 
@@ -4519,7 +4519,7 @@ static int t_dev_one_pkt_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     cmd.cmd = ATHIF_CMD_PAUSE_RGPD_RL;
@@ -4586,12 +4586,12 @@ static int t_dev_one_pkt_lb(int argc , char **argv)
         
                 
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;                  
@@ -4600,7 +4600,7 @@ static int t_dev_one_pkt_lb(int argc , char **argv)
                 KAL_SLEEP_USEC(1) ;
                 // test debug
                 KAL_DBGPRINT(KAL, DBG_WARN, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                         __FUNCTION__, test_que_no, pkt_sz));
+                         __func__, test_que_no, pkt_sz));
 
 
         while(expect_num != recv_total_pkt_cnt){
@@ -4753,7 +4753,7 @@ static int t_dev_single_allow_len(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	/*start loopback mode*/
@@ -4766,7 +4766,7 @@ static int t_dev_single_allow_len(int argc, char** argv)
     if(RET_FAIL == mtlte_dev_test_check_cmd_ack(athif_result_save_t, WAIT_TIMEOUT) ){return RET_FAIL;}
  
 
-	KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_RGPD_ALLOW_LEN, start\n",__FUNCTION__,__LINE__ ));			
+	KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_RGPD_ALLOW_LEN, start\n",__func__,__LINE__ ));			
 	for (allow_len_idx = 0 ; allow_len_idx < sizeof(allow_len_list)/sizeof(allowlen_info_t) ; allow_len_idx ++) {
 		if (allow_len_list[allow_len_idx].valid == 0) {
 			continue;
@@ -4774,7 +4774,7 @@ static int t_dev_single_allow_len(int argc, char** argv)
 		memset(&rgpd_format, 0 , sizeof(athif_ul_rgpd_format_t));			
 		rgpd_format.rgpd_allow_len = allow_len_list[allow_len_idx].rgpd_allow_len;
 		rgpd_format.rbd_num = 0;
-		KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_RGPD_ALLOW_LEN, GPD allow_len=%d\n",__FUNCTION__,__LINE__, rgpd_format.rgpd_allow_len));							
+		KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_RGPD_ALLOW_LEN, GPD allow_len=%d\n",__func__,__LINE__, rgpd_format.rgpd_allow_len));							
 		for (que_no = 0 ; que_no < HIF_MAX_ULQ_NUM ; que_no ++) {
 			while (1) {
 				if (ret = f_ul_rgpd_allow_len_tst(que_no ,&rgpd_format, sizeof(AT_PKT_HEADER), 20) != RET_SUCCESS)
@@ -4794,7 +4794,7 @@ static int t_dev_single_allow_len(int argc, char** argv)
 		}
 	}
 	if (ret == RET_SUCCESS) {
-		KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_RGPD_ALLOW_LEN, passed\n",__FUNCTION__,__LINE__ ));
+		KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_RGPD_ALLOW_LEN, passed\n",__func__,__LINE__ ));
 	}
 
 	/*allow len : RBD1=512/1024/1536/2048*/
@@ -4802,10 +4802,10 @@ static int t_dev_single_allow_len(int argc, char** argv)
 	rgpd_format.rgpd_allow_len = 0;
 	rgpd_format.rbd_num = 1;
 	unsigned int bd_allowlen[] = {128, 256, 512, 1024, 1536, 2048};
-	KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_1RBD_ALLOW_LEN, 1BD test start\n",__FUNCTION__,__LINE__ ));			
+	KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_1RBD_ALLOW_LEN, 1BD test start\n",__func__,__LINE__ ));			
 	for (allow_len_idx = 0 ; allow_len_idx < sizeof(bd_allowlen)/sizeof(unsigned int) ; allow_len_idx ++) {
 		rgpd_format.rbd_allow_len[0] = bd_allowlen[allow_len_idx];
-		KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_1RBD_ALLOW_LEN, 1BD test BD1=%d\n",__FUNCTION__,__LINE__ ,rgpd_format.rbd_allow_len[0]));			
+		KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_1RBD_ALLOW_LEN, 1BD test BD1=%d\n",__func__,__LINE__ ,rgpd_format.rbd_allow_len[0]));			
 		for (que_no = 0 ; que_no < HIF_MAX_ULQ_NUM ; que_no ++) {
 			while (1) {
 				if (ret = f_ul_rgpd_allow_len_tst(que_no ,&rgpd_format, sizeof(AT_PKT_HEADER), 20) != RET_SUCCESS)
@@ -4823,7 +4823,7 @@ static int t_dev_single_allow_len(int argc, char** argv)
 	}
     
     if (ret == RET_SUCCESS) {
-        KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_1RBD_ALLOW_LEN, 1BD test passed\n",__FUNCTION__,__LINE__ ));
+        KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_1RBD_ALLOW_LEN, 1BD test passed\n",__func__,__LINE__ ));
     }
     
     sdio_test_option.auto_receive_pkt = false;
@@ -4857,7 +4857,7 @@ static int t_dev_bd_allow_len(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	/*start loopback mode*/
@@ -4880,12 +4880,12 @@ static int t_dev_bd_allow_len(int argc, char** argv)
 			rgpd_format.rgpd_allow_len = 0;
 			rgpd_format.rbd_num = 2;
 			
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test start\n",__FUNCTION__,__LINE__ ));			
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test start\n",__func__,__LINE__ ));			
 			for (rbd1_allow_len = 252 ; rbd1_allow_len <= 260 ; rbd1_allow_len += 4) {
 				rbd2_allow_len = 2048 - rbd1_allow_len;
 				rgpd_format.rbd_allow_len[0] = rbd1_allow_len;
 				rgpd_format.rbd_allow_len[1] = rbd2_allow_len;
-				KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 1BD test BD1=%d, BD2=%d\n",__FUNCTION__,__LINE__ ,rbd1_allow_len, rbd2_allow_len));
+				KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 1BD test BD1=%d, BD2=%d\n",__func__,__LINE__ ,rbd1_allow_len, rbd2_allow_len));
 
 				for (que_no = 0 ; que_no < HIF_MAX_ULQ_NUM ; que_no ++) {
 					do {
@@ -4911,7 +4911,7 @@ static int t_dev_bd_allow_len(int argc, char** argv)
 					}
 				}
 			}
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test passed\n",__FUNCTION__,__LINE__ ));
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test passed\n",__func__,__LINE__ ));
 
 rd2_allowlen_case1_err:
             break;
@@ -4922,12 +4922,12 @@ rd2_allowlen_case1_err:
 			rgpd_format.rgpd_allow_len = 0;
 			rgpd_format.rbd_num = 2;
 			
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test start\n",__FUNCTION__,__LINE__ ));			
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test start\n",__func__,__LINE__ ));			
 			for (rbd1_allow_len = 500 ; rbd1_allow_len <= 520 ; rbd1_allow_len += 4) {
 				rbd2_allow_len = 2048 - rbd1_allow_len;
 				rgpd_format.rbd_allow_len[0] = rbd1_allow_len;
 				rgpd_format.rbd_allow_len[1] = rbd2_allow_len;
-				KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 1BD test BD1=%d, BD2=%d\n",__FUNCTION__,__LINE__ ,rbd1_allow_len, rbd2_allow_len));
+				KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 1BD test BD1=%d, BD2=%d\n",__func__,__LINE__ ,rbd1_allow_len, rbd2_allow_len));
 
 				for (que_no = 0 ; que_no < HIF_MAX_ULQ_NUM ; que_no ++) {
 					do {
@@ -4954,7 +4954,7 @@ rd2_allowlen_case1_err:
 					}
 				}
 			}
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test passed\n",__FUNCTION__,__LINE__ ));
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN, 2BD test passed\n",__func__,__LINE__ ));
 			
 rd2_allowlen_case2_err:
 			break;
@@ -4965,7 +4965,7 @@ rd2_allowlen_case2_err:
 			rgpd_format.rgpd_allow_len = 0;
 			rgpd_format.rbd_num = 3;
 			
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test start\n",__FUNCTION__,__LINE__ ));			
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test start\n",__func__,__LINE__ ));			
 			for (rbd1_allow_len = 124 ; rbd1_allow_len <= 132 ; rbd1_allow_len += 4) {
 				for (rbd2_allow_len = 252 ; rbd2_allow_len <= 260 ; rbd2_allow_len += 4) {
 					rbd3_allow_len = 2048 - rbd1_allow_len - rbd2_allow_len;
@@ -4973,7 +4973,7 @@ rd2_allowlen_case2_err:
 					rgpd_format.rbd_allow_len[1] = rbd2_allow_len;
 					rgpd_format.rbd_allow_len[2] = rbd3_allow_len;
 					KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 1BD test BD1=%d, BD2=%d, BD3=%d\n",
-												__FUNCTION__,__LINE__ ,rbd1_allow_len, rbd2_allow_len, rbd3_allow_len));
+												__func__,__LINE__ ,rbd1_allow_len, rbd2_allow_len, rbd3_allow_len));
 
 					for (que_no = 0 ; que_no < HIF_MAX_ULQ_NUM ; que_no ++) {
 						do {
@@ -5001,7 +5001,7 @@ rd2_allowlen_case2_err:
 					}
 				}
 			}
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test passed\n",__FUNCTION__,__LINE__ ));
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test passed\n",__func__,__LINE__ ));
             
 rd3_allowlen_case1_err:
             break;
@@ -5012,7 +5012,7 @@ rd3_allowlen_case1_err:
 			rgpd_format.rgpd_allow_len = 0;
 			rgpd_format.rbd_num = 3;
 			
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test start\n",__FUNCTION__,__LINE__ ));			
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test start\n",__func__,__LINE__ ));			
 			for (rbd1_allow_len = 500 ; rbd1_allow_len <= 520 ; rbd1_allow_len += 4) {
 				for (rbd2_allow_len = 1000 ; rbd2_allow_len <= 1048 ; rbd2_allow_len += 4) {
 					rbd3_allow_len = 2048 - rbd1_allow_len - rbd2_allow_len;
@@ -5020,7 +5020,7 @@ rd3_allowlen_case1_err:
 					rgpd_format.rbd_allow_len[1] = rbd2_allow_len;
 					rgpd_format.rbd_allow_len[2] = rbd3_allow_len;
 					KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 1BD test BD1=%d, BD2=%d, BD3=%d\n",
-												__FUNCTION__,__LINE__ ,rbd1_allow_len, rbd2_allow_len, rbd3_allow_len));
+												__func__,__LINE__ ,rbd1_allow_len, rbd2_allow_len, rbd3_allow_len));
 
 					for (que_no = 0 ; que_no < HIF_MAX_ULQ_NUM ; que_no ++) {
 						do {
@@ -5048,7 +5048,7 @@ rd3_allowlen_case1_err:
 					}
 				}
 			}
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test passed\n",__FUNCTION__,__LINE__ ));
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_3RBD_ALLOW_LEN, 3BD test passed\n",__func__,__LINE__ ));
 			
 rd3_allowlen_case2_err:
 			break;
@@ -5060,7 +5060,7 @@ rd3_allowlen_case2_err:
 			rgpd_format.rgpd_allow_len = 0;
 			rgpd_format.rbd_num = 2;
 			
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN_STRESS, 2BD test start\n",__FUNCTION__,__LINE__ ));			
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN_STRESS, 2BD test start\n",__func__,__LINE__ ));			
 			tmp = 0;
 			while (loop) {
 				tmp += 4;
@@ -5068,7 +5068,7 @@ rd3_allowlen_case2_err:
 				rbd2_allow_len = 2048 - rbd1_allow_len; // 2044~4
 				rgpd_format.rbd_allow_len[0] = rbd1_allow_len;
 				rgpd_format.rbd_allow_len[1] = rbd2_allow_len;
-				KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN_STRESS,loop=%d, 1BD test BD1=%d, BD2=%d\n",__FUNCTION__,__LINE__ ,loop,rbd1_allow_len, rbd2_allow_len));
+				KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN_STRESS,loop=%d, 1BD test BD1=%d, BD2=%d\n",__func__,__LINE__ ,loop,rbd1_allow_len, rbd2_allow_len));
 				for (que_no = 0 ; que_no < HIF_MAX_ULQ_NUM ; que_no ++) {
 					do {
 						if (ret = f_ul_rgpd_allow_len_tst(que_no ,&rgpd_format, sizeof(AT_PKT_HEADER), 20) != RET_SUCCESS)
@@ -5098,7 +5098,7 @@ rd3_allowlen_case2_err:
 				loop --;
 			}
 
-			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN_STRESS, 2BD test passed\n",__FUNCTION__,__LINE__ ));
+			KAL_DBGPRINT(KAL, DBG_ERROR,("[%s : %d] ATCASE_2RBD_ALLOW_LEN_STRESS, 2BD test passed\n",__func__,__LINE__ ));
 			
 			break;
 		default:
@@ -5132,7 +5132,7 @@ static int t_dev_small_pkt_loopback(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -5213,7 +5213,7 @@ static int t_dev_misalign_loopback(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -5295,12 +5295,12 @@ static int t_dev_misalign_loopback(int argc, char** argv)
 	        for(pkt_num=10; pkt_num<=20; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -5394,7 +5394,7 @@ static int t_dev_network_loopback(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -5463,12 +5463,12 @@ static int t_dev_network_loopback(int argc, char** argv)
 	        for(pkt_num=10; pkt_num<=20; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -5553,7 +5553,7 @@ static int t_dev_rand_enqueue_loopback(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -5630,12 +5630,12 @@ static int t_dev_rand_enqueue_loopback(int argc, char** argv)
 	        for(pkt_num=10; pkt_num<=20; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -5717,7 +5717,7 @@ static int t_dev_tx_big_packet(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     
@@ -5784,7 +5784,7 @@ static int t_dev_tx_big_packet(int argc, char** argv)
                     expect_num = 0;
             
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=3 ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz));
+                        __func__, test_que_no, pkt_sz));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                      expect_num++;
                     ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
@@ -5793,7 +5793,7 @@ static int t_dev_tx_big_packet(int argc, char** argv)
                      expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         return ret;
 				    }
@@ -5887,7 +5887,7 @@ static int t_dev_rx_big_packet(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     
@@ -6562,12 +6562,12 @@ static int t_dev_dl_fifolen_overflow_err(int argc, char** argv)
 
         if ( (device_int_st->DL0_INTR_Status & 0x1<<(24+test_que_no)) == 0 ) {
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] DL LENFIFO Overflow ERR interrupt check fail, q_num=%d !\n"
-                                                ,__FUNCTION__,__LINE__, test_que_no));
+                                                ,__func__,__LINE__, test_que_no));
             ret = RET_FAIL;
             return ret;
         } else {
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] DL LENFIFO Overflow interrupt check success, q_num=%d !\n"
-                                                ,__FUNCTION__,__LINE__, test_que_no));
+                                                ,__func__,__LINE__, test_que_no));
         }  
 
         cmd.cmd = SDIO_AT_RESET_DL_QUEUE;
@@ -6872,7 +6872,7 @@ static int t_dev_perf(int argc, char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	/*set default compare mode*/
@@ -7535,10 +7535,10 @@ static int t_dev_ulq_random_stop(int argc, char** argv)
 	        for(pkt_num=20; pkt_num<=20; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -7576,10 +7576,10 @@ static int t_dev_ulq_random_stop(int argc, char** argv)
 	        for(pkt_num=20; pkt_num<=20; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -7627,7 +7627,7 @@ static int t_dev_dlq_random_stop(int argc, char** argv)
 				dl_cfg.tgpd_format.tbd_num = 0;
 				ret = sdio_dl_npkt(&dl_cfg);
 				if (ret != RET_SUCCESS) {
-                    KAL_DBGPRINT(KAL, DBG_WARN,("[%s] receiving DL packet fail, the DLQ random stop test will not start !\n",__FUNCTION__));
+                    KAL_DBGPRINT(KAL, DBG_WARN,("[%s] receiving DL packet fail, the DLQ random stop test will not start !\n",__func__));
                     return RET_FAIL;
 				}
                 
@@ -7654,7 +7654,7 @@ static int t_dev_dlq_random_stop(int argc, char** argv)
 				dl_cfg.tgpd_format.tbd_num = 0;
 				ret = sdio_dl_npkt(&dl_cfg);
 				if (ret != RET_SUCCESS) {
-                    KAL_DBGPRINT(KAL, DBG_WARN,("[%s] receiving DL packet fail during DLQ random stop test !!\n",__FUNCTION__));
+                    KAL_DBGPRINT(KAL, DBG_WARN,("[%s] receiving DL packet fail during DLQ random stop test !!\n",__func__));
                     return RET_FAIL;
 				}
                 
@@ -7702,7 +7702,7 @@ static int t_dev_ul_allowlen_error(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     cmd.cmd = ATHIF_CMD_SET_FWD_MD;
@@ -7811,14 +7811,14 @@ static int t_dev_ul_allowlen_error(int argc, char** argv)
                     
 					ret = sdio_send_pkt(q_num, normal_sz , q_num, 0);
 					if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
 					}
 
 					if (recv_th_rslt != RET_SUCCESS) {
-						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 						ret = RET_FAIL;
 						break;
 					}			
@@ -7828,10 +7828,10 @@ static int t_dev_ul_allowlen_error(int argc, char** argv)
 					/*wait loopback data*/
 					ret = f_wait_recv_pkt_cnt(normal_pkt_cnt , 10000);
 					if (ret != RET_SUCCESS) {
-						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __FUNCTION__));
+						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __func__));
 					}
 					if (recv_th_rslt != RET_SUCCESS) {
-						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 						ret = RET_FAIL;					
 					}
 					recv_th_rslt = RET_SUCCESS;
@@ -7851,7 +7851,7 @@ static int t_dev_ul_allowlen_error(int argc, char** argv)
 
             device_int_st = (hifsdio_isr_status_t *)athif_result_save_t->buf;
             if( (device_int_st->UL0_INTR_Status & 0xFFFFFF00) !=0){
-                KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d][ERR] UL INT has some error before test !!\n", __FUNCTION__,__LINE__));
+                KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d][ERR] UL INT has some error before test !!\n", __func__,__LINE__));
                 ret = RET_FAIL;
                 return RET_FAIL;
             }
@@ -7873,7 +7873,7 @@ static int t_dev_ul_allowlen_error(int argc, char** argv)
 
                 device_int_st = (hifsdio_isr_status_t *)athif_result_save_t->buf;
                 if( (device_int_st->UL0_INTR_Status & ORG_SDIO_TXQ_LEN_ERR(q_num) ) ==0){
-                    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d][ERR] UL LEN ERR INT has not occur at que%d test_idx=%d!!\n", __FUNCTION__,__LINE__, q_num, tst_idx));
+                    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d][ERR] UL LEN ERR INT has not occur at que%d test_idx=%d!!\n", __func__,__LINE__, q_num, tst_idx));
 				    ret = RET_FAIL;
                     return RET_FAIL;
                 }
@@ -7957,7 +7957,7 @@ static int t_dev_dl_len_error(int argc, char** argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
     
     //for (tst_idx = 0 ; tst_idx < 8 ; tst_idx ++) { 
@@ -7996,7 +7996,7 @@ static int t_dev_dl_len_error(int argc, char** argv)
 
             device_int_st = (hifsdio_isr_status_t *)athif_result_save_t->buf;
             if( (device_int_st->DL1_INTR_Status & 0x0000FF00) !=0){
-                KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d][ERR] DL INT has some error before test !!\n", __FUNCTION__,__LINE__));
+                KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d][ERR] DL INT has some error before test !!\n", __func__,__LINE__));
 				ret = RET_FAIL;
             }
                
@@ -8102,12 +8102,12 @@ static int t_dev_dl_len_error(int argc, char** argv)
 					/*wait loopback data*/
 					ret = f_wait_recv_pkt_cnt(normal_pkt_cnt , 10000);
 					if (ret != RET_SUCCESS) {
-						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __FUNCTION__));
+						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] f_wait_recv_pkt_cnt timeout\n", __func__));
                         ret = RET_FAIL;
                         return ret;
 					}
 					if (recv_th_rslt != RET_SUCCESS) {
-						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __FUNCTION__));
+						KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] recv thread report fail\n", __func__));
 						ret = RET_FAIL;	
                         return ret;
 					}
@@ -8134,22 +8134,22 @@ static int t_dev_dl_len_error(int argc, char** argv)
             if (err_pkt) {
                 if ( (device_int_st->DL1_INTR_Status & 0x1<<(8+q_num)) ==0 ) {
                     KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] DL LEN ERR interrupt check fail, q_num=%d, tst_idx=%d !\n"
-                                                        ,__FUNCTION__,__LINE__, q_num, tst_idx));
+                                                        ,__func__,__LINE__, q_num, tst_idx));
                     ret = RET_FAIL;
                     return ret;
                 } else {
                     KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] DL LEN ERR interrupt check success, q_num=%d, tst_idx=%d !\n"
-                                                        ,__FUNCTION__,__LINE__, q_num, tst_idx));
+                                                        ,__func__,__LINE__, q_num, tst_idx));
                 }      
             }else {         
                 if ( (device_int_st->DL1_INTR_Status & 0x0000FF00) !=0) {
                     KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] DL LEN ERR interrupt check fail, q_num=%d, tst_idx=%d !\n"
-                                                            ,__FUNCTION__,__LINE__, q_num, tst_idx));
+                                                            ,__func__,__LINE__, q_num, tst_idx));
                     ret = RET_FAIL;
                     return ret;
                 } else {
                     KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s:%d] DL LEN ERR interrupt check success, q_num=%d, tst_idx=%d !\n"
-                                                            ,__FUNCTION__,__LINE__, q_num, tst_idx));
+                                                            ,__func__,__LINE__, q_num, tst_idx));
                 }      
             }
 
@@ -8270,7 +8270,7 @@ static int t_dev_bypass_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	for(test_que_no=0; test_que_no<HIF_MAX_ULQ_NUM; test_que_no++){
@@ -8278,12 +8278,12 @@ static int t_dev_bypass_lb(int argc , char **argv)
 	        for(pkt_num=arg[2]; pkt_num<=arg[3]; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -8293,7 +8293,7 @@ static int t_dev_bypass_lb(int argc , char **argv)
             }
             // test debug
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                        __FUNCTION__, test_que_no, pkt_sz));
+                        __func__, test_que_no, pkt_sz));
 	    }
 	}
 
@@ -8372,7 +8372,7 @@ static int t_dev_txrx_bypass(int argc, char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -8475,7 +8475,7 @@ static int t_dev_txrx_cs_err(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -8627,7 +8627,7 @@ static int t_dev_tcm_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	for(test_que_no=0; test_que_no<HIF_MAX_ULQ_NUM; test_que_no++){
@@ -8635,12 +8635,12 @@ static int t_dev_tcm_lb(int argc , char **argv)
 	        for(pkt_num=arg[2]; pkt_num<=arg[3]; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -8650,7 +8650,7 @@ static int t_dev_tcm_lb(int argc , char **argv)
             }
             // test debug
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                        __FUNCTION__, test_que_no, pkt_sz));
+                        __func__, test_que_no, pkt_sz));
 	    }
 	}
 
@@ -8765,7 +8765,7 @@ static int t_dev_tcm_misalign_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 	for(test_que_no=0; test_que_no<HIF_MAX_ULQ_NUM; test_que_no++){
@@ -8773,12 +8773,12 @@ static int t_dev_tcm_misalign_lb(int argc , char **argv)
 	        for(pkt_num=arg[2]; pkt_num<=arg[3]; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -8788,7 +8788,7 @@ static int t_dev_tcm_misalign_lb(int argc , char **argv)
             }
             // test debug
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                        __FUNCTION__, test_que_no, pkt_sz));
+                        __func__, test_que_no, pkt_sz));
 	    }
 	}
 
@@ -8851,7 +8851,7 @@ static int t_dev_atcmd_data_interleave_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		//translate number string to value
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
     
 
@@ -8913,12 +8913,12 @@ static int t_dev_atcmd_data_interleave_lb(int argc , char **argv)
 	        for(pkt_num=arg[2]; pkt_num<=arg[3]; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    //send packet fail and retry
                         idx --;
                         return ret;
@@ -8950,7 +8950,7 @@ static int t_dev_atcmd_data_interleave_lb(int argc , char **argv)
             }
             // test debug
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-                        __FUNCTION__, test_que_no, pkt_sz));
+                        __func__, test_que_no, pkt_sz));
 	    }
 	}
 
@@ -9022,7 +9022,7 @@ static int t_dev_stress_random_lb(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		//translate number string to value
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
     
 
@@ -9109,12 +9109,12 @@ static int t_dev_stress_random_lb(int argc , char **argv)
                 now_size = (now_size % (target_size_max - target_size_min) ) + target_size_min;
                 transferdata += now_size;
                 
-                //KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pkt size this time = %d !\n",__FUNCTION__, now_size));    
+                //KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] pkt size this time = %d !\n",__func__, now_size));    
 				ret = sdio_send_pkt(test_que_no, now_size, 0, 0);
                 expect_num++;
                 
 				if (ret != RET_SUCCESS) {
-				    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+				    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 				    //send packet fail and retry
                     idx --;
                     return ret;
@@ -9145,7 +9145,7 @@ static int t_dev_stress_random_lb(int argc , char **argv)
 			}
                 
             // test debug
-            //KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s]transfered pkt at que=%d, pkt_num=%d\n",  __FUNCTION__, test_que_no, now_pktnum));
+            //KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s]transfered pkt at que=%d, pkt_num=%d\n",  __func__, test_que_no, now_pktnum));
         }
 
         // exam the packet num which receive.
@@ -9161,7 +9161,7 @@ static int t_dev_stress_random_lb(int argc , char **argv)
             }
             old_pkt_cnt = recv_total_pkt_cnt;
 
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] loop %d is finished\n",  __FUNCTION__, now_big_loop));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] loop %d is finished\n",  __func__, now_big_loop));
         }
 
         jiffies_to_timespec(jiffies , &end_t);
@@ -9170,9 +9170,9 @@ static int t_dev_stress_random_lb(int argc , char **argv)
 		diff_ms += (diff_t.tv_nsec / 1000000);
  		performance = ((unsigned int)transferdata / (unsigned int)diff_ms);
 
-		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __FUNCTION__, performance ));
-		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __FUNCTION__, transferdata));
-		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __FUNCTION__, diff_ms));
+		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] performance = %d KBPS\n", __func__, performance ));
+		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] transfered data=%u\n", __func__, transferdata));
+		KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] diff_ms=%u\n", __func__, diff_ms));
         
 	}
 
@@ -9220,7 +9220,7 @@ static int t_dev_brom_sync_test(int argc , char **argv)
         timeout++;
         KAL_SLEEP_MSEC(1) ;
         if (timeout > 100){
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout at step1 0x88887208!! \n", __FUNCTION__));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout at step1 0x88887208!! \n", __func__));
     	    return RET_FAIL;
         }
         test_d2h_mailbox_rd(0, &rd_val);
@@ -9234,7 +9234,7 @@ static int t_dev_brom_sync_test(int argc , char **argv)
         timeout++;
         KAL_SLEEP_MSEC(1) ;
         if (timeout > 100){
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout step2 0x00000000!! \n", __FUNCTION__));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout step2 0x00000000!! \n", __func__));
     	    return RET_FAIL;
         }
         test_d2h_mailbox_rd(0, &rd_val);
@@ -9267,7 +9267,7 @@ static int t_dev_brom_sync_test_new(int argc , char **argv)
         timeout++;
         KAL_SLEEP_MSEC(1) ;
         if (timeout > 100){
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout at step1 0x59474442!! \n", __FUNCTION__));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout at step1 0x59474442!! \n", __func__));
     	    return RET_FAIL;
         }
         test_d2h_mailbox_rd(0, &rd_val);
@@ -9281,7 +9281,7 @@ static int t_dev_brom_sync_test_new(int argc , char **argv)
         timeout++;
         KAL_SLEEP_MSEC(1) ;
         if (timeout > 100){
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout step2 0x00000000!! \n", __FUNCTION__));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout step2 0x00000000!! \n", __func__));
     	    return RET_FAIL;
         }
         test_d2h_mailbox_rd(0, &rd_val);
@@ -9305,7 +9305,7 @@ static int t_dev_brom_sync_timeout_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -9323,7 +9323,7 @@ static int t_dev_brom_sync_timeout_test(int argc , char **argv)
         timeout++;
         KAL_SLEEP_MSEC(1) ;
         if (timeout > 100){
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout at step1 0x59474442!! \n", __FUNCTION__));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom sync timeout at step1 0x59474442!! \n", __func__));
     	    return RET_FAIL;
         }
         test_d2h_mailbox_rd(0, &rd_val);
@@ -9352,7 +9352,7 @@ static int t_dev_brom_lb_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     mtlte_hif_sdio_enable_fw_own_back(0);
@@ -9407,7 +9407,7 @@ static int t_dev_brom_ioctl_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     ret = RET_SUCCESS;
@@ -9514,7 +9514,7 @@ static int t_dev_brom_ioctl_test(int argc , char **argv)
     
         ret = brom_write_pkt(BROM_ULQ, data_length, brom_io_buf);
     	if (ret != data_length) {
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom write pkt fail!! data_len=%d  return=%d  \n", __FUNCTION__, data_length, ret));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom write pkt fail!! data_len=%d  return=%d  \n", __func__, data_length, ret));
     	    return RET_FAIL;
     	}
     
@@ -9533,7 +9533,7 @@ static int t_dev_brom_ioctl_test(int argc , char **argv)
                 KAL_SLEEP_MSEC(1) ;
                 timeout++;
                 if(timeout > 100){
-                    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom read pkt timeout!! data_len=%d  now len=%d  \n", __FUNCTION__, data_length, total_read_len));
+                    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom read pkt timeout!! data_len=%d  now len=%d  \n", __func__, data_length, total_read_len));
     	            return RET_FAIL;
     	        }
                 
@@ -9594,7 +9594,7 @@ static int t_dev_brom_sync_test_xboot(int argc , char **argv)
         timeout++;
         KAL_SLEEP_MSEC(1) ;
         if (timeout > 100){
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom xboot sync timeout at step1 0x53444254!! \n", __FUNCTION__));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom xboot sync timeout at step1 0x53444254!! \n", __func__));
     	    return RET_FAIL;
         }
         test_d2h_mailbox_rd(0, &rd_val);
@@ -9603,7 +9603,7 @@ static int t_dev_brom_sync_test_xboot(int argc , char **argv)
     timeout_for_device = 200;
     wr_val = SDIOMB_BOOT_ACK_MAGIC | timeout_for_device;
     test_h2d_mailbox_wr(0, &wr_val);
-    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom xboot sync success!! \n", __FUNCTION__));
+    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom xboot sync success!! \n", __func__));
 
     mtlte_hif_sdio_enable_fw_own_back(1);
     return RET_SUCCESS;
@@ -9632,7 +9632,7 @@ static int brom_sync_xboot_no_timeout(void)
     wr_val = SDIOMB_BOOT_ACK_MAGIC | timeout_for_device;
     test_h2d_mailbox_wr(0, &wr_val);
 
-    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom xboot sync success with upper call!! \n", __FUNCTION__));
+    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom xboot sync success with upper call!! \n", __func__));
 
     mtlte_hif_sdio_enable_fw_own_back(1);
     return RET_SUCCESS;
@@ -9699,7 +9699,7 @@ static int t_dev_brom_dl_timeout_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     ret = RET_SUCCESS;
@@ -9729,11 +9729,11 @@ static int t_dev_brom_dl_timeout_test(int argc , char **argv)
     
         ret = brom_write_pkt(BROM_ULQ, data_length, brom_io_buf);
     	if (ret != data_length) {
-            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom write pkt fail!! data_len=%d  return=%d  \n", __FUNCTION__, data_length, ret));
+            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] brom write pkt fail!! data_len=%d  return=%d  \n", __func__, data_length, ret));
     	    return RET_FAIL;
     	}
 
-        KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Now wait and check whether device output error code of send timout?  \n", __FUNCTION__));
+        KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Now wait and check whether device output error code of send timout?  \n", __func__));
     
 
     /*restore pattern mode*/
@@ -9821,7 +9821,7 @@ static int t_dev_rx_pkt_cnt_change_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     sdio_func1_rd(SDIO_IP_WHCR, &orig_WHCR, 4);
@@ -9876,12 +9876,12 @@ static int t_dev_rx_pkt_cnt_change_test(int argc , char **argv)
                 	for(test_que_no=0; test_que_no<HIF_MAX_ULQ_NUM; test_que_no++){
 			            for (idx = 0 ; idx < pkt_num ; idx ++) {
                             KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                                __FUNCTION__, test_que_no, pkt_sz, idx));
+                                __func__, test_que_no, pkt_sz, idx));
 				            ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                             expect_num++;
                     
 				            if (ret != RET_SUCCESS) {
-					            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					            /*send packet fail and retry*/
                                 idx --;
                                 return ret;
@@ -9893,7 +9893,7 @@ static int t_dev_rx_pkt_cnt_change_test(int argc , char **argv)
                     
                     // test debug
                     KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passed of pkt_size=%d, pkt_num=%d \n", \
-                            __FUNCTION__, pkt_sz, pkt_num));
+                            __func__, pkt_sz, pkt_num));
 	            }
 	        }
 
@@ -10228,7 +10228,7 @@ static int t_dev_set_max_rx_pkt(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
     
     // temp set rx report length
@@ -10351,7 +10351,7 @@ static int t_dev_max_rx_pkt_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     sdio_func1_rd(SDIO_IP_WHCR, &orig_WHCR, 4);
@@ -10421,12 +10421,12 @@ static int t_dev_max_rx_pkt_test(int argc , char **argv)
                 	for(test_que_no=0; test_que_no<HIF_MAX_ULQ_NUM; test_que_no++){
 			            for (idx = 0 ; idx < pkt_num ; idx ++) {
                             KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                                __FUNCTION__, test_que_no, pkt_sz, idx));
+                                __func__, test_que_no, pkt_sz, idx));
 				            ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                             expect_num++;
                     
 				            if (ret != RET_SUCCESS) {
-					            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					            KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					            /*send packet fail and retry*/
                                 idx --;
                                 return ret;
@@ -10438,7 +10438,7 @@ static int t_dev_max_rx_pkt_test(int argc , char **argv)
                     
                     // test debug
                     KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passed of pkt_size=%d, pkt_num=%d \n", \
-                            __FUNCTION__, pkt_sz, pkt_num));
+                            __func__, pkt_sz, pkt_num));
 	            }
 	        }
 
@@ -10518,7 +10518,7 @@ static int t_dev_set_wd_reset(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     cmd.cmd = SDIO_AT_WD_RESET;
@@ -10558,7 +10558,7 @@ static int t_dev_device_self_sleep(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     cmd.cmd = SDIO_AT_SELF_SLEEP;
@@ -10590,7 +10590,7 @@ static int t_dev_device_wake_event_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     if(0 == arg[0]){
@@ -10783,7 +10783,7 @@ static int t_dev_device_set_wake_eint(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     cmd.cmd = SDIO_AT_SET_WAKEUP_EINT;
@@ -10805,7 +10805,7 @@ static int t_dev_kal_msec_sleep(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     KAL_SLEEP_MSEC(arg[0]);
@@ -10828,7 +10828,7 @@ static int t_dev_enable_auto_sleep(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
 
@@ -10867,33 +10867,33 @@ void test_exception_callback(KAL_UINT32 msgid)
     {
         //sdio_test_option.auto_receive_pkt = false;
         KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Exception phase %d !! Packet received right now = %d \n", \
-                        __FUNCTION__, msgid, recv_total_pkt_cnt));
+                        __func__, msgid, recv_total_pkt_cnt));
 
         recv_total_pkt_cnt = 0;
     }
     else if(msgid == EX_DHL_DL_RDY)
     {
         KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Exception phase %d !! \n", \
-                        __FUNCTION__, msgid));
+                        __func__, msgid));
         
         if(0 != recv_total_pkt_cnt)
         {
             KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Error !! DL Packet transfer to upper layer at Exception phase %d \n", \
-                        __FUNCTION__, EX_DHL_DL_RDY));
+                        __func__, EX_DHL_DL_RDY));
         }
         //sdio_test_option.auto_receive_pkt = true;
     }
     else if(msgid == EX_INIT_DONE)
     {
         KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Exception phase %d !! Packet received duing phase 1 = %d \n", \
-                        __FUNCTION__, msgid, recv_total_pkt_cnt));
+                        __func__, msgid, recv_total_pkt_cnt));
 
         recv_total_pkt_cnt = 0;
     }
     else
     {
         KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Exception phase ERROR !! now phase = %d \n", \
-                        __FUNCTION__, msgid));
+                        __func__, msgid));
     }
 
     test_exception_msgid = msgid;
@@ -10925,7 +10925,7 @@ static int t_dev_exception_dump_test(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 		/*translate number string to value*/
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     non_stopq = arg[0];
@@ -10982,12 +10982,12 @@ static int t_dev_exception_dump_test(int argc , char **argv)
 	        for(pkt_num=10; pkt_num<=10; pkt_num++){
 			    for (idx = 0 ; idx < pkt_num ; idx ++) {
                     KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                        __FUNCTION__, test_que_no, pkt_sz, idx));
+                        __func__, test_que_no, pkt_sz, idx));
 				    ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
                     expect_num++;
                     
 				    if (ret != RET_SUCCESS) {
-					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+					    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
 					    /*send packet fail and retry*/
                         idx --;
                         return ret;
@@ -10996,12 +10996,12 @@ static int t_dev_exception_dump_test(int argc , char **argv)
             }
             // test debug
             //KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Passe of que=%d, pkt_size=%d\n", \
-            //            __FUNCTION__, test_que_no, pkt_sz));
+            //            __func__, test_que_no, pkt_sz));
 	    }
     }
 
     KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Each que sent %d packets, Total sent packet number before exception = %d\n", \
-                        __FUNCTION__, expect_num/HIF_MAX_ULQ_NUM, expect_num));
+                        __func__, expect_num/HIF_MAX_ULQ_NUM, expect_num));
 
 
     if(KAL_SUCCESS != sdio_func1_rd(SDIO_IP_WHIER, &int_temp_mask, 4)) return RET_FAIL;
@@ -11051,12 +11051,12 @@ static int t_dev_exception_dump_test(int argc , char **argv)
         {
         
             KAL_DBGPRINT(KAL, DBG_TRACE, ("[%s] sending in que=%d, pkt_size=%d, pkt_num=%d ...\n", \
-                            __FUNCTION__, test_que_no, pkt_sz, idx));
+                            __func__, test_que_no, pkt_sz, idx));
     		ret = sdio_send_pkt(test_que_no, pkt_sz, 0, 0);
             expect_num++;
 
             if (ret != RET_SUCCESS) {
-    		    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__FUNCTION__));
+    		    KAL_DBGPRINT(KAL, DBG_ERROR, ("[%s] Tx basic test fail at sent pkt !\n",__func__));
     		    /*send packet fail and retry*/
                 return ret;
     		} 
@@ -11101,7 +11101,7 @@ static int t_dev_set_abnormal_stall(int argc , char **argv)
 	for (idx = 1 ; idx < argc ; idx ++) {
 
 		arg[idx-1] = str_to_int(argv[idx]);
-		printk(KERN_ERR "[%s] param[%d] = %d\n",__FUNCTION__,idx-1, arg[idx-1]);
+		printk(KERN_ERR "[%s] param[%d] = %d\n",__func__,idx-1, arg[idx-1]);
 	}
 
     if(1 == arg[0]){

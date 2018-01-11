@@ -1857,7 +1857,7 @@ static int tpd_local_init(void)
     boot_mode = get_boot_mode();
     //if (boot_mode == 3) boot_mode = NORMAL_BOOT;		//No need
     input_set_abs_params(tpd->dev, ABS_MT_TRACKING_ID, 0, (10-1), 0, 0);
-    TPD_DMESG("end %s, %d\n", __FUNCTION__, __LINE__);
+    TPD_DMESG("end %s, %d\n", __func__, __LINE__);
     tpd_type_cap = 1;
     return 0;
  }

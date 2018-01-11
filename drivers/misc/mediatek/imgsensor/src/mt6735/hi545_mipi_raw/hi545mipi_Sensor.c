@@ -45,7 +45,7 @@ extern void kdSetI2CSpeed(u32 i2cSpeed);
 #define LOG_2 LOG_INF("preview 1296*972@30fps; video 1296*972@30fps; capture 5M@30fps\n")
 /****************************   Modify end    *******************************************/
 
-#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __FUNCTION__, ##args)
+#define LOG_INF(format, args...)    pr_debug(PFX "[%s] " format, __func__, ##args)
 
 #define USE_I2C_400K    1
 

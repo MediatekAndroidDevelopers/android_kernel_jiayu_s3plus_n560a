@@ -6,7 +6,7 @@
 #define I2CLOG(fmt, arg...)	printk(KERN_ERR I2CTAG fmt, ##arg)
 #define I2CMSG(fmt, arg...)	printk(fmt, ##arg)
 #define I2CERR(fmt, arg...)	printk(KERN_ERR I2CTAG "ERROR,%d: "fmt, __LINE__, ##arg)
-#define I2CFUC(fmt, arg...)	printk(I2CTAG "%s\n", __FUNCTION__)
+#define I2CFUC(fmt, arg...)	printk(I2CTAG "%s\n", __func__)
 
 #define I2C_DRV_NAME		"mt-i2c"
 #define I2C_NR			4

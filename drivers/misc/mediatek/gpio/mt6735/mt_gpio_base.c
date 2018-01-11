@@ -70,7 +70,7 @@ int mt_set_gpio_dir_base(unsigned long pin, unsigned long dir)
         GPIO_SET_BITS((1L << bit), DIR_addr[pin].addr+4);
 #endif
     
-   // GPIOERR("%s:pin:%ld, dir:%ld, value:0x%x\n",__FUNCTION__, pin, dir, GPIO_RD32(DIR_addr[pin].addr));
+   // GPIOERR("%s:pin:%ld, dir:%ld, value:0x%x\n",__func__, pin, dir, GPIO_RD32(DIR_addr[pin].addr));
     return RSUCCESS;
 }
 /*---------------------------------------------------------------------------*/
@@ -124,7 +124,7 @@ int mt_set_gpio_pull_enable_base(unsigned long pin, unsigned long enable)
 	        GPIO_SET_BITS((1L << (PULLEN_offset[pin].offset)), PULLEN_addr[pin].addr + 4);
     }
 #endif
-    //GPIOERR("%s:pin:%ld, enable:%ld, value:0x%x\n",__FUNCTION__, pin, enable, GPIO_RD32(PULLEN_addr[pin].addr));
+    //GPIOERR("%s:pin:%ld, enable:%ld, value:0x%x\n",__func__, pin, enable, GPIO_RD32(PULLEN_addr[pin].addr));
     
     return RSUCCESS;
 }
@@ -191,7 +191,7 @@ int mt_set_gpio_smt_base(unsigned long pin, unsigned long enable)
     }
 #endif
 
-    //GPIOERR("%s:pin:%ld, enable:%ld, value:0x%x\n",__FUNCTION__, pin, enable, GPIO_RD32(SMT_addr[pin].addr));
+    //GPIOERR("%s:pin:%ld, enable:%ld, value:0x%x\n",__func__, pin, enable, GPIO_RD32(SMT_addr[pin].addr));
 
     return RSUCCESS;
 }
@@ -365,7 +365,7 @@ int mt_set_gpio_pull_select_base(unsigned long pin, unsigned long select)
   
     }
 #endif
-//    GPIOERR("%s:pin:%ld, select:%ld, value:0x%x\n",__FUNCTION__, pin, select, GPIO_RD32(PULL_addr[pin].addr));
+//    GPIOERR("%s:pin:%ld, select:%ld, value:0x%x\n",__func__, pin, select, GPIO_RD32(PULL_addr[pin].addr));
 
     return RSUCCESS;
 }
@@ -458,7 +458,7 @@ int mt_set_gpio_out_base(unsigned long pin, unsigned long output)
         GPIO_SET_BITS((1L << bit), DATAOUT_addr[pin].addr+4);
 #endif
 
-    //GPIOERR("%s:pin:%ld, output:%ld, value:0x%x\n",__FUNCTION__, pin, output, GPIO_RD32(DATAOUT_addr[pin].addr));
+    //GPIOERR("%s:pin:%ld, output:%ld, value:0x%x\n",__func__, pin, output, GPIO_RD32(DATAOUT_addr[pin].addr));
 
     return RSUCCESS;
 }
@@ -540,7 +540,7 @@ int mt_set_gpio_mode_base(unsigned long pin, unsigned long mode)
 
 	
 #endif
-    GPIOERR("%s:pin:%ld, mode:%ld, value:0x%x\n",__FUNCTION__, pin, mode, GPIO_RD32(MODE_addr[pin].addr));
+    GPIOERR("%s:pin:%ld, mode:%ld, value:0x%x\n",__func__, pin, mode, GPIO_RD32(MODE_addr[pin].addr));
 
     return RSUCCESS;
 }
@@ -578,7 +578,7 @@ void get_gpio_vbase(struct device_node *node)
         //gpio_reg = (GPIO_REGS*)(GPIO_BASE);
         GPIOERR("GPIO base add is 0x%p\n",gpio_vbase.gpio_regs);
     }
-    GPIOERR("GPIO base addr is 0x%p, %s\n",gpio_vbase.gpio_regs, __FUNCTION__);
+    GPIOERR("GPIO base addr is 0x%p, %s\n",gpio_vbase.gpio_regs, __func__);
 }
 /*-----------------------User need GPIO APIs before GPIO probe------------------*/
 extern struct device_node *get_gpio_np(void);
@@ -596,7 +596,7 @@ static int __init  get_gpio_vbase_early(void)
         return 0;
     }
     //gpio_reg = (GPIO_REGS*)(GPIO_BASE);
-    GPIOERR("GPIO base addr is 0x%p, %s\n",gpio_vbase.gpio_regs, __FUNCTION__);
+    GPIOERR("GPIO base addr is 0x%p, %s\n",gpio_vbase.gpio_regs, __func__);
     return 0;
 }
 postcore_initcall(get_gpio_vbase_early);

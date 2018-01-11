@@ -1010,7 +1010,7 @@ static int mmc328x_ioctl(struct inode *inode, struct file *file, unsigned int cm
 			break;
 			
 		default:
-			printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			return -ENOIOCTLCMD;
 			break;		
 		}

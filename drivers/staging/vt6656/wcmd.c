@@ -1179,7 +1179,7 @@ void BSSvSecondTxData(struct vnt_private *pDevice)
 	pDevice->nTxDataTimeCout++;
 
 	if (pDevice->nTxDataTimeCout < 4) {   //don't tx data if timer less than 40s
-		// printk("mike:%s-->no data Tx not exceed the desired Time as %d\n",__FUNCTION__,
+		// printk("mike:%s-->no data Tx not exceed the desired Time as %d\n",__func__,
 		//  	(int)pDevice->nTxDataTimeCout);
 		pDevice->sTimerTxData.expires = RUN_AT(10 * HZ);      //10s callback
 		add_timer(&pDevice->sTimerTxData);
@@ -1191,7 +1191,7 @@ void BSSvSecondTxData(struct vnt_private *pDevice)
 	if (((pDevice->bLinkPass == true) &&
 		(pMgmt->eAuthenMode < WMAC_AUTH_WPA)) ||  //open && sharekey linking
 		(pDevice->fWPA_Authened == true)) {   //wpa linking
-		//   printk("mike:%s-->InSleep Tx Data Procedure\n",__FUNCTION__);
+		//   printk("mike:%s-->InSleep Tx Data Procedure\n",__func__);
 		pDevice->fTxDataInSleep = true;
 		PSbSendNullPacket(pDevice);      //send null packet
 		pDevice->fTxDataInSleep = false;

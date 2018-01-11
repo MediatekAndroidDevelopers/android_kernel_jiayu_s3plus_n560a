@@ -178,8 +178,8 @@ static bool enable_status = false;
 #define GYRO_TAG                  "[Gyroscope] "
 
 
-#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __FUNCTION__)
-#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __func__)
+#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define GYRO_LOG(fmt, args...)    printk(KERN_INFO GYRO_TAG fmt, ##args)
 
 
@@ -739,7 +739,7 @@ static int LSM6DS3_gyro_init_client(struct i2c_client *client, bool enable)
 	struct lsm6ds3_gyro_i2c_data *obj = i2c_get_clientdata(client);
 	int res = 0;
 	
-	GYRO_LOG("%s lsm6ds3 addr %x!\n", __FUNCTION__, client->addr);
+	GYRO_LOG("%s lsm6ds3 addr %x!\n", __func__, client->addr);
 	
 	res = LSM6DS3_CheckDeviceID(client);
 	if(res != LSM6DS3_SUCCESS)
@@ -856,7 +856,7 @@ static int lsm6ds3_gyro_get_data(int* x ,int* y,int* z, int* status)
 	}
 	if(atomic_read(&priv->trace) & GYRO_TRC_DATA)
 	{
-		GYRO_LOG("%s (%d),	\n",__FUNCTION__,__LINE__);
+		GYRO_LOG("%s (%d),	\n",__func__,__LINE__);
 	}
 	memset(buff, 0, sizeof(buff));
 	LSM6DS3_ReadGyroData(priv->client, buff, LSM6DS3_BUFSIZE);
@@ -1064,7 +1064,7 @@ static long lsm6ds3_gyro_compat_ioctl(struct file *file, unsigned int cmd, unsig
 			 break;	
 			 
 		 default:
-			 printk(KERN_ERR "%s not supported = 0x%04x", __FUNCTION__, cmd);
+			 printk(KERN_ERR "%s not supported = 0x%04x", __func__, cmd);
 			 return -ENOIOCTLCMD;
 			 break;
 	}
@@ -1549,7 +1549,7 @@ static int lsm6ds3_gyro_local_init(void)
 	}
 	if(lsm6ds3_gyro_init_flag == -1)
 	{
-		GYRO_ERR("%s init failed!\n", __FUNCTION__);
+		GYRO_ERR("%s init failed!\n", __func__);
 		return -1;
 	}
 	return 0;

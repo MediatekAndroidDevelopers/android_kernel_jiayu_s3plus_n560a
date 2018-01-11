@@ -173,13 +173,13 @@ static int nDirection = 0;
 
 /*----------------------------------------------------------------------------*/
 #define GYRO_TAG                  "[Gyroscope] "
-//#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __FUNCTION__)
-//#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+//#define GYRO_FUN(f)               printk(KERN_INFO GYRO_TAG"%s\n", __func__)
+//#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 
 //#define GYRO_LOG(fmt, args...)    printk(KERN_INFO GYRO_TAG fmt, ##args)
 
-#define GYRO_FUN(f)               printk(GYRO_TAG"%s\n", __FUNCTION__)
-#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __FUNCTION__, __LINE__, ##args)
+#define GYRO_FUN(f)               printk(GYRO_TAG"%s\n", __func__)
+#define GYRO_ERR(fmt, args...)    printk(KERN_ERR GYRO_TAG"%s %d : "fmt, __func__, __LINE__, ##args)
 #define GYRO_LOG(fmt, args...)    printk(GYRO_TAG fmt, ##args)
 
 /*----------------------------------------------------------------------------*/
@@ -799,7 +799,7 @@ static ssize_t show_chip_orientation(struct device_driver *ddri, char *buf)
     ssize_t          _tLength = 0;
     struct gyro_hw   *_ptAccelHw = lsm6ds0_get_cust_gyro_hw();
 
-   GYRO_LOG("[%s] default direction: %d\n", __FUNCTION__, _ptAccelHw->direction);
+   GYRO_LOG("[%s] default direction: %d\n", __func__, _ptAccelHw->direction);
 
     _tLength = snprintf(buf, PAGE_SIZE, "%d\n", nDirection);
 
@@ -819,7 +819,7 @@ static ssize_t store_chip_orientation(struct device_driver *ddri, const char *bu
             GYRO_ERR("ERR: fail to set direction\n");
     }
 
-    GYRO_LOG("[%s] set direction: %d\n", __FUNCTION__, nDirection);
+    GYRO_LOG("[%s] set direction: %d\n", __func__, nDirection);
 
     return (tCount);
 }
