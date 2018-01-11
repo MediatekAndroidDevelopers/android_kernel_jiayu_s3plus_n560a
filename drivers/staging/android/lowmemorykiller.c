@@ -147,7 +147,8 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		if (tsk->flags & PF_KTHREAD)
 			continue;
 
-		if (test_task_flag(tsk, TIF_MM_RELEASED))
+		p = find_lock_task_mm(tsk);
+		if (!p)
 			continue;
 
 		if (test_tsk_thread_flag(p, TIF_MEMDIE) &&
