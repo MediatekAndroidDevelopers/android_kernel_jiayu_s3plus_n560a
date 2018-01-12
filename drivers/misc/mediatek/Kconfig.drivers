@@ -463,11 +463,6 @@ config MTK_BT_SUPPORT
 	  When this option set to yes, the MTK Bluetooth solution will be
 	  included.
 
-config MTK_DHCPV6C_WIFI
-	bool "MTK_DHCPV6C_WIFI"
-	help
-	  no: disable this feature
-
 config MTK_WFD_SUPPORT
 	bool "MTK_WFD_SUPPORT"
 	help
