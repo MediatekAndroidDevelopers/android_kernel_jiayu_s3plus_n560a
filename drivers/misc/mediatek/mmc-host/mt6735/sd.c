@@ -9921,7 +9921,7 @@ static int __init mt_msdc_init(void)
 
 	pr_debug(DRV_NAME ": MediaTek MSDC Driver\n");
 
-	msdc_debug_proc_init();
+	//msdc_debug_proc_init();
 #ifdef MSDC_DMA_ADDR_DEBUG
 	msdc_init_dma_latest_address();
 #endif
