@@ -9,7 +9,6 @@ ifneq ($(CONFIG_MTK_GIC),y)
 obj-y   += irq/
 endif
 
-obj-$(CONFIG_MTK_CPU_STRESS)	+= cpu_stress/
 obj-$(CONFIG_MTK_LASTPC)	    += lastpc/
 
 obj-$(CONFIG_MTK_SYSTRACKER)   += systracker/
@@ -70,7 +69,6 @@ obj-$(CONFIG_CUSTOM_KERNEL_BAROMETER) += barometer/
 endif
 #obj-y	+= matv/
 #obj-y	+= touchpanel/
-#obj-y	+= cpu_stress/
 
 obj-$(CONFIG_MTK_VOW_SUPPORT)	+= vow/
 subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include
@@ -176,8 +174,6 @@ obj-y	+= freqhopping/
 obj-y	+= selinux_warning/
 # MTK PASR SW flow
 obj-$(CONFIG_MTKPASR)	+= mtkpasr/
-
-obj-$(CONFIG_MTK_TC1_FEATURE)	+= tc1_interface/
 
 #charge pump
 #obj-y	+= chargepump/
