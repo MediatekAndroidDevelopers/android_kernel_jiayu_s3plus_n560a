@@ -86,14 +86,12 @@ struct work_struct *g_sdio_1v_autok_wk = NULL;
 #endif
 int gConnectivityChipId = -1;
 
-#ifdef MTK_WCN_COMBO_CHIP_SUPPORT
 /*
 * current used uart port name, default is "ttyMT2",
 * will be changed when wmt driver init
 */
 char *wmt_uart_port_desc = "ttyMT2";
 EXPORT_SYMBOL(wmt_uart_port_desc);
-#endif
 
 static void mtk_wcn_cmb_sdio_request_eirq(msdc_sdio_irq_handler_t irq_handler, void *data);
 static void mtk_wcn_cmb_sdio_enable_eirq(void);
@@ -186,7 +184,7 @@ static int mtk_wcn_cmb_stub_drv_status(unsigned int type)
  *
  * \param void
  *
- * \retval int,mt6630 state:0/off,1/power on,2/func on, -1/null
+ * \retval int,mt6630&mt6632 state:0/off,1/power on,2/func on, -1/null
  */
 int mtk_wcn_cmb_stub_1vautok_for_dvfs(void)
 {
@@ -195,16 +193,16 @@ int mtk_wcn_cmb_stub_1vautok_for_dvfs(void)
 	CMB_STUB_LOG_WARN("DVFS driver call sdio 1v autok\n");
 
 	wmt_status = mtk_wcn_cmb_stub_drv_status(4);
-	CMB_STUB_LOG_WARN("current mt6630 status is %d\n", wmt_status);
+	CMB_STUB_LOG_WARN("current mt6630&mt6632 status is %d\n", wmt_status);
 	if (0 == wmt_status) {
 		if (g_sdio_1v_autok_wk)
 			schedule_work(g_sdio_1v_autok_wk);
 		else
 			CMB_STUB_LOG_WARN("g_sdio_1v_autok_wk is NULL\n");
 	} else if ((2 == wmt_status) || (1 == wmt_status)) {
-		CMB_STUB_LOG_WARN("mt6630 is on state,skip AUTOK\n");
+		CMB_STUB_LOG_WARN("mt6630&mt6632 is on state,skip AUTOK\n");
 	} else {
-		CMB_STUB_LOG_WARN("mt6630 is unknown state(%d)\n", wmt_status);
+		CMB_STUB_LOG_WARN("mt6630&mt6632 is unknown state(%d)\n", wmt_status);
 	}
 
 	return wmt_status;
@@ -425,6 +423,7 @@ EXPORT_SYMBOL(mt_combo_plt_exit_deep_idle);
 
 int mtk_wcn_wmt_chipid_query(void)
 {
+	CMB_STUB_LOG_INFO("query current consys chipid (0x%x)\n", gConnectivityChipId);
 	return gConnectivityChipId;
 }
 EXPORT_SYMBOL(mtk_wcn_wmt_chipid_query);
@@ -488,7 +487,7 @@ static void mtk_wcn_cmb_sdio_request_eirq(msdc_sdio_irq_handler_t irq_handler, v
 
 	CMB_STUB_LOG_INFO("enter %s\n", __func__);
 	mtk_wcn_sdio_irq_flag_set(0);
-	atomic_set(&irq_enable_flag, 0);
+	atomic_set(&irq_enable_flag, 1);
 	mtk_wcn_cmb_sdio_eirq_data = data;
 	mtk_wcn_cmb_sdio_eirq_handler = irq_handler;
 
@@ -566,7 +565,7 @@ int board_sdio_ctrl(unsigned int sdio_port_num, unsigned int on)
 	CMB_STUB_LOG_DBG("mt_mtk_wcn_cmb_sdio_ctrl (%d, %d)\n", sdio_port_num, on);
 	if (on) {
 #if 1
-		CMB_STUB_LOG_INFO("board_sdio_ctrl force off before on\n");
+		CMB_STUB_LOG_DBG("board_sdio_ctrl force off before on\n");
 		mtk_wcn_cmb_sdio_off(sdio_port_num);
 #else
 		CMB_STUB_LOG_WARN("skip sdio off before on\n");

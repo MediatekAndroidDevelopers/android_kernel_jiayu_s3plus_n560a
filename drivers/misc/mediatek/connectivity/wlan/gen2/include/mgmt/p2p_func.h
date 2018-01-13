@@ -1,22 +1,33 @@
+/*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
+*/
+
 #ifndef _P2P_FUNC_H
 #define _P2P_FUNC_H
+
+#define P2P_EXT_LISTEN_TIME_MS                               600
+#define P2P_OFF_CHNL_TX_DEFAULT_TIME_MS                      1000
 
 VOID p2pFuncRequestScan(IN P_ADAPTER_T prAdapter, IN P_P2P_SCAN_REQ_INFO_T prScanReqInfo);
 
 VOID p2pFuncCancelScan(IN P_ADAPTER_T prAdapter, IN P_P2P_SCAN_REQ_INFO_T prScanReqInfo);
 
-VOID
-p2pFuncStartGO(IN P_ADAPTER_T prAdapter,
-	       IN P_BSS_INFO_T prBssInfo,
-	       IN PUINT_8 pucSsidBuf,
-	       IN UINT_8 ucSsidLen,
-	       IN UINT_8 ucChannelNum, IN ENUM_BAND_T eBand, IN ENUM_CHNL_EXT_T eSco, IN BOOLEAN fgIsPureAP);
+VOID p2pFuncStartGO(IN P_ADAPTER_T prAdapter,
+		    IN P_BSS_INFO_T prBssInfo,
+		    IN UINT_8 ucChannelNum, IN ENUM_BAND_T eBand, IN ENUM_CHNL_EXT_T eSco, IN BOOLEAN fgIsPureAP);
 
 VOID p2pFuncAcquireCh(IN P_ADAPTER_T prAdapter, IN P_P2P_CHNL_REQ_INFO_T prChnlReqInfo);
 
 VOID p2pFuncReleaseCh(IN P_ADAPTER_T prAdapter, IN P_P2P_CHNL_REQ_INFO_T prChnlReqInfo);
-
-VOID p2pFuncSetChannel(IN P_ADAPTER_T prAdapter, IN P_RF_CHANNEL_INFO_T prRfChannelInfo);
 
 BOOLEAN p2pFuncRetryJOIN(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaRec, IN P_P2P_JOIN_INFO_T prJoinInfo);
 
@@ -28,11 +39,16 @@ WLAN_STATUS
 p2pFuncTxMgmtFrame(IN P_ADAPTER_T prAdapter,
 		   IN P_P2P_MGMT_TX_REQ_INFO_T prMgmtTxReqInfo, IN P_MSDU_INFO_T prMgmtTxMsdu, IN UINT_64 u8Cookie);
 
-WLAN_STATUS
-p2pFuncBeaconUpdate(IN P_ADAPTER_T prAdapter,
-		    IN P_BSS_INFO_T prP2pBssInfo,
-		    IN P_P2P_BEACON_UPDATE_INFO_T prBcnUpdateInfo,
-		    IN PUINT_8 pucNewBcnHdr, IN UINT_32 u4NewHdrLen, IN PUINT_8 pucNewBcnBody, IN UINT_32 u4NewBodyLen);
+WLAN_STATUS p2pFuncProcessBeacon(IN P_ADAPTER_T prAdapter,
+				 IN P_BSS_INFO_T prP2pBssInfo,
+				 IN P_P2P_BEACON_UPDATE_INFO_T prBcnUpdateInfo,
+				 IN PUINT_8 pucNewBcnHdr, IN UINT_32 u4NewHdrLen,
+				 IN PUINT_8 pucNewBcnBody, IN UINT_32 u4NewBodyLen);
+
+#if CFG_SUPPORT_P2P_GO_OFFLOAD_PROBE_RSP
+WLAN_STATUS p2pFuncUpdateProbeRspIEs(IN P_ADAPTER_T prAdapter, IN P_MSG_P2P_BEACON_UPDATE_T prIETemp,
+			IN ENUM_NETWORK_TYPE_INDEX_T eNetTypeIndex);
+#endif
 
 BOOLEAN
 p2pFuncValidateAuth(IN P_ADAPTER_T prAdapter,
@@ -52,9 +68,8 @@ VOID p2pFuncValidateRxActionFrame(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRf
 
 BOOLEAN p2pFuncIsAPMode(IN P_P2P_FSM_INFO_T prP2pFsmInfo);
 
-VOID
-p2pFuncParseBeaconContent(IN P_ADAPTER_T prAdapter,
-			  IN P_BSS_INFO_T prP2pBssInfo, IN PUINT_8 pucIEInfo, IN UINT_32 u4IELen);
+VOID p2pFuncParseBeaconIEs(IN P_ADAPTER_T prAdapter,
+			   IN P_BSS_INFO_T prP2pBssInfo, IN PUINT_8 pucIEInfo, IN UINT_32 u4IELen);
 
 P_BSS_DESC_T
 p2pFuncKeepOnConnection(IN P_ADAPTER_T prAdapter,
@@ -150,3 +165,5 @@ WLAN_STATUS wfdChangeMediaState(IN P_ADAPTER_T prAdapter,
 				IN ENUM_NETWORK_TYPE_INDEX_T eNetworkTypeIdx,
 				IN ENUM_PARAM_MEDIA_STATE_T eConnectionState);
 #endif
+
+BOOLEAN p2pFuncValidateProbeResp(IN P_ADAPTER_T prAdapter, IN P_MSDU_INFO_T prMgmtTxMsdu);

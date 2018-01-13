@@ -1,3 +1,27 @@
+/*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*******************************************************************************
+*						  C O M P I L E R	F L A G S
+********************************************************************************
+*/
+
+/*******************************************************************************
+*					 E X T E R N A L   R E F E R E N C E S
+********************************************************************************
+*/
+
 #include "precomp.h"
 #include "p2p_dev_state.h"
 #if CFG_ENABLE_WIFI_DIRECT
@@ -348,6 +372,10 @@ VOID p2pDevFsmRunEventTimeout(IN P_ADAPTER_T prAdapter, IN ULONG ulParamPtr)
 	do {
 		ASSERT_BREAK((prAdapter != NULL) && (prP2pDevFsmInfo != NULL));
 
+		DBGLOG(P2P, INFO, "p2p dev fsm timeout, current state: %d:%s\n",
+			prP2pDevFsmInfo->eCurrentState,
+			apucDebugP2pDevState[prP2pDevFsmInfo->eCurrentState]);
+
 		switch (prP2pDevFsmInfo->eCurrentState) {
 		case P2P_DEV_STATE_IDLE:
 			/* TODO: IDLE timeout for low power mode. */
@@ -435,6 +463,12 @@ VOID p2pDevFsmRunEventScanRequest(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsg
 			u4ChnlListSize = sizeof(RF_CHANNEL_INFO_T) * prScanReqInfo->ucNumChannelList;
 			kalMemCopy(prScanReqInfo->arScanChannelList,
 				   prP2pScanReqMsg->arChannelListInfo, u4ChnlListSize);
+			if (prP2pScanReqMsg->u4NumChannel == 1) {
+				DBGLOG(P2P, INFO, "Enlarge Dwell time to 100ms, Channel Number: %d\n",
+					prP2pScanReqMsg->u4NumChannel);
+
+				prScanReqInfo->u2PassiveDewellTime = 100;
+			}
 		} else {
 			/* If channel number is ZERO.
 			 * It means do a FULL channel scan.
@@ -512,7 +546,7 @@ VOID p2pDevFsmRunEventChannelRequest(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T pr
 	do {
 		ASSERT_BREAK((prAdapter != NULL) && (prMsgHdr != NULL));
 
-		DBGLOG(P2P, STATE, "p2pDevFsmRunEventChannelRequest\n");
+		DBGLOG(P2P, TRACE, "p2pDevFsmRunEventChannelRequest\n");
 
 		prP2pDevFsmInfo = prAdapter->rWifiVar.prP2pDevFsmInfo;
 
@@ -560,6 +594,7 @@ VOID p2pDevFsmRunEventChannelRequest(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T pr
 
 		if (prP2pDevFsmInfo->eCurrentState == P2P_DEV_STATE_IDLE) {
 			/* Re-enter IDLE state would trigger channel request. */
+			DBGLOG(P2P, INFO, "prepare to enter idle to trigger channel req\n");
 			p2pDevFsmStateTransition(prAdapter, prP2pDevFsmInfo, P2P_DEV_STATE_IDLE);
 		}
 	} while (FALSE);
@@ -594,6 +629,22 @@ VOID p2pDevFsmRunEventChannelAbort(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMs
 			ASSERT((prP2pDevFsmInfo->eCurrentState == P2P_DEV_STATE_REQING_CHANNEL) ||
 			       (prP2pDevFsmInfo->eCurrentState == P2P_DEV_STATE_CHNL_ON_HAND));
 
+			if (prP2pDevFsmInfo->eCurrentState == P2P_DEV_STATE_REQING_CHANNEL) {
+
+				kalP2PIndicateChannelReady(prAdapter->prGlueInfo,
+							   prChnlReqInfo->u8Cookie,
+							   prChnlReqInfo->ucReqChnlNum,
+							   prChnlReqInfo->eBand,
+							   prChnlReqInfo->eChnlSco,
+							   prChnlReqInfo->u4MaxInterval);
+
+				kalP2PIndicateChannelExpired(prAdapter->prGlueInfo,
+								 prChnlReqInfo->u8Cookie,
+								 prChnlReqInfo->ucReqChnlNum,
+								 prChnlReqInfo->eBand,
+								 prChnlReqInfo->eChnlSco);
+			}
+
 			p2pDevFsmRunEventAbort(prAdapter, prP2pDevFsmInfo);
 
 			break;
@@ -607,10 +658,23 @@ VOID p2pDevFsmRunEventChannelAbort(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMs
 
 				if (prP2pMsgChnlReq->u8Cookie == prChnlAbortMsg->u8Cookie) {
 					LINK_REMOVE_KNOWN_ENTRY(&prChnlReqInfo->rP2pChnlReqLink, prLinkEntry);
-					cnmMemFree(prAdapter, prP2pMsgChnlReq);
-					DBGLOG(P2P, TRACE,
-					       "p2pDevFsmRunEventChannelAbort: Channel Abort, cookie found:%d\n",
+					DBGLOG(P2P, INFO, "Channel Abort. Indicating event, cookie found: 0x%llu\n",
 						prChnlAbortMsg->u8Cookie);
+
+					kalP2PIndicateChannelReady(prAdapter->prGlueInfo,
+								   prP2pMsgChnlReq->u8Cookie,
+								   prP2pMsgChnlReq->rChannelInfo.ucChannelNum,
+								   prP2pMsgChnlReq->rChannelInfo.eBand,
+								   prP2pMsgChnlReq->eChnlSco,
+								   prP2pMsgChnlReq->u4Duration);
+
+					kalP2PIndicateChannelExpired(prAdapter->prGlueInfo,
+									 prP2pMsgChnlReq->u8Cookie,
+									 prP2pMsgChnlReq->rChannelInfo.ucChannelNum,
+									 prP2pMsgChnlReq->rChannelInfo.eBand,
+									 prP2pMsgChnlReq->eChnlSco);
+
+					cnmMemFree(prAdapter, prP2pMsgChnlReq);
 					break;
 				}
 			}
@@ -645,8 +709,9 @@ p2pDevFsmRunEventChnlGrant(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr, IN
 
 		ASSERT(prMsgChGrant->ucPrimaryChannel == prChnlReqInfo->ucReqChnlNum);
 		ASSERT(prMsgChGrant->eReqType == prChnlReqInfo->eChnlReqType);
-		ASSERT(prMsgChGrant->u4GrantInterval == prChnlReqInfo->u4MaxInterval);
-		prChnlReqInfo->u4MaxInterval = prMsgChGrant->u4GrantInterval;
+
+		DBGLOG(P2P, INFO, "P2P: channel grant: u4MaxInterval: %d, Cookie: 0x%llx\n",
+			prChnlReqInfo->u4MaxInterval, prChnlReqInfo->u8Cookie);
 
 		if (prMsgChGrant->eReqType == CH_REQ_TYPE_P2P_LISTEN) {
 			p2pDevFsmStateTransition(prAdapter, prP2pDevFsmInfo, P2P_DEV_STATE_CHNL_ON_HAND);
@@ -681,7 +746,7 @@ VOID p2pDevFsmRunEventMgmtTx(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr)
 		}
 
 		DBGLOG(P2P, TRACE, " Device Interface\n");
-		DBGLOG(P2P, STATE, "p2pDevFsmRunEventMgmtTx\n");
+		DBGLOG(P2P, TRACE, "p2pDevFsmRunEventMgmtTx\n");
 
 		prMgmtTxMsg->ucBssIdx = P2P_DEV_BSS_INDEX;
 
@@ -695,6 +760,7 @@ VOID p2pDevFsmRunEventMgmtTx(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr)
 		if ((!prMgmtTxMsg->fgIsOffChannel) ||
 		    ((prP2pDevFsmInfo->eCurrentState == P2P_DEV_STATE_OFF_CHNL_TX) &&
 		     (LINK_IS_EMPTY(&prP2pMgmtTxReqInfo->rP2pTxReqLink)))) {
+			DBGLOG(P2P, INFO, "send without roc\n");
 			p2pFuncTxMgmtFrame(prAdapter,
 					   prP2pDevFsmInfo->ucBssIndex,
 					   prMgmtTxMsg->prMgmtMsduInfo, prMgmtTxMsg->fgNoneCckRate);
@@ -708,6 +774,7 @@ VOID p2pDevFsmRunEventMgmtTx(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr)
 				ASSERT(FALSE);
 				break;
 			}
+			DBGLOG(P2P, INFO, "send roc\n");
 
 			prOffChnlTxReq->prMgmtTxMsdu = prMgmtTxMsg->prMgmtMsduInfo;
 			prOffChnlTxReq->fgNoneCckRate = prMgmtTxMsg->fgNoneCckRate;
@@ -764,14 +831,15 @@ p2pDevFsmRunEventMgmtFrameTxDone(IN P_ADAPTER_T prAdapter,
 
 		prP2pDevFsmInfo = prAdapter->rWifiVar.prP2pDevFsmInfo;
 
-		if (prP2pDevFsmInfo->eCurrentState == P2P_DEV_STATE_OFF_CHNL_TX)
+		if (prP2pDevFsmInfo && (prP2pDevFsmInfo->eCurrentState == P2P_DEV_STATE_OFF_CHNL_TX))
 			p2pDevFsmStateTransition(prAdapter, prP2pDevFsmInfo, P2P_DEV_STATE_OFF_CHNL_TX);
 
 		if (rTxDoneStatus != TX_RESULT_SUCCESS) {
-			DBGLOG(P2P, TRACE, "Mgmt Frame TX Fail, Status:%d.\n", rTxDoneStatus);
+			DBGLOG(P2P, INFO, "Mgmt Frame TX Fail, Status: %d, SeqNO: %d.\n",
+				rTxDoneStatus, prMsduInfo->ucTxSeqNum);
 		} else {
 			fgIsSuccess = TRUE;
-			DBGLOG(P2P, TRACE, "Mgmt Frame TX Done.\n");
+			DBGLOG(P2P, INFO, "Mgmt Frame TX Done, SeqNO: %d.\n", prMsduInfo->ucTxSeqNum);
 		}
 
 		kalP2PIndicateMgmtTxStatus(prAdapter->prGlueInfo, prMsduInfo, fgIsSuccess);
@@ -833,6 +901,22 @@ VOID p2pFsmRunEventChGrant(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr)
 	} while (FALSE);
 
 }				/* p2pFsmRunEventChGrant */
+
+/*----------------------------------------------------------------------------*/
+/*!
+ * \brief    This function is called when request channel privilege fail.
+ *
+ * \param[in] prAdapter  Pointer of ADAPTER_T
+ * \param[in] prMsgHdr  Pointer of P_MSG_HDR_T
+ *
+ * \return none
+ */
+/*----------------------------------------------------------------------------*/
+VOID p2pFsmRunEventChGrantFail(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr)
+{
+	/*To-do: p2p request channel privilege fail handle*/
+	cnmMemFree(prAdapter, prMsgHdr);
+}
 
 VOID p2pFsmRunEventScanRequest(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr)
 {

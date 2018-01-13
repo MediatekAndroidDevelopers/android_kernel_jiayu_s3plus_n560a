@@ -1,176 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/mgmt/auth.c#1
-*/
-
-/*! \file   "auth.c"
-    \brief  This file includes the authentication-related functions.
-
-    This file includes the authentication-related functions.
-*/
-
-/*
-** Log: auth.c
- *
- * 02 13 2012 cp.wu
- * NULL
- * show error message only instead of raise assertion when
- * received authentication frame is carrying illegal parameters.
- *
- * 11 09 2011 yuche.tsai
- * NULL
- * Fix a network index & station record index issue when TX deauth frame.
- *
- * 10 12 2011 wh.su
- * [WCXRP00001036] [MT6620 Wi-Fi][Driver][FW] Adding the 802.11w code for MFP
- * adding the 802.11w related function and define .
- *
- * 06 22 2011 yuche.tsai
- * NULL
- * Fix coding error.
- *
- * 06 20 2011 yuche.tsai
- * [WCXRP00000796] [Volunteer Patch][MT6620][Driver] Add BC deauth frame TX feature.
- * BC deauth support.
- *
- * 04 21 2011 terry.wu
- * [WCXRP00000674] [MT6620 Wi-Fi][Driver] Refine AAA authSendAuthFrame
- * Add network type parameter to authSendAuthFrame.
- *
- * 04 15 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Add BOW short range mode.
- *
- * 02 08 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * 1. Fix Service Disocvery Logical issue.
- * 2. Fix a NULL pointer access violation issue when sending deauthentication packet to a class error station.
- *
- * 01 24 2011 cp.wu
- * [WCXRP00000382] [MT6620 Wi-Fi][Driver] Track forwarding packet number with notifying tx thread for serving
- * 1. add an extra counter for tracking pending forward frames.
- * 2. notify TX service thread as well when there is pending forward frame
- * 3. correct build errors leaded by introduction of Wi-Fi direct separation module
- *
- * 01 21 2011 terry.wu
- * [WCXRP00000381] [MT6620 Wi-Fi][Driver] Kernel panic when replying unaccept Auth in AP mode
- * In AP mode, use STA_REC_INDEX_NOT_FOUND(0xFE) instead of StaRec index when replying an unaccept Auth frame.
- *
- * 10 18 2010 cp.wu
- * [WCXRP00000052] [MT6620 Wi-Fi][Driver] Eliminate Linux Compile Warning
- * use definition macro to replace hard-coded constant
- *
- * 09 03 2010 kevin.huang
- * NULL
- * Refine #include sequence and solve recursive/nested #include issue
- *
- * 08 30 2010 cp.wu
- * NULL
- * eliminate klockwork errors
- *
- * 08 16 2010 cp.wu
- * NULL
- * Replace CFG_SUPPORT_BOW by CFG_ENABLE_BT_OVER_WIFI.
- * There is no CFG_SUPPORT_BOW in driver domain source.
- *
- * 08 16 2010 kevin.huang
- * NULL
- * Refine AAA functions
- *
- * 08 03 2010 cp.wu
- * NULL
- * surpress compilation warning.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 28 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * send MMPDU in basic rate.
- *
- * 06 21 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * specify correct value for management frames.
- *
- * 06 18 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * Provide cnmMgtPktAlloc() and alloc/free function of msg/buf
- *
- * 06 14 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * add management dispatching function table.
- *
- * 06 11 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * auth.c is migrated.
- *
- * 05 28 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Update authSendDeauthFrame() for correct the value of eNetTypeIndex in MSDU_INFO_T
- *
- * 05 24 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Check Net is active before sending Deauth frame.
- *
- * 05 24 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Refine authSendAuthFrame() for NULL STA_RECORD_T case and minimum deauth interval.
- *
- * 04 24 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * g_aprBssInfo[] depends on CFG_SUPPORT_P2P and CFG_SUPPORT_BOW
- *
- * 04 19 2010 kevin.huang
- * [BORA00000714][WIFISYS][New Feature]Beacon Timeout Support
- * Add Send Deauth for Class 3 Error and Leave Network Support
- *
- * 02 23 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Fix compile warning
- *
- * 02 05 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add debug message for abnormal authentication frame from AP
- *
- * 02 04 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add AAA Module Support, Revise Net Type to Net Type Index for array lookup
- *
- * 01 11 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Add Deauth and Disassoc Handler
- *
- * 01 07 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- *
- * Fix the Debug Label
- *
- * 12 18 2009 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * .
- *
- * Dec 7 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Update the authComposeAuthFrameHeader()
- *
- * Dec 7 2009 mtk01088
- * [BORA00000476] [Wi-Fi][firmware] Add the security module initialize code
- * adding the send deauth frame function
- *
- * Dec 3 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Integrate send Auth with TXM
- *
- * Nov 24 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Revise MGMT Handler with Retain Status
- *
- * Nov 23 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- *
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -198,12 +36,26 @@
 *                            P U B L I C   D A T A
 ********************************************************************************
 */
-APPEND_IE_ENTRY_T txAuthIETable[] = {
-	{(ELEM_HDR_LEN + ELEM_MAX_LEN_CHALLENGE_TEXT), authAddIEChallengeText}
+APPEND_VAR_IE_ENTRY_T txAuthIETable[] = {
+	{(ELEM_HDR_LEN + ELEM_MAX_LEN_CHALLENGE_TEXT), NULL, authAddIEChallengeText},
+	{0, authCalculateRSNIELen, authAddRSNIE}, /* Element ID: 48 */
+	{(ELEM_HDR_LEN + 1), NULL, authAddMDIE}, /* Element ID: 54 */
+	{0, rsnCalculateFTIELen, rsnGenerateFTIE}, /* Element ID: 55 */
 };
 
 HANDLE_IE_ENTRY_T rxAuthIETable[] = {
-	{ELEM_ID_CHALLENGE_TEXT, authHandleIEChallengeText}
+	{ELEM_ID_CHALLENGE_TEXT, authHandleIEChallengeText},
+/* since we only need to indicate these IEs to supplicant, so process them in one function
+* Now we disable it, because no FtIEs need to indicate to supplicant
+**/
+#if 0
+	{ELEM_ID_MOBILITY_DOMAIN, authHandleFtIEs},
+	{ELEM_ID_FAST_TRANSITION, authHandleFtIEs},
+	{ELEM_ID_RSN, authHandleFtIEs},
+	{ELEM_ID_RESOURCE_INFO_CONTAINER, authHandleFtIEs},
+	{ELEM_ID_TIMEOUT_INTERVAL, authHandleFtIEs},
+#endif
+
 };
 
 /*******************************************************************************
@@ -387,7 +239,11 @@ WLAN_STATUS authSendAuthFrame(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaR
 	u2EstimatedExtraIELen = 0;
 
 	for (i = 0; i < sizeof(txAuthIETable) / sizeof(APPEND_IE_ENTRY_T); i++)
-		u2EstimatedExtraIELen += txAuthIETable[i].u2EstimatedIELen;
+		if (txAuthIETable[i].u2EstimatedIELen != 0)
+			u2EstimatedExtraIELen += txAuthIETable[i].u2EstimatedIELen;
+		else
+			u2EstimatedExtraIELen += txAuthIETable[i].pfnCalculateVariableIELen(prAdapter,
+				prStaRec->ucNetTypeIndex, prStaRec);
 
 	u2EstimatedFrameLen += u2EstimatedExtraIELen;
 
@@ -480,8 +336,17 @@ authSendAuthFrame(IN P_ADAPTER_T prAdapter,
 	/* + Extra IE Length */
 	u2EstimatedExtraIELen = 0;
 
-	for (i = 0; i < sizeof(txAuthIETable) / sizeof(APPEND_IE_ENTRY_T); i++)
-		u2EstimatedExtraIELen += txAuthIETable[i].u2EstimatedIELen;
+	for (i = 0; i < sizeof(txAuthIETable) / sizeof(APPEND_VAR_IE_ENTRY_T); i++)
+		if (txAuthIETable[i].u2EstimatedFixedIELen != 0)
+			u2EstimatedExtraIELen += txAuthIETable[i].u2EstimatedFixedIELen;
+		else {
+			/*2016/12/16 add null check before access prStaRec*/
+			if (prStaRec)
+				u2EstimatedExtraIELen += txAuthIETable[i].pfnCalculateVariableIELen(prAdapter,
+					prStaRec->ucNetTypeIndex, prStaRec);
+			else
+				DBGLOG(SAA, WARN, "prStaRec is NULL !\n");
+		}
 
 	u2EstimatedFrameLen += u2EstimatedExtraIELen;
 
@@ -556,7 +421,7 @@ authSendAuthFrame(IN P_ADAPTER_T prAdapter,
 	prMsduInfo->fgIsBasicRate = TRUE;
 
 	/* 4 <4> Compose IEs in MSDU_INFO_T */
-	for (i = 0; i < sizeof(txAuthIETable) / sizeof(APPEND_IE_ENTRY_T); i++) {
+	for (i = 0; i < sizeof(txAuthIETable) / sizeof(APPEND_VAR_IE_ENTRY_T); i++) {
 		if (txAuthIETable[i].pfnAppendIE)
 			txAuthIETable[i].pfnAppendIE(prAdapter, prMsduInfo);
 	}
@@ -635,6 +500,9 @@ WLAN_STATUS authCheckRxAuthFrameTransSeq(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T
 {
 	P_WLAN_AUTH_FRAME_T prAuthFrame;
 	UINT_16 u2RxTransactionSeqNum;
+#if CFG_IGNORE_INVALID_AUTH_TSN
+	P_STA_RECORD_T prStaRec;
+#endif
 
 	ASSERT(prSwRfb);
 
@@ -668,6 +536,21 @@ WLAN_STATUS authCheckRxAuthFrameTransSeq(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T
 	default:
 		DBGLOG(SAA, WARN, "Strange Authentication Packet: Auth Trans Seq No = %d, Error Status Code = %d\n",
 				   u2RxTransactionSeqNum, prAuthFrame->u2StatusCode);
+#if CFG_IGNORE_INVALID_AUTH_TSN
+		prStaRec = cnmGetStaRecByIndex(prAdapter, prSwRfb->ucStaRecIdx);
+		if (!prStaRec)
+			return WLAN_STATUS_SUCCESS;
+		switch (prStaRec->eAuthAssocState) {
+		case SAA_STATE_SEND_AUTH1:
+		case SAA_STATE_WAIT_AUTH2:
+		case SAA_STATE_SEND_AUTH3:
+		case SAA_STATE_WAIT_AUTH4:
+			saaFsmRunEventRxAuth(prAdapter, prSwRfb);
+			break;
+		default:
+			break;
+		}
+#endif
 		break;
 	}
 
@@ -723,7 +606,7 @@ authCheckRxAuthFrameStatus(IN P_ADAPTER_T prAdapter,
 	if (u2RxTransactionSeqNum != u2TransactionSeqNum) {
 		DBGLOG(SAA, WARN, "Discard Auth frame with Transaction Seq No = %d\n", u2RxTransactionSeqNum);
 		*pu2StatusCode = STATUS_CODE_AUTH_OUT_OF_SEQ;
-		return WLAN_STATUS_SUCCESS;
+		return WLAN_STATUS_FAILURE;
 	}
 	/* 4 <3> Get the Status code */
 	/* WLAN_GET_FIELD_16(&prAuthFrame->u2StatusCode, &u2RxStatusCode); */
@@ -821,6 +704,14 @@ WLAN_STATUS authProcessRxAuth2_Auth4Frame(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_
 
 			if (ucIEID == rxAuthIETable[i].ucElemID)
 				rxAuthIETable[i].pfnHandleIE(prAdapter, prSwRfb, (P_IE_HDR_T) pucIEsBuffer);
+		}
+	}
+	if (prAuthFrame->u2AuthAlgNum == AUTH_ALGORITHM_NUM_FAST_BSS_TRANSITION) {
+		if (prAuthFrame->u2AuthTransSeqNo == AUTH_TRANSACTION_SEQ_4) {
+			/* todo: check MIC, if mic error, return WLAN_STATUS_FAILURE */
+		} else if (prAuthFrame->u2AuthTransSeqNo == AUTH_TRANSACTION_SEQ_2) {
+			prAdapter->prGlueInfo->rFtEventParam.ies = &prAuthFrame->aucInfoElem[0];
+			prAdapter->prGlueInfo->rFtEventParam.ies_len = u2IEsLen;
 		}
 	}
 
@@ -1209,3 +1100,42 @@ authProcessRxAuth1Frame(IN P_ADAPTER_T prAdapter,
 	return WLAN_STATUS_SUCCESS;
 
 }				/* end of authProcessRxAuth1Frame() */
+
+/* ToDo: authAddRicIE, authHandleFtIEs, authAddTimeoutIE */
+
+VOID authAddMDIE(IN P_ADAPTER_T prAdapter, IN OUT P_MSDU_INFO_T prMsduInfo)
+{
+	struct FT_IES *prFtIEs = &prAdapter->prGlueInfo->rFtIeForTx;
+	PUINT_8 pucBuffer = (PUINT_8)prMsduInfo->prPacket + prMsduInfo->u2FrameLength;
+
+	if (!prFtIEs->prMDIE)
+		return;
+	prMsduInfo->u2FrameLength += 5; /* IE size for MD IE is fixed, it is 5 */
+	kalMemCopy(pucBuffer, prFtIEs->prMDIE, 5);
+}
+
+UINT_32 authCalculateRSNIELen(P_ADAPTER_T prAdapter,
+	ENUM_NETWORK_TYPE_INDEX_T eNetTypeIndex, P_STA_RECORD_T prStaRec)
+{
+	ENUM_PARAM_AUTH_MODE_T eAuthMode = prAdapter->rWifiVar.rConnSettings.eAuthMode;
+	struct FT_IES *prFtIEs = &prAdapter->prGlueInfo->rFtIeForTx;
+
+	if (!prFtIEs->prRsnIE || (eAuthMode != AUTH_MODE_WPA2_FT && eAuthMode != AUTH_MODE_WPA2_FT_PSK))
+		return 0;
+	return IE_SIZE(prFtIEs->prRsnIE);
+}
+
+VOID authAddRSNIE(IN P_ADAPTER_T prAdapter, IN OUT P_MSDU_INFO_T prMsduInfo)
+{
+	ENUM_PARAM_AUTH_MODE_T eAuthMode = prAdapter->rWifiVar.rConnSettings.eAuthMode;
+	struct FT_IES *prFtIEs = &prAdapter->prGlueInfo->rFtIeForTx;
+	PUINT_8 pucBuffer = (PUINT_8)prMsduInfo->prPacket + prMsduInfo->u2FrameLength;
+	UINT_32 ucRSNIeSize = 0;
+
+	if (!prFtIEs->prRsnIE || (eAuthMode != AUTH_MODE_WPA2_FT && eAuthMode != AUTH_MODE_WPA2_FT_PSK))
+		return;
+	ucRSNIeSize = IE_SIZE(prFtIEs->prRsnIE);
+	prMsduInfo->u2FrameLength += ucRSNIeSize;
+	kalMemCopy(pucBuffer, prFtIEs->prRsnIE, ucRSNIeSize);
+}
+

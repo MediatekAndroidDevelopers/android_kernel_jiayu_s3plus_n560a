@@ -1,66 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/include/CFG_Wifi_File.h#1
-*/
-
-/*! \file   CFG_Wifi_File.h
-    \brief  Collection of NVRAM structure used for YuSu project
-
-    In this file we collect all compiler flags and detail the driver behavior if
-    enable/disable such switch or adjust numeric parameters.
-*/
-
-/*
-** Log: CFG_Wifi_File.h
- *
- * 09 08 2011 cm.chang
- * [WCXRP00000969] [MT6620 Wi-Fi][Driver][FW] Channel list for 5G band based on country code
- * Use new fields ucChannelListMap and ucChannelListIndex in NVRAM
- *
- * 08 31 2011 cm.chang
- * [WCXRP00000969] [MT6620 Wi-Fi][Driver][FW] Channel list for 5G band based on country code
- * .
- *
- * 08 15 2011 cp.wu
- * [WCXRP00000851] [MT6628 Wi-Fi][Driver] Add HIFSYS related definition to driver source tree
- * add MT6628-specific definitions.
- *
- * 08 09 2011 cp.wu
- * [WCXRP00000702] [MT5931][Driver] Modify initialization sequence for E1 ASIC
- * [WCXRP00000913] [MT6620 Wi-Fi] create repository of source code dedicated for MT6620 E6 ASIC
- * add CCK-DSSS TX-PWR control field in NVRAM and CMD definition for MT5931-MP
- *
- * 05 27 2011 cp.wu
- * [WCXRP00000749] [MT6620 Wi-Fi][Driver] Add band edge tx power control to Wi-Fi NVRAM
- * update NVRAM data structure definition.
- *
- * 03 10 2011 cp.wu
- * [WCXRP00000532] [MT6620 Wi-Fi][Driver] Migrate NVRAM configuration procedures from MT6620 E2 to MT6620 E3
- * deprecate configuration used by MT6620 E2
- *
- * 10 26 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * [WCXRP00000137] [MT6620 Wi-Fi] [FW] Support NIC capability query command
- * 1) update NVRAM content template to ver 1.02
- * 2) add compile option for querying NIC capability (default: off)
- * 3) modify AIS 5GHz support to run-time option, which could be turned on by registry or NVRAM setting
- * 4) correct auto-rate compiler error under linux (treat warning as error)
- * 5) simplify usage of NVRAM and REG_INFO_T
- * 6) add version checking between driver and firmware
- *
- * 10 25 2010 cp.wu
- * [WCXRP00000133] [MT6620 Wi-Fi] [FW][Driver] Change TX power offset band definition
- * follow-up for CMD_5G_PWR_OFFSET_T definition change
- *
- * 10 05 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * 1) add NVRAM access API
- * 2) fake scanning result when NVRAM doesn't exist and/or version mismatch. (off by compiler option)
- * 3) add OID implementation for NVRAM read/write service
- *
- * 09 23 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * add skeleton for NVRAM integration
- *
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _CFG_WIFI_FILE_H
@@ -155,6 +103,24 @@ typedef struct _PWR_PARAM_T {
 	UINT_32 u4RefValue2;
 } PWR_PARAM_T, *P_PWR_PARAM_T;
 
+typedef struct _MITIGATED_PWR_BY_CH_BY_MODE {
+	UINT_8 channel;
+	INT_8 mitigatedCckDsss;
+	INT_8 mitigatedOfdm;
+	INT_8 mitigatedHt20;
+	INT_8 mitigatedHt40;
+} MITIGATED_PWR_BY_CH_BY_MODE, *P_MITIGATED_PWR_BY_CH_BY_MODE;
+
+typedef struct _FCC_TX_PWR_ADJUST_T {
+	UINT_8 fgFccTxPwrAdjust;
+	UINT_8 uOffsetCCK;
+	UINT_8 uOffsetHT20;
+	UINT_8 uOffsetHT40;
+	UINT_8 aucChannelCCK[2];
+	UINT_8 aucChannelHT20[2];
+	UINT_8 aucChannelHT40[2];
+} FCC_TX_PWR_ADJUST, *P_FCC_TX_PWR_ADJUST;
+
 typedef struct _MT6620_CFG_PARAM_STRUCT {
 	/* 256 bytes of MP data */
 	UINT_16 u2Part1OwnVersion;
@@ -173,8 +139,14 @@ typedef struct _MT6620_CFG_PARAM_STRUCT {
 	UINT_8 ucRegChannelListMap;
 	UINT_8 ucRegChannelListIndex;
 	UINT_8 aucRegSubbandInfo[36];
+	UINT_8 ucDefaultTestMode;
 
-	UINT_8 aucReserved2[256 - 240];
+	UINT_8 aucReserved2[256 - 247];
+	UINT_16 u2SizeOfNvram;
+	INT_8 bTxPowerLimitEnable2G;
+	INT_8 cTxBackOffMaxPower2G;
+	INT_8 bTxPowerLimitEnable5G;
+	INT_8 cTxBackOffMaxPower5G;
 
 	/* 256 bytes of function data */
 	UINT_16 u2Part2OwnVersion;
@@ -187,7 +159,14 @@ typedef struct _MT6620_CFG_PARAM_STRUCT {
 	UINT_8 uc5GRssiCompensation;
 	UINT_8 fgRssiCompensationValidbit;
 	UINT_8 ucRxAntennanumber;
-	UINT_8 aucTailReserved[256 - 12];
+	/*support tx power back off [start]*/
+	MITIGATED_PWR_BY_CH_BY_MODE arRlmMitigatedPwrByChByMode[40];
+	UINT_8 fgRlmMitigatedPwrByChByMode;
+	FCC_TX_PWR_ADJUST rFccTxPwrAdjust;
+	UINT_8 aucReserved3[3];
+	/*support tx power back off [end]*/
+	UINT_8 aucTailReserved[768 - 12 - 214];
+
 } MT6620_CFG_PARAM_STRUCT, *P_MT6620_CFG_PARAM_STRUCT, WIFI_CFG_PARAM_STRUCT, *P_WIFI_CFG_PARAM_STRUCT;
 
 /*******************************************************************************
@@ -207,6 +186,7 @@ typedef struct _MT6620_CFG_PARAM_STRUCT {
 #endif
 
 #define CFG_FILE_WIFI_REC_SIZE    sizeof(WIFI_CFG_PARAM_STRUCT)
+#define EXTEND_NVRAM_SIZE 1024
 
 /*******************************************************************************
 *                  F U N C T I O N   D E C L A R A T I O N S
@@ -227,7 +207,7 @@ static inline VOID nvramOffsetCheck(VOID)
 {
 	DATA_STRUCT_INSPECTING_ASSERT(OFFSET_OF(WIFI_CFG_PARAM_STRUCT, u2Part2OwnVersion) == 256);
 
-	DATA_STRUCT_INSPECTING_ASSERT(sizeof(WIFI_CFG_PARAM_STRUCT) == 512);
+	DATA_STRUCT_INSPECTING_ASSERT(sizeof(WIFI_CFG_PARAM_STRUCT) == EXTEND_NVRAM_SIZE);
 
 	DATA_STRUCT_INSPECTING_ASSERT((OFFSET_OF(WIFI_CFG_PARAM_STRUCT, aucEFUSE) & 0x0001) == 0);
 

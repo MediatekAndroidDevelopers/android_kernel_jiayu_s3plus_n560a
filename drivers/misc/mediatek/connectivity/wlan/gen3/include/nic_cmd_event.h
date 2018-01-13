@@ -1,4 +1,18 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
 ** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/include/nic_cmd_event.h#1
 */
 
@@ -53,6 +67,8 @@
 #define SCN_PSCAN_SWC_RSSI_WIN_MAX  75
 #define SCN_PSCAN_SWC_MAX_NUM       8
 #define SCN_PSCAN_HOTLIST_REPORT_MAX_NUM 8
+
+#define BEACON_TIMEOUT_DUE_2_NO_TX_DONE_EVENT 0x8
 
 typedef enum _ENUM_CMD_ID_T {
 	CMD_ID_TEST_CTRL = 0x01,	/* 0x01 (Set) */
@@ -126,6 +142,8 @@ typedef enum _ENUM_CMD_ID_T {
 	CMD_ID_SET_NVRAM_SETTINGS,	/* 0x48 (Set) */
 	CMD_ID_SET_COUNTRY_POWER_LIMIT,	/* 0x49 (Set) */
 
+	CMD_ID_SET_SUSPEND_MODE     = 0x58, /* 0x58 (Set) */
+	CMD_ID_REQ_CHNL_UTILIZATION = 0x5C, /* 0x5C (Get) */
 	/* CFG_SUPPORT_GSCN  */
 	CMD_ID_GET_PSCAN_CAPABILITY = 0x60,	/* 0x60 (Set) */
 	CMD_ID_SET_PSCAN_ENABLE,	/* 0x61 (Set) */
@@ -134,7 +152,14 @@ typedef enum _ENUM_CMD_ID_T {
 	CMD_ID_SET_GSCAN_ADD_SWC_BSSID,	/* 0x64 (Set) */
 	CMD_ID_SET_GSCAN_MAC_ADDR,	/* 0x65 (Set) */
 	CMD_ID_GET_GSCAN_RESULT,	/* 0x66 (Get) */
+#if CFG_SUPPORT_FCC_DYNAMIC_TX_PWR_ADJUST
+	CMD_ID_SET_FCC_TX_PWR_CERT = 0x6F,	/* 0x6F (Set) */
+#endif
+#if FW_CFG_SUPPORT
+	CMD_ID_GET_SET_CUSTOMER_CFG = 0x70, /* 0x70(Set) */
+#endif
 
+	CMD_ID_TDLS_PS = 0x75,		/* 0x75 (Set) */
 	CMD_ID_GET_NIC_CAPABILITY = 0x80,	/* 0x80 (Query) */
 	CMD_ID_GET_LINK_QUALITY,	/* 0x81 (Query) */
 	CMD_ID_GET_STATISTICS,	/* 0x82 (Query) */
@@ -143,8 +168,12 @@ typedef enum _ENUM_CMD_ID_T {
 
 	CMD_ID_GET_LTE_CHN = 0x87,	/* 0x87 (Query) */
 	CMD_ID_GET_CHN_LOADING = 0x88,	/* 0x88 (Query) */
+	CMD_ID_GET_BUG_REPORT = 0x89,	/* 0x89 (Query) */
+	CMD_ID_GET_FW_INFO = 0x90, /* 0x90 (Query) */
 
-	CMD_ID_ACCESS_REG = 0xc0,	/* 0xc0 (Set / Query) */
+	CMD_ID_WFC_KEEP_ALIVE = 0xA0,	/* 0xa0(Set) */
+	CMD_ID_RSSI_MONITOR = 0xA1,	/* 0xa1(Set) */
+	CMD_ID_ACCESS_REG = 0xC0,	/* 0xc0 (Set / Query) */
 	CMD_ID_MAC_MCAST_ADDR,	/* 0xc1 (Set / Query) */
 	CMD_ID_802_11_PMKID,	/* 0xc2 (Set / Query) */
 	CMD_ID_ACCESS_EEPROM,	/* 0xc3 (Set / Query) */
@@ -225,13 +254,21 @@ typedef enum _ENUM_EVENT_ID_T {
 	EVENT_ID_SLT_STATUS,	/* 0x43 (Query - CMD_ID_SET_SLTINFO) */
 	EVENT_ID_CHIP_CONFIG,	/* 0x44 (Query - CMD_ID_CHIP_CONFIG) */
 
+#if CFG_RX_BA_REORDERING_ENHANCEMENT
+	EVENT_ID_BA_FW_DROP_SN = 0x51,
+#endif
+
+	EVENT_ID_RSP_CHNL_UTILIZATION = 0x59, /* 0x59 (Query - CMD_ID_REQ_CHNL_UTILIZATION) */
+
 	EVENT_ID_TDLS = 0x80,	/* TDLS event_id */
+	EVENT_ID_RSSI_MONITOR = 0xA1,
+
+	EVENT_ID_UPDATE_FW_INFO = 0x90, /* 0x90 (Unsolicited) */
 
 	EVENT_ID_BUILD_DATE_CODE = 0xF8,
 	EVENT_ID_GET_AIS_BSS_INFO = 0xF9,
 	EVENT_ID_DEBUG_CODE = 0xFB,
 	EVENT_ID_RFTEST_READY = 0xFC,	/* 0xFC */
-
 	EVENT_ID_END
 } ENUM_EVENT_ID_T, *P_ENUM_EVENT_ID_T;
 
@@ -239,6 +276,11 @@ typedef enum _ENUM_EVENT_ID_T {
 #define CMD_ID_SET_PSCN_ADD_SW_BSSID CMD_ID_SET_GSCAN_ADD_SWC_BSSID	/* 0x46 (Set) */
 #define CMD_ID_SET_PSCN_MAC_ADDR     CMD_ID_SET_GSCAN_MAC_ADDR          /* 0x65 (Set) */	/* 0x47 (Set) */
 #define CMD_ID_SET_PSCN_ENABLE      CMD_ID_SET_PSCAN_ENABLE
+
+#define NLO_CHANNEL_TYPE_SPECIFIED	0
+#define NLO_CHANNEL_TYPE_DUAL_BAND	1
+#define NLO_CHANNEL_TYPE_2G4_ONLY	2
+#define NLO_CHANNEL_TYPE_5G_ONLY	3
 
 /*******************************************************************************
 *                             D A T A   T Y P E S
@@ -527,16 +569,6 @@ typedef struct _CMD_ACCESS_REG {
 	UINT_32 u4Data;
 } CMD_ACCESS_REG, *P_CMD_ACCESS_REG;
 
-#if CFG_AUTO_CHANNEL_SEL_SUPPORT
-
-typedef struct _CMD_ACCESS_CHN_LOAD {
-	UINT_32 u4Address;
-	UINT_32 u4Data;
-	UINT_16 u2Channel;
-	UINT_8 aucReserved[2];
-} CMD_ACCESS_CHN_LOAD, *P_ACCESS_CHN_LOAD;
-
-#endif
 /* CMD_DUMP_MEMORY */
 typedef struct _CMD_DUMP_MEM {
 	UINT_32 u4Address;
@@ -559,6 +591,10 @@ typedef struct _CMD_SW_DBG_CTRL_T {
 	/* Debug Support */
 	UINT_32 u4DebugCnt[64];
 } CMD_SW_DBG_CTRL_T, *P_CMD_SW_DBG_CTRL_T;
+
+typedef struct _CMD_GET_FW_INFO_T {
+	UINT_8 ucValue;
+} CMD_GET_FW_INFO_T, *P_CMD_GET_FW_INFO_T;
 
 typedef struct _CMD_CHIP_CONFIG_T {
 	UINT_16 u2Id;
@@ -644,6 +680,76 @@ typedef struct _EVENT_STATISTICS {
 	LARGE_INTEGER rMulticastReceivedFrameCount;
 	LARGE_INTEGER rFCSErrorCount;
 } EVENT_STATISTICS, *P_EVENT_STATISTICS;
+
+typedef struct _EVENT_BUG_REPORT_T {
+	/* BugReportVersion 1 */
+	UINT_32 u4BugReportVersion;
+
+	/* FW Module State 2 */
+	UINT_32 u4FWState;
+
+	/* Scan Counter 3-6 */
+	UINT_32 u4ReceivedBeaconCount;
+	UINT_32 u4ReceivedProbeResponseCount;
+	UINT_32 u4SentProbeRequestCount;
+	UINT_32 u4SentProbeRequestFailCount;
+
+	/* Roaming Counter 7-9 */
+	UINT_32 u4RoamingDebugFlag;
+	UINT_32 u4RoamingThreshold;
+	UINT_32 u4RoamingCurrentRcpi;
+
+	/* RF Counter 10-14 */
+	UINT_32 u4RFPriChannel;
+	UINT_32 u4RFChannelS1;
+	UINT_32 u4RFChannelS2;
+	UINT_32 u4RFChannelWidth;
+	UINT_32 u4RFSco;
+
+	/* Coex Counter 15-17 */
+	UINT_32 u4BTProfile;
+	UINT_32 u4BTOn;
+	UINT_32 u4LTEOn;
+
+	/* Low Power Counter 18-20 */
+	UINT_32 u4LPTxUcPktNum;
+	UINT_32 u4LPRxUcPktNum;
+	UINT_32 u4LPPSProfile;
+
+	/* Base Band Counter 21- 32 */
+	UINT_32 u4OfdmPdCnt;
+	UINT_32 u4CckPdCnt;
+	UINT_32 u4CckSigErrorCnt;
+	UINT_32 u4CckSfdErrorCnt;
+	UINT_32 u4OfdmSigErrorCnt;
+	UINT_32 u4OfdmTaqErrorCnt;
+	UINT_32 u4OfdmFcsErrorCnt;
+	UINT_32 u4CckFcsErrorCnt;
+	UINT_32 u4OfdmMdrdyCnt;
+	UINT_32 u4CckMdrdyCnt;
+	UINT_32 u4PhyCcaStatus;
+	UINT_32 u4WifiFastSpiStatus;
+
+	/* Mac RX Counter 33-45 */
+	UINT_32 u4RxMdrdyCount;
+	UINT_32 u4RxFcsErrorCount;
+	UINT_32 u4RxbFifoFullCount;
+	UINT_32 u4RxMpduCount;
+	UINT_32 u4RxLengthMismatchCount;
+	UINT_32 u4RxCcaPrimCount;
+	UINT_32 u4RxEdCount;
+	UINT_32 u4LmacFreeRunTimer;
+	UINT_32 u4WtblReadPointer;
+	UINT_32 u4RmacWritePointer;
+	UINT_32 u4SecWritePointer;
+	UINT_32 u4SecReadPointer;
+	UINT_32 u4DmaReadPointer;
+
+	/* Mac TX Counter 46-47 */
+	UINT_32 u4TxChannelIdleCount;
+	UINT_32 u4TxCcaNavTxTime;
+	/* If you want to add item, please modify BUG_REPORT_NUM in mtk_driver_nl80211.h */
+} EVENT_BUG_REPORT_T, *P_EVENT_BUG_REPORT_T;
 
 /* EVENT_ID_FW_SLEEPY_NOTIFY */
 typedef struct _EVENT_SLEEPY_INFO_T {
@@ -763,6 +869,20 @@ typedef struct _CMD_PATTERN_FUNC_CONFIG {
 	BOOLEAN fgBcA1MatchDrop;
 	BOOLEAN fgMcA1MatchDrop;
 } CMD_PATTERN_FUNC_CONFIG, *P_CMD_PATTERN_FUNC_CONFIG;
+
+#if CFG_SUPPORT_FCC_DYNAMIC_TX_PWR_ADJUST
+/* TX Power Adjust For FCC/CE Certification */
+typedef struct _CMD_FCC_TX_PWR_ADJUST_T {
+	UINT_8 fgFccTxPwrAdjust;
+	UINT_8 Offset_CCK;      /* Offset for CH 11~14 */
+	UINT_8 Offset_HT20;     /* Offset for CH 11~14 */
+	UINT_8 Offset_HT40;     /* Offset for CH 11~14 */
+	UINT_8 Channel_CCK[2];  /* [0] for start channel, [1] for ending channel */
+	UINT_8 Channel_HT20[2]; /* [0] for start channel, [1] for ending channel */
+	UINT_8 Channel_HT40[2]; /* [0] for start channel, [1] for ending channel */
+	UINT_8 cReserved[2];
+} CMD_FCC_TX_PWR_ADJUST, *P_CMD_FCC_TX_PWR_ADJUST;
+#endif
 
 typedef struct _EVENT_TX_DONE_T {
 	UINT_8 ucPacketSeq;
@@ -900,8 +1020,9 @@ typedef struct _CMD_UPDATE_STA_RECORD_T {
 
 	UINT_8 ucTxBaSize;
 	UINT_8 ucRxBaSize;
-
-	UINT_8 aucReserved4[30];
+	UINT_8 ucKeepAliveDuration; /* unit is 1s */
+	UINT_8 ucKeepAliveOption; /* only bit0 is used now */
+	UINT_8 aucReserved4[28];
 } CMD_UPDATE_STA_RECORD_T, *P_CMD_UPDATE_STA_RECORD_T;
 
 typedef struct _CMD_REMOVE_STA_RECORD_T {
@@ -955,7 +1076,7 @@ typedef struct _CMD_SET_WMM_PS_TEST_STRUCT_T {
 
 typedef struct _GSCN_CHANNEL_INFO_T {
 	UINT_8 ucBand;
-	UINT_8 ucChannel;	/* frequency */
+	UINT_8 ucChannelNumber;	/* Channel Number */
 	UINT_8 ucPassive;	/* 0 => active, 1 => passive scan; ignored for DFS */
 	UINT_8 aucReserved[1];
 
@@ -963,23 +1084,32 @@ typedef struct _GSCN_CHANNEL_INFO_T {
 	/* Add channel class */
 } GSCN_CHANNEL_INFO_T, *P_GSCN_CHANNEL_INFO_T;
 
-typedef struct _GSCAN_CHANNEL_BUCKET_T {
-
+typedef struct _GSCAN_BUCKET_T {
 	UINT_16 u2BucketIndex;	/* bucket index, 0 based */
-	UINT_8 ucBucketFreqMultiple;	/* desired period, in millisecond; if this is too low, the firmware
-	should choose to generate results as fast as it can instead of failing the command */
-	/* report_events semantics -
-	 *  0 => report only when scan history is % full
-	 *  1 => same as 0 + report a scan completion event after scanning this bucket
-	 *  2 => same as 1 + forward scan results (beacons/probe responses + IEs) in real time to HAL
-	 *  3 => same as 2 + forward scan results (beacons/probe responses + IEs) in real time to
-	 supplicant as well (optional) . */
+	UINT_8 ucBucketFreqMultiple;	/* desired period, in millisecond;
+					 * if this is too low, the firmware should choose to generate
+					 * results as fast as it can instead of failing the command */
+	 /* report_events semantics -
+	  *  This is a bit field; which defines following bits -
+	  *  REPORT_EVENTS_EACH_SCAN	=> report a scan completion event after scan. If this is not set
+	  *				    then scan completion events should be reported if
+	  *				    report_threshold_percent or report_threshold_num_scans is
+	  *				    reached.
+	  *  REPORT_EVENTS_FULL_RESULTS => forward scan results (beacons/probe responses + IEs)
+	  *				    in real time to HAL, in addition to completion events
+	  *				    Note: To keep backward compatibility, fire completion
+	  *				    events regardless of REPORT_EVENTS_EACH_SCAN.
+	  *  REPORT_EVENTS_NO_BATCH	=> controls if scans for this bucket should be placed in the
+	  *				    history buffer
+	  */
 	UINT_8 ucReportFlag;
+	UINT_8 ucMaxBucketFreqMultiple; /* max_period / base_period */
+	UINT_8 ucStepCount;
 	UINT_8 ucNumChannels;
-	UINT_8 aucReserved[3];
+	UINT_8 aucReserved[1];
 	WIFI_BAND eBand;	/* when UNSPECIFIED, use channel list */
 	GSCN_CHANNEL_INFO_T arChannelList[GSCAN_MAX_CHANNELS];	/* channels to scan; these may include DFS channels */
-} GSCAN_CHANNEL_BUCKET_T, *P_GSCAN_CHANNEL_BUCKET_T;
+} GSCAN_BUCKET_T, *P_GSCAN_BUCKET_T;
 
 typedef struct _CMD_GSCN_REQ_T {
 	UINT_8 ucFlags;
@@ -988,15 +1118,15 @@ typedef struct _CMD_GSCN_REQ_T {
 	UINT_32 u4BufferThreshold;
 	UINT_32 u4BasePeriod;	/* base timer period in ms */
 	UINT_32 u4NumBuckets;
-	UINT_32 u4MaxApPerScan;	/* number of APs to store in each scan in the
-							history buffer (keep the highest RSSI APs */
-	GSCAN_CHANNEL_BUCKET_T arChannelBucket[GSCAN_MAX_BUCKETS];
+	UINT_32 u4MaxApPerScan;	/* number of APs to store in each scan in the */
+	/* BSSID/RSSI history buffer (keep the highest RSSI APs) */
+	GSCAN_BUCKET_T arBucket[GSCAN_MAX_BUCKETS];
 } CMD_GSCN_REQ_T, *P_CMD_GSCN_REQ_T;
 
 typedef struct _CMD_GSCN_SCN_COFIG_T {
-	UINT_8 ucNumApPerScn;	/* GSCAN_ATTRIBUTE_NUM_AP_PER_SCAN */
-	UINT_32 u4NumScnToCache;	/* GSCAN_ATTRIBUTE_NUM_SCANS_TO_CACHE */
+	UINT_8 ucNumApPerScn;		/* GSCAN_ATTRIBUTE_NUM_AP_PER_SCAN */
 	UINT_32 u4BufferThreshold;	/* GSCAN_ATTRIBUTE_REPORT_THRESHOLD */
+	UINT_32 u4NumScnToCache;	/* GSCAN_ATTRIBUTE_NUM_SCANS_TO_CACHE */
 } CMD_GSCN_SCN_COFIG_T, *P_CMD_GSCN_SCN_COFIG_T;
 
 typedef struct _CMD_GET_GSCAN_RESULT {
@@ -1403,13 +1533,18 @@ typedef enum _ENUM_NLO_AUTH_ALGORITHM {
 	NLO_AUTH_ALGO_RSNA_PSK = 7,
 } ENUM_NLO_AUTH_ALGORITHM, *P_ENUM_NLO_AUTH_ALGORITHM;
 
-typedef struct _NLO_NETWORK {
-	UINT_8 ucNumChannelHint[4];
+struct NLO_SSID_MATCH_SETS {
+	INT_8 cRssiThresold;
 	UINT_8 ucSSIDLength;
-	UINT_8 ucCipherAlgo;
-	UINT_16 u2AuthAlgo;
 	UINT_8 aucSSID[32];
-} NLO_NETWORK, *P_NLO_NETWORK;
+};
+
+struct NLO_NETWORK {
+	UINT_8 ucChannelType; /* 0: specific channel; 1: dual band; 2: 2.4G; 3: 5G; 3*/
+	UINT_8 ucChnlNum;
+	UINT_8 aucChannel[94];
+	struct NLO_SSID_MATCH_SETS arMatchSets[16];
+};
 
 typedef struct _CMD_NLO_REQ {
 	UINT_8 ucSeqNum;
@@ -1421,7 +1556,7 @@ typedef struct _CMD_NLO_REQ {
 	UINT_8 ucEntryNum;
 	UINT_8 ucFlag;		/* BIT(0) Check cipher */
 	UINT_16 u2IELen;
-	NLO_NETWORK arNetworkList[16];
+	struct NLO_NETWORK rNLONetwork;
 	UINT_8 aucIE[0];
 } CMD_NLO_REQ, *P_CMD_NLO_REQ;
 
@@ -1465,14 +1600,6 @@ typedef struct _WIFI_WMM_AC_STAT_GET_FROM_FW_T {
 
 /* CFG_SUPPORT_WFD */
 typedef struct _EVENT_STA_STATISTICS_T {
-	/* Event header */
-	/* UINT_16     u2Length; */
-	/* UINT_16     u2Reserved1; *//* Must be filled with 0x0001 (EVENT Packet) */
-	/* UINT_8            ucEID; */
-	/* UINT_8      ucSeqNum; */
-	/* UINT_8            aucReserved2[2]; */
-
-	/* Event Body */
 	UINT_8 ucVersion;
 	UINT_8 aucReserved1[3];
 	UINT_32 u4Flags;	/* Bit0: valid */
@@ -1502,46 +1629,14 @@ typedef struct _EVENT_STA_STATISTICS_T {
 
 	UINT_8 aucReserved[24];
 } EVENT_STA_STATISTICS_T, *P_EVENT_STA_STATISTICS_T;
+
 #if CFG_AUTO_CHANNEL_SEL_SUPPORT
-
-/* 4 Auto Channel Selection */
-
-typedef struct _CMD_GET_CHN_LOAD_T {
-	UINT_8 ucIndex;
-	UINT_8 ucFlags;
-	UINT_8 ucReadClear;
-	UINT_8 aucReserved0[1];
-	UINT_8 ucChannel;
-	UINT_16 u2ChannelLoad;
-	UINT_8 aucReserved1[1];
-	UINT_8 aucReserved2[16];
-} CMD_GET_CHN_LOAD_T, *P_CMD_GET_CHN_LOAD_T;
-/* 4  Auto Channel Selection */
-
-typedef struct _EVENT_CHN_LOAD_T {
-	/* Event Body */
+typedef struct _EVENT_LTE_SAFE_CHN_T {
 	UINT_8 ucVersion;
-	UINT_8 aucReserved1[3];
+	UINT_8 aucReserved[3];
 	UINT_32 u4Flags;	/* Bit0: valid */
-	UINT_8 ucChannel;
-	UINT_16 u2ChannelLoad;
-	UINT_8 aucReserved4[1];
-	UINT_8 aucReserved[64];
-} EVENT_CHN_LOAD_T, *P_EVENT_CHN_LOAD_T;
-typedef struct _CMD_GET_LTE_SAFE_CHN_T {
-	UINT_8 ucIndex;
-	UINT_8 ucFlags;
-	UINT_8 aucReserved0[2];
-	UINT_8 aucReserved2[16];
-} CMD_GET_LTE_SAFE_CHN_T, *P_CMD_GET_LTE_SAFE_CHN_T;
-
-typedef struct _EVENT_LTE_MODE_T {
-	/* Event Body */
-	UINT_8 ucVersion;
-	UINT_8 aucReserved1[3];
-	UINT_32 u4Flags;	/* Bit0: valid */
-	LTE_SAFE_CH_INFO_T rLteSafeChn;
-} EVENT_LTE_MODE_T, *P_EVENT_LTE_MODE_T;
+	LTE_SAFE_CHN_INFO_T rLteSafeChn;
+} EVENT_LTE_SAFE_CHN_T, *P_EVENT_LTE_SAFE_CHN_T;
 #endif
 
 #if CFG_SUPPORT_SNIFFER
@@ -1609,9 +1704,10 @@ typedef struct _EVENT_GSCAN_RESULT_T {
 } EVENT_GSCAN_RESULT_T, *P_EVENT_GSCAN_RESULT_T;
 
 typedef struct _EVENT_GSCAN_FULL_RESULT_T {
-	UINT_8 ucVersion;
-	UINT_8 aucReserved[3];
 	WIFI_GSCAN_RESULT_T rResult;
+	UINT_32 u4BucketMask;		/* scan chbucket bitmask */
+	UINT_32 u4IeLength;		/* byte length of Information Elements */
+	UINT_8  ucIeData[1];		/* IE data to follow */
 } EVENT_GSCAN_FULL_RESULT_T, *P_EVENT_GSCAN_FULL_RESULT_T;
 
 typedef struct GSCAN_SWC_NET {
@@ -1664,6 +1760,42 @@ typedef struct _CMD_SET_PSCAN_MAC_ADDR {
 	UINT_8 aucReserved[8];
 } CMD_SET_PSCAN_MAC_ADDR, *P_CMD_SET_PSCAN_MAC_ADDR;
 
+typedef struct _CMD_SUSPEND_MODE_SETTING_T {
+	UINT_8		ucBssIndex;
+	UINT_8		fIsEnableSuspendMode;
+	UINT_8		ucReserved[2];
+} CMD_SUSPEND_MODE_SETTING_T, *P_CMD_SUSPEND_MODE_SETTING_T;
+
+typedef struct _EVENT_UPDATE_FW_INFO_T {
+	UINT_8 ucVersion;
+	UINT_8 aucReserved1[3];    /* 4 byte alignment */
+	UINT_32 u4Flags;
+	UINT_32 au4PhyRateLimit[HW_BSSID_NUM+1];
+	UINT_32 au4Reserved2[36];
+} EVENT_UPDATE_FW_INFO_T, *P_EVENT_UPDATE_FW_INFO_T;
+
+struct CMD_REQ_CHNL_UTILIZATION {
+	UINT_16 u2MeasureDuration;
+	UINT_8 ucChannelNum;
+	UINT_8 aucChannelList[48];
+	UINT_8 aucReserved[13];
+};
+
+struct EVENT_RSP_CHNL_UTILIZATION {
+	UINT_8 ucChannelNum;
+	UINT_8 aucChannelMeasureList[48];
+	UINT_8 aucReserved0[15];
+	UINT_8 aucChannelUtilization[48];
+	UINT_8 aucReserved1[16];
+	UINT_8 aucChannelBusyTime[48];
+	UINT_8 aucReserved2[16];
+};
+
+struct CMD_TDLS_PS_T {
+	UINT_8	ucIsEnablePs; /* 0: disable tdls power save; 1: enable tdls power save */
+	UINT_8	aucReserved[3];
+};
+
 /*******************************************************************************
 *                            P U B L I C   D A T A
 ********************************************************************************
@@ -1707,6 +1839,8 @@ VOID nicCmdEventQueryLinkSpeed(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdIn
 
 VOID nicCmdEventQueryStatistics(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 
+VOID nicCmdEventQueryBugReport(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
+
 VOID nicCmdEventEnterRfTest(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 
 VOID nicCmdEventLeaveRfTest(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
@@ -1743,8 +1877,6 @@ VOID nicCmdEventQueryXmitMaxCollisions(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T
 /* for timeout check */
 VOID nicOidCmdTimeoutCommon(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo);
 
-VOID nicCmdTimeoutCommon(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo);
-
 VOID nicOidCmdEnterRFTestTimeout(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo);
 
 #if CFG_SUPPORT_BUILD_DATE_CODE
@@ -1754,16 +1886,18 @@ VOID nicCmdEventBuildDateCode(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInf
 VOID nicCmdEventQueryStaStatistics(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 
 #if CFG_AUTO_CHANNEL_SEL_SUPPORT
-/* 4 Auto Channel Selection */
-VOID nicCmdEventQueryChannelLoad(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
-
-VOID nicCmdEventQueryLTESafeChn(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
+VOID nicCmdEventQueryLteSafeChn(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 #endif
 
 #if CFG_SUPPORT_BATCH_SCAN
 VOID nicCmdEventBatchScanResult(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 #endif
 
+#ifdef FW_CFG_SUPPORT
+VOID nicCmdEventQueryCfgRead(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
+#endif
+
+VOID nicEventUpdateFwInfo(IN P_ADAPTER_T prAdapter, IN P_WIFI_EVENT_T prEvent);
 /*******************************************************************************
 *                              F U N C T I O N S
 ********************************************************************************

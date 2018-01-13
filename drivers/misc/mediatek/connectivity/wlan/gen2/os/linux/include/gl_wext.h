@@ -1,74 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/os/linux/include/gl_wext.h#1
-*/
-
-/*! \file   gl_wext.h
-    \brief  This file is for Portable Driver linux wireless extension support.
-*/
-
-/*
-** Log: gl_wext.h
- *
- * 10 12 2011 wh.su
- * [WCXRP00001036] [MT6620 Wi-Fi][Driver][FW] Adding the 802.11w code for MFP
- * adding the 802.11w related function and define .
- *
- * 09 20 2011 chinglan.wang
- * [WCXRP00000989] [WiFi Direct] [Driver] Add a new io control API to start the formation for the sigma test.
- * .
- *
- * 09 20 2011 chinglan.wang
- * [WCXRP00000989] [WiFi Direct] [Driver] Add a new io control API to start the formation for the sigma test.
- * .
- *
- * 01 11 2011 chinglan.wang
- * NULL
- * Modify to reslove the CR :[ALPS00028994] Use WEP security to connect Marvell 11N AP.
- * Connection establish successfully.
- * Use the WPS function to connect AP, the privacy bit always is set to 1. .
- *
- * 09 27 2010 wh.su
- * NULL
- * [WCXRP00000067][MT6620 Wi-Fi][Driver] Support the android+ WAPI function.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 06 2010 kevin.huang
- * [WPD00003832][MT6620 5931] Create driver base
- * [MT6620 5931] Create driver base
- *
- * 03 31 2010 wh.su
- * [WPD00003816][MT6620 Wi-Fi] Adding the security support
- * modify the wapi related code for new driver's design.
- *
- * 03 24 2010 jeffrey.chang
- * [WPD00003826]Initial import for Linux port
- * initial import for Linux port
-**  \main\maintrunk.MT5921\12 2009-10-20 17:38:33 GMT mtk01090
-**  Refine driver unloading and clean up procedure. Block requests, stop main thread and clean up queued requests,
-**  and then stop hw.
-**  \main\maintrunk.MT5921\11 2009-09-28 20:19:28 GMT mtk01090
-**  Add private ioctl to carry OID structures. Restructure public/private ioctl interfaces to Linux kernel.
-**  \main\maintrunk.MT5921\10 2009-09-03 12:12:35 GMT mtk01088
-**  adding the function declaration
-**  \main\maintrunk.MT5921\9 2009-08-18 22:57:17 GMT mtk01090
-**  Add Linux SDIO (with mmc core) support.
-**  Add Linux 2.6.21, 2.6.25, 2.6.26.
-**  Fix compile warning in Linux.
-**  \main\maintrunk.MT5921\8 2008-08-29 16:59:07 GMT mtk01088
-**  fixed compiling error
-**  \main\maintrunk.MT5921\7 2008-08-29 14:13:28 GMT mtk01088
-**  adjust the header file for code refine
-**  \main\maintrunk.MT5921\6 2008-03-28 10:40:31 GMT mtk01461
-**  Add set desired rate in Linux STD IOCTL
-**  \main\maintrunk.MT5921\5 2008-03-11 14:51:08 GMT mtk01461
-**  Refine private IOCTL functions
-**  \main\maintrunk.MT5921\4 2008-02-12 23:45:45 GMT mtk01461
-**  Add Set Frequency & Channel oid support for Linux
-**  \main\maintrunk.MT5921\3 2007-11-06 19:36:19 GMT mtk01088
-**  add the WPS related code
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _GL_WEXT_H
@@ -84,8 +24,6 @@
 *                    E X T E R N A L   R E F E R E N C E S
 ********************************************************************************
 */
-extern VOID wlanUpdateChannelTable(P_GLUE_INFO_T prGlueInfo);
-extern VOID p2pUpdateChannelTableByDomain(P_GLUE_INFO_T prGlueInfo);
 
 /*******************************************************************************
 *                              C O N S T A N T S
@@ -292,6 +230,7 @@ enum {
 #define IW_AUTH_KEY_MGMT_PSK_SHA256 8
 #endif
 
+#define IW_AUTH_ALG_FT			0x00000008
 /*******************************************************************************
 *                            P U B L I C   D A T A
 ********************************************************************************
@@ -325,8 +264,6 @@ wext_indicate_wext_event(IN P_GLUE_INFO_T prGlueInfo,
 
 struct iw_statistics *wext_get_wireless_stats(struct net_device *prDev);
 
-int wext_get_priv(IN struct net_device *prNetDev, IN struct ifreq *prIfReq);
-
 BOOLEAN
 wextSrchDesiredWPAIE(IN PUINT_8 pucIEStart,
 		     IN INT_32 i4TotalIeLen, IN UINT_8 ucDesiredElemId, OUT PUINT_8 *ppucDesiredIE);
@@ -345,12 +282,14 @@ BOOLEAN wextSrchDesiredInterworkingIE(IN PUINT_8 pucIEStart, IN INT_32 i4TotalIe
 BOOLEAN wextSrchDesiredAdvProtocolIE(IN PUINT_8 pucIEStart, IN INT_32 i4TotalIeLen, OUT PUINT_8 *ppucDesiredIE);
 
 BOOLEAN wextSrchDesiredRoamingConsortiumIE(IN PUINT_8 pucIEStart, IN INT_32 i4TotalIeLen, OUT PUINT_8 *ppucDesiredIE);
+BOOLEAN wextSrchDesiredOsenIE(IN PUINT_8 pucIEStart, IN INT_32 i4TotalIeLen, OUT PUINT_8 *ppucDesiredIE);
 #endif
 
 #if CFG_SUPPORT_WAPI
 BOOLEAN wextSrchDesiredWAPIIE(IN PUINT_8 pucIEStart, IN INT_32 i4TotalIeLen, OUT PUINT_8 *ppucDesiredIE);
 #endif
 
+BOOLEAN wextSrchOkcAndPMKID(IN PUINT_8 pucIEStart, IN INT_32 i4TotalIeLen, OUT PUINT_8 *ppucPMKID, OUT PUINT_8 okc);
 /*******************************************************************************
 *                              F U N C T I O N S
 ********************************************************************************

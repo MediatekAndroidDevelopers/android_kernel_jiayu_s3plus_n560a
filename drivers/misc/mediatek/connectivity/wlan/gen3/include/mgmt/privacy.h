@@ -1,83 +1,24 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
 ** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/include/mgmt/privacy.h#1
 */
 
 /*! \file   privacy.h
  *  \brief This file contains the function declaration for privacy.c.
  */
-
-/*
-** Log: privacy.h
-**
-** 07 25 2014 eason.tsai
-** AOSP
-**
-** 07 30 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Add Rx TKIP mic check
-**
-** 07 30 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Add a function, for rx, input the rx wlan index to get the bss index
-**
-** 07 26 2013 terry.wu
-** [BORA00002207] [MT6630 Wi-Fi] TXM & MQM Implementation
-** 1. Reduce extra Tx frame header parsing
-** 2. Add TX port control
-** 3. Add net interface to BSS binding
-**
-** 07 19 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** wapi 1x frame don't need encrypt
-**
-** 07 17 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** fix and modify some security code
-**
-** 07 05 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Fix to let the wpa-psk ok
-**
-** 07 04 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Add a <<temp function>> to decide data frame need encrypted or not
-**
-** 07 04 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Add the function to got the STA index via the wlan index
-** report at Rx status
-**
-** 07 02 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Refine some secutity code
-**
-** 07 02 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Refine security BMC wlan index assign
-** Fix some compiling warning
-**
-** 03 29 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Do more sta record free mechanism check
-** remove non-used code
-**
-** 03 27 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** add default ket handler
-**
-** 03 20 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Add the security code for wlan table assign operation
-**
-** 03 14 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** .modify some code define and flow
-**
-** 03 13 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** .remove non-used code
-**
-*/
 
 #ifndef _PRIVACY_H
 #define _PRIVACY_H
@@ -127,7 +68,8 @@
 #define CIPHER_SUITE_GCMP               10
 
 /* Todo:: Move to register */
-#if defined(MT6630)
+
+#if defined(MT6630) || defined(MT6797)
 #define WTBL_RESERVED_ENTRY             255
 #else
 #define WTBL_RESERVED_ENTRY             255
@@ -155,10 +97,23 @@
 #define WTBL_AIS_IBSS_NO_SEC_BC_IDX     28	/* Reserved for Ad-hoc No sec index */
 #define WTBL_AP_NO_SEC_BC_IDX           28	/* Reserved for AP mode No Sec index */
 
+#define SEC_TX_KEY_COMMAND		1
+#define SEC_QUEUE_KEY_COMMAND	0
+#define SEC_DROP_KEY_COMMAND	2
+
 /*******************************************************************************
  *                         D A T A   T Y P E S
  ********************************************************************************
  */
+enum EAPOL_KEY_TYPE {
+	EAPOL_KEY_NOT_KEY = 0,
+	EAPOL_KEY_1_OF_4 = 1,
+	EAPOL_KEY_2_OF_4 = 2,
+	EAPOL_KEY_3_OF_4 = 3,
+	EAPOL_KEY_4_OF_4 = 4,
+	EAPOL_KEY_1_OF_2 = 5,
+	EAPOL_KEY_2_OF_2 = 6,
+};
 
 typedef struct _IEEE_802_1X_HDR {
 	UINT_8 ucVersion;
@@ -246,6 +201,9 @@ VOID secPrivacyFreeForEntry(IN P_ADAPTER_T prAdapter, IN UINT_8 ucEntry);
 
 VOID secPrivacyFreeSta(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaRec);
 
+enum EAPOL_KEY_TYPE secGetEapolKeyType(PUINT_8 pucPacket);
+VOID secSetKeyCmdAction(P_BSS_INFO_T prBssInfo, UINT_8 ucEapolKeyType, UINT_8 ucAction);
+
 UINT_8
 secPrivacySeekForBcEntry(IN P_ADAPTER_T prAdapter, IN UINT_8 ucBssIndex, IN PUINT_8 pucAddr, IN UINT_8 ucStaIdx, IN
 			 UINT_8 ucAlg, IN UINT_8 ucKeyId, IN UINT_8 ucCurrentKeyId, IN UINT_8 ucTxRx);
@@ -267,6 +225,8 @@ BOOLEAN secIsProtected1xFrame(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaR
 BOOLEAN secIsProtectedBss(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo);
 
 BOOLEAN tkipMicDecapsulate(IN P_SW_RFB_T prSwRfb, IN PUINT_8 pucMicKey);
+
+UINT_8 secGetBssIdxByNetType(P_ADAPTER_T prAdapter);
 
 /*******************************************************************************
  *                              F U N C T I O N S

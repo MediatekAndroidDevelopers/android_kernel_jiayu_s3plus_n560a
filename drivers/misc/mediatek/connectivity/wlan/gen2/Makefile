@@ -36,7 +36,7 @@ endif
 #    ccflags-y += -D_HIF_SDIO=1
 #endif
 
-ifeq ($(CONFIG_MTK_PASSPOINT_R1_SUPPORT), y)
+ifeq ($(CONFIG_MTK_PASSPOINT_R2_SUPPORT), y)
     ccflags-y += -DCFG_SUPPORT_HOTSPOT_2_0=1
     ccflags-y += -DCFG_HS20_DEBUG=1
     ccflags-y += -DCFG_ENABLE_GTK_FRAME_FILTER=1
@@ -60,13 +60,29 @@ else
     ccflags-y += -I$(srctree)/drivers/misc/mediatek/tc1_interface/pmt
 endif
     ccflags-y += -DCFG_TC1_FEATURE=1
-	ccflags-y += -DCFG_SUPPORT_CFG_FILE=1
+    ccflags-y += -DCFG_SUPPORT_CFG_FILE=1
+    ccflags-y += -DCFG_USE_AOSP_TETHERING_NAME
 else
     ccflags-y += -DCFG_TC1_FEATURE=0
 endif
 
+ifeq ($(CONFIG_MTK_TC10_FEATURE), y)
+    ccflags-y += -DCFG_TC10_FEATURE=1
+    ccflags-y += -DCFG_SKIP_MAC_INFO_CHECK
+    ccflags-y += -DCFG_USE_AOSP_TETHERING_NAME
+else
+    ccflags-y += -DCFG_TC10_FEATURE=0
+endif
+
+ifeq ($(CONFIG_MTK_AOSP_TETHERING), y)
+    ccflags-y += -DCFG_USE_AOSP_TETHERING_NAME
+endif
+
 MTK_SRAM_SIZE_OPTION=0
 ifeq ($(CONFIG_ARCH_MT6755), y)
+    MTK_SRAM_SIZE_OPTION=2
+endif
+ifeq ($(CONFIG_MACH_MT6757), y)
     MTK_SRAM_SIZE_OPTION=2
 endif
 ifeq ($(CONFIG_ARCH_MT6735), y)
@@ -81,7 +97,13 @@ endif
 ifeq ($(CONFIG_ARCH_MT6580), y)
     MTK_SRAM_SIZE_OPTION=1
 endif
+ifeq ($(CONFIG_ARCH_MT6570), y)
+    MTK_SRAM_SIZE_OPTION=1
+endif
 ifeq ($(CONFIG_ARCH_MT8163), y)
+    MTK_SRAM_SIZE_OPTION=1
+endif
+ifeq ($(CONFIG_ARCH_MT8167), y)
     MTK_SRAM_SIZE_OPTION=1
 endif
 ccflags-y += -DCFG_SRAM_SIZE_OPTION=$(MTK_SRAM_SIZE_OPTION)
@@ -99,6 +121,7 @@ ccflags-y += -DDBG=0
 ccflags-y += -I$(src)/os -I$(src)/os/linux/include -I$(src)/os/linux/hif/ahb/include
 ccflags-y += -I$(src)/include -I$(src)/include/nic -I$(src)/include/mgmt
 ccflags-y += -I$(srctree)/drivers/misc/mediatek/base/power/include
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/base/power/$(MTK_PLATFORM)/
 
 MODULE_NAME := wlan_gen2
 obj-$(CONFIG_MTK_COMBO_WIFI) += $(MODULE_NAME).o
@@ -112,8 +135,10 @@ OS_DIR      := os/linux/
 HIF_DIR	    := os/linux/hif/ahb/
 NIC_DIR     := nic/
 MGMT_DIR    := mgmt/
+FWCFG_DIR   := $(srctree)/drivers/misc/mediatek/connectivity/wlan/gen2/$(MTK_PROJECT)/
 DMA_DIR     := ../../../../platform/$(call lc,$(MTK_PLATFORM))/kernel/drivers/wifi/
 PLAT_DIR    := os/linux/plat/$(MTK_PLATFORM)/
+HIF_AHB_PDMA := $(HIF_DIR)$(MTK_PLATFORM)/
 #$(call lc,$(MTK_PLATFORM))
 
 
@@ -170,7 +195,9 @@ MGMT_OBJS := $(MGMT_DIR)ais_fsm.o \
              $(MGMT_DIR)swcr.o \
  			 $(MGMT_DIR)swcr.o \
 			 $(MGMT_DIR)roaming_fsm.o \
-			 $(MGMT_DIR)hs20.o
+			 $(MGMT_DIR)hs20.o \
+			$(MGMT_DIR)wnm.o \
+			$(MGMT_DIR)qosmap.o \
 
 # ---------------------------------------------------
 # TDLS Objects List
@@ -204,7 +231,9 @@ MGMT_OBJS += $(MGMT_DIR)p2p_assoc.o \
              $(MGMT_DIR)p2p_rlm_obss.o \
              $(MGMT_DIR)p2p_scan.o \
              $(MGMT_DIR)p2p_ie.o \
-             $(MGMT_DIR)p2p_state.o
+             $(MGMT_DIR)p2p_state.o \
+             $(MGMT_DIR)wnm.o \
+             $(MGMT_DIR)wmm.o
 
 
 ifeq ($(CONFIG_MTK_WAPI_SUPPORT), y)
@@ -215,18 +244,63 @@ ifeq ($(WLAN_PROC), y)
 OS_OBJS += gl_proc.o
 endif
 
+ifeq ($(CONFIG_ARCH_MT7623), y)
+HIF_AHB_PDMA = $(HIF_DIR)mt8127/
+endif
 HIF_OBJS :=  $(HIF_DIR)arm.o \
              $(HIF_DIR)ahb.o \
-             $(HIF_DIR)$(MTK_PLATFORM)/ahb_pdma.o
+             $(HIF_AHB_PDMA)ahb_pdma.o
+ifeq ($(CONFIG_ARCH_MT6755), y)
+PLAT_OBJS := $(PLAT_DIR)plat_priv.o
+$(MODULE_NAME)-objs  += $(PLAT_OBJS)
+endif
+
+ifeq ($(CONFIG_MACH_MT6757), y)
+PLAT_OBJS := $(PLAT_DIR)plat_priv.o
+$(MODULE_NAME)-objs  += $(PLAT_OBJS)
+endif
+
+ifeq ($(CONFIG_ARCH_MT6570), y)
+PLAT_OBJS := $(PLAT_DIR)plat_priv.o
+$(MODULE_NAME)-objs  += $(PLAT_OBJS)
+endif
 
 ifeq ($(CONFIG_ARCH_MT6735), y)
 PLAT_OBJS := $(PLAT_DIR)plat_priv.o
 $(MODULE_NAME)-objs  += $(PLAT_OBJS)
 endif
 
+ifeq ($(CONFIG_ARCH_MT6735M), y)
+PLAT_OBJS := $(PLAT_DIR)plat_priv.o
+$(MODULE_NAME)-objs  += $(PLAT_OBJS)
+endif
+# ---------------------------------------------------
+# FW customization
+# ---------------------------------------------------
+FW_CUSTOMIZATION = n
+ifeq ($(FW_CUSTOMIZATION), y)
+    ifneq ($(wildcard $(FWCFG_DIR)fw_config.c),)
+        COMMON_OBJS += $(MTK_PROJECT)/fw_config.o
+    endif
+    COMMON_OBJS += $(COMMON_DIR)fwcfg.o
+    ccflags-y += -DFW_CFG_SUPPORT
+    ccflags-y += -DENABLED_IN_ENGUSERDEBUG
+endif
+# ---------------------------------------------------
+# WLAN Parse BUILD VARINAT
+# ---------------------------------------------------
+ifeq ($(TARGET_BUILD_VARIANT), eng)
+    ccflags-y += -DWLAN_ENG_LOAD
+endif
+ifeq ($(TARGET_BUILD_VARIANT), userdebug)
+    ccflags-y += -DWLAN_USERDEBUG_LOAD
+endif
+ifeq ($(TARGET_BUILD_VARIANT), user)
+    ccflags-y += -DWLAN_USER_LOAD
+endif
+# ---------------------------------------------------
 $(MODULE_NAME)-objs  += $(COMMON_OBJS)
 $(MODULE_NAME)-objs  += $(NIC_OBJS)
 $(MODULE_NAME)-objs  += $(OS_OBJS)
 $(MODULE_NAME)-objs  += $(HIF_OBJS)
 $(MODULE_NAME)-objs  += $(MGMT_OBJS)
-

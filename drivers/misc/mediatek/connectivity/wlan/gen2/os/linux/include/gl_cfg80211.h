@@ -1,25 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/os/linux/include/gl_cfg80211.h#1
-*/
-
-/*! \file   gl_cfg80211.h
-    \brief  This file is for Portable Driver linux cfg80211 support.
-*/
-
-/*
-** Log: gl_cfg80211.h
-**
-** 09 03 2013 cp.wu
-** add path for reassociation
-**
-** 09 12 2012 wcpadmin
-** [ALPS00276400] Remove MTK copyright and legal header on GPL/LGPL related packages
-** .
-**
-** 08 30 2012 chinglan.wang
-** [ALPS00349664] [6577JB][WIFI] Phone can not connect to AP secured with AES via WPS in 802.11n Only
-** .
- *
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _GL_CFG80211_H
@@ -53,8 +42,7 @@ extern UINT_8 keyStructBuf[100];	/* add/remove key shared buffer */
 #endif
 
 extern struct delayed_work sched_workq;
-extern struct semaphore g_halt_sem;
-extern int g_u4HaltFlag;
+
 /*******************************************************************************
 *                              C O N S T A N T S
 ********************************************************************************
@@ -62,6 +50,8 @@ extern int g_u4HaltFlag;
 #if CONFIG_NL80211_TESTMODE
 #define NL80211_DRIVER_TESTMODE_VERSION 2
 #endif
+
+#define GL_CFG80211_SCAN_SSID_MAX_NUM 2
 
 /*******************************************************************************
 *                             D A T A   T Y P E S
@@ -98,7 +88,11 @@ typedef enum _ENUM_TESTMODE_STA_STATISTICS_ATTR {
 
 	NL80211_TESTMODE_STA_STATISTICS_TOTAL_CNT,
 	NL80211_TESTMODE_STA_STATISTICS_THRESHOLD_CNT,
+
 	NL80211_TESTMODE_STA_STATISTICS_AVG_PROCESS_TIME,
+	NL80211_TESTMODE_STA_STATISTICS_MAX_PROCESS_TIME,
+	NL80211_TESTMODE_STA_STATISTICS_AVG_HIF_PROCESS_TIME,
+	NL80211_TESTMODE_STA_STATISTICS_MAX_HIF_PROCESS_TIME,
 
 	NL80211_TESTMODE_STA_STATISTICS_FAIL_CNT,
 	NL80211_TESTMODE_STA_STATISTICS_TIMEOUT_CNT,
@@ -110,19 +104,56 @@ typedef enum _ENUM_TESTMODE_STA_STATISTICS_ATTR {
 	NL80211_TESTMODE_STA_STATISTICS_TC_AVG_QUE_LEN_ARRAY,
 	NL80211_TESTMODE_STA_STATISTICS_TC_CUR_QUE_LEN_ARRAY,
 
+	/*
+	 * how many packages TX during statistics interval
+	 */
+	NL80211_TESTMODE_STA_STATISTICS_ENQUEUE,
+
+	/*
+	 * how many packages this TX during statistics interval
+	 */
+	NL80211_TESTMODE_STA_STATISTICS_STA_ENQUEUE,
+
+	/*
+	 * how many packages dequeue during statistics interval
+	 */
+	NL80211_TESTMODE_STA_STATISTICS_DEQUEUE,
+
+	/*
+	 * how many packages this sta dequeue during statistics interval
+	 */
+	NL80211_TESTMODE_STA_STATISTICS_STA_DEQUEUE,
+
+	/*
+	 * how many TC[0-3] resource back from firmware during
+	 * statistics interval
+	 */
+	NL80211_TESTMODE_STA_STATISTICS_RB_ARRAY,
+	NL80211_TESTMODE_STA_STATISTICS_NO_TC_ARRAY,
+	NL80211_TESTMODE_STA_STATISTICS_USED_BFCT_ARRAY,
+	NL80211_TESTMODE_STA_STATISTICS_WANTED_BFCT_ARRAY,
+
+	NL80211_TESTMODE_STA_STATISTICS_IRQ_ISR_CNT,
+	NL80211_TESTMODE_STA_STATISTICS_IRQ_ISR_PASS_CNT,
+	NL80211_TESTMODE_STA_STATISTICS_IRQ_TASK_CNT,
+	NL80211_TESTMODE_STA_STATISTICS_IRQ_AB_CNT,
+	NL80211_TESTMODE_STA_STATISTICS_IRQ_SW_CNT,
+	NL80211_TESTMODE_STA_STATISTICS_IRQ_TX_CNT,
+	NL80211_TESTMODE_STA_STATISTICS_IRQ_RX_CNT,
+
 	NL80211_TESTMODE_STA_STATISTICS_RESERVED_ARRAY,
 
 	NL80211_TESTMODE_STA_STATISTICS_NUM
 } ENUM_TESTMODE_STA_STATISTICS_ATTR;
+
 typedef struct _NL80211_DRIVER_SET_NFC_PARAMS {
 	NL80211_DRIVER_TEST_MODE_PARAMS hdr;
 	UINT_32 NFC_Enable;
-
 } NL80211_DRIVER_SET_NFC_PARAMS, *P_NL80211_DRIVER_SET_NFC_PARAMS;
+
 typedef struct _NL80211_DRIVER_GET_SCANDONE_PARAMS {
 	NL80211_DRIVER_TEST_MODE_PARAMS hdr;
 	UINT_32 u4ScanDone;
-
 } NL80211_DRIVER_GET_SCANDONE_PARAMS, *P_NL80211_DRIVER_GET_SCANDONE_PARAMS;
 
 typedef enum _ENUM_TESTMODE_LINK_DETECTION_ATTR {
@@ -136,26 +167,6 @@ typedef enum _ENUM_TESTMODE_LINK_DETECTION_ATTR {
 	NL80211_TESTMODE_LINK_DETECT_NUM,
 } ENUM_TESTMODE_LINK_DETECTION_ATTR;
 
-#if CFG_AUTO_CHANNEL_SEL_SUPPORT
-
-typedef struct _NL80211_DRIVER_GET_LTE_PARAMS {
-	NL80211_DRIVER_TEST_MODE_PARAMS hdr;
-	UINT_32 u4Version;
-	UINT_32 u4Flag;
-
-} NL80211_DRIVER_GET_LTE_PARAMS, *P_NL80211_DRIVER_GET_LTE_PARAMS;
-
-/*typedef enum _ENUM_TESTMODE_AVAILABLE_CHAN_ATTR{
-	NL80211_TESTMODE_AVAILABLE_CHAN_INVALID = 0,
-	NL80211_TESTMODE_AVAILABLE_CHAN_2G_BASE_1,
-	NL80211_TESTMODE_AVAILABLE_CHAN_5G_BASE_34,
-	NL80211_TESTMODE_AVAILABLE_CHAN_5G_BASE_149,
-	NL80211_TESTMODE_AVAILABLE_CHAN_5G_BASE_184,
-
-	NL80211_TESTMODE_AVAILABLE_CHAN_NUM,
-}ENUM_TESTMODE_AVAILABLE_CHAN_ATTR;*/
-
-#endif
 #endif
 /*******************************************************************************
 *                            P U B L I C   D A T A
@@ -240,10 +251,8 @@ int mtk_cfg80211_cancel_remain_on_channel(struct wiphy *wiphy, struct wireless_d
 int
 mtk_cfg80211_mgmt_tx(struct wiphy *wiphy,
 		     struct wireless_dev *wdev,
-		     struct ieee80211_channel *channel, bool offscan,
-		     unsigned int wait,
-		     const u8 *buf,
-		     size_t len, bool no_cck, bool dont_wait_for_ack, u64 *cookie);
+		     struct cfg80211_mgmt_tx_params *params,
+		     u64 *cookie);
 
 void mtk_cfg80211_mgmt_frame_register(IN struct wiphy *wiphy,
 				      IN struct wireless_dev *wdev,
@@ -260,23 +269,16 @@ mtk_cfg80211_sched_scan_start(IN struct wiphy *wiphy,
 int mtk_cfg80211_sched_scan_stop(IN struct wiphy *wiphy, IN struct net_device *ndev);
 
 #if CONFIG_NL80211_TESTMODE
-#if CFG_AUTO_CHANNEL_SEL_SUPPORT
-WLAN_STATUS
-wlanoidQueryACSChannelList(IN P_ADAPTER_T prAdapter,
-			   IN PVOID pvQueryBuffer, IN UINT_32 u4QueryBufferLen, OUT PUINT_32 pu4QueryInfoLen);
-
-int
-mtk_cfg80211_testmode_get_lte_channel(IN struct wiphy *wiphy, IN void *data, IN int len, IN P_GLUE_INFO_T prGlueInfo);
-#endif
 int
 mtk_cfg80211_testmode_get_sta_statistics(IN struct wiphy *wiphy,
 					 IN void *data, IN int len, IN P_GLUE_INFO_T prGlueInfo);
 
 int mtk_cfg80211_testmode_get_scan_done(IN struct wiphy *wiphy, IN void *data, IN int len, IN P_GLUE_INFO_T prGlueInfo);
 
-int mtk_cfg80211_testmode_cmd(IN struct wiphy *wiphy, IN void *data, IN int len);
+int mtk_cfg80211_testmode_cmd(IN struct wiphy *wiphy, IN struct wireless_dev *wdev, IN void *data, IN int len);
 
 int mtk_cfg80211_testmode_sw_cmd(IN struct wiphy *wiphy, IN void *data, IN int len);
+
 #if CFG_SUPPORT_WAPI
 int mtk_cfg80211_testmode_set_key_ext(IN struct wiphy *wiphy, IN void *data, IN int len);
 #endif
@@ -288,12 +290,19 @@ int mtk_cfg80211_testmode_hs20_cmd(IN struct wiphy *wiphy, IN void *data, IN int
 #if CFG_ENABLE_WIFI_DIRECT && CFG_ENABLE_WIFI_DIRECT_CFG_80211
 int mtk_p2p_cfg80211_testmode_sw_cmd(IN struct wiphy *wiphy, IN void *data, IN int len);
 #endif
-
 #else
-#error "Please ENABLE kernel config (CONFIG_NL80211_TESTMODE) to support Wi-Fi Direct"
+#error "Please ENABLE kernel config (CONFIG_NL80211_TESTMODE)"
 #endif
+
 int	mtk_cfg80211_suspend(struct wiphy *wiphy, struct cfg80211_wowlan *wow);
+
 int mtk_cfg80211_resume(struct wiphy *wiphy);
+
+int mtk_cfg80211_update_ft_ies(struct wiphy *wiphy, struct net_device *dev,
+			       struct cfg80211_update_ft_ies_params *ftie);
+
+INT_32 mtk_cfg80211_process_str_cmd(P_GLUE_INFO_T prGlueInfo, PUINT_8 cmd, INT_32 len);
+
 /*******************************************************************************
 *                              F U N C T I O N S
 ********************************************************************************

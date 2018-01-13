@@ -1,163 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/include/mgmt/rlm.h#2
-*/
-
-/*! \file   "rlm.h"
-    \brief
-*/
-
-/*
-** Log: rlm.h
- *
- * 07 17 2012 yuche.tsai
- * NULL
- * Compile no error before trial run.
- *
- * 09 30 2011 cm.chang
- * [WCXRP00001020] [MT6620 Wi-Fi][Driver] Handle secondary channel offset of AP in 5GHz band
- * .
- *
- * 04 12 2011 cm.chang
- * [WCXRP00000634] [MT6620 Wi-Fi][Driver][FW] 2nd BSS will not support 40MHz bandwidth for concurrency
- * .
- *
- * 01 13 2011 cm.chang
- * [WCXRP00000358] [MT6620 Wi-Fi][Driver] Provide concurrent information for each module
- * Refine function when rcv a 20/40M public action frame
- *
- * 01 13 2011 cm.chang
- * [WCXRP00000354] [MT6620 Wi-Fi][Driver][FW] Follow NVRAM bandwidth setting
- * Use SCO of BSS_INFO to replace user-defined setting variables
- *
- * 01 12 2011 cm.chang
- * [WCXRP00000354] [MT6620 Wi-Fi][Driver][FW] Follow NVRAM bandwidth setting
- * User-defined bandwidth is for 2.4G and 5G individually
- *
- * 12 07 2010 cm.chang
- * [WCXRP00000239] MT6620 Wi-Fi][Driver][FW] Merge concurrent branch back to maintrunk
- * 1. BSSINFO include RLM parameter
- * 2. free all sta records when network is disconnected
- *
- * 12 07 2010 cm.chang
- * [WCXRP00000238] MT6620 Wi-Fi][Driver][FW] Support regulation domain setting from NVRAM and supplicant
- * 1. Country code is from NVRAM or supplicant
- * 2. Change band definition in CMD/EVENT.
- *
- * 10 18 2010 cm.chang
- * [WCXRP00000114] [MT6620 Wi-Fi] [Driver] Fix compiling warning in Linux about RLM network index checking
- * Enum member cannot be used as compiling option decision in Linux
- *
- * 09 10 2010 cm.chang
- * NULL
- * Always update Beacon content if FW sync OBSS info
- *
- * 08 31 2010 kevin.huang
- * NULL
- * Use LINK LIST operation to process SCAN result
- *
- * 08 24 2010 cm.chang
- * NULL
- * Support RLM initail channel of Ad-hoc, P2P and BOW
- *
- * 08 23 2010 chinghwa.yu
- * NULL
- * Update for BOW.
- *
- * 08 20 2010 cm.chang
- * NULL
- * Migrate RLM code to host from FW
- *
- * 08 16 2010 cp.wu
- * NULL
- * Replace CFG_SUPPORT_BOW by CFG_ENABLE_BT_OVER_WIFI.
- * There is no CFG_SUPPORT_BOW in driver domain source.
- *
- * 08 02 2010 yuche.tsai
- * NULL
- * P2P Group Negotiation Code Check in.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 07 08 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * Check draft RLM code for HT cap
- *
- * 06 28 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * 1st draft code for RLM module
- *
- * 06 02 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Add RX HT GF compiling option
- *
- * 06 02 2010 chinghwa.yu
- * [BORA00000563]Add WiFi CoEx BCM module
- * Roll back to remove CFG_SUPPORT_BCM_TEST.
- *
- * 06 01 2010 chinghwa.yu
- * [BORA00000563]Add WiFi CoEx BCM module
- * Update BCM Test and RW configuration.
- *
- * 05 31 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Add some compiling options to control 11n functions
- *
- * 05 18 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Ad-hoc Beacon should not carry HT OP and OBSS IEs
- *
- * 05 17 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * MT6620 does not support L-SIG TXOP
- *
- * 05 05 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * First draft support for 20/40M bandwidth for AP mode
- *
- * 04 24 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * g_aprBssInfo[] depends on CFG_SUPPORT_P2P and CFG_SUPPORT_BOW
- *
- * 04 22 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * First draft code to support protection in AP mode
- *
- * 04 07 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Different invoking order for WTBL entry of associated AP
- *
- * 03 24 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Not carry  HT cap when being associated with b/g only AP
- *
- * 03 03 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Move default value of HT capability to rlm.h
- *
- * 02 12 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Use bss info array for concurrent handle
- *
- * 01 22 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Support protection and bandwidth switch
- *
- * 01 08 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- *
- * Modify the prototype of rlmRecAssocRspHtInfo()
- *
- * Dec 9 2009 mtk01104
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Add several function prototypes for HT operation
- *
- * Nov 18 2009 mtk01104
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- *
- *
-**
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _RLM_H
@@ -241,11 +92,94 @@
 #define CONFIG_BW_20_40M            0
 #define CONFIG_BW_20M               1	/* 20MHz only */
 
+/* Radio Measurement Request Mode definition */
+#define RM_REQ_MODE_PARALLEL_BIT                    BIT(0)
+#define RM_REQ_MODE_ENABLE_BIT                      BIT(1)
+#define RM_REQ_MODE_REQUEST_BIT                     BIT(2)
+#define RM_REQ_MODE_REPORT_BIT                      BIT(3)
+#define RM_REQ_MODE_DURATION_MANDATORY_BIT          BIT(4)
+#define RM_REP_MODE_LATE                            BIT(0)
+#define RM_REP_MODE_INCAPABLE                       BIT(1)
+#define RM_REP_MODE_REFUSED                         BIT(2)
+
+/* Radio Measurement Report Frame Max Length */
+#define RM_REPORT_FRAME_MAX_LENGTH                  1600
+#define RM_BCN_REPORT_SUB_ELEM_MAX_LENGTH           224
+
+/* beacon request mode definition */
+#define RM_BCN_REQ_PASSIVE_MODE                     0
+#define RM_BCN_REQ_ACTIVE_MODE                      1
+#define RM_BCN_REQ_TABLE_MODE                       2
+
+#define RLM_INVALID_POWER_LIMIT                     -127 /* dbm */
+#define RLM_MAX_TX_PWR		20	/* dbm */
+#define RLM_MIN_TX_PWR		8	/* dbm */
+
 /*******************************************************************************
 *                             D A T A   T Y P E S
 ********************************************************************************
 */
+struct SUB_ELEMENT_LIST {
+	struct SUB_ELEMENT_LIST *prNext;
+	struct SUB_ELEMENT_T rSubIE;
+};
 
+enum BCN_RM_STATE {
+	RM_NO_REQUEST,
+	RM_ON_GOING,
+	RM_WAITING, /*waiting normal scan done */
+};
+
+enum RM_REQ_PRIORITY {
+	RM_PRI_BROADCAST,
+	RM_PRI_MULTICAST,
+	RM_PRI_UNICAST
+};
+
+struct NORMAL_SCAN_PARAMS {
+	P_PARAM_SSID_T prSSID;
+	PUINT_8 pucScanIE;
+	UINT_32 u4IELen;
+	BOOLEAN fgExist;
+};
+
+/* Beacon RM related parameters */
+struct BCN_RM_PARAMS {
+	BOOLEAN fgExistBcnReq;
+	enum BCN_RM_STATE eState;
+	struct NORMAL_SCAN_PARAMS rNormalScan;
+};
+
+struct RADIO_MEASUREMENT_REQ_PARAMS {
+	/* Remain Request Elements Length, started at prMeasElem. if it is 0, means RM is done */
+	UINT_16 u2RemainReqLen;
+	UINT_16 u2ReqIeBufLen;
+	P_IE_MEASUREMENT_REQ_T prCurrMeasElem;
+	OS_SYSTIME rStartTime;
+	UINT_16 u2Repetitions;
+	PUINT_8 pucReqIeBuf;
+	enum RM_REQ_PRIORITY ePriority;
+	BOOLEAN fgRmIsOngoing;
+	BOOLEAN fgInitialLoop;
+
+	struct BCN_RM_PARAMS rBcnRmParam;
+};
+
+struct RADIO_MEASUREMENT_REPORT_PARAMS {
+	UINT_16 u2ReportFrameLen; /* the total length of Measurement Report elements */
+	PUINT_8 pucReportFrameBuff;
+	/* Variables to collect report */
+	LINK_T rReportLink; /* a link to save received report entry */
+	LINK_T rFreeReportLink;
+};
+
+typedef enum _ENUM_NET_ACTIVE_SRC_T {
+	NET_ACTIVE_SRC_NONE = 0,
+	NET_ACTIVE_SRC_CONNECT = 1,
+	NET_ACTIVE_SRC_SCAN = 2,
+	NET_ACTIVE_SRC_SCHED_SCAN = 4,
+	NET_ACTIVE_SRC_NUM
+} ENUM_NET_ACTIVE_SRC_T, *P_ENUM_NET_ACTIVE_SRC_T;
 /*******************************************************************************
 *                            P U B L I C   D A T A
 ********************************************************************************
@@ -260,6 +194,9 @@
 *                                 M A C R O S
 ********************************************************************************
 */
+#define RM_EXIST_REPORT(_prRmReportParam) \
+	(((struct RADIO_MEASUREMENT_REPORT_PARAMS *)_prRmReportParam)->u2ReportFrameLen == \
+	OFFSET_OF(ACTION_RM_REPORT_FRAME, aucInfoElem))
 
 /* It is used for RLM module to judge if specific network is valid
  * Note: Ad-hoc mode of AIS is not included now. (TBD)
@@ -332,6 +269,7 @@ VOID rlmRspGenerateExtCapIE(P_ADAPTER_T prAdapter, P_MSDU_INFO_T prMsduInfo);
 VOID rlmRspGenerateHtOpIE(P_ADAPTER_T prAdapter, P_MSDU_INFO_T prMsduInfo);
 
 VOID rlmRspGenerateErpIE(P_ADAPTER_T prAdapter, P_MSDU_INFO_T prMsduInfo);
+VOID rlmGenerateMTKOuiIE(P_ADAPTER_T prAdapter, P_MSDU_INFO_T prMsduInfo);
 
 VOID rlmProcessBcn(P_ADAPTER_T prAdapter, P_SW_RFB_T prSwRfb, PUINT_8 pucIE, UINT_16 u2IELength);
 
@@ -373,7 +311,74 @@ rlmCmd(
 	UINT_8		*prInBuf,
 	UINT_32	u4InBufLen
 	);
+VOID rlmProcessNeighborReportResonse(
+	P_ADAPTER_T prAdapter, P_WLAN_ACTION_FRAME prAction, UINT_16 u2PacketLen);
+VOID rlmTxNeighborReportRequest(P_ADAPTER_T prAdapter, P_STA_RECORD_T prStaRec,
+		struct SUB_ELEMENT_LIST *prSubIEs);
 
+VOID rlmGernerateRRMEnabledCapIE(IN P_ADAPTER_T prAdapter, IN P_MSDU_INFO_T prMsduInfo);
+
+VOID rlmGerneratePowerCapIE(IN P_ADAPTER_T prAdapter, IN P_MSDU_INFO_T prMsduInfo);
+
+VOID rlmProcessRadioMeasurementRequest(P_ADAPTER_T prAdapter, P_SW_RFB_T prSwRfb);
+
+VOID rlmProcessLinkMeasurementRequest(P_ADAPTER_T prAdapter, P_WLAN_ACTION_FRAME prAction);
+
+VOID rlmProcessNeighborReportResonse(P_ADAPTER_T prAdapter, P_WLAN_ACTION_FRAME prAction, UINT_16 u2PacketLen);
+
+VOID rlmFillRrmCapa(PUINT_8 pucCapa);
+
+VOID rlmSetMaxTxPwrLimit(IN P_ADAPTER_T prAdapter, INT_8 cLimit, UINT_8 ucEnable);
+
+VOID rlmStartNextMeasurement(P_ADAPTER_T prAdapter, BOOLEAN fgNewStarted);
+
+BOOLEAN rlmBcnRmRunning(P_ADAPTER_T prAdapter);
+
+BOOLEAN rlmFillScanMsg(P_ADAPTER_T prAdapter, P_MSG_SCN_SCAN_REQ prMsg);
+
+VOID rlmDoBeaconMeasurement(P_ADAPTER_T prAdapter, ULONG ulParam);
+
+VOID rlmTxNeighborReportRequest(P_ADAPTER_T prAdapter, P_STA_RECORD_T prStaRec, struct SUB_ELEMENT_LIST *prSubIEs);
+
+VOID rlmTxRadioMeasurementReport(P_ADAPTER_T prAdapter);
+
+VOID rlmCancelRadioMeasurement(P_ADAPTER_T prAdapter);
+
+enum RM_REQ_PRIORITY rlmGetRmRequestPriority(PUINT_8 pucDestAddr);
+
+VOID rlmRunEventProcessNextRm(P_ADAPTER_T prAdapter, P_MSG_HDR_T prMsgHdr);
+
+VOID rlmScheduleNextRm(P_ADAPTER_T prAdapter);
+#if CFG_SUPPORT_P2P_ECSA
+void rlmGenActionCSHdr(u8 *buf,
+			u8 *da, u8 *sa, u8 *bssid,
+			u8 category, u8 action);
+
+void rlmGenActionCSA(u8 *buf,
+			u8 mode,
+			u8 channel,
+			u8 count,
+			u8 sco);
+
+void rlmGenActionECSA(u8 *buf,
+			u8 mode,
+			u8 channel,
+			u8 count,
+			u8 op_class);
+VOID rlmGenerateCSAIE(P_ADAPTER_T prAdapter, P_MSDU_INFO_T prMsduInfo);
+VOID rlmGenerateECSAIE(P_ADAPTER_T prAdapter, P_MSDU_INFO_T prMsduInfo);
+VOID  rlmFreqToChannelExt(unsigned int freq,
+			int sec_channel,
+			u8 *op_class, u8 *channel);
+#endif
+
+#if CFG_SUPPORT_RLM_ACT_NETWORK
+VOID rlmActivateNetwork(P_ADAPTER_T prAdapter, ENUM_NETWORK_TYPE_INDEX_T eNetworkTypeIdx,
+			ENUM_NET_ACTIVE_SRC_T eNetActiveSrcIdx);
+
+VOID rlmDeactivateNetwork(P_ADAPTER_T prAdapter, ENUM_NETWORK_TYPE_INDEX_T eNetworkTypeIdx,
+			ENUM_NET_ACTIVE_SRC_T eNetActiveSrcIdx);
+#endif
 /*******************************************************************************
 *                              F U N C T I O N S
 ********************************************************************************

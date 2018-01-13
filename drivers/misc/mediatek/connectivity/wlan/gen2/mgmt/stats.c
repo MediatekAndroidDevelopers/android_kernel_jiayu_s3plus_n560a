@@ -1,18 +1,15 @@
 /*
-** Id: stats.c#1
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
-
-/*! \file stats.c
-    \brief This file includes statistics support.
-*/
-
-/*
-** Log: stats.c
- *
- * 07 17 2014 samp.lin
- * NULL
- * Initial version.
- */
 
 /*******************************************************************************
  *						C O M P I L E R	 F L A G S
@@ -51,8 +48,7 @@ statsInfoEnvRequest(ADAPTER_T *prAdapter, VOID *pvSetBuffer, UINT_32 u4SetBuffer
 UINT_64 u8DrvOwnStart, u8DrvOwnEnd;
 UINT32 u4DrvOwnMax = 0;
 #define CFG_USER_LOAD 0
-static UINT_16 su2TxDoneCfg = CFG_DHCP | CFG_ICMP | CFG_EAPOL;
-
+static UINT_16 su2TxDoneCfg = CFG_DHCP | CFG_ICMP | CFG_EAPOL | CFG_ARP;
 /*******************************************************************************
 *						P R I V A T E  F U N C T I O N S
 ********************************************************************************
@@ -145,6 +141,8 @@ static void statsInfoEnvDisplay(GLUE_INFO_T *prGlueInfo, UINT8 *prInBuf, UINT32 
 
 	/* init */
 	prAdapter = prGlueInfo->prAdapter;
+	/* show pkt status */
+	wlanPktStatusDebugDumpInfo(prAdapter);
 	/*prInfo = &rStatsInfoEnv;*/
 	prInfo = kalMemAlloc(sizeof(STATS_INFO_ENV_T), VIR_MEM_TYPE);
 	if (prInfo == NULL) {
@@ -185,13 +183,37 @@ static void statsInfoEnvDisplay(GLUE_INFO_T *prGlueInfo, UINT8 *prInBuf, UINT32 
 		}
 
 		if (prInfo->u4TxDataCntErr == 0) {
-			DBGLOG(RX, INFO, "<stats> TOS(%u) OK(%u %u)\n",
+			DBGLOG(RX, INFO, "<stats> TOS(%u) OK(%u %u) PendingPKT(%u) SE(%u) Num(%u %u %u %u)\n"
+					"TC resource(%d %d %d %d %d)\n",
 					    (UINT32) prGlueInfo->rNetDevStats.tx_packets,
-					    prInfo->u4TxDataCntAll, prInfo->u4TxDataCntOK);
+					    prInfo->u4TxDataCntAll, prInfo->u4TxDataCntOK,
+					prGlueInfo->i4TxPendingFrameNum,
+					prGlueInfo->i4TxPendingSecurityFrameNum,
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][0],
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][1],
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][2],
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][3],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC0_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC1_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC2_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC3_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC4_INDEX]);
 		} else {
-			DBGLOG(RX, INFO, "<stats> TOS(%u) OK(%u %u) ERR(%u)\n",
+			DBGLOG(RX, INFO, "<stats> TOS(%u) OK(%u %u) ERR(%u) PendingPKT(%u) SE(%u) Num(%u %u %u %u)\n"
+					"TC resource(%d %d %d %d %d)\n",
 					    (UINT32) prGlueInfo->rNetDevStats.tx_packets,
-					    prInfo->u4TxDataCntAll, prInfo->u4TxDataCntOK, prInfo->u4TxDataCntErr);
+					    prInfo->u4TxDataCntAll, prInfo->u4TxDataCntOK, prInfo->u4TxDataCntErr,
+					prGlueInfo->i4TxPendingFrameNum,
+					prGlueInfo->i4TxPendingSecurityFrameNum,
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][0],
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][1],
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][2],
+					prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_AIS_INDEX][3],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC0_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC1_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC2_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC3_INDEX],
+					prAdapter->rTxCtrl.rTc.aucFreeBufferCount[TC4_INDEX]);
 			DBGLOG(RX, INFO, "<stats> ERR type(%u %u %u %u %u %u)\n",
 					    prInfo->u4TxDataCntErrType[0], prInfo->u4TxDataCntErrType[1],
 					    prInfo->u4TxDataCntErrType[2], prInfo->u4TxDataCntErrType[3],
@@ -752,8 +774,10 @@ statsInfoEnvRequest(ADAPTER_T *prAdapter, VOID *pvSetBuffer, UINT_32 u4SetBuffer
 	WLAN_STATUS rStatus;
 
 	/* sanity check */
-	if (fgIsUnderSuspend == true)
+	if (fgIsUnderSuspend == true) {
+		DBGLOG(TX, INFO, "%s fgIsUnderSuspend = true.\n", __func__);
 		return WLAN_STATUS_SUCCESS;	/* do not request stats after early suspend */
+	}
 
 	/* init command buffer */
 	prCmdContent = (STATS_CMD_CORE_T *) pvSetBuffer;
@@ -803,7 +827,7 @@ VOID statsEventHandle(GLUE_INFO_T *prGlueInfo, UINT8 *prInBuf, UINT32 u4InBufLen
 
 	/* sanity check */
 /* DBGLOG(RX, INFO, */
-/* ("<stats> %s: Rcv a event\n", __func__)); */
+/* ("<stats> %s: Rcv a event\n", __FUNCTION__)); */
 
 	if ((prGlueInfo == NULL) || (prInBuf == NULL))
 		return;		/* shall not be here */
@@ -813,7 +837,7 @@ VOID statsEventHandle(GLUE_INFO_T *prGlueInfo, UINT8 *prInBuf, UINT32 u4InBufLen
 	u4InBufLen -= 4;
 
 /* DBGLOG(RX, INFO, */
-/* ("<stats> %s: Rcv a event: %d\n", __func__, u4EventId)); */
+/* ("<stats> %s: Rcv a event: %d\n", __FUNCTION__, u4EventId)); */
 
 	switch (u4EventId) {
 	case STATS_HOST_EVENT_ENV_REPORT:
@@ -842,13 +866,20 @@ VOID statsEnvReportDetect(ADAPTER_T *prAdapter, UINT8 ucStaRecIndex)
 	STATS_CMD_CORE_T rCmd;
 
 	prStaRec = cnmGetStaRecByIndex(prAdapter, ucStaRecIndex);
-	if (prStaRec == NULL)
+
+	if (prStaRec == NULL) {
+		/* check station record but skip broadcast id: 0xFF */
+		if (ucStaRecIndex != 0xFF)
+			DBGLOG(TX, WARN, "%s : prStaRec[%d] is null!", __func__, ucStaRecIndex);
 		return;
+	}
 
 	prStaRec->u4StatsEnvTxCnt++;
 	GET_CURRENT_SYSTIME(&rCurTime);
+	prAdapter->rStasEnvReportDetectTime = rCurTime;
 
 	if (prStaRec->rStatsEnvTxPeriodLastTime == 0) {
+		DBGLOG(TX, WARN, "%s : rStatsEnvTxPeriodLastTime is 0!", __func__);
 		prStaRec->rStatsEnvTxLastTime = rCurTime;
 		prStaRec->rStatsEnvTxPeriodLastTime = rCurTime;
 		return;
@@ -1013,33 +1044,36 @@ static VOID statsParsePktInfo(PUINT_8 pucPkt, UINT_8 status, UINT_8 eventType, P
 		if (eventType == EVENT_TX)
 			prMsduInfo->fgIsBasicRate = TRUE;
 
+		wlanPktDebugTraceInfoARP(status, eventType, u2OpCode);
+		wlanPktStatusDebugTraceInfoARP(status, eventType, u2OpCode, pucPkt);
+
 		if ((su2TxDoneCfg & CFG_ARP) == 0)
 			break;
 
 		switch (eventType) {
 		case EVENT_RX:
 			if (u2OpCode == ARP_PRO_REQ)
-				DBGLOG(RX, INFO, "<RX> Arp Req From IP: %d.%d.%d.%d\n",
+				DBGLOG(RX, TRACE, "<RX> Arp Req From IP: %d.%d.%d.%d\n",
 					pucEthBody[14], pucEthBody[15], pucEthBody[16], pucEthBody[17]);
 			else if (u2OpCode == ARP_PRO_RSP)
-				DBGLOG(RX, INFO, "<RX> Arp Rsp from IP: %d.%d.%d.%d\n",
+				DBGLOG(RX, TRACE, "<RX> Arp Rsp from IP: %d.%d.%d.%d\n",
 					pucEthBody[14], pucEthBody[15], pucEthBody[16], pucEthBody[17]);
 			break;
 		case EVENT_TX:
 			if (u2OpCode == ARP_PRO_REQ)
-				DBGLOG(TX, INFO, "<TX> Arp Req to IP: %d.%d.%d.%d\n",
+				DBGLOG(TX, TRACE, "<TX> Arp Req to IP: %d.%d.%d.%d\n",
 					pucEthBody[24], pucEthBody[25], pucEthBody[26], pucEthBody[27]);
 			else if (u2OpCode == ARP_PRO_RSP)
-				DBGLOG(TX, INFO, "<TX> Arp Rsp to IP: %d.%d.%d.%d\n",
+				DBGLOG(TX, TRACE, "<TX> Arp Rsp to IP: %d.%d.%d.%d\n",
 					pucEthBody[24], pucEthBody[25], pucEthBody[26], pucEthBody[27]);
 			prMsduInfo->fgNeedTxDoneStatus = TRUE;
 			break;
 		case EVENT_TX_DONE:
 			if (u2OpCode == ARP_PRO_REQ)
-				DBGLOG(TX, INFO, "<TX status:%d> Arp Req to IP: %d.%d.%d.%d\n", status,
+				DBGLOG(TX, TRACE, "<TX status:%d> Arp Req to IP: %d.%d.%d.%d\n", status,
 					pucEthBody[24], pucEthBody[25], pucEthBody[26], pucEthBody[27]);
 			else if (u2OpCode == ARP_PRO_RSP)
-				DBGLOG(TX, INFO, "<TX status:%d> Arp Rsp to IP: %d.%d.%d.%d\n", status,
+				DBGLOG(TX, TRACE, "<TX status:%d> Arp Rsp to IP: %d.%d.%d.%d\n", status,
 					pucEthBody[24], pucEthBody[25], pucEthBody[26], pucEthBody[27]);
 			break;
 		}
@@ -1050,6 +1084,9 @@ static VOID statsParsePktInfo(PUINT_8 pucPkt, UINT_8 status, UINT_8 eventType, P
 		UINT_8 ucIpProto = pucEthBody[9]; /* IP header without options */
 		UINT_8 ucIpVersion = (pucEthBody[0] & IPVH_VERSION_MASK) >> IPVH_VERSION_OFFSET;
 		UINT_16 u2IpId = pucEthBody[4]<<8 | pucEthBody[5];
+
+		wlanPktDebugTraceInfoIP(status, eventType, ucIpProto, u2IpId);
+		wlanPktStatusDebugTraceInfoIP(status, eventType, ucIpProto, u2IpId, pucPkt);
 
 		if (ucIpVersion != IPVERSION)
 			break;
@@ -1074,12 +1111,12 @@ static VOID statsParsePktInfo(PUINT_8 pucPkt, UINT_8 status, UINT_8 eventType, P
 							ucIcmpType, u2IcmpId, u2IcmpSeq);
 				break;
 			case EVENT_TX:
-				DBGLOG(TX, INFO, "<TX> ICMP: Type %d, Id 0x04%x, Seq BE 0x%04x\n",
+				DBGLOG(TX, TRACE, "<TX> ICMP: Type %d, Id 0x04%x, Seq BE 0x%04x\n",
 								ucIcmpType, u2IcmpId, u2IcmpSeq);
 				prMsduInfo->fgNeedTxDoneStatus = TRUE;
 				break;
 			case EVENT_TX_DONE:
-				DBGLOG(TX, INFO, "<TX status:%d> Type %d, Id 0x%04x, Seq 0x%04x\n",
+				DBGLOG(TX, INFO, "<TX status:%d> ICMP: Type %d, Id 0x%04x, Seq 0x%04x\n",
 						status, ucIcmpType, u2IcmpId, u2IcmpSeq);
 				break;
 			}
@@ -1229,10 +1266,12 @@ static VOID statsParsePktInfo(PUINT_8 pucPkt, UINT_8 status, UINT_8 eventType, P
 					pucEapol[21], pucEapol[22], pucEapol[23], pucEapol[24]);
 				break;
 			case EVENT_TX_DONE:
-				DBGLOG(TX, INFO,
-					"<TX status: %d> EAPOL: key, KeyInfo 0x%04x, Nonce %02x%02x%02x%02x%02x%02x%02x%02x...\n",
-					status, u2KeyInfo, pucEapol[17], pucEapol[18], pucEapol[19],
-					pucEapol[20], pucEapol[21], pucEapol[22], pucEapol[23], pucEapol[24]);
+				if (status != 0) {
+					DBGLOG(TX, INFO,
+						"<TX status: %d> EAPOL: key, KeyInfo 0x%04x, Nonce %02x%02x%02x%02x%02x%02x%02x%02x...\n",
+						status, u2KeyInfo, pucEapol[17], pucEapol[18], pucEapol[19],
+						pucEapol[20], pucEapol[21], pucEapol[22], pucEapol[23], pucEapol[24]);
+				}
 				break;
 			}
 
@@ -1308,6 +1347,7 @@ VOID StatsTxPktCallBack(UINT_8 *pPkt, P_MSDU_INFO_T prMsduInfo)
 
 	u2EtherTypeLen = (pPkt[ETH_TYPE_LEN_OFFSET] << 8) | (pPkt[ETH_TYPE_LEN_OFFSET + 1]);
 	statsParsePktInfo(pPkt, 0, EVENT_TX, prMsduInfo);
+
 }
 
 /*----------------------------------------------------------------------------*/

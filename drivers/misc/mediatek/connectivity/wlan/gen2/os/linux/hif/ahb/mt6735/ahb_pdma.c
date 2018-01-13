@@ -1,21 +1,14 @@
-/******************************************************************************
-*[File]             ahb_pdma.c
-*[Version]          v1.0
-*[Revision Date]    2013-03-13
-*[Author]
-*[Description]
-*    The program provides AHB PDMA driver
-*[Copyright]
-*    Copyright (C) 2013 MediaTek Incorporation. All Rights Reserved.
-******************************************************************************/
-
 /*
-** Log: ahb_pdma.c
- *
- * 03 13 2013 vend_samp.lin
- * Add AHB PDMA support
- * 1) Initial version
-**
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -75,11 +68,11 @@
 #include <linux/module.h>
 #include <linux/errno.h>
 
-#if defined(CONFIG_MTK_LEGACY)
+#if defined(CONFIG_MTK_CLKMGR)
 #include <mach/mt_clkmgr.h>
 #else
 #include <linux/clk.h>
-#endif /* defined(CONFIG_MTK_LEGACY) */
+#endif /* defined(CONFIG_MTK_CLKMGR) */
 
 #include "hif.h"
 #include "hif_pdma.h"
@@ -99,7 +92,7 @@
 
 static UINT_32 gDmaReg[AP_DMA_HIF_0_LENGTH];
 
-#if !defined(CONFIG_MTK_LEGACY)
+#if !defined(CONFIG_MTK_CLKMGR)
 struct clk *g_clk_wifi_pdma;
 #endif
 
@@ -191,8 +184,7 @@ VOID HifPdmaInit(GL_HIF_INFO_T *HifInfo)
 	DBGLOG(HAL, TRACE, "[wlan] MPU region 12, 0x%08x - 0x%08x\n", (UINT_32) gConEmiPhyBase,
 	       (UINT_32) (gConEmiPhyBase + 512 * 1024));
 #if defined(CONFIG_ARCH_MT6735) || defined(CONFIG_ARCH_MT6753)
-	/* for denali 1 & denali 3 */
-	/* for denali 2, we share region with wmt due to not enough region to use */
+	/* for MT6735M , we share region with wmt due to not enough region to use */
 	emi_mpu_set_region_protection(gConEmiPhyBase,
 				      gConEmiPhyBase + 512 * 1024 - 1,
 				      12,
@@ -200,7 +192,7 @@ VOID HifPdmaInit(GL_HIF_INFO_T *HifInfo)
 							   NO_PROTECTION, FORBIDDEN, FORBIDDEN));
 #endif
 
-#if !defined(CONFIG_MTK_LEGACY)
+#if !defined(CONFIG_MTK_CLKMGR)
 	g_clk_wifi_pdma = HifInfo->clk_wifi_dma;
 #endif
 
@@ -392,11 +384,11 @@ static VOID HifPdmaAckIntr(IN void *HifInfoSrc)
 /*----------------------------------------------------------------------------*/
 static VOID HifPdmaClockCtrl(IN UINT_32 FlgIsEnabled)
 {
-#if !defined(CONFIG_MTK_LEGACY)
+#if !defined(CONFIG_MTK_CLKMGR)
 	int ret = 0;
 #endif
 
-#if defined(CONFIG_MTK_LEGACY)
+#if defined(CONFIG_MTK_CLKMGR)
 	if (FlgIsEnabled == TRUE)
 		enable_clock(MT_CG_PERI_APDMA, "WLAN");
 	else

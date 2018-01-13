@@ -1,3 +1,16 @@
+/*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
+*/
+
 #include "p2p_precomp.h"
 
 BOOLEAN
@@ -5,7 +18,7 @@ p2pStateInit_IDLE(IN P_ADAPTER_T prAdapter,
 		  IN P_P2P_FSM_INFO_T prP2pFsmInfo, IN P_BSS_INFO_T prP2pBssInfo, OUT P_ENUM_P2P_STATE_T peNextState)
 {
 	BOOLEAN fgIsTransOut = FALSE;
-/* P_P2P_CHNL_REQ_INFO_T prChnlReqInfo = (P_P2P_CHNL_REQ_INFO_T)NULL; */
+	P_P2P_CHNL_REQ_INFO_T prChnlReqInfo = (P_P2P_CHNL_REQ_INFO_T) NULL;
 
 	do {
 		ASSERT_BREAK((prAdapter != NULL) &&
@@ -13,33 +26,15 @@ p2pStateInit_IDLE(IN P_ADAPTER_T prAdapter,
 
 		if ((prP2pBssInfo->eIntendOPMode == OP_MODE_ACCESS_POINT)
 		    && IS_NET_PWR_STATE_ACTIVE(prAdapter, NETWORK_TYPE_P2P_INDEX)) {
-			P_P2P_CHNL_REQ_INFO_T prChnlReqInfo = &(prP2pFsmInfo->rChnlReqInfo);
+			prChnlReqInfo = &prP2pFsmInfo->rChnlReqInfo;
 
 			fgIsTransOut = TRUE;
 			prChnlReqInfo->eChannelReqType = CHANNEL_REQ_TYPE_GO_START_BSS;
 
-			DBGLOG(P2P, INFO, "p2pStateInit_IDLE GO Scan\n");
 			*peNextState = P2P_STATE_REQING_CHANNEL;
 
-		} else {
-#if 0
-			else
-		if (IS_NET_PWR_STATE_ACTIVE(prAdapter, NETWORK_TYPE_P2P_INDEX)) {
-
-			ASSERT((prP2pBssInfo->eCurrentOPMode == OP_MODE_ACCESS_POINT) ||
-			       (prP2pBssInfo->eCurrentOPMode == OP_MODE_INFRASTRUCTURE));
-
-			prChnlReqInfo = &prP2pFsmInfo->rChnlReqInfo;
-
-			if (prChnlReqInfo->fgIsChannelRequested) {
-				/* Start a timer for return channel. */
-				DBGLOG(P2P, TRACE, "start a GO channel timer.\n");
-			}
-
-		}
-#endif
+		} else
 			cnmTimerStartTimer(prAdapter, &(prAdapter->rP2pFsmTimeoutTimer), 5000);
-		}
 
 	} while (FALSE);
 
@@ -88,13 +83,19 @@ VOID p2pStateInit_CHNL_ON_HAND(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prP2pBs
 		prP2pBssInfo->eBssSCO = prChnlReqInfo->eChnlSco;
 
 		DBGLOG(P2P, TRACE, "start a channel on hand timer.\n");
-		cnmTimerStartTimer(prAdapter, &(prAdapter->rP2pFsmTimeoutTimer), prChnlReqInfo->u4MaxInterval);
+		if (prP2pFsmInfo->eListenExted != P2P_DEV_EXT_LISTEN_ING) {
+			cnmTimerStartTimer(prAdapter, &(prAdapter->rP2pFsmTimeoutTimer),
+				prChnlReqInfo->u4MaxInterval);
 
-		kalP2PIndicateChannelReady(prAdapter->prGlueInfo,
-					   prChnlReqInfo->u8Cookie,
-					   prChnlReqInfo->ucReqChnlNum,
-					   prChnlReqInfo->eBand, prChnlReqInfo->eChnlSco, prChnlReqInfo->u4MaxInterval);
-
+			kalP2PIndicateChannelReady(prAdapter->prGlueInfo,
+				   prChnlReqInfo->u8Cookie,
+				   prChnlReqInfo->ucReqChnlNum,
+				   prChnlReqInfo->eBand, prChnlReqInfo->eChnlSco, prChnlReqInfo->u4MaxInterval);
+			/* Complete channel request */
+			complete(&prAdapter->prGlueInfo->rP2pReq);
+		} else
+			cnmTimerStartTimer(prAdapter, &(prAdapter->rP2pFsmTimeoutTimer),
+				(P2P_EXT_LISTEN_TIME_MS - prChnlReqInfo->u4MaxInterval));
 	} while (FALSE);
 
 }				/* p2pStateInit_CHNL_ON_HAND */
@@ -108,6 +109,9 @@ p2pStateAbort_CHNL_ON_HAND(IN P_ADAPTER_T prAdapter,
 
 	do {
 		ASSERT_BREAK((prAdapter != NULL) && (prP2pFsmInfo != NULL));
+		if (prP2pFsmInfo->eListenExted != P2P_DEV_EXT_LISTEN_ING &&
+			eNextState == P2P_STATE_CHNL_ON_HAND)
+			WARN_ON(1);
 
 		prChnlReqInfo = &(prP2pFsmInfo->rChnlReqInfo);
 
@@ -118,12 +122,20 @@ p2pStateAbort_CHNL_ON_HAND(IN P_ADAPTER_T prAdapter,
 		prP2pBssInfo->eBand = prChnlReqInfo->eOriBand;
 		prP2pBssInfo->eBssSCO = prChnlReqInfo->eOriChnlSco;
 
-		if (eNextState != P2P_STATE_CHNL_ON_HAND) {
+		DBGLOG(P2P, INFO, "p2p state trans abort chann on hand, eListenExted: %d, eNextState: %d\n",
+			prP2pFsmInfo->eListenExted, eNextState);
+		if (prP2pFsmInfo->eListenExted != P2P_DEV_EXT_LISTEN_ING ||
+			eNextState != P2P_STATE_CHNL_ON_HAND) {
+			/* Here maybe have a bug, when it's extlistening, a new remain_on_channel
+			was sent to driver? need to verify */
+			prP2pFsmInfo->eListenExted = P2P_DEV_NOT_EXT_LISTEN;
 			/* Indicate channel return. */
 			kalP2PIndicateChannelExpired(prAdapter->prGlueInfo, &prP2pFsmInfo->rChnlReqInfo);
 
 			/* Return Channel. */
 			p2pFuncReleaseCh(prAdapter, &(prP2pFsmInfo->rChnlReqInfo));
+			/* case: if supplicant cancel remain on channel */
+			complete(&prAdapter->prGlueInfo->rP2pReq);
 		}
 
 	} while (FALSE);
@@ -136,7 +148,6 @@ p2pStateAbort_REQING_CHANNEL(IN P_ADAPTER_T prAdapter, IN P_P2P_FSM_INFO_T prP2p
 	P_P2P_SPECIFIC_BSS_INFO_T prP2pSpecificBssInfo = (P_P2P_SPECIFIC_BSS_INFO_T) NULL;
 
 	do {
-
 		ASSERT_BREAK((prAdapter != NULL) && (prP2pFsmInfo != NULL) && (eNextState < P2P_STATE_NUM));
 
 		prP2pBssInfo = &(prAdapter->rWifiVar.arBssInfo[NETWORK_TYPE_P2P_INDEX]);
@@ -148,15 +159,16 @@ p2pStateAbort_REQING_CHANNEL(IN P_ADAPTER_T prAdapter, IN P_P2P_FSM_INFO_T prP2p
 				/* Setup for AP mode. */
 				p2pFuncStartGO(prAdapter,
 					       prP2pBssInfo,
-					       prP2pSpecificBssInfo->aucGroupSsid,
-					       prP2pSpecificBssInfo->u2GroupSsidLen,
 					       prP2pSpecificBssInfo->ucPreferredChannel,
 					       prP2pSpecificBssInfo->eRfBand,
-					       prP2pSpecificBssInfo->eRfSco, prP2pFsmInfo->fgIsApMode);
+					       prP2pSpecificBssInfo->eRfSco,
+					       prP2pFsmInfo->fgIsApMode);
 
 			} else {
 				/* Return Channel. */
 				p2pFuncReleaseCh(prAdapter, &(prP2pFsmInfo->rChnlReqInfo));
+				/* possible have not acquire channel */
+				complete(&prAdapter->prGlueInfo->rP2pReq);
 			}
 
 		}

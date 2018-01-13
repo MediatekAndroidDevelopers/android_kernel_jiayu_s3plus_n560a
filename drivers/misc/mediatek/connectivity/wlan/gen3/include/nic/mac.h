@@ -1,4 +1,18 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
 ** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/include/nic/mac.h#1
 */
 
@@ -6,152 +20,6 @@
     \brief  Brief description.
 
     Detail description.
-*/
-
-/*
-** Log: mac.h
-**
-** 09 16 2014 eason.tsai
-** [ALPS01728937] [Need Patch] [Volunteer Patch] MET support
-** support MET
-**
-** 07 23 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Sync the latest jb2.mp 11w code as draft version
-** Not the CM bit for avoid wapi 1x drop at re-key
-**
-** 07 16 2013 terry.wu
-** [BORA00002207] [MT6630 Wi-Fi] TXM & MQM Implementation
-** Fix VHT CAP IE parsing error
-**
-** 07 12 2013 terry.wu
-** [BORA00002207] [MT6630 Wi-Fi] TXM & MQM Implementation
-** 1. Update VHT IE composing function
-** 2. disable bow
-** 3. Exchange bss/sta rec update sequence for temp solution
-**
-** 06 14 2013 eddie.chen
-** [BORA00002450] [WIFISYS][MT6630] New design for mt6630
-** Add full mcsset. Add more vht info in sta update
-**
-** 03 13 2013 terry.wu
-** [BORA00002207] [MT6630 Wi-Fi] TXM & MQM Implementation
-** .
-**
-** 03 12 2013 tsaiyuan.hsu
-** [BORA00002222] MT6630 unified MAC RXM
-** add rx data and management processing.
-**
-** 11 06 2012 eason.tsai
-** [BORA00002255] [MT6630 Wi-Fi][Driver] develop
-** .
-**
-** 09 17 2012 cm.chang
-** [BORA00002149] [MT6630 Wi-Fi] Initial software development
-** Duplicate source from MT6620 v2.3 driver branch
-** (Davinci label: MT6620_WIFI_Driver_V2_3_120913_1942_As_MT6630_Base)
- *
- * 03 02 2012 terry.wu
- * NULL
- * Sync CFG80211 modification from branch 2,2.
- *
- * 01 05 2012 tsaiyuan.hsu
- * [WCXRP00001157] [MT6620 Wi-Fi][FW][DRV] add timing measurement support for 802.11v
- * add timing measurement support for 802.11v.
- *
- * 10 12 2011 wh.su
- * [WCXRP00001036] [MT6620 Wi-Fi][Driver][FW] Adding the 802.11w code for MFP
- * adding the 802.11w related function and define .
- *
- * 06 22 2011 wh.su
- * [WCXRP00000806] [MT6620 Wi-Fi][Driver] Move the WPA/RSN IE and WAPI IE structure to mac.h
- * and let the sw structure not align at byte
- * Move the WAPI/RSN IE to mac.h and SW structure not align to byte,
- * Notice needed update P2P.ko.
- *
- * 05 06 2011 wh.su
- * [WCXRP00000699] [MT6620 Wi-Fi][Driver] Add the ie pointer check for avoid TP-LINK AP send
- * the wrong beacon make driver got incorrect support rate set
- * Add the length check before access the ie length filed.
- *
- * 05 06 2011 wh.su
- * [WCXRP00000699] [MT6620 Wi-Fi][Driver] Add the ie pointer check for avoid TP-LINK AP send
- * the wrong beacon make driver got incorrect support rate set
- * adding the length check before processing next ie..
- *
- * 04 18 2011 terry.wu
- * [WCXRP00000660] [MT6620 Wi-Fi][Driver] Remove flag CFG_WIFI_DIRECT_MOVED
- * Remove flag CFG_WIFI_DIRECT_MOVED.
- *
- * 04 12 2011 cm.chang
- * [WCXRP00000634] [MT6620 Wi-Fi][Driver][FW] 2nd BSS will not support 40MHz bandwidth for concurrency
- * .
- *
- * 04 08 2011 yuche.tsai
- * [WCXRP00000624] [Volunteer Patch][MT6620][Driver] Add device discoverability support for GO.
- * Add device discover ability support.
- *
- * 03 17 2011 chinglan.wang
- * [WCXRP00000570] [MT6620 Wi-Fi][Driver] Add Wi-Fi Protected Setup v2.0 feature
- * .
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * Some action frame define is not belong to P2P.
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * Add some service discovery MAC define, phase I.
- *
- * 12 13 2010 cp.wu
- * [WCXRP00000260] [MT6620 Wi-Fi][Driver][Firmware] Create V1.1 branch for both firmware and driver
- * create branch for Wi-Fi driver v1.1
- *
- * 12 13 2010 cp.wu
- * [WCXRP00000256] [MT6620 Wi-Fi][Driver] Eliminate potential issues which is identified by Klockwork
- * suppress warning reported by Klockwork.
- *
- * 11 01 2010 cp.wu
- * [WCXRP00000122] [MT6620 Wi-Fi][Driver] Preparation for YuSu source tree integration
- * revert to previous revision. (this file is not necessary to be changed)
- *
- * 08 20 2010 cm.chang
- * NULL
- * Migrate RLM code to host from FW
- *
- * 08 02 2010 yuche.tsai
- * NULL
- * 1. Add P2P MAC define.
- * 2. Add scan device found event
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 21 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * Add WFA specific OUI.
- *
- * 06 17 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * Add P2P IE ID & Vendor OUI TYPE for P2P.
- *
- * 06 07 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * merge MAC.h.
- *
- * 06 06 2010 kevin.huang
- * [WPD00003832][MT6620 5931] Create driver base
- * [MT6620 5931] Create driver base
- *
- * 01 13 2010 tehuang.liu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * Added OFFSET_BAR_SSC_SN
-**  \main\maintrunk.MT6620WiFiDriver_Prj\3 2009-12-09 14:00:24 GMT MTK02468
-**  Added offsets and masks for the BA Parameter Set filed
-**  \main\maintrunk.MT6620WiFiDriver_Prj\2 2009-03-10 20:16:26 GMT mtk01426
-**  Init for develop
-**
 */
 
 #ifndef _MAC_H
@@ -186,15 +54,18 @@
 
 #define IP_PRO_ICMP				0x01
 #define IP_PRO_UDP				0x11
+#define IP_PRO_TCP				0x06
 
 #define UDP_PORT_DHCPS				0x43
 #define UDP_PORT_DHCPC				0x44
+#define UDP_PORT_DNS				0x35
 
 #define ETH_P_1X                                0x888E
 #define ETH_P_PRE_1X                            0x88C7
 #if CFG_SUPPORT_WAPI
 #define ETH_WPI_1X                              0x88B4
 #endif
+#define ETH_PRO_TDLS                            0x890d
 
 /* 802.3 Frame If Ether Type/Len <= 1500 */
 #define ETH_802_3_MAX_LEN                       1500
@@ -268,6 +139,11 @@
 #define ARP_TARGET_IP_OFFSET                    24
 #define ARP_OPERATION_REQUEST                   0x0001
 #define ARP_OPERATION_RESPONSE                  0x0002
+
+#define ARP_PRO_REQ				1
+#define ARP_PRO_RSP				2
+
+#define TDLS_ACTION_CODE_OFFSET                 2
 
 #define LLC_LEN                                 8	/* LLC(3) + SNAP(3) + EtherType(2) */
 
@@ -911,6 +787,7 @@
 #define ELEM_ID_20_40_BSS_COEXISTENCE               72	/* 20/40 BSS Coexistence */
 #define ELEM_ID_20_40_INTOLERANT_CHNL_REPORT        73	/* 20/40 BSS Intolerant Channel Report */
 #define ELEM_ID_OBSS_SCAN_PARAMS                    74	/* Overlapping BSS Scan Parameters */
+#define ELEM_ID_BSS_MAX_IDLE_PERIOD                 90	/* AP Keep-Alive parameters */
 #define ELEM_ID_EXTENDED_CAP                        127	/* Extended capabilities */
 
 #define ELEM_ID_INTERWORKING                        107	/* Interworking with External Network */
@@ -1421,6 +1298,11 @@
 #define CTRL_BAR_BAR_INFORMATION_OFFSET             18
 #define CTRL_BAR_BAR_INFORMATION_SSN_OFFSET         4
 
+/* 802.11-2012, 8.5.7 Radio Measurement action fields, table 8-206 */
+#if CFG_SUPPORT_802_11K
+#define RM_ACTION_NEIGHBOR_REQUEST                  4
+#define RM_ACTION_REIGHBOR_RESPONSE                 5
+#endif
 /*******************************************************************************
 *                             D A T A   T Y P E S
 ********************************************************************************
@@ -1895,6 +1777,41 @@ typedef struct _IE_SUP_OPERATING_CLASS_T {
 	UINT_8 ucCur;
 	UINT_8 ucSup[255];
 } __KAL_ATTRIB_PACKED__ IE_SUP_OPERATING_CLASS_T, *P_IE_SUP_OPERATING_CLASS_T;
+
+/* 8.4.2.30 BSS Load element */
+struct IE_BSS_LOAD {
+	UINT_8 ucId;
+	UINT_8 ucLength;
+	UINT_16 u2StaCnt;
+	UINT_8 ucChnlUtilizaion;
+	UINT_16 u2AvailabeAC;
+};
+
+/* 8.4.2.81 Bss Max Idle Period */
+struct IE_BSS_MAX_IDLE_PERIOD {
+	UINT_8 ucId;
+	UINT_8 ucLength;
+	UINT_16 u2MaxIdlePeriod; /* unit is 1000 TUs, 1024ms */
+	UINT_8 ucIdleOption; /* BIT(0) is now means Protected Keep-Alive Required, other bits are reserved */
+};
+
+/* 8.4.2.39 Neighbor Report Element */
+struct IE_NEIGHBOR_REPORT_T {
+	UINT_8 ucId;		/* Element ID */
+	UINT_8 ucLength;	/* Length */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* OUI */
+	UINT_8 aucBSSIDInfo[4];		/* Type */
+	UINT_8 ucOperClass; /* Hotspot Configuration */
+	UINT_8 ucChnlNumber;
+	UINT_8 ucPhyType;
+	UINT_8 aucSubElem[0];
+};
+
+struct SUB_ELEMENT_T {
+	UINT_8 ucSubID;
+	UINT_8 ucLength;
+	UINT_8 aucOptInfo[1];
+};
 
 typedef struct _SM_BASIC_REQ_T {
 	UINT_8 ucChannel;
@@ -2475,6 +2392,22 @@ typedef struct _ACTION_OP_MODE_NOTIFICATION_FRAME {
 	UINT_8 ucAction;	/* Action Value */
 	UINT_8 ucOperatingMode;	/* Operating Mode */
 } __KAL_ATTRIB_PACKED__ ACTION_OP_MODE_NOTIFICATION_FRAME, *P_ACTION_OP_MODE_NOTIFICATION_FRAME;
+
+/* 8.5.7.6/8.5.7.7 Neighbor Report Request/Response frame format */
+struct ACTION_NEIGHBOR_REPORT_FRAME {
+	/* Neighbor Report Request/Response MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration;	/* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* Neighbor Report Request/Response frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+	UINT_8 ucDialogToken;	/* Dialog Token */
+	UINT_8 aucInfoElem[1];	/* subelements */
+};
 
 /* 3 Information Elements from WFA. */
 typedef struct _IE_WFA_T {

@@ -1,60 +1,14 @@
 /*
-** Id:
-*/
-
-/*! \file   "roaming_fsm.c"
-    \brief  This file defines the FSM for Roaming MODULE.
-
-    This file defines the FSM for Roaming MODULE.
-*/
-
-/*
-** Log: roaming_fsm.c
- *
- * 11 24 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * Adjust code for DBG and CONFIG_XLOG.
- *
- * 11 11 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * modify the xlog related code.
- *
- * 11 02 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * adding the code for XLOG.
- *
- * 08 31 2011 tsaiyuan.hsu
- * [WCXRP00000931] [MT5931 Wi-Fi][DRV/FW] add swcr to disable roaming from driver
- * remove obsolete code.
- *
- * 08 15 2011 tsaiyuan.hsu
- * [WCXRP00000931] [MT5931 Wi-Fi][DRV/FW] add swcr to disable roaming from driver
- * add swcr in driver reg, 0x9fxx0000, to disable roaming .
- *
- * 03 16 2011 tsaiyuan.hsu
- * [WCXRP00000517] [MT6620 Wi-Fi][Driver][FW] Fine Tune Performance of Roaming
- * remove obsolete definition and unused variables.
- *
- * 02 26 2011 tsaiyuan.hsu
- * [WCXRP00000391] [MT6620 Wi-Fi][FW] Add Roaming Support
- * not send disassoc or deauth to leaving AP so as to improve performace of roaming.
- *
- * 01 27 2011 tsaiyuan.hsu
- * [WCXRP00000392] [MT6620 Wi-Fi][Driver] Add Roaming Support
- * add roaming fsm
- * 1. not support 11r, only use strength of signal to determine roaming.
- * 2. not enable CFG_SUPPORT_ROAMING until completion of full test.
- * 3. in 6620, adopt work-around to avoid sign extension problem of cck of hw
- * 4. assume that change of link quality in smooth way.
- *
- * 01 27 2011 tsaiyuan.hsu
- * [WCXRP00000392] [MT6620 Wi-Fi][Driver] Add Roaming Support
- * add roaming fsm
- * 1. not support 11r, only use strength of signal to determine roaming.
- * 2. not enable CFG_SUPPORT_ROAMING until completion of full test.
- * 3. in 6620, adopt work-around to avoid sign extension problem of cck of hw
- * 4. assume that change of link quality in smooth way.
- *
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -145,6 +99,7 @@ VOID roamingFsmInit(IN P_ADAPTER_T prAdapter)
 	prRoamingFsmInfo->fgIsEnableRoaming = prConnSettings->fgIsEnableRoaming;
 	prRoamingFsmInfo->eCurrentState = ROAMING_STATE_IDLE;
 	prRoamingFsmInfo->rRoamingDiscoveryUpdateTime = 0;
+	prRoamingFsmInfo->DrvRoamingAllow = 1;
 
 }				/* end of roamingFsmInit() */
 
@@ -229,7 +184,82 @@ VOID roamingFsmScanResultsUpdate(IN P_ADAPTER_T prAdapter)
 	GET_CURRENT_SYSTIME(&prRoamingFsmInfo->rRoamingDiscoveryUpdateTime);
 
 }				/* end of roamingFsmScanResultsUpdate() */
+#if !(CFG_SUPPORT_NCHO)
+static BOOLEAN roamingFsmIsNeedScan(IN P_ADAPTER_T prAdapter)
+{
+	P_SCAN_INFO_T prScanInfo;
+	P_LINK_T prRoamBSSDescList;
+	P_ROAM_BSS_DESC_T prRoamBssDesc;
+	P_BSS_INFO_T prAisBssInfo;
+	P_BSS_DESC_T prBssDesc;
+	CMD_ID_SET_ROAMING_SKIP_T rCmdSwCtrl;
+	BOOLEAN fgIsNeedScan = FALSE;
+	BOOLEAN fgIsRoamingSSID = FALSE;
 
+	prAisBssInfo = &(prAdapter->rWifiVar.arBssInfo[NETWORK_TYPE_AIS_INDEX]);
+	prScanInfo = &(prAdapter->rWifiVar.rScanInfo);
+	prRoamBSSDescList = &prScanInfo->rRoamBSSDescList;
+	/* Count same BSS Desc from current SCAN result list. */
+	LINK_FOR_EACH_ENTRY(prRoamBssDesc, prRoamBSSDescList, rLinkEntry, ROAM_BSS_DESC_T) {
+		if (EQUAL_SSID(prRoamBssDesc->aucSSID,
+				       prRoamBssDesc->ucSSIDLen,
+				       prAisBssInfo->aucSSID, prAisBssInfo->ucSSIDLen)) {
+			fgIsRoamingSSID = TRUE;
+			fgIsNeedScan = TRUE;
+			DBGLOG(INIT, INFO, "roamingFsmSteps: IsRoamingSSID:%d\n", fgIsRoamingSSID);
+			break;
+		}
+	}
+
+	if (!fgIsRoamingSSID) {
+		prBssDesc = scanSearchBssDescByBssid(prAdapter, prAisBssInfo->aucBSSID);
+		if (prBssDesc) {
+
+			rCmdSwCtrl.IsRoamingSkipOneAp = TRUE;
+			wlanSendSetQueryCmd(prAdapter,
+					    CMD_ID_SET_ROAMING_SKIP,
+					    TRUE,
+					    FALSE,
+					    FALSE, NULL, NULL, sizeof(CMD_ID_SET_ROAMING_SKIP_T),
+					    (PUINT_8)&rCmdSwCtrl, NULL, 0);
+
+			DBGLOG(INIT, INFO, "roamingFsmSteps: RCPI:%d RoamSkipTimes:%d\n",
+								prBssDesc->ucRCPI, prAisBssInfo->ucRoamSkipTimes);
+			if (prBssDesc->ucRCPI > CFG_GOOG_RCPI_THRESHOLD) {
+				prAisBssInfo->ucRoamSkipTimes = CFG_GOOG_RCPI_SCAN_SKIP_TIMES;
+				prAisBssInfo->fgGoodRcpiArea = TRUE;
+				prAisBssInfo->fgPoorRcpiArea = FALSE;
+			} else {
+				if (prAisBssInfo->fgGoodRcpiArea) {
+					prAisBssInfo->ucRoamSkipTimes--;
+				} else if (prBssDesc->ucRCPI > CFG_POOR_RCPI_THRESHOLD) {
+					if (!prAisBssInfo->fgPoorRcpiArea) {
+						prAisBssInfo->ucRoamSkipTimes = CFG_POOR_RCPI_SCAN_SKIP_TIMES;
+						prAisBssInfo->fgPoorRcpiArea = TRUE;
+						prAisBssInfo->fgGoodRcpiArea = FALSE;
+					} else {
+						prAisBssInfo->ucRoamSkipTimes--;
+					}
+				} else {
+					prAisBssInfo->fgPoorRcpiArea = FALSE;
+					prAisBssInfo->fgGoodRcpiArea = FALSE;
+					prAisBssInfo->ucRoamSkipTimes--;
+				}
+			}
+
+			if (prAisBssInfo->ucRoamSkipTimes == 0) {
+				prAisBssInfo->ucRoamSkipTimes = CFG_GOOG_RCPI_SCAN_SKIP_TIMES;
+				prAisBssInfo->fgPoorRcpiArea = FALSE;
+				prAisBssInfo->fgGoodRcpiArea = FALSE;
+				DBGLOG(INIT, INFO, "roamingFsmSteps: Need Scan\n");
+				fgIsNeedScan = TRUE;
+			}
+		}
+	}
+
+	return fgIsNeedScan;
+}
+#endif
 /*----------------------------------------------------------------------------*/
 /*!
 * @brief The Core FSM engine of ROAMING for AIS Infra.
@@ -245,6 +275,10 @@ VOID roamingFsmSteps(IN P_ADAPTER_T prAdapter, IN ENUM_ROAMING_STATE_T eNextStat
 	P_ROAMING_INFO_T prRoamingFsmInfo;
 	ENUM_ROAMING_STATE_T ePreviousState;
 	BOOLEAN fgIsTransition = (BOOLEAN) FALSE;
+#if CFG_SUPPORT_NCHO
+	UINT32 u4ScnResultsTimeout = ROAMING_DISCOVERY_TIMEOUT_SEC;
+	UINT_32 u4ReqScan = FALSE;
+#endif
 
 	prRoamingFsmInfo = (P_ROAMING_INFO_T) &(prAdapter->rWifiVar.rRoamingInfo);
 
@@ -277,11 +311,35 @@ VOID roamingFsmSteps(IN P_ADAPTER_T prAdapter, IN ENUM_ROAMING_STATE_T eNextStat
 
 		case ROAMING_STATE_DISCOVERY:
 			{
+#if CFG_SUPPORT_NCHO
+				if (prAdapter->rNchoInfo.fgECHOEnabled == TRUE) {
+					u4ScnResultsTimeout = prAdapter->rNchoInfo.u4RoamScanPeriod;
+					DBGLOG(ROAMING, TRACE, "NCHO u4ScnResultsTimeout is %d\n", u4ScnResultsTimeout);
+				}
+
+				if (CHECK_FOR_TIMEOUT(kalGetTimeTick(), prRoamingFsmInfo->rRoamingDiscoveryUpdateTime,
+							  SEC_TO_SYSTIME(u4ScnResultsTimeout))) {
+					DBGLOG(ROAMING, LOUD, "DiscoveryUpdateTime Timeout");
+					u4ReqScan =  TRUE;
+				} else {
+					DBGLOG(ROAMING, LOUD, "DiscoveryUpdateTime Updated");
+#if CFG_SUPPORT_ROAMING_ENC
+					if (prAdapter->fgIsRoamingEncEnabled == TRUE)
+						u4ReqScan =  TRUE;
+					else
+#endif /* CFG_SUPPORT_ROAMING_ENC */
+						u4ReqScan = FALSE;
+				}
+				aisFsmRunEventRoamingDiscovery(prAdapter, u4ReqScan);
+#else
 				OS_SYSTIME rCurrentTime;
+				BOOLEAN fgIsNeedScan = FALSE;
+
+				fgIsNeedScan = roamingFsmIsNeedScan(prAdapter);
 
 				GET_CURRENT_SYSTIME(&rCurrentTime);
 				if (CHECK_FOR_TIMEOUT(rCurrentTime, prRoamingFsmInfo->rRoamingDiscoveryUpdateTime,
-						      SEC_TO_SYSTIME(ROAMING_DISCOVERY_TIMEOUT_SEC))) {
+						  SEC_TO_SYSTIME(ROAMING_DISCOVERY_TIMEOUT_SEC)) && fgIsNeedScan) {
 					DBGLOG(ROAMING, LOUD, "roamingFsmSteps: DiscoveryUpdateTime Timeout");
 					aisFsmRunEventRoamingDiscovery(prAdapter, TRUE);
 				} else {
@@ -293,7 +351,9 @@ VOID roamingFsmSteps(IN P_ADAPTER_T prAdapter, IN ENUM_ROAMING_STATE_T eNextStat
 #endif /* CFG_SUPPORT_ROAMING_ENC */
 						aisFsmRunEventRoamingDiscovery(prAdapter, FALSE);
 				}
+#endif
 			}
+
 			break;
 
 		case ROAMING_STATE_ROAM:
@@ -389,12 +449,30 @@ VOID roamingFsmRunEventDiscovery(IN P_ADAPTER_T prAdapter, IN P_ROAMING_PARAM_T 
 	if (eNextState != prRoamingFsmInfo->eCurrentState) {
 		P_BSS_INFO_T prAisBssInfo;
 		P_BSS_DESC_T prBssDesc;
+		PARAM_MAC_ADDRESS arBssid;
+		PARAM_SSID_T rSsid;
+		P_AIS_FSM_INFO_T prAisFsmInfo;
+		P_CONNECTION_SETTINGS_T prConnSettings;
+
+		kalMemZero(&rSsid, sizeof(PARAM_SSID_T));
+		prAisFsmInfo = &(prAdapter->rWifiVar.rAisFsmInfo);
+		prConnSettings = &(prAdapter->rWifiVar.rConnSettings);
 
 		/* sync. rcpi with firmware */
 		prAisBssInfo = &(prAdapter->rWifiVar.arBssInfo[NETWORK_TYPE_AIS_INDEX]);
-		prBssDesc = scanSearchBssDescByBssid(prAdapter, prAisBssInfo->aucBSSID);
-		if (prBssDesc)
+		prBssDesc = prAisFsmInfo->prTargetBssDesc;
+		if (prBssDesc) {
+			COPY_SSID(rSsid.aucSsid, rSsid.u4SsidLen, prBssDesc->aucSSID, prBssDesc->ucSSIDLen);
+			COPY_MAC_ADDR(arBssid, prBssDesc->aucBSSID);
+		} else  {
+			COPY_SSID(rSsid.aucSsid, rSsid.u4SsidLen, prConnSettings->aucSSID, prConnSettings->ucSSIDLen);
+			COPY_MAC_ADDR(arBssid, prConnSettings->aucBSSID);
+		}
+		prBssDesc = scanSearchBssDescByBssidAndSsid(prAdapter, arBssid, TRUE, &rSsid);
+		if (prBssDesc) {
 			prBssDesc->ucRCPI = (UINT_8) (prParam->u2Data & 0xff);
+			DBGLOG(ROAMING, INFO, "RCPI %u\n", prBssDesc->ucRCPI);
+		}
 
 		roamingFsmSteps(prAdapter, eNextState);
 	}

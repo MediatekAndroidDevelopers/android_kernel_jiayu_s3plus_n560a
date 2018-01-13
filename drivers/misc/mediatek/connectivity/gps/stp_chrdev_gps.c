@@ -18,6 +18,7 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/sched.h>
+#include <linux/wakelock.h>
 #include <asm/current.h>
 #include <asm/uaccess.h>
 #include <linux/skbuff.h>
@@ -49,7 +50,10 @@ MODULE_LICENSE("GPL");
 #define COMBO_IOC_D1_EFUSE_GET       9
 #define COMBO_IOC_RTC_FLAG	     10
 #define COMBO_IOC_CO_CLOCK_FLAG	     11
-
+#define COMBO_IOC_TRIGGER_WMT_ASSERT 12
+#define COMBO_IOC_TRIGGER_WMT_SUBSYS_RESET  13
+#define COMBO_IOC_TAKE_GPS_WAKELOCK         14
+#define COMBO_IOC_GIVE_GPS_WAKELOCK         15
 
 static UINT32 gDbgLevel = GPS_LOG_DBG;
 
@@ -79,6 +83,9 @@ static int GPS_major = GPS_DEV_MAJOR;	/* dynamic allocation */
 module_param(GPS_major, uint, 0);
 static struct cdev GPS_cdev;
 
+static struct wakeup_source gps_wake_lock;
+static unsigned char wake_lock_acquired;   /* default: 0 */
+
 #if (defined(CONFIG_MTK_GMO_RAM_OPTIMIZE) && !defined(CONFIG_MT_ENG_BUILD))
 #define STP_GPS_BUFFER_SIZE 2048
 #else
@@ -92,6 +99,27 @@ static int flag;
 static volatile int retflag;
 
 static void GPS_event_cb(void);
+
+static void gps_hold_wake_lock(int hold)
+{
+	if (hold == 1) {
+		if (!wake_lock_acquired) {
+			GPS_DBG_FUNC("acquire gps wake_lock acquired = %d\n", wake_lock_acquired);
+			__pm_stay_awake(&gps_wake_lock);
+			wake_lock_acquired = 1;
+		} else {
+			GPS_DBG_FUNC("acquire gps wake_lock acquired = %d (do nothing)\n", wake_lock_acquired);
+		}
+	} else if (hold == 0) {
+		if (wake_lock_acquired) {
+			GPS_DBG_FUNC("release gps wake_lock acquired = %d\n", wake_lock_acquired);
+			__pm_relax(&gps_wake_lock);
+			wake_lock_acquired = 0;
+		} else {
+			GPS_DBG_FUNC("release gps wake_lock acquired = %d (do nothing)\n", wake_lock_acquired);
+		}
+	}
+}
 
 bool rtc_GPS_low_power_detected(void)
 {
@@ -232,7 +260,7 @@ ssize_t GPS_read(struct file *filp, char __user *buf, size_t count, loff_t *f_po
 	}
 #endif
 
-	if (retval) {
+	if (retval > 0) {
 		/* we got something from STP driver */
 		if (copy_to_user(buf, i_buf, retval)) {
 			retval = -EFAULT;
@@ -332,6 +360,35 @@ long GPS_unlocked_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 #endif
 		break;
 
+	case COMBO_IOC_TRIGGER_WMT_ASSERT:
+		/* Trigger FW assert for debug */
+		GPS_INFO_FUNC("%s: Host trigger FW assert......, reason:%lu\n", __func__, arg);
+		retval = mtk_wcn_wmt_assert(WMTDRV_TYPE_GPS, arg);
+		if (retval == MTK_WCN_BOOL_TRUE) {
+			GPS_INFO_FUNC("Host trigger FW assert succeed\n");
+			retval = 0;
+		} else {
+			GPS_ERR_FUNC("Host trigger FW assert Failed\n");
+			retval = (-EBUSY);
+		}
+		break;
+
+	case COMBO_IOC_TAKE_GPS_WAKELOCK:
+		GPS_INFO_FUNC("Ioctl to take gps wakelock\n");
+		gps_hold_wake_lock(1);
+		if (1 == wake_lock_acquired)
+			retval = 0;
+		else
+			retval = -EAGAIN;
+		break;
+	case COMBO_IOC_GIVE_GPS_WAKELOCK:
+		GPS_INFO_FUNC("Ioctl to give gps wakelock\n");
+		gps_hold_wake_lock(0);
+		if (0 == wake_lock_acquired)
+			retval = 0;
+		else
+			retval = -EAGAIN;
+		break;
 	default:
 		retval = -EFAULT;
 		GPS_DBG_FUNC("GPS_ioctl(): unknown cmd (%d)\n", cmd);
@@ -424,6 +481,8 @@ static int GPS_open(struct inode *inode, struct file *file)
 		/*return error code */
 		return -ENODEV;
 	}
+	gps_hold_wake_lock(1);
+	GPS_DBG_FUNC("gps_hold_wake_lock(1)\n");
 #if defined(CONFIG_ARCH_MT6580)
 	clk_buf_ctrl(CLK_BUF_AUDIO, 1);
 #endif
@@ -454,8 +513,11 @@ static int GPS_close(struct inode *inode, struct file *file)
 		return -EIO;	/* mostly, native programer does not care this return vlaue,
 		but we still return error code. */
 	}
-
 	GPS_DBG_FUNC("WMT turn off GPS OK!\n");
+
+	gps_hold_wake_lock(0);
+	GPS_DBG_FUNC("gps_hold_wake_lock(0)\n");
+
 #if defined(CONFIG_ARCH_MT6580)
 	clk_buf_ctrl(CLK_BUF_AUDIO, 0);
 #endif
@@ -517,6 +579,8 @@ static int GPS_init(void)
 #endif
 	pr_warn("%s driver(major %d) installed.\n", GPS_DRIVER_NAME, GPS_major);
 
+	wakeup_source_init(&gps_wake_lock, "gpswakelock");
+
 	return 0;
 
 error:
@@ -549,8 +613,9 @@ static void GPS_exit(void)
 
 	cdev_del(&GPS_cdev);
 	unregister_chrdev_region(dev, GPS_devs);
-
 	pr_warn("%s driver removed.\n", GPS_DRIVER_NAME);
+
+	wakeup_source_trash(&gps_wake_lock);
 }
 
 #ifdef MTK_WCN_REMOVE_KERNEL_MODULE

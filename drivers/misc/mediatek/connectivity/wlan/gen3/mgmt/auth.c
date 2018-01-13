@@ -1,4 +1,18 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
 ** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/mgmt/auth.c#1
 */
 
@@ -6,217 +20,6 @@
     \brief  This file includes the authentication-related functions.
 
     This file includes the authentication-related functions.
-*/
-
-/*
-** Log: auth.c
-**
-** 04 22 2014 eason.tsai
-** [ALPS01511962] [WFD][Case Fail]Device can't connect to another AP successfully after connect to WFD.
-** remove force tx de-auth
-**
-** 04 21 2014 eason.tsai
-** [ALPS01511962] [WFD][Case Fail]Device can't connect to another AP successfully after connect to WFD.
-**
-** [ALPS01511962] [WFD][Case Fail]Device can't connect to another AP successfully after connect to WFD.
-**	deauth retry limit 100ms and force to TX
-**
-**
-** 08 13 2013 terry.wu
-** [BORA00002207] [MT6630 Wi-Fi] TXM & MQM Implementation
-** Remove unused code
-**
-** 03 12 2013 terry.wu
-** [BORA00002207] [MT6630 Wi-Fi] TXM & MQM Implementation
-** Update Tx utility function for management frame
-**
-** 02 27 2013 yuche.tsai
-** [BORA00002398] [MT6630][Volunteer Patch] P2P Driver Re-Design for Multiple BSS support
-** Add aaa_fsm.c, p2p_ie.c, fix compile warning & error.
-**
-** 02 19 2013 cp.wu
-** [BORA00002227] [MT6630 Wi-Fi][Driver] Update for Makefile and HIFSYS modifications
-** take use of GET_BSS_INFO_BY_INDEX() and MAX_BSS_INDEX macros
-** for correctly indexing of BSS-INFO pointers
-**
-** 02 06 2013 yuche.tsai
-** [BORA00002398] [MT6630][Volunteer Patch] P2P Driver Re-Design for Multiple BSS support
-** Fix BSS index to BSS Info MACRO
-**
-** 01 22 2013 cp.wu
-** [BORA00002253] [MT6630 Wi-Fi][Driver][Firmware] Add NLO and timeout mechanism to SCN module
-** modification for ucBssIndex migration
-**
-** 01 07 2013 terry.wu
-** [BORA00002207] [MT6630 Wi-Fi] TXM & MQM Implementation
-** <saved by Perforce>
-** Fix reassoc req issue
-**
-** 09 17 2012 cm.chang
-** [BORA00002149] [MT6630 Wi-Fi] Initial software development
-** Duplicate source from MT6620 v2.3 driver branch
-** (Davinci label: MT6620_WIFI_Driver_V2_3_120913_1942_As_MT6630_Base)
- *
- * 02 13 2012 cp.wu
- * NULL
- * show error message only instead of raise assertion when
- * received authentication frame is carrying illegal parameters.
- *
- * 11 09 2011 yuche.tsai
- * NULL
- * Fix a network index & station record index issue when TX deauth frame.
- *
- * 10 12 2011 wh.su
- * [WCXRP00001036] [MT6620 Wi-Fi][Driver][FW] Adding the 802.11w code for MFP
- * adding the 802.11w related function and define .
- *
- * 06 22 2011 yuche.tsai
- * NULL
- * Fix coding error.
- *
- * 06 20 2011 yuche.tsai
- * [WCXRP00000796] [Volunteer Patch][MT6620][Driver] Add BC deauth frame TX feature.
- * BC deauth support.
- *
- * 04 21 2011 terry.wu
- * [WCXRP00000674] [MT6620 Wi-Fi][Driver] Refine AAA authSendAuthFrame
- * Add network type parameter to authSendAuthFrame.
- *
- * 04 15 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Add BOW short range mode.
- *
- * 02 08 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * 1. Fix Service Disocvery Logical issue.
- * 2. Fix a NULL pointer access violation issue when sending deauthentication packet to a class error station.
- *
- * 01 24 2011 cp.wu
- * [WCXRP00000382] [MT6620 Wi-Fi][Driver] Track forwarding packet number with notifying tx thread for serving
- * 1. add an extra counter for tracking pending forward frames.
- * 2. notify TX service thread as well when there is pending forward frame
- * 3. correct build errors leaded by introduction of Wi-Fi direct separation module
- *
- * 01 21 2011 terry.wu
- * [WCXRP00000381] [MT6620 Wi-Fi][Driver] Kernel panic when replying unaccept Auth in AP mode
- * In AP mode, use STA_REC_INDEX_NOT_FOUND(0xFE) instead of StaRec index when replying an unaccept Auth frame.
- *
- * 10 18 2010 cp.wu
- * [WCXRP00000052] [MT6620 Wi-Fi][Driver] Eliminate Linux Compile Warning
- * use definition macro to replace hard-coded constant
- *
- * 09 03 2010 kevin.huang
- * NULL
- * Refine #include sequence and solve recursive/nested #include issue
- *
- * 08 30 2010 cp.wu
- * NULL
- * eliminate klockwork errors
- *
- * 08 16 2010 cp.wu
- * NULL
- * Replace CFG_SUPPORT_BOW by CFG_ENABLE_BT_OVER_WIFI.
- * There is no CFG_SUPPORT_BOW in driver domain source.
- *
- * 08 16 2010 kevin.huang
- * NULL
- * Refine AAA functions
- *
- * 08 03 2010 cp.wu
- * NULL
- * surpress compilation warning.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 28 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * send MMPDU in basic rate.
- *
- * 06 21 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * specify correct value for management frames.
- *
- * 06 18 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * Provide cnmMgtPktAlloc() and alloc/free function of msg/buf
- *
- * 06 14 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * add management dispatching function table.
- *
- * 06 11 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * auth.c is migrated.
- *
- * 05 28 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Update authSendDeauthFrame() for correct the value of eNetTypeIndex in MSDU_INFO_T
- *
- * 05 24 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Check Net is active before sending Deauth frame.
- *
- * 05 24 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Refine authSendAuthFrame() for NULL STA_RECORD_T case and minimum deauth interval.
- *
- * 04 24 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * g_aprBssInfo[] depends on CFG_SUPPORT_P2P and CFG_SUPPORT_BOW
- *
- * 04 19 2010 kevin.huang
- * [BORA00000714][WIFISYS][New Feature]Beacon Timeout Support
- * Add Send Deauth for Class 3 Error and Leave Network Support
- *
- * 02 23 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Fix compile warning
- *
- * 02 05 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add debug message for abnormal authentication frame from AP
- *
- * 02 04 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add AAA Module Support, Revise Net Type to Net Type Index for array lookup
- *
- * 01 11 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Add Deauth and Disassoc Handler
- *
- * 01 07 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- *
- * Fix the Debug Label
- *
- * 12 18 2009 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * .
- *
- * Dec 7 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Update the authComposeAuthFrameHeader()
- *
- * Dec 7 2009 mtk01088
- * [BORA00000476] [Wi-Fi][firmware] Add the security module initialize code
- * adding the send deauth frame function
- *
- * Dec 3 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Integrate send Auth with TXM
- *
- * Nov 24 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Revise MGMT Handler with Retain Status
- *
- * Nov 23 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- *
 */
 
 /*******************************************************************************
@@ -418,8 +221,6 @@ WLAN_STATUS authSendAuthFrame(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaR
 	UINT_16 u2PayloadLen;
 	UINT_32 i;
 
-	DBGLOG(SAA, LOUD, "Send Auth Frame\n");
-
 	ASSERT(prStaRec);
 
 	/* 4 <1> Allocate a PKT_INFO_T for Authentication Frame */
@@ -440,19 +241,19 @@ WLAN_STATUS authSendAuthFrame(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaR
 	/* Allocate a MSDU_INFO_T */
 	prMsduInfo = cnmMgtPktAlloc(prAdapter, u2EstimatedFrameLen);
 	if (prMsduInfo == NULL) {
-		DBGLOG(SAA, WARN, "No PKT_INFO_T for sending Auth Frame.\n");
+		DBGLOG(SAA, WARN, "No MSDU_INFO_T for sending Auth\n");
 		return WLAN_STATUS_RESOURCES;
 	}
 	/* 4 <2> Compose Authentication Request frame header and fixed fields in MSDU_INfO_T. */
 	ASSERT(prStaRec->ucBssIndex <= MAX_BSS_INDEX);
 	prBssInfo = GET_BSS_INFO_BY_INDEX(prAdapter, prStaRec->ucBssIndex)
 
-	    /* Compose Header and some Fixed Fields */
-	    authComposeAuthFrameHeaderAndFF((PUINT_8)
-					    ((UINT_32) (prMsduInfo->prPacket) +
-					     MAC_TX_RESERVED_FIELD), prStaRec->aucMacAddr,
-					    prBssInfo->aucOwnMacAddr, prStaRec->ucAuthAlgNum,
-					    u2TransactionSeqNum, STATUS_CODE_RESERVED);
+	/* Compose Header and some Fixed Fields */
+	authComposeAuthFrameHeaderAndFF((PUINT_8)
+					((ULONG) (prMsduInfo->prPacket) + MAC_TX_RESERVED_FIELD),
+					prStaRec->aucMacAddr,
+					prBssInfo->aucOwnMacAddr, prStaRec->ucAuthAlgNum,
+					u2TransactionSeqNum, STATUS_CODE_RESERVED);
 
 	u2PayloadLen = (AUTH_ALGORITHM_NUM_FIELD_LEN + AUTH_TRANSACTION_SEQENCE_NUM_FIELD_LEN + STATUS_CODE_FIELD_LEN);
 
@@ -476,6 +277,7 @@ WLAN_STATUS authSendAuthFrame(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaR
 	nicTxConfigPktControlFlag(prMsduInfo, MSDU_CONTROL_FLAG_FORCE_TX, TRUE);
 
 	/* 4 <6> Inform TXM  to send this Authentication frame. */
+	DBGLOG(SAA, TRACE, "Send Auth, SeqNo: %d\n", prMsduInfo->ucTxSeqNum);
 	nicTxEnqueueMsdu(prAdapter, prMsduInfo);
 
 	return WLAN_STATUS_SUCCESS;
@@ -513,14 +315,12 @@ authSendAuthFrame(IN P_ADAPTER_T prAdapter,
 	UINT_16 ucAuthAlgNum;
 	UINT_32 i;
 
-	DBGLOG(SAA, LOUD, "Send Auth Frame %d, Status Code = %d\n", u2TransactionSeqNum, u2StatusCode);
-
 	/* 4 <1> Allocate a PKT_INFO_T for Authentication Frame */
 	/* Init with MGMT Header Length + Length of Fixed Fields */
-	u2EstimatedFrameLen = (MAC_TX_RESERVED_FIELD +
-			       WLAN_MAC_MGMT_HEADER_LEN +
-			       AUTH_ALGORITHM_NUM_FIELD_LEN +
-			       AUTH_TRANSACTION_SEQENCE_NUM_FIELD_LEN + STATUS_CODE_FIELD_LEN);
+	u2EstimatedFrameLen = MAC_TX_RESERVED_FIELD +
+			      WLAN_MAC_MGMT_HEADER_LEN +
+			      AUTH_ALGORITHM_NUM_FIELD_LEN +
+			      AUTH_TRANSACTION_SEQENCE_NUM_FIELD_LEN + STATUS_CODE_FIELD_LEN;
 
 	/* + Extra IE Length */
 	u2EstimatedExtraIELen = 0;
@@ -533,7 +333,7 @@ authSendAuthFrame(IN P_ADAPTER_T prAdapter,
 	/* Allocate a MSDU_INFO_T */
 	prMsduInfo = cnmMgtPktAlloc(prAdapter, u2EstimatedFrameLen);
 	if (prMsduInfo == NULL) {
-		DBGLOG(SAA, WARN, "No PKT_INFO_T for sending Auth Frame.\n");
+		DBGLOG(SAA, WARN, "No MSDU_INFO_T for sending Auth\n");
 		return WLAN_STATUS_RESOURCES;
 	}
 	/* 4 <2> Compose Authentication Request frame header and fixed fields in MSDU_INfO_T. */
@@ -607,6 +407,7 @@ authSendAuthFrame(IN P_ADAPTER_T prAdapter,
 	nicTxConfigPktControlFlag(prMsduInfo, MSDU_CONTROL_FLAG_FORCE_TX, TRUE);
 
 	/* 4 <6> Inform TXM  to send this Authentication frame. */
+	DBGLOG(SAA, TRACE, "Send Auth, StatusCode: %d, SeqNo: %d\n", u2StatusCode, prMsduInfo->ucTxSeqNum);
 	nicTxEnqueueMsdu(prAdapter, prMsduInfo);
 
 	return WLAN_STATUS_SUCCESS;
@@ -751,10 +552,10 @@ authCheckRxAuthFrameStatus(IN P_ADAPTER_T prAdapter,
 	ASSERT(pu2StatusCode);
 
 	prStaRec = cnmGetStaRecByIndex(prAdapter, prSwRfb->ucStaRecIdx);
-	ASSERT(prStaRec);
-
-	if (!prStaRec)
+	if (!prStaRec) {
+		DBGLOG(SAA, ERROR, "Cannot find corresponding StaRec, invalid packet\n");
 		return WLAN_STATUS_INVALID_PACKET;
+	}
 
 	/* 4 <1> locate the Authentication Frame. */
 	prAuthFrame = (P_WLAN_AUTH_FRAME_T) prSwRfb->pvHeader;
@@ -763,17 +564,18 @@ authCheckRxAuthFrameStatus(IN P_ADAPTER_T prAdapter,
 	/* WLAN_GET_FIELD_16(&prAuthFrame->u2AuthAlgNum, &u2RxAuthAlgNum); */
 	u2RxAuthAlgNum = prAuthFrame->u2AuthAlgNum;	/* NOTE(Kevin): Optimized for ARM */
 	if (u2RxAuthAlgNum != (UINT_16) prStaRec->ucAuthAlgNum) {
-		DBGLOG(SAA, WARN, "Discard Auth frame with auth type = %d, current = %d\n",
-				   u2RxAuthAlgNum, prStaRec->ucAuthAlgNum);
+		DBGLOG(SAA, WARN, "Auth frame with AlgNum: %d, expected: %d\n",
+		       u2RxAuthAlgNum, prStaRec->ucAuthAlgNum);
 		*pu2StatusCode = STATUS_CODE_AUTH_ALGORITHM_NOT_SUPPORTED;
 		return WLAN_STATUS_SUCCESS;
 	}
 	/* WLAN_GET_FIELD_16(&prAuthFrame->u2AuthTransSeqNo, &u2RxTransactionSeqNum); */
 	u2RxTransactionSeqNum = prAuthFrame->u2AuthTransSeqNo;	/* NOTE(Kevin): Optimized for ARM */
 	if (u2RxTransactionSeqNum != u2TransactionSeqNum) {
-		DBGLOG(SAA, WARN, "Discard Auth frame with Transaction Seq No = %d\n", u2RxTransactionSeqNum);
+		DBGLOG(SAA, WARN, "Auth frame with TransactionSeqNum: %d, expected: %d\n",
+		       u2RxTransactionSeqNum, u2TransactionSeqNum);
 		*pu2StatusCode = STATUS_CODE_AUTH_OUT_OF_SEQ;
-		return WLAN_STATUS_SUCCESS;
+		return WLAN_STATUS_FAILURE;
 	}
 	/* 4 <3> Get the Status code */
 	/* WLAN_GET_FIELD_16(&prAuthFrame->u2StatusCode, &u2RxStatusCode); */
@@ -1059,7 +861,7 @@ authSendDeauthFrame(IN P_ADAPTER_T prAdapter,
 	/* Allocate a MSDU_INFO_T */
 	prMsduInfo = cnmMgtPktAlloc(prAdapter, u2EstimatedFrameLen);
 	if (prMsduInfo == NULL) {
-		DBGLOG(SAA, WARN, "No PKT_INFO_T for sending Deauth Request.\n");
+		DBGLOG(SAA, WARN, "No MSDU_INFO_T for sending Deauth\n");
 		return WLAN_STATUS_RESOURCES;
 	}
 	/* 4 <6> compose Deauthentication frame header and some fixed fields */
@@ -1150,6 +952,7 @@ WLAN_STATUS authProcessRxDeauthFrame(IN P_SW_RFB_T prSwRfb, IN UINT_8 aucBSSID[]
 	/* 4 <3> Parse the Fixed Fields of Deauthentication Frame Body. */
 	WLAN_GET_FIELD_16(&prDeauthFrame->u2ReasonCode, &u2RxReasonCode);
 	*pu2ReasonCode = u2RxReasonCode;
+	DBGLOG(SAA, INFO, "RX deauth, reason code: %d\n", u2RxReasonCode);
 
 	return WLAN_STATUS_SUCCESS;
 
@@ -1163,7 +966,7 @@ WLAN_STATUS authProcessRxDeauthFrame(IN P_SW_RFB_T prSwRfb, IN UINT_8 aucBSSID[]
 * @param[in] aucExpectedBSSID       Given Expected BSSID.
 * @param[in] u2ExpectedAuthAlgNum   Given Expected Authentication Algorithm Number
 * @param[in] u2ExpectedTransSeqNum  Given Expected Transaction Sequence Number.
-* @param[out] pu2ReturnStatusCode   Return Status Code.
+* @param[out] pu2StatusCode   Pointer to store the Status Code carried in returned Authentication.
 *
 * @retval WLAN_STATUS_SUCCESS   This is the frame we should handle.
 * @retval WLAN_STATUS_FAILURE   The frame we will ignore.
@@ -1174,37 +977,39 @@ authProcessRxAuth1Frame(IN P_ADAPTER_T prAdapter,
 			IN P_SW_RFB_T prSwRfb,
 			IN UINT_8 aucExpectedBSSID[],
 			IN UINT_16 u2ExpectedAuthAlgNum,
-			IN UINT_16 u2ExpectedTransSeqNum, OUT PUINT_16 pu2ReturnStatusCode)
+			IN UINT_16 u2ExpectedTransSeqNum, OUT PUINT_16 pu2StatusCode)
 {
 	P_WLAN_AUTH_FRAME_T prAuthFrame;
-	UINT_16 u2ReturnStatusCode = STATUS_CODE_SUCCESSFUL;
+	UINT_16 u2StatusCode = STATUS_CODE_SUCCESSFUL;
 
 	ASSERT(prSwRfb);
 	ASSERT(aucExpectedBSSID);
-	ASSERT(pu2ReturnStatusCode);
+	ASSERT(pu2StatusCode);
 
 	/* 4 <1> locate the Authentication Frame. */
 	prAuthFrame = (P_WLAN_AUTH_FRAME_T) prSwRfb->pvHeader;
 
 	/* 4 <2> Check the BSSID */
-	if (UNEQUAL_MAC_ADDR(prAuthFrame->aucBSSID, aucExpectedBSSID))
-		return WLAN_STATUS_FAILURE;	/* Just Ignore this MMPDU */
+	if (UNEQUAL_MAC_ADDR(prAuthFrame->aucBSSID, aucExpectedBSSID)) {
+		DBGLOG(AAA, ERROR, "Auth frame is not from current BSSID\n");
+		return WLAN_STATUS_FAILURE;
+	}
 
 	/* 4 <3> Check the SA, which should not be MC/BC */
 	if (prAuthFrame->aucSrcAddr[0] & BIT(0)) {
 		DBGLOG(P2P, WARN, "Invalid STA MAC with MC/BC bit set: " MACSTR "\n",
-				   MAC2STR(prAuthFrame->aucSrcAddr));
+		       MAC2STR(prAuthFrame->aucSrcAddr));
 		return WLAN_STATUS_FAILURE;
 	}
 
 	/* 4 <4> Parse the Fixed Fields of Authentication Frame Body. */
 	if (prAuthFrame->u2AuthAlgNum != u2ExpectedAuthAlgNum)
-		u2ReturnStatusCode = STATUS_CODE_AUTH_ALGORITHM_NOT_SUPPORTED;
+		u2StatusCode = STATUS_CODE_AUTH_ALGORITHM_NOT_SUPPORTED;
 
 	if (prAuthFrame->u2AuthTransSeqNo != u2ExpectedTransSeqNum)
-		u2ReturnStatusCode = STATUS_CODE_AUTH_OUT_OF_SEQ;
+		u2StatusCode = STATUS_CODE_AUTH_OUT_OF_SEQ;
 
-	*pu2ReturnStatusCode = u2ReturnStatusCode;
+	*pu2StatusCode = u2StatusCode;
 
 	return WLAN_STATUS_SUCCESS;
 

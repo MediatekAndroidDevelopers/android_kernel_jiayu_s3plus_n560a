@@ -1,100 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/mgmt/swcr.c#1
-*/
-
-/*! \file   "swcr.c"
-    \brief
-
-*/
-
-/*
-** Log: swcr.c
- *
- * 06 04 2012 tsaiyuan.hsu
- * [WCXRP00001249] [ALPS.ICS] Daily build warning on "wlan/mgmt/swcr.c#1"
- * resolve build waring for "WNM_UNIT_TEST not defined".
- *
- * 03 02 2012 terry.wu
- * NULL
- * Sync CFG80211 modification from branch 2,2.
- *
- * 01 05 2012 tsaiyuan.hsu
- * [WCXRP00001157] [MT6620 Wi-Fi][FW][DRV] add timing measurement support for 802.11v
- * add timing measurement support for 802.11v.
- *
- * 11 22 2011 tsaiyuan.hsu
- * [WCXRP00001083] [MT6620 Wi-Fi][DRV]] dump debug counter or frames when debugging is triggered
- * keep debug counter setting after wake up.
- *
- * 11 15 2011 cm.chang
- * NULL
- * Fix compiling warning
- *
- * 11 11 2011 tsaiyuan.hsu
- * [WCXRP00001083] [MT6620 Wi-Fi][DRV]] dump debug counter or frames when debugging is triggered
- * fix debug counters of rx in driver.
- *
- * 11 11 2011 tsaiyuan.hsu
- * [WCXRP00001083] [MT6620 Wi-Fi][DRV]] dump debug counter or frames when debugging is triggered
- * add debug counters of bb and ar for xlog.
- *
- * 11 10 2011 eddie.chen
- * [WCXRP00001096] [MT6620 Wi-Fi][Driver/FW] Enhance the log function (xlog)
- * Modify the QM xlog level and remove LOG_FUNC.
- *
- * 11 08 2011 tsaiyuan.hsu
- * [WCXRP00001083] [MT6620 Wi-Fi][DRV]] dump debug counter or frames when debugging is triggered
- * add debug counters, eCurPsProf, for PS.
- *
- * 11 07 2011 tsaiyuan.hsu
- * [WCXRP00001083] [MT6620 Wi-Fi][DRV]] dump debug counter or frames when debugging is triggered
- * add debug counters and periodically dump counters for debugging.
- *
- * 11 03 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * change the DBGLOG for "\n" and "\r\n". LABEL to LOUD for XLOG
- *
- * 08 31 2011 tsaiyuan.hsu
- * [WCXRP00000931] [MT5931 Wi-Fi][DRV/FW] add swcr to disable roaming from driver
- * remove obsolete code.
- *
- * 08 15 2011 tsaiyuan.hsu
- * [WCXRP00000931] [MT5931 Wi-Fi][DRV/FW] add swcr to disable roaming from driver
- * add swcr in driver reg, 0x9fxx0000, to disable roaming .
- *
- * 05 11 2011 eddie.chen
- * [WCXRP00000709] [MT6620 Wi-Fi][Driver] Check free number before copying broadcast packet
- * Fix dest type when GO packet copying.
- *
- * 05 09 2011 eddie.chen
- * [WCXRP00000709] [MT6620 Wi-Fi][Driver] Check free number before copying broadcast packet
- * Check free number before copying broadcast packet.
- *
- * 04 14 2011 eddie.chen
- * [WCXRP00000603] [MT6620 Wi-Fi][DRV] Fix Klocwork warning
- * Check the SW RFB free. Fix the compile warning..
- *
- * 04 12 2011 eddie.chen
- * [WCXRP00000617] [MT6620 Wi-Fi][DRV/FW] Fix for sigma
- * Fix the sta index in processing security frame
- * Simple flow control for TC4 to avoid mgt frames for PS STA to occupy the TC4
- * Add debug message.
- *
- * 03 28 2011 eddie.chen
- * [WCXRP00000603] [MT6620 Wi-Fi][DRV] Fix Klocwork warning
- * Fix Klockwork warning.
- *
- * 03 15 2011 eddie.chen
- * [WCXRP00000554] [MT6620 Wi-Fi][DRV] Add sw control debug counter
- * Add sw debug counter for QM.
- *
- * 01 11 2011 eddie.chen
- * [WCXRP00000322] Add WMM IE in beacon,
-Add per station flow control when STA is in PS
-
- * Add swcr for test.
- *
+* Copyright (C) 2016 MediaTek Inc.
 *
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -302,6 +216,9 @@ void dumpQueue(P_ADAPTER_T prAdapter)
 	DBGLOG(SW4, INFO, " rIndicatedRfbList %u\n", prAdapter->rRxCtrl.rIndicatedRfbList.u4NumElem);
 	DBGLOG(SW4, INFO, " ucNumIndPacket %u\n", prAdapter->rRxCtrl.ucNumIndPacket);
 	DBGLOG(SW4, INFO, " ucNumRetainedPacket %u\n", prAdapter->rRxCtrl.ucNumRetainedPacket);
+#if CFG_SUPPORT_MULTITHREAD
+	DBGLOG(SW4, INFO, " ucNumRxDataPacket %9u\n", prAdapter->rRxCtrl.rRxDataRfbList.u4NumElem);
+#endif
 
 }
 
@@ -413,6 +330,21 @@ VOID dumpBss(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInfo)
 
 }
 
+UINT_32 swCrGetDNSRxFilter(VOID)
+{
+	UINT_32 u2RetRxFilter = 0;
+
+	if (g_u4mDNSRXFilter & RX_MDNS_FILTER_IPV4)
+		u2RetRxFilter |= PARAM_PACKET_FILTER_ALL_MULTICAST;
+	else
+		u2RetRxFilter |= PARAM_PACKET_FILTER_MULTICAST;
+
+	DBGLOG(SW4, TRACE, "[MC debug]swCrGetDNSRxFilter %x\n", u2RetRxFilter);
+
+	return u2RetRxFilter;
+}
+
+
 VOID swCtrlCmdCategory0(P_ADAPTER_T prAdapter, UINT_8 ucCate, UINT_8 ucAction, UINT_8 ucOpt0, UINT_8 ucOpt1)
 {
 	UINT_8 ucIndex, ucRead;
@@ -430,9 +362,6 @@ VOID swCtrlCmdCategory0(P_ADAPTER_T prAdapter, UINT_8 ucCate, UINT_8 ucAction, U
 	if (ucRead == SWCR_WRITE) {
 		switch (ucIndex) {
 		case SWCTRL_DEBUG:
-#if DBG
-			aucDebugModule[ucOpt0] = (UINT_8) g_au4SwCr[1];
-#endif
 			break;
 		case SWCTRL_WIFI_VAR:
 			break;
@@ -462,16 +391,13 @@ VOID swCtrlCmdCategory0(P_ADAPTER_T prAdapter, UINT_8 ucCate, UINT_8 ucAction, U
 				if (ucOpt0 == SWCR_RX_MDNS_FILTER_CMD_STOP) {
 					g_u4mDNSRXFilter &= ~(RX_MDNS_FILTER_START);
 
-					u4rxfilter = prAdapter->u4OsPacketFilter;
+					u4rxfilter = prAdapter->u4OsPacketFilter & (
+						~PARAM_PACKET_FILTER_MULTICAST | ~PARAM_PACKET_FILTER_ALL_MULTICAST);
 					fgUpdate = TRUE;
 				} else if (ucOpt0 == SWCR_RX_MDNS_FILTER_CMD_START) {
 					g_u4mDNSRXFilter |= (RX_MDNS_FILTER_START);
 
-					u4rxfilter = prAdapter->u4OsPacketFilter;
-					if ((g_u4mDNSRXFilter & RX_MDNS_FILTER_IPV4) ||
-					    (g_u4mDNSRXFilter & RX_MDNS_FILTER_IPV6)) {
-						u4rxfilter |= PARAM_PACKET_FILTER_ALL_MULTICAST;
-					}
+					u4rxfilter = prAdapter->u4OsPacketFilter | swCrGetDNSRxFilter();
 					fgUpdate = TRUE;
 				} else if (ucOpt0 == SWCR_RX_MDNS_FILTER_CMD_ADD) {
 					if (ucOpt1 < 31)
@@ -481,11 +407,8 @@ VOID swCtrlCmdCategory0(P_ADAPTER_T prAdapter, UINT_8 ucCate, UINT_8 ucAction, U
 						g_u4mDNSRXFilter &= ~(1 << ucOpt1);
 				}
 
-				if (fgUpdate == TRUE) {
+				if (fgUpdate == TRUE)
 					rStatus = wlanoidSetPacketFilter(prAdapter, u4rxfilter, FALSE, NULL, 0);
-				}
-/* DBGLOG(SW4, INFO,("SWCTRL_RX_MDNS_FILTER: g_u4mDNSRXFilter %x ucOpt0 %x ucOpt1 %x fgUpdate %x u4rxfilter %x, */
-/* rStatus %x\n", g_u4mDNSRXFilter, ucOpt0, ucOpt1, fgUpdate, u4rxfilter, rStatus)); */
 			}
 			break;
 		default:
@@ -494,9 +417,6 @@ VOID swCtrlCmdCategory0(P_ADAPTER_T prAdapter, UINT_8 ucCate, UINT_8 ucAction, U
 	} else {
 		switch (ucIndex) {
 		case SWCTRL_DEBUG:
-#if DBG
-			g_au4SwCr[1] = aucDebugModule[ucOpt0];
-#endif
 			break;
 		case SWCTRL_MAGIC:
 			g_au4SwCr[1] = _SWCTRL_MAGIC;

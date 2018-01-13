@@ -34,7 +34,7 @@
 
 -d__arm						// Define __arm
 
--d__func__="function"   // Non-standard preprocessor macro
+-d__FUNCTION__="function"   // Non-standard preprocessor macro
 
 //===========================================================================
 // General message inhibitions

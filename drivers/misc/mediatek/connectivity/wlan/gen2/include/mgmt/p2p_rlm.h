@@ -1,9 +1,14 @@
 /*
-** Id: //Department/DaVinci/TRUNK/WiFi_P2P_Driver/include/mgmt/p2p_rlm.h#1
-*/
-
-/*! \file   "rlm.h"
-    \brief
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _P2P_RLM_H
@@ -70,5 +75,5 @@ rlmFuncFindAvailableChannel(IN P_ADAPTER_T prAdapter,
 			    IN PUINT_8 pucSuggestChannel, IN BOOLEAN fgIsSocialChannel, IN BOOLEAN fgIsDefaultChannel);
 
 ENUM_CHNL_EXT_T rlmDecideScoForAP(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInfo);
-
+ENUM_CHNL_EXT_T rlmDecideSco(P_ADAPTER_T prAdapter, UINT_8 ucPrimaryChannel, ENUM_BAND_T eBand);
 #endif

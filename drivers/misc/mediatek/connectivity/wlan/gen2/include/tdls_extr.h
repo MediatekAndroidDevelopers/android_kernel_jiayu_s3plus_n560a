@@ -1,21 +1,15 @@
 /*
-** Id: include/tdls_extr.h#1
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
-
-/*! \file   "tdls_extr.h"
-    \brief This file contains the external used in other modules
-	 for MediaTek Inc. 802.11 Wireless LAN Adapters.
-*/
-
-/*
-** Log: tdls_extr.h
- *
- * 11 18 2013 vend_samp.lin
- * NULL
- * Initial version.
- *
- **
- */
 
 #ifndef _TDLS_EXTR_H
 #define _TDLS_EXTR_H
@@ -81,7 +75,7 @@ typedef enum _TDLS_REASON_CODE {
 typedef struct _TDLS_CMD_PEER_ADD_T {
 
 	TDLS_U8 aucPeerMac[6];
-
+	ENUM_NETWORK_TYPE_INDEX_T eNetworkType;
 #if 0
 	ENUM_NETWORK_TYPE_INDEX_T eNetTypeIndex;
 	UINT_16 u2CapInfo;
@@ -95,7 +89,7 @@ typedef struct _TDLS_CMD_PEER_ADD_T {
 } TDLS_CMD_PEER_ADD_T;
 
 typedef struct _TDLS_CMD_LINK_T {
-
+	ENUM_NETWORK_TYPE_INDEX_T eNetworkType;
 	TDLS_U8 aucPeerMac[6];
 	BOOLEAN fgIsEnabled;
 } TDLS_CMD_LINK_T;
@@ -121,6 +115,7 @@ typedef struct _TDLS_CMD_PEER_UPDATE_HT_CAP_T {
 
 typedef struct _TDLS_CMD_PEER_UPDATE_T {
 
+	ENUM_NETWORK_TYPE_INDEX_T eNetworkType;
 	TDLS_U8 aucPeerMac[6];
 
 #define TDLS_CMD_PEER_UPDATE_SUP_CHAN_MAX			50
@@ -389,7 +384,7 @@ VOID TdlsexBssExtCapParse(STA_RECORD_T *prStaRec, UINT_8 *pucIE);
 
 VOID TdlsexEventHandle(P_GLUE_INFO_T prGlueInfo, UINT8 *prInBuf, UINT32 u4InBufLen);
 
-TDLS_STATUS TdlsexKeyHandle(ADAPTER_T *prAdapter, PARAM_KEY_T *prNewKey);
+TDLS_STATUS TdlsexKeyHandle(ADAPTER_T *prAdapter, PARAM_KEY_T *prNewKey, ENUM_NETWORK_TYPE_INDEX_T eNetworkType);
 
 VOID TdlsexInit(ADAPTER_T *prAdapter);
 
@@ -407,15 +402,17 @@ TDLS_STATUS TdlsexPeerAdd(P_ADAPTER_T prAdapter, PVOID pvSetBuffer, UINT_32 u4Se
 
 TDLS_STATUS TdlsexPeerUpdate(P_ADAPTER_T prAdapter, PVOID pvSetBuffer, UINT_32 u4SetBufferLen, PUINT_32 pu4SetInfoLen);
 
-BOOLEAN TdlsexRxFrameDrop(GLUE_INFO_T *prGlueInfo, UINT_8 *pPkt);
+BOOLEAN TdlsexRxFrameDrop(GLUE_INFO_T *prGlueInfo, struct sk_buff *skb);
 
-VOID TdlsexRxFrameHandle(GLUE_INFO_T *prGlueInfo, UINT8 *pPkt, UINT16 u2PktLen);
+VOID TdlsexRxFrameHandle(GLUE_INFO_T *prGlueInfo, struct sk_buff *skb);
 
 TDLS_STATUS TdlsexStaRecIdxGet(ADAPTER_T *prAdapter, MSDU_INFO_T *prMsduInfo);
 
 VOID TdlsexTxQuotaCheck(GLUE_INFO_T *prGlueInfo, STA_RECORD_T *prStaRec, UINT8 FreeQuota);
 
 VOID TdlsexUninit(ADAPTER_T *prAdapter);
+
+VOID TdlsexForwardFrameTag(struct sk_buff *skb, BOOLEAN fgDrop);
 
 /*******************************************************************************
 *                              F U N C T I O N S

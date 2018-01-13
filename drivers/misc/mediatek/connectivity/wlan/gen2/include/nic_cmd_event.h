@@ -1,641 +1,16 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/include/nic_cmd_event.h#1
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
-/*! \file   "nic_cmd_event.h"
-    \brief This file contains the declairation file of the WLAN OID processing routines
-	   of Windows driver for MediaTek Inc. 802.11 Wireless LAN Adapters.
-*/
-
-/*
-** Log: nic_cmd_event.h
- *
- * 03 29 2012 eason.tsai
- * [WCXRP00001216] [MT6628 Wi-Fi][Driver]add conditional define
- * add conditional define.
- *
- * 03 04 2012 eason.tsai
- * NULL
- * modify the cal fail report code.
- *
- * 01 06 2012 wh.su
- * [WCXRP00001153] [MT6620 Wi-Fi][Driver] Adding the get_ch_list and set_tx_power proto type function
- * redefine the CMD_ID_SET_TXPWR_CTRL value.
- *
- * 01 05 2012 wh.su
- * [WCXRP00001153] [MT6620 Wi-Fi][Driver] Adding the get_ch_list and set_tx_power proto type function
- * Adding the related ioctl / wlan oid function to set the Tx power cfg.
- *
- * 11 30 2011 cm.chang
- * [WCXRP00001128] [MT5931 Wi-Fi][FW] Update BB/RF setting based on RF doc v0.7 for LGE spec
- * 1. Add a new CMD for driver to set device mode
- * 2. Update calibration parameters
- *
- * 11 19 2011 yuche.tsai
- * NULL
- * Update RSSI for P2P.
- *
- * 11 18 2011 yuche.tsai
- * NULL
- * CONFIG P2P support RSSI query, default turned off.
- *
- * 11 10 2011 eddie.chen
- * [WCXRP00001096] [MT6620 Wi-Fi][Driver/FW] Enhance the log function (xlog)
- * Add TX_DONE status detail information.
- *
- * 11 08 2011 tsaiyuan.hsu
- * [WCXRP00001083] [MT6620 Wi-Fi][DRV]] dump debug counter or frames when debugging is triggered
- * check if CFG_SUPPORT_SWCR is defined to aoid compiler error.
- *
- * 11 07 2011 tsaiyuan.hsu
- * [WCXRP00001083] [MT6620 Wi-Fi][DRV]] dump debug counter or frames when debugging is triggered
- * add debug counters and periodically dump counters for debugging.
- *
- * 10 26 2011 cp.wu
- * [WCXRP00001065] [MT6620 Wi-Fi][MT5931][FW][DRV] Adding parameter for controlling
- * minimum channel dwell time for scanning
- * add interface for control minimum channel dwell time for scanning.
- *
- * 09 20 2011 cm.chang
- * [WCXRP00000997] [MT6620 Wi-Fi][Driver][FW] Handle change of BSS preamble type and slot time
- * New CMD definition about RLM parameters
- *
- * 08 31 2011 cm.chang
- * [WCXRP00000969] [MT6620 Wi-Fi][Driver][FW] Channel list for 5G band based on country code
- * .
- *
- * 08 25 2011 chinghwa.yu
- * [WCXRP00000612] [MT6620 Wi-Fi] [FW] CSD update SWRDD algorithm
- * Add DFS switch.
- *
- * 08 24 2011 chinghwa.yu
- * [WCXRP00000612] [MT6620 Wi-Fi] [FW] CSD update SWRDD algorithm
- * Update RDD test mode cases.
- *
- * 08 15 2011 cp.wu
- * [WCXRP00000851] [MT6628 Wi-Fi][Driver] Add HIFSYS related definition to driver source tree
- * add MT6628-specific definitions.
- *
- * 08 11 2011 cp.wu
- * [WCXRP00000830] [MT6620 Wi-Fi][Firmware] Use MDRDY counter to detect empty channel for shortening scan time
- * sparse channel detection:
- * driver: collect sparse channel information with scan-done event
- *
- * 08 09 2011 cp.wu
- * [WCXRP00000702] [MT5931][Driver] Modify initialization sequence for E1 ASIC
- * [WCXRP00000913] [MT6620 Wi-Fi] create repository of source code dedicated for MT6620 E6 ASIC
- * add CCK-DSSS TX-PWR control field in NVRAM and CMD definition for MT5931-MP
- *
- * 08 03 2011 terry.wu
- * [WCXRP00000899] [MT6620] [FW] Reply probe rsp in FW for hotspot mode
- * Reply Probe Rsp in FW for Hotspot Mode.
- *
- *
- *
- * 08 03 2011 terry.wu
- * [WCXRP00000899] [MT6620] [FW] Reply probe rsp in FW for hotspot mode
- * Reply Probe Rsp in FW for Hotspot Mode.
- *
- *
- * 08 03 2011 terry.wu
- * [WCXRP00000899] [MT6620] [FW] Reply probe rsp in FW for hotspot mode
- * Reply Probe Rsp in FW for Hotspot Mode.
- *
- * 08 03 2011 terry.wu
- * [WCXRP00000899] [MT6620] [FW] Reply probe rsp in FW for hotspot mode
- * Reply Probe Rsp in FW for Hotspot Mode.
- *
- * 07 28 2011 chinghwa.yu
- * [WCXRP00000063] Update BCM CoEx design and settings
- * Add BWCS cmd and event.
- *
- * 07 22 2011 jeffrey.chang
- * [WCXRP00000864] [MT5931] Add command to adjust OSC stable time
- * add osc stable time command structure
- *
- * 07 22 2011 jeffrey.chang
- * [WCXRP00000864] [MT5931] Add command to adjust OSC stable time
- * modify driver to set OSC stable time after f/w download
- *
- * 07 18 2011 chinghwa.yu
- * [WCXRP00000063] Update BCM CoEx design and settings[WCXRP00000612] [MT6620 Wi-Fi] [FW] CSD update SWRDD algorithm
- * Add CMD/Event for RDD and BWCS.
- *
- * 07 18 2011 cp.wu
- * [WCXRP00000858] [MT5931][Driver][Firmware] Add support for scan to search for more than
- * one SSID in a single scanning request
- * add framework in driver domain for supporting new SCAN_REQ_V2 for more than 1 SSID
- * support as well as uProbeDelay in NDIS 6.x driver model
- *
- * 06 23 2011 cp.wu
- * [WCXRP00000812] [MT6620 Wi-Fi][Driver] not show NVRAM when there is no valid MAC address in NVRAM content
- * check with firmware for valid MAC address.
- *
- * 06 23 2011 cp.wu
- * [WCXRP00000798] [MT6620 Wi-Fi][Firmware] Follow-ups for WAPI frequency offset workaround in firmware SCN module
- * change parameter name from PeerAddr to BSSID
- *
- * 06 20 2011 cp.wu
- * [WCXRP00000798] [MT6620 Wi-Fi][Firmware] Follow-ups for WAPI frequency offset workaround in firmware SCN module
- * 1. specify target's BSSID when requesting channel privilege.
- * 2. pass BSSID information to firmware domain
- *
- * 06 09 2011 tsaiyuan.hsu
- * [WCXRP00000760] [MT5931 Wi-Fi][FW] Refine rxmHandleMacRxDone to reduce code size
- * move send_auth at rxmHandleMacRxDone in firmware to driver to reduce code size.
- *
- * 05 27 2011 cp.wu
- * [WCXRP00000749] [MT6620 Wi-Fi][Driver] Add band edge tx power control to Wi-Fi NVRAM
- * invoke CMD_ID_SET_EDGE_TXPWR_LIMIT when there is valid data exist in NVRAM content.
- *
- * 04 18 2011 terry.wu
- * [WCXRP00000660] [MT6620 Wi-Fi][Driver] Remove flag CFG_WIFI_DIRECT_MOVED
- * Remove flag CFG_WIFI_DIRECT_MOVED.
- *
- * 03 31 2011 chinglan.wang
- * [WCXRP00000613] [MT6620 Wi-Fi] [FW] [Driver] BssInfo can get the security mode which is WPA/WPA2/WAPI or not.
- * .
- *
- * 03 18 2011 cm.chang
- * [WCXRP00000576] [MT6620 Wi-Fi][Driver][FW] Remove P2P compile option in scan req/cancel command
- * As CR title
- *
- * 03 17 2011 yarco.yang
- * [WCXRP00000569] [MT6620 Wi-Fi][F/W][Driver] Set multicast address support current network usage
- * .
- *
- * 03 07 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * rename the define to anti_pviracy.
- *
- * 03 05 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * add the code to get the check rsponse and indicate to app.
- *
- * 03 02 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * Add Security check related code.
- *
- * 03 02 2011 george.huang
- * [WCXRP00000504] [MT6620 Wi-Fi][FW] Support Sigma CAPI for power saving related command
- * Support UAPSD/OppPS/NoA parameter setting
- *
- * 02 16 2011 cm.chang
- * [WCXRP00000447] [MT6620 Wi-Fi][FW] Support new NVRAM update mechanism
- * .
- *
- * 02 10 2011 cp.wu
- * [WCXRP00000434] [MT6620 Wi-Fi][Driver] Obsolete unused event packet handlers
- * EVENT_ID_CONNECTION_STATUS has been obsoleted and no need to handle.
- *
- * 02 08 2011 eddie.chen
- * [WCXRP00000426] [MT6620 Wi-Fi][FW/Driver] Add STA aging timeout and defualtHwRatein AP mode
- * Add event STA agint timeout
- *
- * 01 27 2011 tsaiyuan.hsu
- * [WCXRP00000392] [MT6620 Wi-Fi][Driver] Add Roaming Support
- * add roaming fsm
- * 1. not support 11r, only use strength of signal to determine roaming.
- * 2. not enable CFG_SUPPORT_ROAMING until completion of full test.
- * 3. in 6620, adopt work-around to avoid sign extension problem of cck of hw
- * 4. assume that change of link quality in smooth way.
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000352] [Volunteer Patch][MT6620][Driver] P2P Statsion Record Client List Issue
- * Update cmd format of BSS INFO, always sync OwnMac to FW no matter P2P is enabled or not..
- *
- * 01 20 2011 eddie.chen
- * [WCXRP00000374] [MT6620 Wi-Fi][DRV] SW debug control
- * Add Oid for sw control debug command
- *
- * 01 15 2011 puff.wen
- * NULL
- * Add Stress test
- *
- * 01 12 2011 cm.chang
- * [WCXRP00000354] [MT6620 Wi-Fi][Driver][FW] Follow NVRAM bandwidth setting
- * Sync HT operation element information from host to FW
- *
- * 01 12 2011 cm.chang
- * [WCXRP00000354] [MT6620 Wi-Fi][Driver][FW] Follow NVRAM bandwidth setting
- * User-defined bandwidth is for 2.4G and 5G individually
- *
- * 12 29 2010 eddie.chen
- * [WCXRP00000322] Add WMM IE in beacon,
-
-Add per station flow control when STA is in PS
-
- * 1) PS flow control event
- *
- * 2) WMM IE in beacon, assoc resp, probe resp
- *
- * 12 28 2010 cp.wu
- * [WCXRP00000269] [MT6620 Wi-Fi][Driver][Firmware] Prepare for v1.1 branch release
- * report EEPROM used flag via NIC_CAPABILITY
- *
- * 12 28 2010 cp.wu
- * [WCXRP00000269] [MT6620 Wi-Fi][Driver][Firmware] Prepare for v1.1 branch release
- * integrate with 'EEPROM used' flag for reporting correct capability to Engineer Mode/META and other tools
- *
- * 12 23 2010 george.huang
- * [WCXRP00000152] [MT6620 Wi-Fi] AP mode power saving function
- * 1. update WMM IE parsing, with ASSOC REQ handling
- * 2. extend U-APSD parameter passing from driver to FW
- *
- * 12 07 2010 cm.chang
- * [WCXRP00000239] MT6620 Wi-Fi][Driver][FW] Merge concurrent branch back to maintrunk
- * 1. BSSINFO include RLM parameter
- * 2. free all sta records when network is disconnected
- *
- * 12 07 2010 cm.chang
- * [WCXRP00000238] MT6620 Wi-Fi][Driver][FW] Support regulation domain setting from NVRAM and supplicant
- * 1. Country code is from NVRAM or supplicant
- * 2. Change band definition in CMD/EVENT.
- *
- * 11 29 2010 cm.chang
- * [WCXRP00000210] [MT6620 Wi-Fi][Driver][FW] Set RCPI value in STA_REC for
- * initial TX rate selection of auto-rate algorithm
- * Sync RCPI of STA_REC to FW as reference of initial TX rate
- *
- * 11 08 2010 cm.chang
- * [WCXRP00000169] [MT6620 Wi-Fi][Driver][FW] Remove unused CNM recover message ID
- * Remove CNM channel reover message ID
- *
- * 11 01 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * [WCXRP00000150] [MT6620 Wi-Fi][Driver] Add implementation for querying current TX rate from firmware auto rate module
- * 1) Query link speed (TX rate) from firmware directly with buffering mechanism to reduce overhead
- * 2) Remove CNM CH-RECOVER event handling
- * 3) cfg read/write API renamed with kal prefix for unified naming rules.
- *
- * 10 26 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * [WCXRP00000137] [MT6620 Wi-Fi] [FW] Support NIC capability query command
- * 1) update NVRAM content template to ver 1.02
- * 2) add compile option for querying NIC capability (default: off)
- * 3) modify AIS 5GHz support to run-time option, which could be turned on by registry or NVRAM setting
- * 4) correct auto-rate compiler error under linux (treat warning as error)
- * 5) simplify usage of NVRAM and REG_INFO_T
- * 6) add version checking between driver and firmware
- *
- * 10 25 2010 cp.wu
- * [WCXRP00000133] [MT6620 Wi-Fi] [FW][Driver] Change TX power offset band definition
- * follow-up for CMD_5G_PWR_OFFSET_T definition change
- *
- * 10 20 2010 cp.wu
- * [WCXRP00000117] [MT6620 Wi-Fi][Driver] Add logic for suspending driver when MT6620 is not responding anymore
- * use OID_CUSTOM_TEST_MODE as indication for driver reset
- * by dropping pending TX packets
- *
- * 10 20 2010 wh.su
- * [WCXRP00000124] [MT6620 Wi-Fi] [Driver] Support the dissolve P2P Group
- * Add the code to support disconnect p2p group
- *
- * 09 15 2010 cm.chang
- * NULL
- * Add new CMD for TX power, 5G power offset and power parameters
- *
- * 09 07 2010 yuche.tsai
- * NULL
- * Add a pointer in P2P SCAN RESULT structure. This pointer
- * is pointed to a IE buffer for this P2p device.
- *
- * 09 07 2010 wh.su
- * NULL
- * adding the code for beacon/probe req/ probe rsp wsc ie at p2p.
- *
- * 09 03 2010 kevin.huang
- * NULL
- * Refine #include sequence and solve recursive/nested #include issue
- *
- * 08 23 2010 chinghwa.yu
- * NULL
- * Update for BOW.
- *
- * 08 20 2010 cm.chang
- * NULL
- * Migrate RLM code to host from FW
- *
- * 08 16 2010 george.huang
- * NULL
- * add new CMD ID definition
- *
- * 08 16 2010 yuche.tsai
- * NULL
- * Add a field in BSS INFO cmd to change interface address for P2P. (switching between Device Addr & Interface Addr)
- *
- * 08 12 2010 yuche.tsai
- * NULL
- * Add interface address indication when indicate connection status.
- * It is requested by supplicant to do 4 way handshake.
- *
- * 08 07 2010 wh.su
- * NULL
- * adding the privacy related code for P2P network
- *
- * 08 05 2010 yuche.tsai
- * NULL
- * Change data structure for P2P Device scan result, all channel time for scan command.
- *
- * 08 04 2010 george.huang
- * NULL
- * handle change PS mode OID/ CMD
- *
- * 08 04 2010 yarco.yang
- * NULL
- * Add TX_AMPDU and ADDBA_REJECT command
- *
- * 08 03 2010 george.huang
- * NULL
- * handle event for updating NOA parameters indicated from FW
- *
- * 08 02 2010 george.huang
- * NULL
- * add WMM-PS test related OID/ CMD handlers
- *
- * 07 28 2010 cp.wu
- * NULL
- * sync. CMD_BSS_INFO structure change to CMD-EVENT v0.15.
- *
- * 07 26 2010 yuche.tsai
- *
- * Add P2P Device Found Event.
- * Channel extension option in scan abort command.
- *
- * 07 23 2010 cp.wu
- *
- * add AIS-FSM handling for beacon timeout event.
- *
- * 07 21 2010 yuche.tsai
- *
- * Add for P2P Scan Result Parsing & Saving.
- *
- * 07 20 2010 george.huang
- *
- * DWORD align for the CMD data structure
- *
- * 07 20 2010 cp.wu
- *
- * pass band information for scan in an efficient way by mapping ENUM_BAND_T into UINT_8..
- *
- * 07 19 2010 wh.su
- *
- * update for security supporting.
- *
- * 07 19 2010 cm.chang
- *
- * Set RLM parameters and enable CNM channel manager
- *
- * 07 16 2010 yarco.yang
- *
- * 1. Support BSS Absence/Presence Event
- * 2. Support STA change PS mode Event
- * 3. Support BMC forwarding for AP mode.
- *
- * 07 14 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration.
- * pass band with channel number information as scan parameter
- *
- * 07 14 2010 yarco.yang
- *
- * 1. Remove CFG_MQM_MIGRATION
- * 2. Add CMD_UPDATE_WMM_PARMS command
- *
- * 07 09 2010 cp.wu
- *
- * reorder members of CMD_SET_BSS_INFO.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 07 07 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * update prStaRecOfAP with BSS-INFO.
- *
- * 07 07 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * Support state of STA record change from 1 to 1
- *
- * 07 01 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * Support sync command of STA_REC
- *
- * 07 01 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * implementation of DRV-SCN and related mailbox message handling.
- *
- * 06 30 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * sync. with CMD/EVENT document ver0.07.
- *
- * 06 29 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * correct variable naming for 8-bit variable used in CMD_BEACON_TEMPLATE_UPDATE.
- *
- * 06 29 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * 1) sync to. CMD/EVENT document v0.03
- * 2) simplify DTIM period parsing in scan.c only, bss.c no longer parses it again.
- * 3) send command packet to indicate FW-PM after
- *     a) 1st beacon is received after AIS has connected to an AP
- *     b) IBSS-ALONE has been created
- *     c) IBSS-MERGE has occurred
- *
- * 06 28 2010 george.huang
- * [WPD00001556]Basic power managemenet function
- * Create beacon update path, with expose bssUpdateBeaconContent()
- *
- * 06 22 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * 1) add command warpper for STA-REC/BSS-INFO sync.
- * 2) enhance command packet sending procedure for non-oid part
- * 3) add command packet definitions for STA-REC/BSS-INFO sync.
- *
- * 06 21 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * add BSS/STA_REC commands for integration.
- *
- * 06 21 2010 yarco.yang
- * [WPD00003837][MT6620]Data Path Refine
- * Add TX Done Event handle entry
- *
- * 06 10 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * 1) eliminate CFG_CMD_EVENT_VERSION_0_9
- * 2) when disconnected, indicate nic directly (no event is needed)
- *
- * 06 06 2010 kevin.huang
- * [WPD00003832][MT6620 5931] Create driver base
- * [MT6620 5931] Create driver base
- *
- * 05 20 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * 1) integrate OID_GEN_NETWORK_LAYER_ADDRESSES with CMD_ID_SET_IP_ADDRESS
- * 2) buffer statistics data for 2 seconds
- * 3) use default value for adhoc parameters instead of 0
- *
- * 05 19 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * 1) do not take timeout mechanism for power mode oids
- * 2) retrieve network type from connection status
- * 3) after disassciation, set radio state to off
- * 4) TCP option over IPv6 is supported
- *
- * 05 17 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * correct OID_802_11_DISASSOCIATE handling.
- *
- * 05 17 2010 cp.wu
- * [WPD00003831][MT6620 Wi-Fi] Add framework for Wi-Fi Direct support
- * 1) add timeout handler mechanism for pending command packets
- * 2) add p2p add/removal key
- *
- * 04 13 2010 cp.wu
- * [WPD00003823][MT6620 Wi-Fi] Add Bluetooth-over-Wi-Fi support
- * add framework for BT-over-Wi-Fi support.
- *  *  *  *  *  *  *  *  *  * 1) prPendingCmdInfo is replaced by queue for multiple handler capability
- *  *  *  *  *  *  *  *  *  * 2) command sequence number is now increased atomically
- *  *  *  *  *  *  *  *  *  * 3) private data could be hold and taken use for other purpose
- *
- * 04 06 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * sync statistics data structure definition with firmware implementation
- *
- * 03 30 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * statistics information OIDs are now handled by querying from firmware domain
- *
- * 03 26 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * indicate media stream mode after set is done
- *
- * 03 26 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * add a temporary flag for integration with CMD/EVENT v0.9.
- *
- * 03 25 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * 1) correct OID_802_11_CONFIGURATION with frequency setting behavior.
- *  * the frequency is used for adhoc connection only
- *  * 2) update with SD1 v0.9 CMD/EVENT documentation
- *
- * 03 24 2010 jeffrey.chang
- * [WPD00003826]Initial import for Linux port
- * initial import for Linux port
- *
- * 03 22 2010 cp.wu
- * [WPD00003824][MT6620 Wi-Fi][New Feature] Add support of large scan list
- * Implement feature needed by CR: WPD00003824: refining association command by pasting scanning result
- *
- * 03 19 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * 1) add ACPI D0/D3 state switching support
- *  *  *  *  *  * 2) use more formal way to handle interrupt when the status is retrieved from enhanced RX response
- *
- * 03 15 2010 kevin.huang
- * [WPD00003820][MT6620 Wi-Fi] Modify the code for meet the WHQL test
- * Add event for activate STA_RECORD_T
- *
- * 03 03 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * implement custom OID: EEPROM read/write access
- *
- * 03 03 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * implement OID_802_3_MULTICAST_LIST oid handling
- *
- * 02 26 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * move EVENT_ID_ASSOC_INFO from nic_rx.c to gl_kal_ndis_51.c
- * 'cause it involves OS dependent data structure handling
- *
- * 02 25 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * send CMD_ID_INFRASTRUCTURE when handling OID_802_11_INFRASTRUCTURE_MODE set.
- *
- * 02 09 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * 1. Permanent and current MAC address are now retrieved by CMD/EVENT packets instead of hard-coded address
- *  *  *  *  * 2. follow MSDN defined behavior when associates to another AP
- *  *  *  *  * 3. for firmware download, packet size could be up to 2048 bytes
- *
- * 01 27 2010 wh.su
- * [WPD00003816][MT6620 Wi-Fi] Adding the security support
- * .
- *
- * 01 27 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * 1. eliminate improper variable in rHifInfo
- *  *  *  *  *  * 2. block TX/ordinary OID when RF test mode is engaged
- *  *  *  *  *  * 3. wait until firmware finish operation when entering into and leaving from RF test mode
- *  *  *  *  *  * 4. correct some HAL implementation
- *
- * 01 22 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * implement following 802.11 OIDs:
- *  *  * OID_802_11_RSSI,
- *  *  * OID_802_11_RSSI_TRIGGER,
- *  *  * OID_802_11_STATISTICS,
- *  *  * OID_802_11_DISASSOCIATE,
- *  *  * OID_802_11_POWER_MODE
- *
- * 01 21 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * implement OID_802_11_MEDIA_STREAM_MODE
- *
- * 01 21 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * implement OID_802_11_SUPPORTED_RATES / OID_802_11_DESIRED_RATES
- *
- * 12 30 2009 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * 1) According to CMD/EVENT documentation v0.8,
- *  *  *  *  *  * OID_CUSTOM_TEST_RX_STATUS & OID_CUSTOM_TEST_TX_STATUS is no longer used,
- *  *  *  *  *  * and result is retrieved by get ATInfo instead
- *  *  *  *  *  * 2) add 4 counter for recording aggregation statistics
-**  \main\maintrunk.MT6620WiFiDriver_Prj\20 2009-12-11 18:35:07 GMT mtk02752
-**  add CMD added in CMD/EVEN document v0.8
-**  \main\maintrunk.MT6620WiFiDriver_Prj\19 2009-12-10 16:39:37 GMT mtk02752
-**  eliminate unused definitions
-**  \main\maintrunk.MT6620WiFiDriver_Prj\18 2009-12-10 09:55:11 GMT mtk02752
-**  command ID/event ID revised
-**  \main\maintrunk.MT6620WiFiDriver_Prj\17 2009-12-09 13:57:37 GMT MTK02468
-**  Added event ids (EVENT_ID_RX_ADDBA and EVENT_ID_RX_DELBA)
-**  \main\maintrunk.MT6620WiFiDriver_Prj\16 2009-12-08 17:35:39 GMT mtk02752
-**  + add event ID for EVENT_ID_TEST_STATUS (rf test)
-**  \main\maintrunk.MT6620WiFiDriver_Prj\15 2009-12-07 23:01:09 GMT mtk02752
-**  add data structure for RF_TEST
-**  \main\maintrunk.MT6620WiFiDriver_Prj\14 2009-12-03 16:22:56 GMT mtk01461
-**  Modify the element - i4RSSI in EVENT of SCAN RESULT
-**  \main\maintrunk.MT6620WiFiDriver_Prj\13 2009-11-30 10:54:44 GMT mtk02752
-**  1st DW of WIFI_CMD_T is shared with HIF_TX_HEADER_T, while 1st DW of WIFI_EVENT_T is shared with HIF_RX_HEADER_T
-**  \main\maintrunk.MT6620WiFiDriver_Prj\12 2009-11-26 10:16:58 GMT mtk02752
-**  resync EVENT_CONNECTION_STATUS
-**  \main\maintrunk.MT6620WiFiDriver_Prj\11 2009-11-25 21:34:01 GMT mtk02752
-**  sync. EVENT_SCAN_RESULT_T with firmware
-**  \main\maintrunk.MT6620WiFiDriver_Prj\10 2009-11-25 21:03:48 GMT mtk02752
-**  refine MGMT_FRAME
-**  \main\maintrunk.MT6620WiFiDriver_Prj\9 2009-11-25 18:17:47 GMT mtk02752
-**  refine GL_WLAN_INFO_T for buffering scan result and presume max. ie length = 600 bytes
-**  \main\maintrunk.MT6620WiFiDriver_Prj\8 2009-11-24 22:41:20 GMT mtk02752
-**  add EVENT_SCAN_RESULT_T definition
-**  \main\maintrunk.MT6620WiFiDriver_Prj\7 2009-11-23 20:29:16 GMT mtk02752
-**   fix typo
-**  \main\maintrunk.MT6620WiFiDriver_Prj\6 2009-11-23 14:46:01 GMT mtk02752
-**  add new command/event structure upon CM@SD1's documentation
-**  \main\maintrunk.MT6620WiFiDriver_Prj\5 2009-11-13 15:13:40 GMT mtk02752
-**  add command definition for CMD_BUILD_CONNECTION and EVENT_CONNECTION_STATUS
-**  \main\maintrunk.MT6620WiFiDriver_Prj\4 2009-05-20 12:22:22 GMT mtk01461
-**  Add SeqNum field to Event Header
-**  \main\maintrunk.MT6620WiFiDriver_Prj\3 2009-04-29 15:42:11 GMT mtk01461
-**  Update structure of HIF_EVENT_HEADER_T and EVENT_HDR_SIZE
-**  \main\maintrunk.MT6620WiFiDriver_Prj\2 2009-04-21 12:10:36 GMT mtk01461
-**  Add Common Set CMD Callback for MCR Write and other Set OID
-**  \main\maintrunk.MT6620WiFiDriver_Prj\1 2009-04-21 01:40:17 GMT mtk01461
-**  Command Done Handler
-*/
 #ifndef _NIC_CMD_EVENT_H
 #define _NIC_CMD_EVENT_H
 
@@ -749,9 +124,30 @@ typedef enum _ENUM_CMD_ID_T {
 	CMD_ID_SET_PSCN_MAC_ADDR = 0x47,	/* 0x47 (Set) */
 	CMD_ID_GET_GSCN_SCN_RESULT = 0x48,	/* 0x48 (Get) */
 	CMD_ID_SET_COUNTRY_POWER_LIMIT = 0x4A,	/* 0x4A (Set) */
+	CMD_ID_SET_RRM_CAPABILITY = 0x59, /* 0x59 (Set) */
+	CMD_ID_SET_MAX_TXPWR_LIMIT = 0x5A, /* 0x5A (Set) */
+	CMD_ID_REQ_CHNL_UTILIZATION = 0x5C, /* 0x5C (Get) */
+#if CFG_SUPPORT_P2P_ECSA
+	CMD_ID_SET_ECSA_PARAM = 0x5D,		/* 0x5D (Set) */
+#endif
+	CMD_ID_SET_TSM_STATISTICS_REQUEST = 0x5E,
+	CMD_ID_GET_TSM_STATISTICS = 0x5F,
 	CMD_ID_SET_SYSTEM_SUSPEND = 0x60,	/* 0x60 (Set) */
-#if CFG_SUPPORT_FCC_DYNAMIC_TX_PWR_ADJUST
+	CMD_ID_UPDATE_AC_PARMS = 0x6A,		/* 0x6A (Set) */
+	CMD_ID_SET_CTIA_MODE_STATUS = 0x6B,		/* 0x6B (Set) */
+	CMD_ID_SET_ROAMING_SKIP = 0x6D, /* 0x6D (Set) */
+	CMD_ID_SET_DROP_PACKET_CFG = 0x6E,   /* 0x6E (Set) */
+#if (CFG_SUPPORT_FCC_DYNAMIC_TX_PWR_ADJUST || CFG_SUPPORT_FCC_POWER_BACK_OFF)
 	CMD_ID_SET_FCC_TX_PWR_CERT = 0x6F,	/* 0x6F (Set) */
+#endif
+#ifdef FW_CFG_SUPPORT
+		CMD_ID_GET_SET_CUSTOMER_CFG = 0x70,
+#endif
+	CMD_ID_SET_ALWAYS_SCAN_PARAM = 0x73,/*0x73(set)*/
+	CMD_ID_SET_RX_BA_WIN_SIZE = 0x74,	/* 0x74 (Set) */
+	CMD_ID_TDLS_PS = 0x75,	/* 0x75 (Set) */
+#if CFG_SUPPORT_EMI_DEBUG
+	CMD_ID_DRIVER_DUMP_EMI_LOG = 0x76,      /* 0x76 (Set) */
 #endif
 	CMD_ID_GET_NIC_CAPABILITY = 0x80,	/* 0x80 (Query) */
 	CMD_ID_GET_LINK_QUALITY,	/* 0x81 (Query) */
@@ -763,6 +159,8 @@ typedef enum _ENUM_CMD_ID_T {
 	CMD_ID_GET_LTE_CHN = 0x87,	/* 0x87 (Query) */
 	CMD_ID_GET_CHN_LOADING = 0x88,	/* 0x88 (Query) */
 	CMD_ID_GET_STATISTICS_PL = 0x89,	/* 0x87 (Query) */
+	CMD_ID_WFC_KEEP_ALIVE = 0xa0,	/* 0xa0(Set) */
+	CMD_ID_RSSI_MONITOR = 0xa1,	/* 0xa1(Set) */
 	CMD_ID_BASIC_CONFIG = 0xc1,	/* 0xc1 (Set / Query) */
 	CMD_ID_ACCESS_REG,	/* 0xc2 (Set / Query) */
 	CMD_ID_MAC_MCAST_ADDR,	/* 0xc3 (Set / Query) */
@@ -773,13 +171,18 @@ typedef enum _ENUM_CMD_ID_T {
 	CMD_ID_SEC_CHECK,	/* 0xc7 (Set / Query) */
 #endif
 	CMD_ID_DUMP_MEM,	/* 0xc8 (Query) */
-
+#if CFG_SUPPORT_TX_POWER_BACK_OFF
+	CMD_ID_SET_TX_PWR_OFFSET = 0xC9,	/* 0xc9 (Set) */
+#endif
 	CMD_ID_CHIP_CONFIG = 0xCA,	/* 0xca (Set / Query) */
-
+#if CFG_SUPPORT_TX_POWER_BACK_OFF
+	CMD_ID_SET_TX_PWR_BACKOFF = 0xCC,	/* 0xcc (Set) */
+#endif
 #if CFG_SUPPORT_RDD_TEST_MODE
 	CMD_ID_SET_RDD_CH = 0xE1,
 #endif
 
+	CMD_ID_SET_NVRAM_SETTINGS = 0xEF,
 	CMD_ID_SET_BWCS = 0xF1,
 	CMD_ID_SET_ROAMING_INFO = 0xF3,
 
@@ -858,8 +261,25 @@ typedef enum _ENUM_EVENT_ID_T {
 	EVENT_ID_GSCAN_RESULT = 0x36,
 	EVENT_ID_BATCH_RESULT = 0x37,
 
+	EVENT_ID_CHECK_REORDER_BUBBLE = 0x39,
+#if CFG_SUPPORT_P2P_ECSA
+		EVENT_ID_ECSA_RESULT = 0x3D,
+#endif
+	EVENT_ID_ADD_PKEY_DONE = 0x44, /* 0x44 (Unsolicited) */
+	EVENT_ID_GET_TSM_STATISTICS = 0x47,
+
+
+
+#if CFG_RX_BA_REORDERING_ENHANCEMENT
+	EVENT_ID_BA_FW_DROP_SN = 0x51,
+#endif
+	EVENT_ID_RSP_CHNL_UTILIZATION = 0x59, /* 0x59 (Query - CMD_ID_REQ_CHNL_UTILIZATION) */
+#if CFG_SUPPORT_EMI_DEBUG
+	EVENT_ID_DRIVER_DUMP_LOG = 0x76, /*request driver to dump EMI message*/
+#endif
 	EVENT_ID_TDLS = 0x80,
 	EVENT_ID_STATS_ENV = 0x81,
+	EVENT_ID_RSSI_MONITOR = 0xa1,
 
 #if CFG_SUPPORT_BUILD_DATE_CODE
 	EVENT_ID_BUILD_DATE_CODE = 0xF8,
@@ -871,6 +291,17 @@ typedef enum _ENUM_EVENT_ID_T {
 	EVENT_ID_FW_LOG_ENV = 0xFE,	/* 0xFE, FW real time debug log */
 } ENUM_EVENT_ID_T, *P_ENUM_EVENT_ID_T;
 
+#if CFG_SUPPORT_P2P_ECSA
+typedef enum _ENUM_ECSA_STATE_T {
+	ECSA_EVENT_STATUS_SUCCESS = 0,
+	ECSA_EVENT_STATUS_UPDATE_BEACON = 1, /*Notify Driver to update GO’s ECSA/CSA IE*/
+	ECSA_EVENT_STATUS_INVALID_PARAM = 2,
+	ECSA_EVENT_STATUS_CHNL_SWITCH_FAILED = 3,
+	ECSA_EVENT_STATUS_UNACCEPTABLE = 4,
+	ECSA_EVENT_STATUS_NUM,
+} ENUM_ECSA_STATE_T;
+#endif
+
 /*******************************************************************************
 *                             D A T A   T Y P E S
 ********************************************************************************
@@ -879,7 +310,7 @@ typedef enum _ENUM_EVENT_ID_T {
 typedef UINT_8 CMD_STATUS;
 #endif
 
-#if CFG_SUPPORT_FCC_DYNAMIC_TX_PWR_ADJUST
+#if (CFG_SUPPORT_FCC_DYNAMIC_TX_PWR_ADJUST || CFG_SUPPORT_FCC_POWER_BACK_OFF)
 /* TX Power Adjust For FCC/CE Certification */
 typedef struct _CMD_FCC_TX_PWR_ADJUST_T {
 	UINT_8 fgFccTxPwrAdjust;
@@ -1062,6 +493,19 @@ typedef struct _CMD_CUSTOM_UAPSD_PARAM_STRUCT_T {
 	UINT_8 aucResv[2];
 } CMD_CUSTOM_UAPSD_PARAM_STRUCT_T, *P_CMD_CUSTOM_UAPSD_PARAM_STRUCT_T;
 
+struct CMD_SET_MAX_TXPWR_LIMIT {
+	UINT_8 ucMaxTxPwrLimitEnable;
+	INT_8 cMaxTxPwr; /* in unit of 0.5 dBm */
+	INT_8 cMinTxPwr; /* in unit of 0.5 dBm */
+	UINT_8 ucReserved;
+};
+
+struct CMD_SET_RRM_CAPABILITY {
+	UINT_8 ucDot11RadioMeasurementEnabled;
+	UINT_8 aucCapabilities[5];
+	UINT_8 aucReserved[2];
+};
+
 /* EVENT_CONNECTION_STATUS */
 typedef struct _EVENT_CONNECTION_STATUS {
 	UINT_8 ucMediaStatus;
@@ -1161,17 +605,6 @@ typedef struct _CMD_ACCESS_REG {
 	UINT_32 u4Data;
 } CMD_ACCESS_REG, *P_CMD_ACCESS_REG;
 
-/* CMD_ID_ACCESS_REG & EVENT_ID_ACCESS_REG */
-#if CFG_AUTO_CHANNEL_SEL_SUPPORT
-
-typedef struct _CMD_ACCESS_CHN_LOAD {
-	UINT_32 u4Address;
-	UINT_32 u4Data;
-	UINT_16 u2Channel;
-	UINT_8 aucReserved[2];
-} CMD_ACCESS_CHN_LOAD, *P_ACCESS_CHN_LOAD;
-
-#endif
 /* CMD_DUMP_MEMORY */
 typedef struct _CMD_DUMP_MEM {
 	UINT_32 u4Address;
@@ -1460,7 +893,9 @@ typedef struct _CMD_UPDATE_STA_RECORD_T {
 	UINT_8 ucNeedResp;
 	UINT_8 ucUapsdAc;	/* b0~3: Trigger enabled, b4~7: Delivery enabled */
 	UINT_8 ucUapsdSp;	/* 0: all, 1: max 2, 2: max 4, 3: max 6 */
-	UINT_8 aucReserved[3];
+	UINT_8 ucKeepAliveDuration; /* unit is 1s */
+	UINT_8 ucKeepAliveOption; /* only bit0 is used now */
+	UINT_8 aucReserved;
 	/* TBD */
 } CMD_UPDATE_STA_RECORD_T, *P_CMD_UPDATE_STA_RECORD_T;
 
@@ -1548,13 +983,14 @@ typedef struct _CMD_SCAN_REQ_T {
 	UINT_8 ucScanType;
 	UINT_8 ucSSIDType;	/* BIT(0) wildcard / BIT(1) P2P-wildcard / BIT(2) specific */
 	UINT_8 ucSSIDLength;
-	UINT_8 aucReserved[1];
+	UINT_8 ucStructVersion;
 	UINT_16 u2ChannelMinDwellTime;
 	UINT_8 aucSSID[32];
 	UINT_16 u2ChannelDwellTime;	/* For P2P */
 	UINT_8 ucChannelType;
 	UINT_8 ucChannelListNum;
 	CHANNEL_INFO_T arChannelList[32];
+	UINT_8 aucBSSID[MAC_ADDR_LEN];
 	UINT_16 u2IELen;
 	UINT_8 aucIE[MAX_IE_LENGTH];
 } CMD_SCAN_REQ, *P_CMD_SCAN_REQ;
@@ -1588,6 +1024,37 @@ typedef struct _CMD_SCAN_REQ_V2_T {
 	UINT_16 u2IELen;
 	UINT_8 aucIE[MAX_IE_LENGTH];
 } CMD_SCAN_REQ_V2, *P_CMD_SCAN_REQ_V2;
+
+/* MULTI SSID */
+typedef struct _CMD_SCAN_REQ_V3_EXT_CH_T {
+	UINT_8			ucSeqNum;
+	UINT_8			ucNetworkType;
+	UINT_8			ucScanType;
+	UINT_8			ucSSIDType;
+	PARAM_SSID_T	arSSID[11];
+	UINT_16			u2ProbeDelayTime;
+	UINT_16			u2ChannelDwellTime;	/* For P2P */
+	UINT_8			ucChannelType;
+	UINT_8			ucChannelListNum;
+	CHANNEL_INFO_T	arChannelList[MAXIMUM_OPERATION_CHANNEL_LIST];
+	UINT_16			u2IELen;
+	UINT_8			aucIE[MAX_IE_LENGTH];
+} CMD_SCAN_REQ_V3_EXT_CH, *P_CMD_SCAN_REQ_V3_EXT_CH;
+
+typedef struct _CMD_SCAN_REQ_V3_T {
+	UINT_8          ucSeqNum;
+	UINT_8          ucNetworkType;
+	UINT_8          ucScanType;
+	UINT_8          ucSSIDType;
+	PARAM_SSID_T    arSSID[11];
+	UINT_16         u2ProbeDelayTime;
+	UINT_16         u2ChannelDwellTime; /* For P2P */
+	UINT_8          ucChannelType;
+	UINT_8          ucChannelListNum;
+	CHANNEL_INFO_T  arChannelList[32];
+	UINT_16         u2IELen;
+	UINT_8          aucIE[MAX_IE_LENGTH];
+} CMD_SCAN_REQ_V3, *P_CMD_SCAN_REQ_V3;
 
 typedef struct _CMD_SCAN_CANCEL_T {
 	UINT_8 ucSeqNum;
@@ -1722,6 +1189,12 @@ typedef struct _CMD_5G_PWR_OFFSET_T {
 	INT_8 cOffsetBand7;	/* 5.700-5.825G */
 } CMD_5G_PWR_OFFSET_T, *P_CMD_5G_PWR_OFFSET_T;
 
+#if CFG_SUPPORT_TX_POWER_BACK_OFF
+typedef struct _CMD_MITIGATED_PWR_OFFSET_T {
+	MITIGATED_PWR_BY_CH_BY_MODE arRlmMitigatedPwrByChByMode[40];
+} CMD_MITIGATED_PWR_OFFSET_T, *P_CMD_MITIGATED_PWR_OFFSET_T;
+#endif
+
 typedef struct _CMD_PWR_PARAM_T {
 	UINT_32 au4Data[28];
 	UINT_32 u4RefValue1;
@@ -1742,6 +1215,66 @@ typedef struct _CMD_AUTO_POWER_PARAM_T {
 	UINT_8 aucReserved3[1];
 	UINT_8 aucReserved4[8];
 } CMD_AUTO_POWER_PARAM_T, *P_CMD_AUTO_POWER_PARAM_T;
+
+/*for WMMAC, CMD_ID_UPDATE_AC_PARAMS*/
+typedef struct _CMD_UPDATE_AC_PARAMS_T {
+	UINT_8  ucAcIndex; /*0 ~3, from AC0 to AC3*/
+	UINT_8  ucNetTypeIndex;  /*no use*/
+	UINT_16 u2MediumTime; /*if 0, disable ACM for ACx specified by ucAcIndex,
+							otherwise in unit of 32us*/
+	UINT_32 u4PhyRate; /* rate to be used to tx packet with priority ucAcIndex , unit: bps */
+	UINT_16 u2EDCALifeTime; /* msdu life time for this TC, unit: 2TU */
+	UINT_8 ucRetryCount; /* if we use fix rate to tx packets, should tell firmware the limited retries */
+	UINT_8 aucReserved[5];
+} CMD_UPDATE_AC_PARAMS_T, *P_CMD_UPDATE_AC_PARAMS_T;
+/* S56 Traffic Stream Metrics */
+typedef struct _CMD_SET_TSM_STATISTICS_REQUEST_T {
+	UINT_8 ucEnabled; /* 0, disable; 1, enable; */
+	UINT_8 ucNetTypeIndex; /* always NETWORK_TYPE_AIS_INDEX now */
+	UINT_8 ucAcIndex; /* wmm ac index, the statistics should be on this TC */
+	UINT_8 ucTid;
+	UINT_8 aucPeerAddr[MAC_ADDR_LEN]; /* packet to the target address to be mesured */
+	UINT_8 ucBin0Range;
+	UINT_8 aucReserved[3];
+
+	 /* if this variable is 0, followed variables are meaningless
+	    only report once for a same trigger condition in this time frame */
+	UINT_8 ucTriggerCondition; /* for triggered mode: bit(0):average, bit(1):consecutive, bit(2):delay */
+	UINT_8 ucAvgErrThreshold;
+	UINT_8 ucConsecutiveErrThreshold;
+	UINT_8 ucDelayThreshold;
+	UINT_8 ucMeasureCount;
+	UINT_8 ucTriggerTimeout; /* unit: 100 TU*/
+} CMD_SET_TSM_STATISTICS_REQUEST_T, *P_CMD_SET_TSM_STATISTICS_REQUEST_T;
+
+typedef struct _CMD_GET_TSM_STATISTICS_T {
+	UINT_8 ucNetTypeIndex; /* always NETWORK_TYPE_AIS_INDEX now */
+	UINT_8 ucAcIndex;	/* wmm ac index, the statistics should be on this TC or TS */
+	UINT_8 ucTid; /* */
+	UINT_8 aucPeerAddr[MAC_ADDR_LEN];  /* indicating the RA for the measured frames */
+	UINT_8 ucReportReason; /* for triggered mode: bit(0):average, bit(1):consecutive, bit(2):delay */
+	UINT_16 u2Reserved;
+
+	UINT_32 u4PktTxDoneOK;
+	UINT_32 u4PktDiscard; /* u2PktTotal - u2PktTxDoneOK */
+	UINT_32 u4PktFail; /* failed count for exceeding retry limit */
+	UINT_32 u4PktRetryTxDoneOK;
+	UINT_32 u4PktQosCfPollLost;
+
+	/* 802.11k - Average Packet Transmission delay for all packets per this TC or TS */
+	UINT_32 u4AvgPktTxDelay;
+	/* 802.11k - Average Packet Queue Delay */
+	UINT_32 u4AvgPktQueueDelay;
+	UINT_64 u8StartTime; /* represented by TSF */
+	/* sum of packets whose packet tx delay is less than Bi (i=0~6) range value(unit: TU) */
+	UINT_32 au4PktCntBin[6];
+} CMD_GET_TSM_STATISTICS_T, *P_CMD_GET_TSM_STATISTICS_T;
+
+typedef struct _CMD_MAX_TXPWR_LIMIT_T {
+	UINT_8 ucMaxTxPwrLimitEnable;
+	UINT_8 ucMaxTxPwr;
+	UINT_8 ucReserved[2];
+} CMD_MAX_TXPWR_LIMIT_T, *P_CMD_MAX_TXPWR_LIMIT_T;
 
 typedef struct _EVENT_CH_PRIVILEGE_T {
 	UINT_8 ucNetTypeIndex;
@@ -1806,6 +1339,12 @@ typedef struct _EVENT_AP_OBSS_STATUS_T {
 	UINT_8 ucObssBeaconForcedTo20M;
 	UINT_8 aucReserved[2];
 } EVENT_AP_OBSS_STATUS_T, *P_EVENT_AP_OBSS_STATUS_T;
+
+struct EVENT_ADD_KEY_DONE_INFO {
+	UINT_8 ucNetworkType;
+	UINT_8 ucReserved;
+	UINT_8 aucStaAddr[MAC_ADDR_LEN];
+};
 
 typedef struct _CMD_EDGE_TXPWR_LIMIT_T {
 	INT_8 cBandEdgeMaxPwrCCK;
@@ -1906,14 +1445,6 @@ typedef struct _CMD_GET_STA_STATISTICS_T {
 
 /* CFG_SUPPORT_WFD */
 typedef struct _EVENT_STA_STATISTICS_T {
-	/* Event header */
-	/* UINT_16     u2Length; */
-	/* UINT_16     u2Reserved1; *//* Must be filled with 0x0001 (EVENT Packet) */
-	/* UINT_8            ucEID; */
-	/* UINT_8      ucSeqNum; */
-	/* UINT_8            aucReserved2[2]; */
-
-	/* Event Body */
 	UINT_8 ucVersion;
 	UINT_8 aucReserved1[3];
 	UINT_32 u4Flags;	/* Bit0: valid */
@@ -1946,57 +1477,16 @@ typedef struct _CMD_HOTSPOT_OPTIMIZATION_CONFIG {
 	UINT_32 u4Level;
 } CMD_HOTSPOT_OPTIMIZATION_CONFIG, *P_HOTSPOT_OPTIMIZATION_CONFIG;
 #endif
+
 #if CFG_AUTO_CHANNEL_SEL_SUPPORT
-
-/* 4 Auto Channel Selection */
-
-typedef struct _CMD_GET_CHN_LOAD_T {
-	UINT_8 ucIndex;
-	UINT_8 ucFlags;
-	UINT_8 ucReadClear;
-	UINT_8 aucReserved0[1];
-
-	UINT_8 ucChannel;
-	UINT_16 u2ChannelLoad;
-	UINT_8 aucReserved1[1];
-	UINT_8 aucReserved2[16];
-} CMD_GET_CHN_LOAD_T, *P_CMD_GET_CHN_LOAD_T;
-/* 4  Auto Channel Selection */
-
-typedef struct _EVENT_CHN_LOAD_T {
-	/* Event Body */
+typedef struct _EVENT_LTE_SAFE_CHN_T {
 	UINT_8 ucVersion;
-	UINT_8 aucReserved1[3];
+	UINT_8 aucReserved[3];
 	UINT_32 u4Flags;	/* Bit0: valid */
-
-	UINT_8 ucChannel;
-	UINT_16 u2ChannelLoad;
-	UINT_8 aucReserved4[1];
-
-	UINT_8 aucReserved[64];
-
-} EVENT_CHN_LOAD_T, *P_EVENT_CHN_LOAD_T;
-typedef struct _CMD_GET_LTE_SAFE_CHN_T {
-	UINT_8 ucIndex;
-	UINT_8 ucFlags;
-	UINT_8 aucReserved0[2];
-
-	UINT_8 aucReserved2[16];
-} CMD_GET_LTE_SAFE_CHN_T, *P_CMD_GET_LTE_SAFE_CHN_T;
-
-typedef struct _EVENT_LTE_MODE_T {
-	/* Event Body */
-	UINT_8 ucVersion;
-	UINT_8 aucReserved1[3];
-	UINT_32 u4Flags;	/* Bit0: valid */
-
-	LTE_SAFE_CH_INFO_T rLteSafeChn;
-	UINT_8 aucReserved4[3];
-
-	UINT_8 aucReserved[4];
-
-} EVENT_LTE_MODE_T, *P_EVENT_LTE_MODE_T;
+	LTE_SAFE_CHN_INFO_T rLteSafeChn;
+} EVENT_LTE_SAFE_CHN_T, *P_EVENT_LTE_SAFE_CHN_T;
 #endif
+
 typedef struct _CMD_ROAMING_INFO_T {
 	UINT_32 fgIsFastRoamingApplied;
 	UINT_32 Reserved[9];
@@ -2058,12 +1548,24 @@ typedef struct _CMD_NLO_REQ {
 	NLO_NETWORK arNetworkList[16];
 	UINT_8 aucIE[0];
 	UINT_8 ucScanType;
+#if CFG_NLO_MSP
+	BOOLEAN fgNLOMspEnable; /*Flag for NLO/PNO MSP enable indicator*/
+	UINT_8 ucNLOMspEntryNum; /*indicates the entry num of MSP List */
+	UINT_16 au2NLOMspList[10];
+#endif
 } CMD_NLO_REQ, *P_CMD_NLO_REQ;
 
 typedef struct _CMD_NLO_CANCEL_T {
 	UINT_8 ucSeqNum;
 	UINT_8 aucReserved[3];
 } CMD_NLO_CANCEL, *P_CMD_NLO_CANCEL;
+
+
+struct CMD_SET_CTIA_MODE {
+	UINT_8  ucCmdVersion;
+	UINT_8  ucCtiaModeEnable;
+	UINT_8  ucReserved[2];
+};
 
 typedef struct _EVENT_NLO_DONE_T {
 	UINT_8      ucSeqNum;
@@ -2118,9 +1620,10 @@ typedef struct _EVENT_GSCAN_RESULT_T {
 } EVENT_GSCAN_RESULT_T, *P_EVENT_GSCAN_RESULT_T;
 
 typedef struct _EVENT_GSCAN_FULL_RESULT_T {
-	UINT_8 ucVersion;
-	UINT_8 aucReserved[3];
 	WIFI_GSCAN_RESULT_T rResult;
+	UINT_32 u4BucketMask;		/* scan chbucket bitmask */
+	UINT_32 u4IeLength;		/* byte length of Information Elements */
+	UINT_8  ucIeData[1];		/* IE data to follow */
 } EVENT_GSCAN_FULL_RESULT_T, *P_EVENT_GSCAN_FULL_RESULT_T;
 
 typedef struct GSCAN_SWC_NET {
@@ -2201,6 +1704,66 @@ typedef struct _WIFI_SYSTEM_SUSPEND_CMD_T {
 	UINT_8 reserved[3];
 } WIFI_SYSTEM_SUSPEND_CMD_T, *P_WIFI_SYSTEM_SUSPEND_CMD_T;
 
+typedef struct _CMD_ID_SET_ROAMING_SKIP_T {
+	BOOLEAN IsRoamingSkipOneAp;
+} CMD_ID_SET_ROAMING_SKIP_T, *P_CMD_ID_SET_ROAMING_SKIP_T;
+
+struct CMD_TDLS_PS_T {
+	UINT_8	ucIsEnablePs; /* 0: disable tdls power save; 1: enable tdls power save */
+	UINT_8	aucReserved[3];
+};
+
+
+struct CMD_REQ_CHNL_UTILIZATION {
+	UINT_16 u2MeasureDuration;
+	UINT_8 ucChannelNum;
+	UINT_8 aucChannelList[48];
+	UINT_8 aucReserved[13];
+};
+
+#if CFG_SUPPORT_EMI_DEBUG
+typedef struct _CMD_DRIVER_DUMP_EMI_LOG_T {
+	BOOLEAN fgIsDriverDumpEmiLogEnable; /* TRUE: notify to FW Driver supoort*/
+} CMD_DRIVER_DUMP_EMI_LOG_T, *P_CMD_DRIVER_DUMP_EMI_LOG_T;
+
+typedef struct _EVENT_DRIVER_DUMP_EMI_LOG_T {
+	UINT_32 u4RequestDriverDumpAddr; /*EMI dump end page num */
+} EVENT_DRIVER_DUMP_EMI_LOG_T, *P_EVENT_DRIVER_DUMP_EMI_LOG_T;
+#endif
+
+struct EVENT_RSP_CHNL_UTILIZATION {
+	UINT_8 ucChannelNum;
+	UINT_8 aucChannelMeasureList[48];
+	UINT_8 aucReserved0[15];
+	UINT_8 aucChannelUtilization[48];
+	UINT_8 aucReserved1[16];
+	UINT_8 aucChannelBusyTime[48];
+	UINT_8 aucReserved2[16];
+};
+
+#if CFG_SUPPORT_P2P_ECSA
+typedef struct _CMD_SET_ECSA_PARAM_T {
+	UINT_8  ucNetTypeIndex;
+	UINT_8  ucSwitchMode;
+	UINT_8  ucOperatingClass;
+	UINT_8  ucSwitchTotalCount; /* unit:tbtt, min value: 1 sec */
+	UINT_8  ucPrimaryChannel;
+	UINT_8  ucRfSco;
+	UINT_8  ucReserved[2];
+} CMD_SET_ECSA_PARAM, *P_CMD_SET_ECSA_PARAM;
+typedef struct _EVENT_ECSA_RESULT_T {
+	UINT_8 ucNetTypeIndex;
+	UINT_8 ucStatus;	/*
+				 * 0: ECSA success
+				 * 1: update beacon success
+				 * 2: Fail due to wrong parameter
+				 * 3: Set channel fail
+				 */
+	UINT_8 ucPrimaryChannel;
+	UINT_8 ucRfSco;
+	UINT_8 ucReserved[4];
+} EVENT_ECSA_RESULT, *P_EVENT_ECSA_RESULT;
+#endif
 /*******************************************************************************
 *                            P U B L I C   D A T A
 ********************************************************************************
@@ -2252,6 +1815,8 @@ VOID nicCmdEventQueryEepromRead(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdI
 
 VOID nicCmdEventSetMediaStreamMode(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 
+VOID nicCmdEventSetStopSchedScan(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
+
 /* Statistics responder */
 VOID nicCmdEventQueryXmitOk(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 
@@ -2287,10 +1852,7 @@ VOID nicCmdEventBuildDateCode(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInf
 VOID nicCmdEventQueryStaStatistics(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 
 #if CFG_AUTO_CHANNEL_SEL_SUPPORT
-/* 4 Auto Channel Selection */
-VOID nicCmdEventQueryChannelLoad(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
-
-VOID nicCmdEventQueryLTESafeChn(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
+VOID nicCmdEventQueryLteSafeChn(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 #endif
 
 #if CFG_SUPPORT_BATCH_SCAN
@@ -2299,6 +1861,9 @@ VOID nicCmdEventBatchScanResult(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdI
 
 VOID nicCmdEventGetBSSInfo(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
 
+#ifdef FW_CFG_SUPPORT
+VOID nicCmdEventQueryCfgRead(IN P_ADAPTER_T prAdapter, IN P_CMD_INFO_T prCmdInfo, IN PUINT_8 pucEventBuf);
+#endif
 /*******************************************************************************
 *                              F U N C T I O N S
 ********************************************************************************

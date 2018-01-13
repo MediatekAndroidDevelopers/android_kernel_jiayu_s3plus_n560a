@@ -1,10 +1,14 @@
 /*
-** Id: @(#) p2p_rlm.c@@
-*/
-
-/*! \file   "p2p_rlm.c"
-    \brief
-
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -75,24 +79,25 @@ VOID rlmBssInitForAP(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInfo)
 	if (prBssInfo->eCurrentOPMode != OP_MODE_ACCESS_POINT)
 		return;
 
-	/* Operation band, channel shall be ready before invoking this function.
-	 * Bandwidth may be ready if other network is connected
+	/* Operation band, channel shall be ready before invoking this function,
+	 * bandwidth may be ready if other network is connected.
 	 */
 	prBssInfo->fg40mBwAllowed = FALSE;
 	prBssInfo->fgAssoc40mBwAllowed = FALSE;
 	prBssInfo->eBssSCO = CHNL_EXT_SCN;
 
-	if (RLM_AP_IS_BW_40_ALLOWED(prAdapter, prBssInfo)) {
-		/* In this case, the first BSS's SCO is 40MHz and known, so AP can
+	if ((prAdapter->rWifiVar.ucAvailablePhyTypeSet & PHY_TYPE_SET_802_11N) &&
+		RLM_AP_IS_BW_40_ALLOWED(prAdapter, prBssInfo)) {
+		/* In this case, the first BSS's SCO is 40MHz and known, so GO can
 		 * apply 40MHz bandwidth, but the first BSS's SCO may be changed
-		 * later if its Beacon lost timeout occurs
+		 * later if its Beacon lost timeout occurs.
 		 */
+
 		if (cnmPreferredChannel(prAdapter, &eBand, &ucChannel, &eSCO) &&
 		    eSCO != CHNL_EXT_SCN && ucChannel == prBssInfo->ucPrimaryChannel && eBand == prBssInfo->eBand) {
 			prBssInfo->eBssSCO = eSCO;
-		} else if (cnmBss40mBwPermitted(prAdapter, prBssInfo->ucNetTypeIndex)) {
+		} else
 			prBssInfo->eBssSCO = rlmDecideScoForAP(prAdapter, prBssInfo);
-		}
 
 		if (prBssInfo->eBssSCO != CHNL_EXT_SCN) {
 			prBssInfo->fg40mBwAllowed = TRUE;
@@ -105,7 +110,7 @@ VOID rlmBssInitForAP(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInfo)
 		}
 	}
 
-	DBGLOG(RLM, INFO, "WLAN AP SCO=%d\n", prBssInfo->eBssSCO);
+	DBGLOG(RLM, INFO, "AP SCO=%d\n", prBssInfo->eBssSCO);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -903,3 +908,40 @@ ENUM_CHNL_EXT_T rlmDecideScoForAP(P_ADAPTER_T prAdapter, P_BSS_INFO_T prBssInfo)
 
 	return eSCO;
 }
+#if CFG_SUPPORT_P2P_ECSA
+ENUM_CHNL_EXT_T rlmDecideSco(P_ADAPTER_T prAdapter, UINT_8 ucPrimaryChannel, ENUM_BAND_T eBand)
+{
+	P_DOMAIN_SUBBAND_INFO prSubband;
+	P_DOMAIN_INFO_ENTRY prDomainInfo;
+	UINT_8 i, j;
+	ENUM_CHNL_EXT_T eSCO;
+
+	eSCO = CHNL_EXT_SCN;
+
+	if (eBand == BAND_2G4) {
+		if (ucPrimaryChannel != 14)
+			eSCO = (ucPrimaryChannel > 7) ? CHNL_EXT_SCB : CHNL_EXT_SCA;
+	} else {
+		prDomainInfo = rlmDomainGetDomainInfo(prAdapter);
+		ASSERT(prDomainInfo);
+
+		for (i = 0; i < MAX_SUBBAND_NUM; i++) {
+			prSubband = &prDomainInfo->rSubBand[i];
+			if (prSubband->ucBand == eBand) {
+				for (j = 0; j < prSubband->ucNumChannels; j++) {
+					if ((prSubband->ucFirstChannelNum + j * prSubband->ucChannelSpan)
+					    == ucPrimaryChannel) {
+						eSCO = (j & 1) ? CHNL_EXT_SCB : CHNL_EXT_SCA;
+						break;
+					}
+				}
+
+				if (j < prSubband->ucNumChannels)
+					break;	/* Found */
+			}
+		}
+	}
+
+	return eSCO;
+}
+#endif

@@ -1,3 +1,16 @@
+/*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
+*/
+
 #include "p2p_precomp.h"
 
 #if CFG_SUPPORT_WFD
@@ -548,11 +561,11 @@ VOID p2pFuncComposeNoaAttribute(IN P_ADAPTER_T prAdapter, IN P_MSDU_INFO_T prMsd
 		prNoaAttr->ucCTWOppPSParam = 0;
 	}
 	/*NoA Description */
-	DBGLOG(P2P, INFO, "Compose NoA count=%d.\n", prP2pSpecificBssInfo->ucNoATimingCount);
+	DBGLOG(P2P, TRACE, "Compose NoA count=%d.\n", prP2pSpecificBssInfo->ucNoATimingCount);
 	for (i = 0; i < prP2pSpecificBssInfo->ucNoATimingCount; i++) {
 		if (prP2pSpecificBssInfo->arNoATiming[i].fgIsInUse) {
 
-			prNoaDesc = (P_NOA_DESCRIPTOR_T) &prNoaAttr->aucNoADesc[u4NumOfNoaDesc];
+			prNoaDesc = (P_NOA_DESCRIPTOR_T)&prNoaAttr->aucNoADesc[i * sizeof(NOA_DESCRIPTOR_T)];
 
 			prNoaDesc->ucCountType = prP2pSpecificBssInfo->arNoATiming[i].ucCount;
 			prNoaDesc->u4Duration = prP2pSpecificBssInfo->arNoATiming[i].u4Duration;

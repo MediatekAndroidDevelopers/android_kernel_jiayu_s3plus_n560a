@@ -1,4 +1,18 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
 ** Id:
 //Department/DaVinci/TRUNK/MT6620_5931_WiFi_Driver/os/linux/include/gl_p2p_os.h#28
 */
@@ -48,6 +62,7 @@ extern const struct net_device_ops p2p_netdev_ops;
 *                                 M A C R O S
 ********************************************************************************
 */
+#define OID_SET_GET_STRUCT_LENGTH		4096	/* For SET_STRUCT/GET_STRUCT */
 
 /*******************************************************************************
 *                             D A T A   T Y P E S
@@ -126,8 +141,8 @@ struct _GL_P2P_INFO_T {
 #if CFG_SUPPORT_WFD
 	UINT_8 aucWFDIE[400];	/* 0 for beacon, 1 for probe req, 2 for probe response */
 	UINT_16 u2WFDIELen;
-	/* UINT_8                      aucVenderIE[1024]; *//* Save the other IE for prove resp */
-/* UINT_16                     u2VenderIELen; */
+	UINT_8 aucVenderIE[1024]; /* Save the other IE for prove resp, PLS DON'T COMMENT OUT, CROSSMOUNT */
+	UINT_16 u2VenderIELen;
 #endif
 
 	UINT_8 ucOperatingChnl;
@@ -136,7 +151,7 @@ struct _GL_P2P_INFO_T {
 	UINT_32 u4InvStatus;
 
 	/* For SET_STRUCT/GET_STRUCT */
-	UINT_8 aucOidBuf[4096];
+	UINT_8 aucOidBuf[OID_SET_GET_STRUCT_LENGTH];
 
 #if 1				/* CFG_SUPPORT_ANTI_PIRACY */
 	UINT_8 aucSecCheck[256];
@@ -238,7 +253,7 @@ BOOLEAN p2pLaunch(P_GLUE_INFO_T prGlueInfo);
 
 BOOLEAN p2pRemove(P_GLUE_INFO_T prGlueInfo);
 
-VOID p2pSetMode(IN BOOLEAN fgIsAPMOde);
+VOID p2pSetMode(IN BOOLEAN fgIsAPMode);
 
 BOOLEAN glRegisterP2P(P_GLUE_INFO_T prGlueInfo, const char *prDevName, BOOLEAN fgIsApMode);
 

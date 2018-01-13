@@ -1,439 +1,14 @@
 /*
-** Id: //Department/DaVinci/TRUNK/WiFi_P2P_Driver/include/mgmt/p2p_fsm.h#23
-*/
-
-/*! \file   p2p_fsm.h
-    \brief  Declaration of functions and finite state machine for P2P Module.
-
-    Declaration of functions and finite state machine for P2P Module.
-*/
-
-/*
-** Log: p2p_fsm.h
-**
-** 09 12 2012 wcpadmin
-** [ALPS00276400] Remove MTK copyright and legal header on GPL/LGPL related packages
-** .
-**
-** 08 14 2012 yuche.tsai
-** NULL
-** Fix compile error.
-**
-** 07 26 2012 yuche.tsai
-** [ALPS00324337] [ALPS.JB][Hot-Spot] Driver update for Hot-Spot
-** Update driver code of ALPS.JB for hot-spot.
-**
-** 07 19 2012 yuche.tsai
-** NULL
-** Code update for JB.
- *
- * 07 18 2012 yuche.tsai
- * NULL
- * add one file.
- *
- * 12 02 2011 yuche.tsai
- * NULL
- * Resolve class 3 error issue under AP mode.
- *
- * data frame may TX before Assoc Response TX.
- *
- * 11 11 2011 yuche.tsai
- * NULL
- * Fix work thread cancel issue.
- *
- * 11 11 2011 yuche.tsai
- * NULL
- * Fix default device name issue.
- *
- * 11 09 2011 yuche.tsai
- * [WCXRP00001093] [Need Patch][Volunteer Patch] Service Discovery 2.0 state transition issue.
- * Fix SD2.0 issue which may cause KE. (Monkey test)
- *
- * 11 08 2011 yuche.tsai
- * [WCXRP00001094] [Volunteer Patch][Driver] Driver version & supplicant version
- * query & set support for service discovery version check.
- * Add support for driver version query & p2p supplicant verseion set.
- * For new service discovery mechanism sync.
- *
- * 10 18 2011 yuche.tsai
- * [WCXRP00001045] [WiFi Direct][Driver] Check 2.1 branch.
- * Support Channel Query.
- *
- * 10 18 2011 yuche.tsai
- * [WCXRP00001045] [WiFi Direct][Driver] Check 2.1 branch.
- * New 2.1 branch
-
- *
- * 09 01 2011 yuche.tsai
- * NULL
- * Fix channel stay interval.
- * Sync channel stay interval & channel request interval under AP mode..
- *
- * 08 30 2011 yuche.tsai
- * [WCXRP00000953] [Volunteer Patch][Driver] Hot Spot Channel ASSERT issue.
- * Fix hot spot FW assert issue when under concurrent case. (DBG enable only)
- *
- * 08 16 2011 cp.wu
- * [WCXRP00000934] [MT6620 Wi-Fi][Driver][P2P] Wi-Fi hot spot with auto sparse channel residence
- * auto channel decision for 2.4GHz hot spot mode
- *
- * 08 16 2011 yuche.tsai
- * NULL
- * Fix scan policy for Active LISTEN scan.
- *
- * 08 09 2011 yuche.tsai
- * [WCXRP00000919] [Volunteer Patch][WiFi Direct][Driver] Invitation New Feature.
- * Invitation Feature add on.
- *
- * 08 02 2011 yuche.tsai
- * [WCXRP00000896] [Volunteer Patch][WiFi Direct][Driver] GO with multiple client,
- * TX deauth to a disconnecting device issue.
- * Support TX Deauth Issue.
- *
- * 07 26 2011 yuche.tsai
- * [WCXRP00000875] [Volunteer Patch][WiFi Direct][Driver] MT6620 IOT issue with realtek test bed solution.
- * Turn off persistent group support for V2.0 release.
- *
- * 07 18 2011 yuche.tsai
- * [WCXRP00000856] [Volunteer Patch][WiFi Direct][Driver] MT6620 WiFi Direct IOT Issue with BCM solution.
- * Fix compile error.
- *
- * 07 18 2011 yuche.tsai
- * [WCXRP00000856] [Volunteer Patch][WiFi Direct][Driver] MT6620 WiFi Direct IOT Issue with BCM solution.
- * Fix MT6620 WiFi Direct IOT Issue with BCM solution.
- *
- * 07 11 2011 yuche.tsai
- * [WCXRP00000845] [Volunteer Patch][WiFi Direct] WiFi Direct Device Connection Robustness
- * Enhance Connection Robustness.
- *
- * 07 08 2011 yuche.tsai
- * [WCXRP00000841] [Volunteer Patch][WiFi Direct] Group Owner Setting.
- * Update GO configure parameter.
- *
- * 07 05 2011 yuche.tsai
- * [WCXRP00000821] [Volunteer Patch][WiFi Direct][Driver] WiFi Direct Connection Speed Issue
- * Disable enhancement II for debugging.
- *
- * 07 05 2011 yuche.tsai
- * [WCXRP00000821] [Volunteer Patch][WiFi Direct][Driver] WiFi Direct Connection Speed Issue
- * Refine compile flag.
- *
- * 07 05 2011 yuche.tsai
- * [WCXRP00000821] [Volunteer Patch][WiFi Direct][Driver] WiFi Direct Connection Speed Issue
- * Add wifi direct connection enhancement method I, II & VI.
- *
- * 06 20 2011 yuche.tsai
- * [WCXRP00000799] [Volunteer Patch][MT6620][Driver] Connection Indication Twice Issue.
- * Fix connection indication twice issue.
- *
- * 06 07 2011 yuche.tsai
- * [WCXRP00000763] [Volunteer Patch][MT6620][Driver] RX Service Discovery Frame under AP mode Issue
- * Fix RX SD request under AP mode issue.
- *
- * 05 04 2011 yuche.tsai
- * NULL
- * Support partial persistent group function.
- *
- * 04 20 2011 terry.wu
- * [WCXRP00000660] [MT6620 Wi-Fi][Driver] Remove flag CFG_WIFI_DIRECT_MOVED
- * Remove CFG_WIFI_DIRECT_MOVED.
- *
- * 04 08 2011 yuche.tsai
- * [WCXRP00000624] [Volunteer Patch][MT6620][Driver] Add device discoverability support for GO.
- * Add device discoverability support.
- *
- * 03 25 2011 yuche.tsai
- * NULL
- * Improve some error handleing.
- *
- * 03 22 2011 george.huang
- * [WCXRP00000504] [MT6620 Wi-Fi][FW] Support Sigma CAPI for power saving related command
- * link with supplicant commands
- *
- * 03 22 2011 yuche.tsai
- * NULL
- * 1.Shorten the LISTEN interval.
- * 2. Fix IF address issue when we are GO
- * 3. Fix LISTEN channel issue.
- *
- * 03 21 2011 yuche.tsai
- * NULL
- * Change P2P Connection Request Flow.
- *
- * 03 19 2011 yuche.tsai
- * [WCXRP00000584] [Volunteer Patch][MT6620][Driver] Add beacon timeout support for WiFi Direct.
- * Add beacon timeout support.
- *
- * 03 19 2011 yuche.tsai
- * [WCXRP00000581] [Volunteer Patch][MT6620][Driver] P2P IE in Assoc Req Issue
- * Append P2P IE in Assoc Req, so that GC can be discovered in probe response of GO.
- *
- * 03 18 2011 yuche.tsai
- * [WCXRP00000574] [Volunteer Patch][MT6620][Driver] Modify P2P FSM Connection Flow
- * Modify connection flow after Group Formation Complete, or device connect to a GO.
- * Instead of request channel & connect directly, we use scan to allocate channel bandwidth & connect after RX BCN.
- *
- * 03 15 2011 yuche.tsai
- * [WCXRP00000560] [Volunteer Patch][MT6620][Driver] P2P Connection from UI using KEY/DISPLAY issue
- * Fix some configure method issue.
- *
- * 03 10 2011 yuche.tsai
- * NULL
- * Add P2P API.
- *
- * 03 07 2011 yuche.tsai
- * [WCXRP00000502] [Volunteer Patch][MT6620][Driver] Fix group ID issue when doing Group Formation.
- * .
- *
- * 03 07 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * rename the define to anti_pviracy.
- *
- * 03 05 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * add the code to get the check rsponse and indicate to app.
- *
- * 03 01 2011 yuche.tsai
- * [WCXRP00000501] [Volunteer Patch][MT6620][Driver] No common channel issue when doing GO formation
- * Update channel issue when doing GO formation..
- *
- * 03 01 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Update Service Discovery Related wlanoid function.
- *
- * 02 18 2011 wh.su
- * [WCXRP00000471] [MT6620 Wi-Fi][Driver] Add P2P Provison discovery append Config Method attribute at WSC IE
- * fixed the ioctl setting that index not map to spec defined config method.
- *
- * 02 18 2011 yuche.tsai
- * [WCXRP00000480] [Volunteer Patch][MT6620][Driver] WCS IE format issue
- * Fix WSC IE BE format issue.
- *
- * 02 17 2011 wh.su
- * [WCXRP00000471] [MT6620 Wi-Fi][Driver] Add P2P Provison discovery append Config Method attribute at WSC IE
- * append the WSC IE config method attribute at provision discovery request.
- *
- * 02 11 2011 yuche.tsai
- * [WCXRP00000431] [Volunteer Patch][MT6620][Driver] Add MLME support for deauthentication under AP(Hot-Spot) mode.
- * Add two function prototype.
- *
- * 02 10 2011 yuche.tsai
- * [WCXRP00000431] [Volunteer Patch][MT6620][Driver] Add MLME support for deauthentication under AP(Hot-Spot) mode.
- * Support Disassoc & Deauthentication for Hot-Spot.
- *
- * 02 09 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-
-2. Provision Discovery Request/Response
-
- * Add Service Discovery Indication Related code.
- *
- * 02 09 2011 yuche.tsai
- * [WCXRP00000431] [Volunteer Patch][MT6620][Driver] Add MLME support for deauthentication under AP(Hot-Spot) mode.
- * Add Support for MLME deauthentication for Hot-Spot.
- *
- * 02 09 2011 yuche.tsai
- * [WCXRP00000429] [Volunteer Patch][MT6620][Driver] Hot Spot Client Limit Issue
- * Fix Client Limit Issue.
- *
- * 01 26 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-
-2. Provision Discovery Request/Response
-
- * Add Service Discovery Function.
- *
- * 01 25 2011 terry.wu
- * [WCXRP00000393] [MT6620 Wi-Fi][Driver] Add new module insert parameter
- * Add a new module parameter to indicate current runnig mode, P2P or AP.
- *
- * 01 19 2011 george.huang
- * [WCXRP00000355] [MT6620 Wi-Fi] Set WMM-PS related setting with qualifying AP capability
- * Null NOA attribute setting when no related parameters.
- *
- * 01 12 2011 yuche.tsai
- * [WCXRP00000352] [Volunteer Patch][MT6620][Driver] P2P Statsion Record Client List Issue
- * Modify some behavior of AP mode.
- *
- * 12 22 2010 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Fix Compile Error.
- *
- * 12 15 2010 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Refine Connection Flow.
- *
- * 12 08 2010 yuche.tsai
- * [WCXRP00000244] [MT6620][Driver] Add station record type for each client when in AP mode.
- * Change STA Type under AP mode. We would tell if client is a P2P device or a legacy client
- * by checking the P2P IE in assoc req frame.
- *
- * 12 02 2010 yuche.tsai
- * NULL
- * Update P2P Connection Policy for Invitation.
- *
- * 12 02 2010 yuche.tsai
- * NULL
- * Update P2P Connection Policy for Invitation & Provision Discovery.
- *
- * 11 30 2010 yuche.tsai
- * NULL
- * Invitation & Provision Discovery Indication.
- *
- * 11 30 2010 yuche.tsai
- * NULL
- * Update Configure Method indication & selection for Provision Discovery & GO_NEGO_REQ
- *
- * 11 29 2010 yuche.tsai
- * NULL
- * Update P2P related function for INVITATION & PROVISION DISCOVERY.
- *
- * 11 26 2010 george.huang
- * [WCXRP00000152] [MT6620 Wi-Fi] AP mode power saving function
- * Update P2P PS for NOA function.
- *
- * 11 25 2010 yuche.tsai
- * NULL
- * Update Code for Invitation Related Function.
- *
- * 11 17 2010 wh.su
- * [WCXRP00000164] [MT6620 Wi-Fi][Driver] Support the p2p random SSID[WCXRP00000179] [MT6620 Wi-Fi][FW]
- * Set the Tx lowest rate at wlan table for normal operation
- * fixed some ASSERT check.
- *
- * 11 04 2010 wh.su
- * [WCXRP00000164] [MT6620 Wi-Fi][Driver] Support the p2p random SSID
- * adding the p2p random ssid support.
- *
- * 10 20 2010 wh.su
- * [WCXRP00000124] [MT6620 Wi-Fi] [Driver] Support the dissolve P2P Group
- * Add the code to support disconnect p2p group
- *
- * 10 08 2010 wh.su
- * [WCXRP00000085] [MT6620 Wif-Fi] [Driver] update the modified p2p state machine
- * update the frog's new p2p state machine.
- *
- * 10 04 2010 wh.su
- * [WCXRP00000081] [MT6620][Driver] Fix the compiling error at WinXP while enable P2P
- * fixed compiling error while enable p2p.
- *
- * 09 21 2010 kevin.huang
- * [WCXRP00000054] [MT6620 Wi-Fi][Driver] Restructure driver for second Interface
- * Isolate P2P related function for Hardware Software Bundle
- *
- * 09 10 2010 wh.su
- * NULL
- * fixed the compiling error at WinXP.
- *
- * 09 07 2010 wh.su
- * NULL
- * adding the code for beacon/probe req/ probe rsp wsc ie at p2p.
- *
- * 09 03 2010 kevin.huang
- * NULL
- * Refine #include sequence and solve recursive/nested #include issue
- *
- * 08 26 2010 yuche.tsai
- * NULL
- * Add connection abort message event prototype.
- *
- * 08 20 2010 kevin.huang
- * NULL
- * Modify AAA Module for changing STA STATE 3 at p2p/bowRunEventAAAComplete()
- *
- * 08 16 2010 yuche.tsai
- * NULL
- * Fix P2P Intended Interface Address Bug.
- * Extend GO Nego Timeout Time.
- *
- * 08 16 2010 yuche.tsai
- * NULL
- * Extend Listen Interval default value & remove deprecated variable.
- *
- * 08 16 2010 kevin.huang
- * NULL
- * Refine AAA functions
- *
- * 08 12 2010 kevin.huang
- * NULL
- * Refine bssProcessProbeRequest() and bssSendBeaconProbeResponse()
- *
- * 08 12 2010 yuche.tsai
- * NULL
- * Add function prototype for join complete.
- *
- * 08 11 2010 yuche.tsai
- * NULL
- * Add some function proto type for P2P FSM under provisioning phase..
- *
- * 08 11 2010 yuche.tsai
- * NULL
- * Change P2P data structure for supporting
- * 1. P2P Device discovery.
- * 2. P2P Group Negotiation.
- * 3. P2P JOIN
- *
- * 08 05 2010 yuche.tsai
- * NULL
- * Check-in P2P Device Discovery Feature.
- *
- * 08 03 2010 george.huang
- * NULL
- * handle event for updating NOA parameters indicated from FW
- *
- * 08 02 2010 yuche.tsai
- * NULL
- * P2P Group Negotiation Code Check in.
- *
- * 07 26 2010 yuche.tsai
- *
- * Update P2P FSM header file.
- *
- * 07 23 2010 cp.wu
- *
- * P2P/RSN/WAPI IEs need to be declared with compact structure.
- *
- * 07 21 2010 yuche.tsai
- *
- * Add for P2P Scan Result Parsing & Saving.
- *
- * 07 19 2010 yuche.tsai
- *
- * Update P2P FSM header file.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 21 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * Fix some P2P function prototype.
- *
- * 06 17 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * First draft for migration P2P FSM from FW to Driver.
- *
- * 03 18 2010 kevin.huang
- * [BORA00000663][WIFISYS][New Feature] AdHoc Mode Support
- * Rename CFG flag for P2P
- *
- * 02 26 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Modify parameter of p2pStartGO
- *
- * 02 23 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add Wi-Fi Direct SSID and P2P GO Test Mode
- *
- * 02 04 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add AAA Module Support, Revise Net Type to Net Type Index for array lookup
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _P2P_FSM_H
@@ -469,6 +44,26 @@ typedef enum _ENUM_P2P_STATE_T {
 	P2P_STATE_NUM
 } ENUM_P2P_STATE_T, *P_ENUM_P2P_STATE_T;
 
+
+enum _ENUM_P2P_DEV_EXT_LISTEN_T {
+	P2P_DEV_NOT_EXT_LISTEN,
+	P2P_DEV_EXT_LISTEN_ING,
+	P2P_DEV_EXT_LISTEN_WAITFOR_TIMEOUT,
+	P2P_DEV_EXT_LISTEN_NUM
+};
+typedef enum _ENUM_P2P_CONNECT_STATE_T {
+	P2P_CNN_NORMAL = 0,
+	P2P_CNN_GO_NEG_REQ,
+	P2P_CNN_GO_NEG_RESP,
+	P2P_CNN_GO_NEG_CONF,
+	P2P_CNN_INVITATION_REQ,
+	P2P_CNN_INVITATION_RESP,
+	P2P_CNN_DEV_DISC_REQ,
+	P2P_CNN_DEV_DISC_RESP,
+	P2P_CNN_PROV_DISC_REQ,
+	P2P_CNN_PROV_DISC_RES
+} ENUM_P2P_CNN_STATE_T, *P_ENUM_P2P_CNN_STATE_T;
+
 typedef enum _ENUM_CHANNEL_REQ_TYPE_T {
 	CHANNEL_REQ_TYPE_REMAIN_ON_CHANNEL,
 	CHANNEL_REQ_TYPE_GC_JOIN_REQ,
@@ -486,7 +81,7 @@ typedef enum _ENUM_BUFFER_TYPE_T {
 
 typedef enum _ENUM_HIDDEN_SSID_TYPE_T {
 	ENUM_HIDDEN_SSID_NONE,
-	ENUM_HIDDEN_SSID_LEN,
+	ENUM_HIDDEN_SSID_ZERO_LEN,
 	ENUM_HIDDEN_SSID_ZERO_CONTENT,
 	ENUM_HIDDEN_SSID_NUM
 } ENUM_HIDDEN_SSID_TYPE_T, *P_ENUM_HIDDEN_SSID_TYPE_T;
@@ -559,11 +154,23 @@ typedef struct _P2P_CONNECTION_REQ_INFO_T {
 	UINT_8 aucIEBuf[MAX_IE_LENGTH];
 } P2P_CONNECTION_REQ_INFO_T, *P_P2P_CONNECTION_REQ_INFO_T;
 
+typedef struct _P2P_GC_DISCONNECTION_REQ_INFO_T {
+	P_STA_RECORD_T prTargetStaRec;
+	UINT_32 u4RetryCount;
+	UINT_16 u2ReasonCode;
+	BOOLEAN fgSendDeauth;
+} P2P_GC_DISCONNECTION_REQ_INFO_T, *P_P2P_GC_DISCONNECTION_REQ_INFO_T;
+
 typedef struct _P2P_MGMT_TX_REQ_INFO_T {
 	BOOLEAN fgIsMgmtTxRequested;
 	P_MSDU_INFO_T prMgmtTxMsdu;
 	UINT_64 u8Cookie;
 } P2P_MGMT_TX_REQ_INFO_T, *P_P2P_MGMT_TX_REQ_INFO_T;
+
+struct _MSG_P2P_EXTEND_LISTEN_INTERVAL_T {
+	MSG_HDR_T rMsgHdr;
+	UINT_32 wait; /* interval supplicant expected to stay in listen interval */
+};
 
 typedef struct _P2P_BEACON_UPDATE_INFO_T {
 	PUINT_8 pucBcnHdr;
@@ -650,6 +257,7 @@ struct _P2P_FSM_INFO_T {
 	/* State related. */
 	ENUM_P2P_STATE_T ePreviousState;
 	ENUM_P2P_STATE_T eCurrentState;
+	ENUM_P2P_CNN_STATE_T eCNNState;
 
 	/* Channel related. */
 	P2P_CHNL_REQ_INFO_T rChnlReqInfo;
@@ -659,6 +267,9 @@ struct _P2P_FSM_INFO_T {
 
 	/* Connection related. */
 	P2P_CONNECTION_REQ_INFO_T rConnReqInfo;
+
+	/* Disconnection related. */
+	P2P_GC_DISCONNECTION_REQ_INFO_T rGcDisConnReqInfo;
 
 	/* Mgmt tx related. */
 	P2P_MGMT_TX_REQ_INFO_T rMgmtTxInfo;
@@ -702,6 +313,11 @@ struct _P2P_FSM_INFO_T {
 #endif
 
 	BOOLEAN fgIsWPSMode;
+
+	enum _ENUM_P2P_DEV_EXT_LISTEN_T eListenExted;
+
+	/* GO start and scan its channel first. */
+	BOOLEAN fgIsFirstGOScan;
 };
 
 /*---------------- Messages -------------------*/
@@ -772,6 +388,10 @@ typedef struct _MSG_P2P_BEACON_UPDATE_T {
 	UINT_32 u4BcnHdrLen;
 	UINT_32 u4BcnBodyLen;
 	PUINT_8 pucBcnHdr;
+#if CFG_SUPPORT_P2P_GO_OFFLOAD_PROBE_RSP
+	PUINT_8 pucProbeRsp;
+	UINT_32 u4ProbeRsp_len;
+#endif
 	PUINT_8 pucBcnBody;
 	UINT_8 aucBuffer[1];	/* Header & Body are put here. */
 } MSG_P2P_BEACON_UPDATE_T, *P_MSG_P2P_BEACON_UPDATE_T;
@@ -800,6 +420,19 @@ typedef struct _MSG_P2P_NETDEV_REGISTER_T {
 	UINT_8 ucMode;
 } MSG_P2P_NETDEV_REGISTER_T, *P_MSG_P2P_NETDEV_REGISTER_T;
 
+typedef struct _P2P_ECSA_SETTING_T {
+	u8 mode;
+	u8 channel;
+	u8 sco;
+	u8 op_class;
+	u8 count;
+} P2P_ECSA_SETTING_T, *P_P2P_ECSA_SETTING_T;
+
+typedef struct _MSG_P2P_ECSA_T {
+	MSG_HDR_T rMsgHdr;	/* Must be the first member */
+	P2P_ECSA_SETTING_T rP2pECSA;
+} MSG_P2P_ECSA_T, *P_MSG_P2P_ECSA_T;
+
 #if CFG_SUPPORT_WFD
 typedef struct _MSG_WFD_CONFIG_SETTINGS_CHANGED_T {
 	MSG_HDR_T rMsgHdr;	/* Must be the first member */
@@ -817,6 +450,8 @@ VOID p2pFsmRunEventAbort(IN P_ADAPTER_T prAdapter, IN P_P2P_FSM_INFO_T prP2pFsmI
 
 VOID p2pFsmRunEventScanRequest(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 
+VOID p2pFsmRunEventScanAbort(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
+
 VOID p2pFsmRunEventMgmtFrameTx(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 
 VOID p2pFsmRunEventStartAP(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
@@ -824,6 +459,8 @@ VOID p2pFsmRunEventStartAP(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 VOID p2pFsmRunEventNetDeviceRegister(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 
 VOID p2pFsmRunEventUpdateMgmtFrame(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
+
+VOID p2pFsmRunEventExtendListen(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 
 VOID p2pFsmRunEventBeaconUpdate(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 
@@ -846,6 +483,9 @@ VOID p2pFsmRunEventMgmtFrameRegister(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T pr
 #if CFG_SUPPORT_WFD
 VOID p2pFsmRunEventWfdSettingUpdate(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 #endif
+
+VOID p2pFsmRunEventSendCSA(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
+VOID p2pFsmRunEventSendECSA(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr);
 
 #if 0
 /* ////////////////////////////////////////////////////////////////////////////////////////////////////// */
@@ -878,7 +518,7 @@ VOID p2pFsmRunEventWfdSettingUpdate(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prM
 
 #define P2P_GC_MAX_CACHED_SEC_DEV_TYPE_COUNT        8	/* NOTE(Kevin): Shall <= 16 */
 
-#define P2P_MAXIMUM_CLIENT_COUNT                    8
+#define P2P_MAXIMUM_CLIENT_COUNT                    10
 #define P2P_MAXIMUM_NOA_COUNT                       8
 
 #define P2P_MAXIMUM_ATTRIBUTE_LEN                   251
@@ -1115,6 +755,8 @@ VOID p2pFsmRunEventWfdSettingUpdate(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prM
 #define CFG_DISABLE_DELAY_PROVISION_DISCOVERY      0
 
 #define CFG_CONNECTION_POLICY_2_0                            0
+
+#define MAX_GC_DEAUTH_RETRY_COUNT                  1
 
 /* Device Password ID */
 enum wps_dev_password_id {
@@ -2120,7 +1762,10 @@ VOID
 p2pProcessEvent_UpdateNOAParam(IN P_ADAPTER_T prAdapter,
 			       UINT_8 ucNetTypeIndex, P_EVENT_UPDATE_NOA_PARAMS_T prEventUpdateNoaParam);
 
+WLAN_STATUS p2pUpdateBeaconEcsaIE(IN P_ADAPTER_T prAdapter, IN UINT_8 ucNetTypeIndex);
+
 VOID p2pFuncCompleteIOCTL(IN P_ADAPTER_T prAdapter, IN WLAN_STATUS rWlanStatus);
+VOID p2pFsmRunEventTdlsTimeout(IN P_ADAPTER_T prAdapter, IN ULONG ulParam);
 
 /*******************************************************************************
 *                              F U N C T I O N S

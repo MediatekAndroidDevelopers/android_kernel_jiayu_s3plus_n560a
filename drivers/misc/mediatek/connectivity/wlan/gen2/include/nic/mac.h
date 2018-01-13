@@ -1,117 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/include/nic/mac.h#1
-*/
-
-/*! \file   "mac.h"
-    \brief  Brief description.
-
-    Detail description.
-*/
-
-/*
-** Log: mac.h
- *
- * 03 02 2012 terry.wu
- * NULL
- * Sync CFG80211 modification from branch 2,2.
- *
- * 01 05 2012 tsaiyuan.hsu
- * [WCXRP00001157] [MT6620 Wi-Fi][FW][DRV] add timing measurement support for 802.11v
- * add timing measurement support for 802.11v.
- *
- * 10 12 2011 wh.su
- * [WCXRP00001036] [MT6620 Wi-Fi][Driver][FW] Adding the 802.11w code for MFP
- * adding the 802.11w related function and define .
- *
- * 06 22 2011 wh.su
- * [WCXRP00000806] [MT6620 Wi-Fi][Driver] Move the WPA/RSN IE and WAPI IE structure to mac.h
- * and let the sw structure not align at byte
- * Move the WAPI/RSN IE to mac.h and SW structure not align to byte,
- * Notice needed update P2P.ko.
- *
- * 05 06 2011 wh.su
- * [WCXRP00000699] [MT6620 Wi-Fi][Driver] Add the ie pointer check for avoid TP-LINK AP send
- * the wrong beacon make driver got incorrect support rate set
- * Add the length check before access the ie length filed.
- *
- * 05 06 2011 wh.su
- * [WCXRP00000699] [MT6620 Wi-Fi][Driver] Add the ie pointer check for avoid TP-LINK AP send
- * the wrong beacon make driver got incorrect support rate set
- * adding the length check before processing next ie..
- *
- * 04 18 2011 terry.wu
- * [WCXRP00000660] [MT6620 Wi-Fi][Driver] Remove flag CFG_WIFI_DIRECT_MOVED
- * Remove flag CFG_WIFI_DIRECT_MOVED.
- *
- * 04 12 2011 cm.chang
- * [WCXRP00000634] [MT6620 Wi-Fi][Driver][FW] 2nd BSS will not support 40MHz bandwidth for concurrency
- * .
- *
- * 04 08 2011 yuche.tsai
- * [WCXRP00000624] [Volunteer Patch][MT6620][Driver] Add device discoverability support for GO.
- * Add device discover ability support.
- *
- * 03 17 2011 chinglan.wang
- * [WCXRP00000570] [MT6620 Wi-Fi][Driver] Add Wi-Fi Protected Setup v2.0 feature
- * .
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * Some action frame define is not belong to P2P.
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * Add some service discovery MAC define, phase I.
- *
- * 12 13 2010 cp.wu
- * [WCXRP00000260] [MT6620 Wi-Fi][Driver][Firmware] Create V1.1 branch for both firmware and driver
- * create branch for Wi-Fi driver v1.1
- *
- * 12 13 2010 cp.wu
- * [WCXRP00000256] [MT6620 Wi-Fi][Driver] Eliminate potential issues which is identified by Klockwork
- * suppress warning reported by Klockwork.
- *
- * 11 01 2010 cp.wu
- * [WCXRP00000122] [MT6620 Wi-Fi][Driver] Preparation for YuSu source tree integration
- * revert to previous revision. (this file is not necessary to be changed)
- *
- * 08 20 2010 cm.chang
- * NULL
- * Migrate RLM code to host from FW
- *
- * 08 02 2010 yuche.tsai
- * NULL
- * 1. Add P2P MAC define.
- * 2. Add scan device found event
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 21 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * Add WFA specific OUI.
- *
- * 06 17 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * Add P2P IE ID & Vendor OUI TYPE for P2P.
- *
- * 06 07 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * merge MAC.h.
- *
- * 06 06 2010 kevin.huang
- * [WPD00003832][MT6620 5931] Create driver base
- * [MT6620 5931] Create driver base
- *
- * 01 13 2010 tehuang.liu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * Added OFFSET_BAR_SSC_SN
-**  \main\maintrunk.MT6620WiFiDriver_Prj\3 2009-12-09 14:00:24 GMT MTK02468
-**  Added offsets and masks for the BA Parameter Set filed
-**  \main\maintrunk.MT6620WiFiDriver_Prj\2 2009-03-10 20:16:26 GMT mtk01426
-**  Init for develop
-**
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _MAC_H
@@ -186,6 +83,8 @@
 
 #define TCP_HDR_TCP_CSUM_OFFSET                 16
 #define UDP_HDR_UDP_CSUM_OFFSET                 6
+
+#define DHCP_MAGIC_NUMBER                       0x63825363
 
 #define LLC_LEN                                 8	/* LLC(3) + SNAP(3) + EtherType(2) */
 
@@ -553,7 +452,7 @@
 #define CAP_INFO_QOS                                BIT(9)
 #define CAP_INFO_SHORT_SLOT_TIME                    BIT(10)
 #define CAP_INFO_APSD                               BIT(11)
-#define CAP_INFO_RESERVED                           BIT(12)
+#define CAP_INFO_RADIO_MEASUREMENT                  BIT(12)
 #define CAP_INFO_DSSS_OFDM                          BIT(13)
 #define CAP_INFO_DELAYED_BLOCK_ACK                  BIT(14)
 #define CAP_INFO_IMM_BLOCK_ACK                      BIT(15)
@@ -724,6 +623,12 @@
 #define CATEGORY_WME_MGT_NOTIFICATION               17	/* WME management notification */
 #define CATEGORY_VENDOR_SPECIFIC_ACTION             127
 
+/* Public Action field*/
+#define PUBLIC_ACTION_GAS_INITIAL_REQ		    10
+#define PUBLIC_ACTION_GAS_INITIAL_RESP		    11
+#define PUBLIC_ACTION_GAS_COMEBACK_REQ		    12
+#define PUBLIC_ACTION_GAS_COMEBACK_RESP		    13
+
 /* 7.3.1.14 Block Ack Parameter Set field */
 #define BA_PARAM_SET_ACK_POLICY_MASK                BIT(1)
 #define BA_PARAM_SET_ACK_POLICY_MASK_OFFSET         1
@@ -774,16 +679,24 @@
 #define ELEM_ID_QOS_CAP                             46	/* QoS capability */
 #define ELEM_ID_RSN                                 48	/* RSN IE */
 #define ELEM_ID_EXTENDED_SUP_RATES                  50	/* Extended supported rates */
+#define ELEM_ID_AP_CHANNEL_REPORT                   51	/* AP Channel Report Element */
+#define ELEM_ID_NEIGHBOR_REPORT                     52	/* Neighbor Report */
+#define ELEM_ID_MOBILITY_DOMAIN                     54  /* Mobility Domain for 802.11R */
+#define ELEM_ID_FAST_TRANSITION                     55  /* Fast Bss Transition for 802.11 R */
 #define ELEM_ID_TIMEOUT_INTERVAL                    56	/* 802.11w SA Timeout interval */
+#define ELEM_ID_RESOURCE_INFO_CONTAINER             57  /* Resource Information Container for 802.11 R */
 #define ELEM_ID_SUP_OPERATING_CLASS					59	/* Supported Operating Classes */
+#define ELEM_ID_CH_ESW_ANNOUNCEMENT                 60	/* Channel switch announcement */
 #define ELEM_ID_HT_OP                               61	/* HT Operation */
 #define ELEM_ID_SCO                                 62	/* Secondary Channel Offset */
 #define ELEM_ID_RRM_ENABLED_CAP                     70	/* Radio Resource Management Enabled Capabilities */
 #define ELEM_ID_20_40_BSS_COEXISTENCE               72	/* 20/40 BSS Coexistence */
 #define ELEM_ID_20_40_INTOLERANT_CHNL_REPORT        73	/* 20/40 BSS Intolerant Channel Report */
 #define ELEM_ID_OBSS_SCAN_PARAMS                    74	/* Overlapping BSS Scan Parameters */
+#define ELEM_ID_BSS_MAX_IDLE_PERIOD					90	/* AP Keep-Alive parameters */
 #define ELEM_ID_INTERWORKING                        107	/* Interworking with External Network */
 #define ELEM_ID_ADVERTISEMENT_PROTOCOL              108	/* Advertisement Protocol */
+#define ELEM_ID_QOS_MAP_SET			110 /* QoS Map Set */
 #define ELEM_ID_ROAMING_CONSORTIUM                  111	/* Roaming Consortium */
 #define ELEM_ID_EXTENDED_CAP                        127	/* Extended capabilities */
 
@@ -852,7 +765,7 @@
 #define ELEM_RM_TYPE_FRAME_REQ                      6
 #define ELEM_RM_TYPE_STA_STATISTICS_REQ             7
 #define ELEM_RM_TYPE_LCI_REQ                        8
-#define ELEM_RM_TYPE_TS_REQ                         9
+#define ELEM_RM_TYPE_TSM_REQ                         9
 #define ELEM_RM_TYPE_MEASURE_PAUSE_REQ              255
 
 /* 7.3.2.22 Measurement Report element */
@@ -865,7 +778,7 @@
 #define ELEM_RM_TYPE_FRAME_REPORT                   6
 #define ELEM_RM_TYPE_STA_STATISTICS_REPORT          7
 #define ELEM_RM_TYPE_LCI_REPORT                     8
-#define ELEM_RM_TYPE_TS_REPORT                      9
+#define ELEM_RM_TYPE_TSM_REPORT                      9
 /*Auto Channel Selection*/
 #if CFG_AUTO_CHANNEL_SEL_SUPPORT
 #define ELEM_RM_TYPE_ACS_CHN						1
@@ -885,6 +798,7 @@
 
 /* 7.3.2.27 Extended Capabilities information element */
 #define ELEM_EXT_CAP_20_40_COEXIST_SUPPORT          BIT(0)
+#define ELEM_EXT_CAP_ECS_SUPPORT                    BIT(2)
 #define ELEM_EXT_CAP_PSMP_CAP                       BIT(4)
 #define ELEM_EXT_CAP_SERVICE_INTERVAL_GRANULARITY   BIT(5)
 #define ELEM_EXT_CAP_SCHEDULE_PSMP                  BIT(6)
@@ -892,6 +806,7 @@
 #define ELEM_EXT_CAP_BSS_TRANSITION_BIT             19
 #define ELEM_EXT_CAP_UTC_TSF_OFFSET_BIT             27
 #define ELEM_EXT_CAP_INTERWORKING_BIT               31
+#define ELEM_EXT_CAP_QOSMAPSET_BIT			32
 #define ELEM_EXT_CAP_WNM_NOTIFICATION_BIT           46
 
 #if CFG_SUPPORT_HOTSPOT_2_0
@@ -915,6 +830,16 @@
 #define TS_INFO_ACK_POLICY_OFFSET                   14
 #define TS_INFO_ACK_POLICY_MASK                     BITS(14, 15)
 #define TS_INFO_SCHEDULE_MASK                       16
+
+/* 7.3.2.45 RRM Enabled Capbility element */
+#define ELEM_MAX_LEN_RRM_CAP                        5
+#define RRM_CAP_INFO_LINK_MEASURE_BIT               0
+#define RRM_CAP_INFO_NEIGHBOR_REPORT_BIT            1
+#define RRM_CAP_INFO_BEACON_PASSIVE_MEASURE_BIT     4
+#define RRM_CAP_INFO_BEACON_ACTIVE_MEASURE_BIT      5
+#define RRM_CAP_INFO_BEACON_TABLE_BIT               6
+#define RRM_CAP_INFO_TSM_BIT                        14
+#define RRM_CAP_INFO_RRM_BIT                        17
 
 /* 7.3.2.56 HT capabilities element */
 #define ELEM_MAX_LEN_HT_CAP                         (28 - ELEM_HDR_LEN)	/* sizeof(IE_HT_CAP_T)-2 */
@@ -1055,9 +980,11 @@
 #define ACTION_ADDTS_RSP                            1	/* ADDTS response */
 #define ACTION_DELTS                                2	/* DELTS */
 #define ACTION_SCHEDULE                             3	/* Schedule */
+#define ACTION_QOS_MAP_CONFIGURE		4 /*Qos Map Configure*/
 
 #define ACTION_ADDTS_REQ_FRAME_LEN                  (24+3+63)	/* WMM TSPEC IE: 63 */
 #define ACTION_ADDTS_RSP_FRAME_LEN                  (24+4+63)	/* WMM Status Code: 1; WMM TSPEC IE: 63 */
+#define ACTION_DELTS_FRAME_LEN                      (24 + 7) /*category + action + WMM TSinfo:3 + reason:2*/
 
 /* 7.4.3 DLS Action frame details */
 #define ACTION_DLS_REQ                              0	/* DLS request */
@@ -1101,6 +1028,15 @@
 #define ACTION_SA_TIMEOUT_ASSOC_COMEBACK            3
 #endif
 
+/* MTK Vendor Specific OUI */
+#define ELEM_MIN_LEN_MTK_OUI                        7
+#define VENDOR_OUI_MTK                              { 0x00, 0x0C, 0xE7 }
+#define MTK_SYNERGY_CAP_SUPPORT_24G_MCS89           BIT(3)
+#define MTK_SYNERGY_CAP0                            (MTK_SYNERGY_CAP_SUPPORT_24G_MCS89)
+#define MTK_SYNERGY_CAP1                            0x0
+#define MTK_SYNERGY_CAP2                            0x0
+#define MTK_SYNERGY_CAP3                            0x0
+
 /* 7.4.10.1 HT action frame details */
 #define ACTION_HT_NOTIFY_CHANNEL_WIDTH              0	/* Notify Channel Width */
 #define ACTION_HT_SM_POWER_SAVE                     1	/* SM Power Save */
@@ -1111,12 +1047,15 @@
 #define ACTION_HT_COMPRESSED_BEAMFORM               6	/* Compressed Beamforming */
 #define ACTION_HT_ANT_SEL_INDICES_FB                7	/* Antenna Selection Indices Feedback */
 
+#define ACTION_WNM_NOTIFICATION_REQUEST			26
 /* 802.11v Wireless Network Management */
 #define ACTION_WNM_TIMING_MEASUREMENT_REQUEST       27
 
 #define ACTION_UNPROTECTED_WNM_TIM                  0
 #define ACTION_UNPROTECTED_WNM_TIMING_MEASUREMENT   1
-
+#define ACTION_WNM_BSS_TRANSITION_MANAGEMENT_QUERY  6
+#define ACTION_WNM_BSS_TRANSITION_MANAGEMENT_REQ    7
+#define ACTION_WNM_BSS_TRANSITION_MANAGEMENT_RSP    8
 #define ACTION_UNPROTECTED_WNM_TIMING_MEAS_LEN      12
 
 /* 3  --------------- WFA  frame body fields --------------- */
@@ -1167,6 +1106,16 @@
 #define CTRL_BAR_BAR_CONTROL_OFFSET                 16
 #define CTRL_BAR_BAR_INFORMATION_OFFSET             18
 
+/* 802.11-2012, 8.5.7 Radio Measurement action fields, table 8-206 */
+#define RM_ACTION_NEIGHBOR_REQUEST					4
+#define RM_ACTION_REIGHBOR_RESPONSE					5
+#define RM_ACTION_RM_REQUEST                        0
+#define RM_ACTION_RM_REPORT                         1
+#define RM_ACTION_LM_REQUEST                        2
+#define RM_ACTION_LM_REPORT                         3
+#define RM_ACTION_NEIGHBOR_REQUEST                  4
+#define RM_ACTION_REIGHBOR_RESPONSE                 5
+
 /*******************************************************************************
 *                             D A T A   T Y P E S
 ********************************************************************************
@@ -1198,6 +1147,24 @@ typedef struct _ETH_FRAME_T {
 	UINT_16 u2TypeLen;
 	UINT_8 aucData[1];
 } __KAL_ATTRIB_PACKED__ ETH_FRAME_T, *P_ETH_FRAME_T;
+
+typedef struct _BOOTP_PROTOCOL_T {
+	UINT_8 ucOperation;
+	UINT_8 ucHdrType;
+	UINT_8 ucHdrLen;
+	UINT_8 ucHops;
+	UINT_32 u4TransId;
+	UINT_16 u2Seconds;
+	UINT_16 u2Flags;
+	UINT_32 u4CIAddr;
+	UINT_32 u4YIAddr;
+	UINT_32 u4SIAddr;
+	UINT_32 u4GIAddr;
+	UINT_8 aucCHAddr[16];
+	UINT_8 aucServerName[64];
+	UINT_8 aucFileName[128];
+	UINT_8 aucOptions[0];
+} __KAL_ATTRIB_PACKED__ BOOTP_PROTOCOL_T, *P_BOOTP_PROTOCOL_T;
 
 /* IEEE 802.11 WLAN Frame Structure */
 /* WLAN MAC Header (without Address 4 and QoS Control fields) */
@@ -1581,12 +1548,20 @@ typedef struct _IE_SUPPORTED_CHANNELS_T {
 /* 7.3.2.20 Channel Switch Announcement element*/
 typedef struct _IE_CHANNEL_SWITCH_T {
 	UINT_8 ucId;
-	UINT_8 ucLength;
+	UINT_8 ucLength;	/* 3 bytes */
 	UINT_8 ucChannelSwitchMode;
 	UINT_8 ucNewChannelNum;
 	UINT_8 ucChannelSwitchCount;
 } __KAL_ATTRIB_PACKED__ IE_CHANNEL_SWITCH_T, *P_IE_CHANNEL_SWITCH_T;
 #endif
+typedef struct _IE_EXT_CHANNEL_SWITCH_T {
+	UINT_8 ucId;
+	UINT_8 ucLength;	/* 4 bytes */
+	UINT_8 ucChannelSwitchMode;
+	UINT_8 ucOpClass;
+	UINT_8 ucNewChannelNum;
+	UINT_8 ucChannelSwitchCount;
+} __KAL_ATTRIB_PACKED__ IE_EXT_CHANNEL_SWITCH_T, *P_IE_EXT_CHANNEL_SWITCH_T;
 
 /* 7.3.2.21 Measurement Request element */
 typedef struct _IE_MEASUREMENT_REQ_T {
@@ -1717,6 +1692,38 @@ typedef struct _RM_IPI_REPORT_T {
 	INT_8 cANPI;
 	UINT_8 aucIPI[11];
 } __KAL_ATTRIB_PACKED__ RM_IPI_REPORT_T, *P_RM_IPI_REPORT_T;
+
+struct __KAL_ATTRIB_PACKED__ RM_BCN_REPORT {
+	UINT_8 ucRegulatoryClass;
+	UINT_8 ucChannel;
+	UINT_8 aucStartTime[8];
+	UINT_16 u2Duration;
+	UINT_8 ucReportInfo;
+	UINT_8 ucRCPI;
+	UINT_8 ucRSNI;
+	UINT_8 aucBSSID[MAC_ADDR_LEN];
+	UINT_8 ucAntennaID;
+	UINT_8 aucParentTSF[4];
+	UINT_8 aucOptElem[0];
+};
+
+struct __KAL_ATTRIB_PACKED__ RM_TSM_REPORT {
+	UINT_64 u8ActualStartTime;
+	UINT_16 u2Duration;
+	UINT_8 aucPeerAddress[MAC_ADDR_LEN];
+	UINT_8 ucTID;
+	UINT_8 ucReason;
+	UINT_32 u4TransmittedMsduCnt;
+	UINT_32 u4DiscardedMsduCnt;
+	UINT_32 u4FailedMsduCnt;
+	UINT_32 u4MultiRetryCnt;
+	UINT_32 u4CfPollLostCnt;
+	UINT_32 u4AvgQueDelay;
+	UINT_32 u4AvgDelay;
+	UINT_8 ucBin0Range;
+	UINT_32 u4Bin[6];
+	UINT_8 aucOptSubElems[0];
+};
 
 /* 7.3.2.23 Quiet element */
 typedef struct _IE_QUIET_T {
@@ -1849,6 +1856,40 @@ typedef struct _IE_SUP_OPERATING_CLASS_T {
 	UINT_8 ucSup[255];
 } __KAL_ATTRIB_PACKED__ IE_SUP_OPERATING_CLASS_T, *P_IE_SUP_OPERATING_CLASS_T;
 
+/* 8.4.2.30 BSS Load element */
+struct __KAL_ATTRIB_PACKED__ IE_BSS_LOAD {
+	UINT_8 ucId;
+	UINT_8 ucLength;
+	UINT_16 u2StaCnt;
+	UINT_8 ucChnlUtilizaion;
+	UINT_16 u2AvailabeAC;
+};
+
+/* 8.4.2.81 Bss Max Idle Period */
+struct __KAL_ATTRIB_PACKED__ IE_BSS_MAX_IDLE_PERIOD {
+	UINT_8 ucId;
+	UINT_8 ucLength;
+	UINT_16 u2MaxIdlePeriod; /* unit is 1000 TUs, 1024ms */
+	UINT_8 ucIdleOption; /* BIT(0) is now means Protected Keep-Alive Required, other bits are reserved */
+};
+
+struct __KAL_ATTRIB_PACKED__ IE_NEIGHBOR_REPORT_T {
+	UINT_8 ucId;		/* Element ID */
+	UINT_8 ucLength;	/* Length */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* OUI */
+	UINT_8 aucBSSIDInfo[4];		/* Type */
+	UINT_8 ucOperClass; /* Hotspot Configuration */
+	UINT_8 ucChnlNumber;
+	UINT_8 ucPhyType;
+	UINT_8 aucSubElem[0];
+};
+
+struct __KAL_ATTRIB_PACKED__ SUB_ELEMENT_T {
+	UINT_8 ucSubID;
+	UINT_8 ucLength;
+	UINT_8 aucOptInfo[1];
+};
+
 /* 3 7.4 Action Frame. */
 /* 7.4 Action frame format */
 typedef struct _WLAN_ACTION_FRAME {
@@ -1949,6 +1990,21 @@ typedef struct _ACTION_DELTS_FRAME {
 	UINT_8 aucTsInfo[3];	/* TS Info */
 } __KAL_ATTRIB_PACKED__ ACTION_DELTS_FRAME, *P_ACTION_DELTS_FRAME;
 
+/* 7.4.2.3 QOSMAP frame format */
+struct _ACTION_QOS_MAP_CONFIGURE_FRAME {
+	/* QOSMAP CONFIGURE MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2DurationID;	/* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* DELTS frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+	UINT_8 qosMapSet[1];	/* qosmapset */
+};
+
 /* 7.4.4.1 ADDBA Request frame format */
 typedef struct _ACTION_ADDBA_REQ_FRAME_T {
 	/* Action MAC header */
@@ -2012,6 +2068,20 @@ typedef struct _ACTION_DELBA_FRAME_T {
 	UINT_16 u2DelBaParameterSet;	/* Bit 11 Initiator, Bits 12-15 TID */
 	UINT_16 u2ReasonCode;	/* 7.3.1.7 */
 } __KAL_ATTRIB_PACKED__ ACTION_DELBA_FRAME_T, *P_ACTION_DELBA_FRAME_T;
+
+#if CFG_SUPPORT_NCHO
+/* 7.4.5.1 vendor-specific frame format */
+typedef struct _ACTION_VENDOR_SPEC_FRAME_T {
+	/* Action MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration;	/* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	UINT_8 aucElemInfo[0];	/* Pointer to frame data */
+} __KAL_ATTRIB_PACKED__ ACTION_VENDOR_SPEC_FRAME_T, *P_ACTION_VENDOR_SPEC_FRAME_T;
+#endif
 
 /* 7.4.6.1 Radio Measurement Request frame format */
 typedef struct _ACTION_RM_REQ_FRAME {
@@ -2135,6 +2205,32 @@ typedef struct _ACTION_UNPROTECTED_WNM_TIMING_MEAS_FRAME {
 	UINT_8 ucMaxToAErr;	/* Maximum of ToA Error [10ns] */
 } __KAL_ATTRIB_PACKED__ ACTION_UNPROTECTED_WNM_TIMING_MEAS_FRAME, *P_ACTION_UNPROTECTED_WNM_TIMING_MEAS_FRAME;
 
+/* 8.5.7.6/8.5.7.7 Neighbor Report Request/Response frame format */
+struct ACTION_NEIGHBOR_REPORT_FRAME {
+	/* Neighbor Report Request/Response MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration;	/* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* Neighbor Report Request/Response frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+	UINT_8 ucDialogToken;	/* Dialog Token */
+	UINT_8 aucInfoElem[1];	/* subelements */
+};
+struct IE_WFA_OSEN {
+	UINT_8 ucId;
+	UINT_8 ucLength;
+	UINT_8 aucOui[3];
+	UINT_8 ucOuiType;
+	UINT_32 u4GroupKeyCipherSuite;
+	UINT_16 u2PairwiseKeyCipherSuiteCount;
+	UINT_8 aucPairwiseKeyCipherSuite1[4];
+};
+
+
 /* 3 Information Elements from WFA. */
 typedef struct _IE_WFA_T {
 	UINT_8 ucId;
@@ -2163,11 +2259,257 @@ typedef struct _WAPI_INFO_ELEM_T {
 	UINT_16 u2AuthKeyMgtSuiteCount;
 	UCHAR aucAuthKeyMgtSuite1[4];
 } __KAL_ATTRIB_PACKED__ WAPI_INFO_ELEM_T, *P_WAPI_INFO_ELEM_T;
+/* Information Elements from MTK Synergies.*/
+typedef struct _IE_MTK_OUI_T {
+	UINT_8 ucId;
+	UINT_8 ucLength;
+	UINT_8 aucOui[3];
+	UINT_8 aucCapability[4];
+	UINT_8 aucInfoElem[1];
+} __KAL_ATTRIB_PACKED__ IE_MTK_OUI_T, *P_IE_MTK_OUI_T;
+
+typedef struct _ACTION_ECSA_T {
+	UINT_16 frame_control;
+	UINT_16 duration;
+	UINT_8 da[MAC_ADDR_LEN];
+	UINT_8 sa[MAC_ADDR_LEN];
+	UINT_8 bssid[MAC_ADDR_LEN];
+	UINT_16 seq_ctrl;
+
+	UINT_8 caegory;
+	UINT_8 action_code;
+
+	UINT_8 mode;
+	UINT_8 new_operating_class;
+	UINT_8 new_ch_num;
+	UINT_8 count;
+
+	UINT_8 variable[0];
+} __KAL_ATTRIB_PACKED__ ACTIOIN_ECSA_T, *P_ACTION_ECSA_T;
+
+typedef struct _ACTION_CSA_T {
+	UINT_16 frame_control;
+	UINT_16 duration;
+	UINT_8 da[MAC_ADDR_LEN];
+	UINT_8 sa[MAC_ADDR_LEN];
+	UINT_8 bssid[MAC_ADDR_LEN];
+	UINT_16 seq_ctrl;
+
+	UINT_8 caegory;
+	UINT_8 action_code;
+
+	UINT_8 csa_id;
+	UINT_8 clen;
+	UINT_8 mode;
+	UINT_8 new_ch_num;
+	UINT_8 count;
+
+	UINT_8 sco_id;
+	UINT_8 slen;
+	UINT_8 sco;
+
+	UINT_8 variable[0];
+}  __KAL_ATTRIB_PACKED__ ACTIOIN_CSA_T, *P_ACTION_CSA_T;
 
 #if defined(WINDOWS_DDK) || defined(WINDOWS_CE)
 #pragma pack()
 #endif
 
+struct __KAL_ATTRIB_PACKED__ SUB_IE_BSS_TERM_DURATION_T {
+	UINT_8 ucSubId;
+	UINT_8 ucLength;
+	UINT_8 aucTermTsf[8];
+	UINT_16 u2Duration;
+};
+
+struct __KAL_ATTRIB_PACKED__ SUB_IE_BSS_CAND_PREFERENCE_T {
+	UINT_8 ucSubId;
+	UINT_8 ucLength;
+	UINT_8 ucPreference;
+};
+
+struct __KAL_ATTRIB_PACKED__ ACTION_BTM_QUERY_FRAME_T {
+	/* MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration; /* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* BSS Coexistence Management frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+
+	UINT_8 ucDialogToken;
+	UINT_8 ucQueryReason;
+	PUINT_8 pucNeighborBss;
+};
+
+struct __KAL_ATTRIB_PACKED__ ACTION_BTM_REQ_FRAME_T {
+	/* MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration; /* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* BSS Coexistence Management frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+
+	UINT_8 ucDialogToken;
+	UINT_8 ucRequestMode;
+	UINT_16 u2DisassocTimer;
+	UINT_8 ucValidityInterval;
+	UINT_8 aucOptInfo[0];
+	/* Optional: Bss Termination Duration(0~12 bytes),
+	* Session Information URL, Bss Transition Candidate List */
+};
+
+struct __KAL_ATTRIB_PACKED__ ACTION_BTM_RSP_FRAME_T {
+	/* MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration; /* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* BSS Coexistence Management frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+
+	UINT_8 ucDialogToken;
+	UINT_8 ucStatusCode;
+	UINT_8 ucBssTermDelay;
+	UINT_8 aucOptInfo[0];
+	/* Optional Target BSSID and Transition Candidate Entry list */
+};
+
+struct __KAL_ATTRIB_PACKED__ IE_MOBILITY_DOMAIN_T {
+	UINT_8 ucId; /* Element ID = 54 */
+	UINT_8 ucLength; /* Length is 3 */
+	UINT_16 u2MDID;
+	UINT_8 ucBitMap; /* Bit 0: FT over DS; Bit 1: Resource Request Protocol Capbility, others: reserved */
+};
+
+struct __KAL_ATTRIB_PACKED__ IE_FAST_TRANSITION_T {
+	UINT_8 ucId; /* Element ID = 55 */
+	UINT_8 ucLength; /* Length is variable */
+	UINT_8 ucMicCtrl; /* Bit 0 ~ Bit 7: reserved; Bit 8 ~ Bit 15: IE count used to calculate MIC, 0 means No MIC*/
+	UINT_8 aucMic[16]; /*  */
+	UINT_8 aucANonce[32]; /* Nonce of R1KH */
+	UINT_8 aucSNonce[32]; /* Nonce of S1KH */
+	UINT_8 aucOptParam[0];
+};
+
+struct __KAL_ATTRIB_PACKED__ SUB_IE_FAST_TRANSITION_T {
+	UINT_8 ucSubId; /* 0, 4-255: reserved; 1: R1KH-ID; 2: GTK; 3: R0KH-ID */
+	UINT_8 ucLength; /* bytes, R1KH-ID: 6; GTK: 15-42; R0KH-ID: 1-48 */
+	UINT_8 aucData[1];
+};
+
+struct __KAL_ATTRIB_PACKED__ SUB_IE_GTK_T {
+	UINT_8 ucSubId; /*  subId=2 */
+	UINT_8 ucLength; /*  length is 15-42 */
+	UINT_16 u2KeyInfo; /* Bit0-Bit1: Key ID; Bit2-Bit15: reserved */
+	UINT_8 ucKeyLength;
+	UINT_8 aucRsc[8];
+	UINT_8 aucKey[5];
+};
+
+/* 8.5.7.4 Link Measurement Request frame format */
+struct __KAL_ATTRIB_PACKED__ ACTION_LM_REQUEST_FRAME {
+	/* Link Measurement Request MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration;	/* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* Link Measurement Request frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+	UINT_8 ucDialogToken;	/* Dialog Token */
+	UINT_8 ucTxPowerUsed;	/*  */
+	UINT_8 ucTxPowerMax;	/*  */
+	UINT_8 aucInfoElem[1];	/* subelements */
+};
+
+/* 8.5.7.5 Link Measurement Report frame format */
+struct __KAL_ATTRIB_PACKED__ ACTION_LM_REPORT_FRAME {
+	/* Link Measurement Report MAC header */
+	UINT_16 u2FrameCtrl;	/* Frame Control */
+	UINT_16 u2Duration;	/* Duration */
+	UINT_8 aucDestAddr[MAC_ADDR_LEN];	/* DA */
+	UINT_8 aucSrcAddr[MAC_ADDR_LEN];	/* SA */
+	UINT_8 aucBSSID[MAC_ADDR_LEN];	/* BSSID */
+	UINT_16 u2SeqCtrl;	/* Sequence Control */
+	/* Link Measurement Report frame body */
+	UINT_8 ucCategory;	/* Category */
+	UINT_8 ucAction;	/* Action Value */
+	UINT_8 ucDialogToken;	/* Dialog Token */
+	UINT_8 aucTpcReportIE[4];	/*   */
+	UINT_8 ucRxAntennaID;
+	UINT_8 ucTxAntennaID;
+	UINT_8 ucRCPI;
+	UINT_8 ucRSNI;
+	UINT_8 aucInfoElem[1];	/* subelements */
+};
+
+struct __KAL_ATTRIB_PACKED__ IE_REQUEST_T {
+	UINT_8 ucId; /* ELEM_ID_REQUEST */
+	UINT_8 ucLength; /* 0 to 237 */
+	UINT_8 aucReqIds[0];
+};
+
+struct __KAL_ATTRIB_PACKED__ IE_AP_CHNL_REPORT_T {
+	UINT_8 ucId; /* ELEM_ID_AP_CHANNEL_REPORT */
+	UINT_8 ucLength; /* 1 to 237 */
+	UINT_8 ucOpClass;
+	UINT_8 aucChnlList[0];
+};
+
+struct __KAL_ATTRIB_PACKED__ SUB_IE_REPORTING_DETAIL_T {
+	UINT_8 ucSubID; /* 2 */
+	UINT_8 ucLength;
+	/* 0: No fixed length fields or elemets. 1: all fixed length fields and requested IEs 2: */
+	UINT_8 ucDetailValue;
+};
+
+struct __KAL_ATTRIB_PACKED__ IE_TSPEC_BODY {
+	UINT_8	aucTsInfo[3];               /* TS info field */
+	UINT_16 u2NominalMSDUSize;     /* nominal MSDU size */
+	UINT_16 u2MaxMSDUsize;         /* maximum MSDU size */
+	UINT_32 u4MinSvcIntv;          /* minimum service interval */
+	UINT_32 u4MaxSvcIntv;          /* maximum service interval */
+	UINT_32 u4InactIntv;           /* inactivity interval */
+	UINT_32 u4SpsIntv;             /* suspension interval */
+	UINT_32 u4SvcStartTime;        /* service start time */
+	UINT_32 u4MinDataRate;         /* minimum Data rate */
+	UINT_32 u4MeanDataRate;        /* mean data rate */
+	UINT_32 u4PeakDataRate;        /* peak data rate */
+	UINT_32 u4MaxBurstSize;        /* maximum burst size */
+	UINT_32 u4DelayBound;          /* delay bound */
+	UINT_32 u4MinPHYRate;          /* minimum PHY rate */
+	UINT_16 u2Sba;                 /* surplus bandwidth allowance */
+	UINT_16 u2MediumTime;          /* medium time */
+};
+
+struct __KAL_ATTRIB_PACKED__ WMM_ACTION_TSPEC_FRAME {
+	/* DELTS MAC header */
+	UINT_16     u2FrameCtrl;                /* Frame Control */
+	UINT_16     u2DurationID;               /* Duration */
+	UINT_8      aucDestAddr[MAC_ADDR_LEN];  /* DA */
+	UINT_8      aucSrcAddr[MAC_ADDR_LEN];   /* SA */
+	UINT_8      aucBSSID[MAC_ADDR_LEN];     /* BSSID */
+	UINT_16     u2SeqCtrl;                  /* Sequence Control */
+	/* DELTS frame body */
+	UINT_8      ucCategory;                 /* Category, value is 17  */
+	UINT_8      ucAction;                   /* Action Value, value: 2, delts */
+	UINT_8		ucDlgToken;
+	UINT_8		ucStatusCode;
+	UINT_8		aucInfoElem[1];
+};
 /*******************************************************************************
 *                            P U B L I C   D A T A
 ********************************************************************************
@@ -2233,6 +2575,8 @@ typedef struct _WAPI_INFO_ELEM_T {
 #define SUP_OPERATING_CLASS_IE(fp) ((P_IE_SUP_OPERATING_CLASS_T) fp)
 
 #define QUIET_IE(fp)            ((P_IE_QUIET_T) fp)
+#define MTK_OUI_IE(fp)          ((P_IE_MTK_OUI_T) fp)
+
 
 #if CFG_SUPPORT_DFS		/* Add by Enlai */
 #define SUPPORTED_CHANNELS_IE(fp) ((P_IE_SUPPORTED_CHANNELS_T)fp)

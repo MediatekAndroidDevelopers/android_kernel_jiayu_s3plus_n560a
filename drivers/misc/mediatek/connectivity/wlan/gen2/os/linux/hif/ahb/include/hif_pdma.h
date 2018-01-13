@@ -1,20 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/os/linux/hif/sdio/include/hif.h#1
-*/
-
-/*! \file   "hif_pdma.h"
-    \brief  MARCO, definition, structure for PDMA.
-
-    MARCO, definition, structure for PDMA.
-*/
-
-/*
-** Log: hif_pdma.h
- *
- * 01 16 2013 vend_samp.lin
- * Add AHB PDMA support
- * 1) Initial version
-**
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _HIF_PDMA_H
@@ -70,8 +64,10 @@ typedef enum _MTK_WCN_HIF_PDMA_BURST_LEN {
 #define AP_DMA_HIF_0_LEN            (0x0024)
 #define AP_DMA_HIF_0_INT_BUF_SIZE   (0x0038)
 #define AP_DMA_HIF_0_DEBUG_STATUS   (0x0050)
+#define AP_DMA_HIF_0_SRC_ADDR2		(0x0054)
+#define AP_DMA_HIF_0_DST_ADDR2		(0x0058)
 
-#define AP_DMA_HIF_0_LENGTH         0x0054
+#define AP_DMA_HIF_0_LENGTH         0x0080
 
 /* AP_DMA_HIF_0_INT_FLAG */
 #define ADH_CR_FLAG_0               BIT(0)
@@ -104,6 +100,11 @@ typedef enum _MTK_WCN_HIF_PDMA_BURST_LEN {
 
 /* AP_DMA_HIF_0_LEN */
 #define ADH_CR_LEN                  BITS(0, 19)
+
+/* AP_DMA_HIF_0_SRC_ADDR2 */
+#define ADH_CR_SRC_ADDR2		BIT(0)
+/* AP_DMA_HIF_0_DST_ADDR2 */
+#define ADH_CR_DST_ADDR2		BIT(0)
 
 /*******************************************************************************
 *                            P U B L I C   D A T A

@@ -1,189 +1,14 @@
 /*
-** Id: @(#) gl_bow.c@@
-*/
-
-/*! \file   gl_bow.c
-    \brief  Main routines of Linux driver interface for 802.11 PAL (BT 3.0 + HS)
-
-    This file contains the main routines of Linux driver for MediaTek Inc. 802.11
-    Wireless LAN Adapters.
-*/
-
-/*
-** Log: gl_bow.c
- *
- * 02 16 2012 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * [ALPS00235223] [Rose][ICS][Cross Feature][AEE-IPANIC]The device reboot automatically and then the "KE" pops up
- * after you turn on the "Airplane mode".(once)
- *
- * [Root Cause]
- * PAL operates BOW char dev poll after BOW char dev is registered.
- *
- * [Solution]
- * Rejects PAL char device operation after BOW is unregistered or when wlan GLUE_FLAG_HALT is set.
- *
- * This is a workaround for BOW driver robustness, happens only in ICS.
- *
- * Root cause should be fixed by CR [ALPS00231570]
- *
- * 02 03 2012 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * [ALPS00118114] [Rose][ICS][Free Test][Bluetooth]The "KE" pops up after you turn on the airplane mode.(5/5)
- *
- * [Root Cause]
- * PAL operates BOW char dev poll after BOW char dev is registered.
- *
- * [Solution]
- * Rejects PAL char device operation after BOW is unregistered.
- *
- * Happens only in ICS.
- *
- * Notified PAL owener to reivew MTKBT/PAL closing BOW char dev procedure.
- *
- * [Side Effect]
- * None.
- *
- * 01 16 2012 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Support BOW for 5GHz band.
- *
- * 11 10 2011 cp.wu
- * [WCXRP00001098] [MT6620 Wi-Fi][Driver] Replace printk by DBG LOG macros in linux porting layer
- * 1. eliminaite direct calls to printk in porting layer.
- * 2. replaced by DBGLOG, which would be XLOG on ALPS platforms.
- *
- * 10 25 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Modify ampc0 char device for major number 151 for all MT6575 projects.
- *
- * 07 28 2011 cp.wu
- * [WCXRP00000884] [MT6620 Wi-Fi][Driver] Deprecate ioctl interface by unlocked ioctl
- * unlocked_ioctl returns as long instead of int.
- *
- * 07 28 2011 cp.wu
- * [WCXRP00000884] [MT6620 Wi-Fi][Driver] Deprecate ioctl interface by unlocked ioctl
- * migrate to unlocked ioctl interface
- *
- * 04 12 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Add WMM IE for BOW initiator data.
- *
- * 04 10 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Change Link disconnection event procedure for hotspot and change skb length check to 1514 bytes.
- *
- * 04 09 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Change Link connection event procedure and change skb length check to 1512 bytes.
- *
- * 03 27 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Support multiple physical link.
- *
- * 03 06 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Sync BOW Driver to latest person development branch version..
- *
- * 03 03 2011 jeffrey.chang
- * [WCXRP00000512] [MT6620 Wi-Fi][Driver] modify the net device relative functions to support the H/W multiple queue
- * support concurrent network
- *
- * 03 03 2011 jeffrey.chang
- * [WCXRP00000512] [MT6620 Wi-Fi][Driver] modify the net device relative functions to support the H/W multiple queue
- * replace alloc_netdev to alloc_netdev_mq for BoW
- *
- * 03 03 2011 jeffrey.chang
- * [WCXRP00000512] [MT6620 Wi-Fi][Driver] modify the net device relative functions to support the H/W multiple queue
- * modify net device relative functions to support multiple H/W queues
- *
- * 02 15 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Update net register and BOW for concurrent features.
- *
- * 02 10 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Fix kernel API change issue.
- * Before ALPS 2.2 (2.2 included), kfifo_alloc() is
- * struct kfifo *kfifo_alloc(unsigned int size, gfp_t gfp_mask, spinlock_t *lock);
- * After ALPS 2.3, kfifo_alloc() is changed to
- * int kfifo_alloc(struct kfifo *fifo, unsigned int size, gfp_t gfp_mask);
- *
- * 02 09 2011 cp.wu
- * [WCXRP00000430] [MT6620 Wi-Fi][Firmware][Driver] Create V1.2 branch for MT6620E1 and MT6620E3
- * create V1.2 driver branch based on label MT6620_WIFI_DRIVER_V1_2_110209_1031
- * with BOW and P2P enabled as default
- *
- * 02 08 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Replace kfifo_get and kfifo_put with kfifo_out and kfifo_in.
- * Update BOW get MAC status, remove returning event for AIS network type.
- *
- * 01 12 2011 cp.wu
- * [WCXRP00000357] [MT6620 Wi-Fi][Driver][Bluetooth over Wi-Fi] add another net device interface for BT AMP
- * implementation of separate BT_OVER_WIFI data path.
- *
- * 01 12 2011 cp.wu
- * [WCXRP00000356] [MT6620 Wi-Fi][Driver] fill mac header length for security frames 'cause hardware header translation
- * needs such information
- * fill mac header length information for 802.1x frames.
- *
- * 11 11 2010 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Fix BoW timer assert issue.
- *
- * 09 14 2010 chinghwa.yu
- * NULL
- * Add bowRunEventAAAComplete.
- *
- * 09 14 2010 cp.wu
- * NULL
- * correct typo: POLLOUT instead of POLL_OUT
- *
- * 09 13 2010 cp.wu
- * NULL
- * add waitq for poll() and read().
- *
- * 08 24 2010 chinghwa.yu
- * NULL
- * Update BOW for the 1st time.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 06 2010 kevin.huang
- * [WPD00003832][MT6620 5931] Create driver base
- * [MT6620 5931] Create driver base
- *
- * 05 05 2010 cp.wu
- * [WPD00003823][MT6620 Wi-Fi] Add Bluetooth-over-Wi-Fi support
- * change variable names for multiple physical link to match with coding convention
- *
- * 05 05 2010 cp.wu
- * [WPD00003823][MT6620 Wi-Fi] Add Bluetooth-over-Wi-Fi support
- * multiple BoW interfaces need to compare with peer address
- *
- * 04 28 2010 cp.wu
- * [WPD00003823][MT6620 Wi-Fi] Add Bluetooth-over-Wi-Fi support
- * change prefix for data structure used to communicate with 802.11 PAL
- * to avoid ambiguous naming with firmware interface
- *
- * 04 28 2010 cp.wu
- * [WPD00003823][MT6620 Wi-Fi] Add Bluetooth-over-Wi-Fi support
- * fix kalIndicateBOWEvent.
- *
- * 04 27 2010 cp.wu
- * [WPD00003823][MT6620 Wi-Fi] Add Bluetooth-over-Wi-Fi support
- * add multiple physical link support
- *
- * 04 13 2010 cp.wu
- * [WPD00003823][MT6620 Wi-Fi] Add Bluetooth-over-Wi-Fi support
- * add framework for BT-over-Wi-Fi support.
- *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * 1) prPendingCmdInfo is replaced by queue for multiple handler capability
- *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * 2) command sequence number is now increased atomically
- *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * 3) private data could be hold and taken use for other purpose
-**
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -241,7 +66,7 @@ mt6620_ampc_write(IN struct file *filp, OUT const char __user *buf, IN size_t si
 
 static long mt6620_ampc_ioctl(IN struct file *filp, IN unsigned int cmd, IN OUT unsigned long arg);
 
-static unsigned int mt6620_ampc_poll(IN struct file *filp, IN poll_table *wait);
+static unsigned int mt6620_ampc_poll(IN struct file *filp, IN poll_table * wait);
 
 static int mt6620_ampc_open(IN struct inode *inodep, IN struct file *filp);
 
@@ -541,7 +366,7 @@ static long mt6620_ampc_ioctl(IN struct file *filp, IN unsigned int cmd, IN OUT 
 *
 */
 /*----------------------------------------------------------------------------*/
-static unsigned int mt6620_ampc_poll(IN struct file *filp, IN poll_table *wait)
+static unsigned int mt6620_ampc_poll(IN struct file *filp, IN poll_table * wait)
 {
 	unsigned int retval;
 	P_GLUE_INFO_T prGlueInfo;
@@ -1008,6 +833,7 @@ static int bowHardStartXmit(IN struct sk_buff *prSkb, IN struct net_device *prDe
 	aucOUI[0] = *(PUINT_8) &aucLookAheadBuf[ETH_SNAP_OFFSET];
 	aucOUI[1] = *(PUINT_8) &aucLookAheadBuf[ETH_SNAP_OFFSET + 1];
 	aucOUI[2] = *(PUINT_8) &aucLookAheadBuf[ETH_SNAP_OFFSET + 2];
+	prGlueInfo->u8SkbToDriver++;
 
 	if (!(ucDSAP == ETH_LLC_DSAP_SNAP &&
 	      ucSSAP == ETH_LLC_SSAP_SNAP &&
@@ -1020,12 +846,14 @@ static int bowHardStartXmit(IN struct sk_buff *prSkb, IN struct net_device *prDe
 #endif
 
 		dev_kfree_skb(prSkb);
+		prGlueInfo->u8SkbFreed++;
 		return NETDEV_TX_OK;
 	}
 
 	if (prGlueInfo->ulFlag & GLUE_FLAG_HALT) {
 		DBGLOG(BOW, TRACE, "GLUE_FLAG_HALT skip tx\n");
 		dev_kfree_skb(prSkb);
+		prGlueInfo->u8SkbFreed++;
 		return NETDEV_TX_OK;
 	}
 
@@ -1065,6 +893,9 @@ static int bowHardStartXmit(IN struct sk_buff *prSkb, IN struct net_device *prDe
 		GLUE_INC_REF_CNT(prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_BOW_INDEX][u2QueueIdx]);
 		if (prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_BOW_INDEX][u2QueueIdx] >=
 				CFG_TX_STOP_NETIF_PER_QUEUE_THRESHOLD)
+			DBGLOG(TX, INFO, "netif_stop_subqueue for BOW, Queue len: %d\n",
+				prGlueInfo->ai4TxPendingFrameNumPerQueue[NETWORK_TYPE_BOW_INDEX][u2QueueIdx]);
+
 			netif_stop_subqueue(prDev, u2QueueIdx);
 	} else {
 		GLUE_INC_REF_CNT(prGlueInfo->i4TxPendingSecurityFrameNum);
@@ -1106,7 +937,7 @@ BOOLEAN kalInitBowDevice(IN P_GLUE_INFO_T prGlueInfo, IN const char *prDevName)
 	ASSERT(prHif);
 	if (prGlueInfo->rBowInfo.fgIsNetRegistered == FALSE) {
 		prGlueInfo->rBowInfo.prDevHandler =
-		alloc_netdev_mq(sizeof(P_GLUE_INFO_T), prDevName, ether_setup, CFG_MAX_TXQ_NUM);
+		alloc_netdev_mq(sizeof(P_GLUE_INFO_T), prDevName, NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
 		if (!prGlueInfo->rBowInfo.prDevHandler)
 			return FALSE;
 
@@ -1117,9 +948,9 @@ BOOLEAN kalInitBowDevice(IN P_GLUE_INFO_T prGlueInfo, IN const char *prDevName)
 		COPY_MAC_ADDR(rMacAddr, prAdapter->rMyMacAddr);
 		rMacAddr[0] |= 0x2;
 		/* change to local administrated address */
-		memcpy(prGlueInfo->rBowInfo.prDevHandler->dev_addr, rMacAddr, ETH_ALEN);
-		memcpy(prGlueInfo->rBowInfo.prDevHandler->perm_addr,
-			prGlueInfo->rBowInfo.prDevHandler->dev_addr, ETH_ALEN);
+		ether_addr_copy(prGlueInfo->rBowInfo.prDevHandler->dev_addr, rMacAddr);
+		ether_addr_copy(prGlueInfo->rBowInfo.prDevHandler->perm_addr,
+			prGlueInfo->rBowInfo.prDevHandler->dev_addr);
 		/* 1.3 register callback functions */
 		prGlueInfo->rBowInfo.prDevHandler->netdev_ops = &bow_netdev_ops;
 #if (MTK_WCN_HIF_SDIO == 0)

@@ -1,18 +1,24 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software: you can redistribute it and/or modify it under the terms of the
+* GNU General Public License version 2 as published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See the GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License along with this program.
+* If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/*
 ** Id: tdls.c#1
 */
 
 /*! \file tdls.c
     \brief This file includes IEEE802.11z TDLS support.
 */
-
-/*
-** Log: tdls.c
- *
- * 11 13 2013 vend_samp.lin
- * NULL
- * Initial version.
- */
 
 /*******************************************************************************
  *						C O M P I L E R	 F L A G S
@@ -197,8 +203,7 @@ UINT_32 TdlsexLinkMgt(P_ADAPTER_T prAdapter, PVOID pvSetBuffer, UINT_32 u4SetBuf
 	case TDLS_FRM_ACTION_TEARDOWN:
 
 		prStaRec = cnmGetTdlsPeerByAddress(prAdapter, prAdapter->prAisBssInfo->ucBssIndex, prCmd->aucPeer);
-		if (prCmd->u2StatusCode == TDLS_REASON_CODE_UNREACHABLE)
-			g_arTdlsLink[prStaRec->ucTdlsIndex] = 0;
+		g_arTdlsLink[prStaRec->ucTdlsIndex] = 0;
 
 		if (TdlsDataFrameSend_TearDown(prAdapter,
 					       prStaRec,
@@ -1705,18 +1710,20 @@ TdlsDataFrameSend_DISCOVERY_RSP(ADAPTER_T *prAdapter,
 		LR_TDLS_FME_FIELD_FILL(AppendIeLen);
 	}
 
-	prMsduInfoMgmt->ucPacketType = TX_PACKET_TYPE_MGMT;
-	prMsduInfoMgmt->ucStaRecIndex = prBssInfo->prStaRecOfAP->ucIndex;
-	prMsduInfoMgmt->ucBssIndex = prBssInfo->ucBssIndex;
-	prMsduInfoMgmt->ucMacHeaderLength = WLAN_MAC_MGMT_HEADER_LEN;
-	prMsduInfoMgmt->fgIs802_1x = FALSE;
-	prMsduInfoMgmt->fgIs802_11 = TRUE;
-	prMsduInfoMgmt->u2FrameLength = u4PktLen;
-	prMsduInfoMgmt->ucTxSeqNum = nicIncreaseTxSeqNum(prAdapter);
-	prMsduInfoMgmt->pfTxDoneHandler = NULL;
+	if (ucActionCode == TDLS_FRM_ACTION_DISCOVERY_RSP) {
+		prMsduInfoMgmt->ucPacketType = TX_PACKET_TYPE_MGMT;
+		prMsduInfoMgmt->ucStaRecIndex = prBssInfo->prStaRecOfAP->ucIndex;
+		prMsduInfoMgmt->ucBssIndex = prBssInfo->ucBssIndex;
+		prMsduInfoMgmt->ucMacHeaderLength = WLAN_MAC_MGMT_HEADER_LEN;
+		prMsduInfoMgmt->fgIs802_1x = FALSE;
+		prMsduInfoMgmt->fgIs802_11 = TRUE;
+		prMsduInfoMgmt->u2FrameLength = u4PktLen;
+		prMsduInfoMgmt->ucTxSeqNum = nicIncreaseTxSeqNum(prAdapter);
+		prMsduInfoMgmt->pfTxDoneHandler = NULL;
 
-	/* Send them to HW queue */
-	nicTxEnqueueMsdu(prAdapter, prMsduInfoMgmt);
+		/* Send them to HW queue */
+		nicTxEnqueueMsdu(prAdapter, prMsduInfoMgmt);
+	}
 
 	return TDLS_STATUS_SUCCESS;
 }

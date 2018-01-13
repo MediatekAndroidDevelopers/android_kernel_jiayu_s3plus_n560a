@@ -1,61 +1,14 @@
 /*
-** Id: //Department/DaVinci/TRUNK/WiFi_P2P_Driver/os/linux/include/gl_p2p_kal.h#2
-*/
-
-/*! \file   gl_p2p_kal.h
-    \brief  Declaration of KAL functions for Wi-Fi Direct support
-	    - kal*() which is provided by GLUE Layer.
-
-    Any definitions in this file will be shared among GLUE Layer and internal Driver Stack.
-*/
-
-/*
-** Log: gl_p2p_kal.h
-**
-** 08 30 2012 chinglan.wang
-** [ALPS00349664] [6577JB][WIFI] Phone can not connect to AP secured with AES via WPS in 802.11n Only
-** .
- *
- * 07 17 2012 yuche.tsai
- * NULL
- * Compile no error before trial run.
- *
- * 10 18 2011 yuche.tsai
- * [WCXRP00001045] [WiFi Direct][Driver] Check 2.1 branch.
- * New 2.1 branch
-
- *
- * 08 15 2011 yuche.tsai
- * [WCXRP00000919] [Volunteer Patch][WiFi Direct][Driver] Invitation New Feature.
- * Add group BSSID in invitation request indication.
- * The BSSID is used for APP to decide the configure method.
- *
- * 08 09 2011 yuche.tsai
- * [WCXRP00000919] [Volunteer Patch][WiFi Direct][Driver] Invitation New Feature.
- * Invitation Feature add on.
- *
- * 03 19 2011 terry.wu
- * [WCXRP00000577] [MT6620 Wi-Fi][Driver][FW] Create V2.0 branch for firmware and driver
- * create V2.0 p2p driver release based on label "MT6620_WIFI_P2P_DRIVER_V2_0_2100_0319_2011" from main trunk.
- *
- * 03 07 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * rename the define to anti_pviracy.
- *
- * 03 05 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * add the code to get the check rsponse and indicate to app.
- *
- * 03 02 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * Add Security check related code.
- *
- * 12 22 2010 cp.wu
- * [WCXRP00000283] [MT6620 Wi-Fi][Driver][Wi-Fi Direct] Implementation of interface for supporting Wi-Fi Direct Service
- * Discovery
- * 1. header file restructure for more clear module isolation
- * 2. add function interface definition for implementing Service Discovery callbacks
- *
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _GL_P2P_KAL_H
@@ -78,7 +31,6 @@
 #include "wlan_p2p.h"
 #include "gl_kal.h"
 #include "gl_wext_priv.h"
-#include "gl_p2p_ioctl.h"
 #include "nic/p2p.h"
 
 #if DBG
@@ -127,6 +79,10 @@ wextSrchDesiredWPSIE(IN PUINT_8 pucIEStart,
 BOOLEAN kalP2pFuncGetChannelType(IN ENUM_CHNL_EXT_T rChnlSco, OUT enum nl80211_channel_type *channel_type);
 struct ieee80211_channel *kalP2pFuncGetChannelEntry(IN P_GL_P2P_INFO_T prP2pInfo, IN P_RF_CHANNEL_INFO_T prChannelInfo);
 
+#if CFG_SUPPORT_P2P_ECSA
+VOID kalP2pUpdateECSA(IN P_ADAPTER_T prAdapter, IN P_EVENT_ECSA_RESULT prECSA);
+#endif
+
 /* Service Discovery */
 VOID kalP2PIndicateSDRequest(IN P_GLUE_INFO_T prGlueInfo, IN PARAM_MAC_ADDRESS rPeerAddr, IN UINT_8 ucSeqNum);
 
@@ -173,6 +129,13 @@ VOID kalP2PGenWSC_IE(IN P_GLUE_INFO_T prGlueInfo, IN UINT_8 ucType, IN PUINT_8 p
 
 VOID kalP2PUpdateWSC_IE(IN P_GLUE_INFO_T prGlueInfo, IN UINT_8 ucType, IN PUINT_8 pucBuffer, IN UINT_16 u2BufferLength);
 
+UINT_16 kalP2PCalP2P_IELen(IN P_GLUE_INFO_T prGlueInfo, IN UINT_8 ucIndex);
+
+VOID kalP2PGenP2P_IE(IN P_GLUE_INFO_T prGlueInfo, IN UINT_8 ucIndex, IN PUINT_8 pucBuffer);
+
+VOID kalP2PUpdateP2P_IE(IN P_GLUE_INFO_T prGlueInfo,
+		IN UINT_8 ucIndex, IN PUINT_8 pucBuffer, IN UINT_16 u2BufferLength);
+
 BOOLEAN kalP2PIndicateFound(IN P_GLUE_INFO_T prGlueInfo);
 
 VOID kalP2PIndicateConnReq(IN P_GLUE_INFO_T prGlueInfo, IN PUINT_8 pucDevName, IN INT_32 u4NameLength,
@@ -217,6 +180,9 @@ kalP2PIndicateBssInfo(IN P_GLUE_INFO_T prGlueInfo,
 		      IN PUINT_8 pucFrameBuf,
 		      IN UINT_32 u4BufLen, IN P_RF_CHANNEL_INFO_T prChannelInfo, IN INT_32 i4SignalStrength);
 
+VOID
+kalP2PIndicateCompleteBssInfo(IN P_GLUE_INFO_T prGlueInfo, IN P_BSS_DESC_T prSpecificBssDesc);
+
 VOID kalP2PIndicateRxMgmtFrame(IN P_GLUE_INFO_T prGlueInfo, IN P_SW_RFB_T prSwRfb);
 
 VOID
@@ -228,18 +194,16 @@ VOID kalP2PIndicateChannelExpired(IN P_GLUE_INFO_T prGlueInfo, IN P_P2P_CHNL_REQ
 VOID
 kalP2PGCIndicateConnectionStatus(IN P_GLUE_INFO_T prGlueInfo,
 				 IN P_P2P_CONNECTION_REQ_INFO_T prP2pConnInfo,
-				 IN PUINT_8 pucRxIEBuf, IN UINT_16 u2RxIELen, IN UINT_16 u2StatusReason,
-				 IN WLAN_STATUS eStatus);
-
+				 IN PUINT_8 pucRxIEBuf, IN UINT_16 u2RxIELen, IN UINT_16 u2StatusReason);
 
 VOID kalP2PGOStationUpdate(IN P_GLUE_INFO_T prGlueInfo, IN P_STA_RECORD_T prCliStaRec, IN BOOLEAN fgIsNew);
 
-INT_32 kalP2PSetBlackList(IN P_GLUE_INFO_T prGlueInfo, IN PARAM_MAC_ADDRESS rbssid, IN BOOLEAN fgIsblock);
+INT_32 kalP2PSetBlackList(IN P_GLUE_INFO_T prGlueInfo, IN PARAM_MAC_ADDRESS bssid, IN BOOLEAN block);
 
-BOOLEAN kalP2PCmpBlackList(IN P_GLUE_INFO_T prGlueInfo, IN PARAM_MAC_ADDRESS rbssid);
+BOOLEAN kalP2PCmpBlackList(IN P_GLUE_INFO_T prGlueInfo, IN PARAM_MAC_ADDRESS bssid);
 
 VOID kalP2PSetMaxClients(IN P_GLUE_INFO_T prGlueInfo, IN UINT_32 u4MaxClient);
 
-BOOLEAN kalP2PMaxClients(IN P_GLUE_INFO_T prGlueInfo, IN UINT_32 u4NumClient);
+BOOLEAN kalP2PReachMaxClients(IN P_GLUE_INFO_T prGlueInfo, IN UINT_32 u4NumClient);
 
 #endif /* _GL_P2P_KAL_H */

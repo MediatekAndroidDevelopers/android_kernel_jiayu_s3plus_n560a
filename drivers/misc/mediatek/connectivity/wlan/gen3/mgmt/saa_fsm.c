@@ -1,4 +1,16 @@
 /*
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
+*/
+/*
 ** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/mgmt/saa_fsm.c#2
 */
 
@@ -6,280 +18,6 @@
     \brief  This file defines the FSM for SAA MODULE.
 
     This file defines the FSM for SAA MODULE.
-*/
-
-/*
-** Log: saa_fsm.c
-**
-** 07 30 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** update some debug code
-**
-** 07 30 2013 yuche.tsai
-** [BORA00002398] [MT6630][Volunteer Patch] P2P Driver Re-Design for Multiple BSS support
-** Driver update for Hot-Spot mode.
-**
-** 07 30 2013 yuche.tsai
-** [BORA00002398] [MT6630][Volunteer Patch] P2P Driver Re-Design for Multiple BSS support
-** MT6630 Driver Update for Hot-Spot.
-**
-** 07 23 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** fixed compiling error
-**
-** 07 23 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Modify some security code for 11w and p2p
-**
-** 04 08 2013 cp.wu
-** [BORA00002253] [MT6630 Wi-Fi][Driver][Firmware] Add NLO and timeout mechanism to SCN module
-** remove unnecessary assertion
-**
-** 03 12 2013 tsaiyuan.hsu
-** [BORA00002222] MT6630 unified MAC RXM
-** remove hif_rx_hdr usage.
-**
-** 03 08 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** Remove non-used compiling flag and code
-**
-** 03 06 2013 wh.su
-** [BORA00002446] [MT6630] [Wi-Fi] [Driver] Update the security function code
-** submit some code related with security.
-**
-** 02 27 2013 yuche.tsai
-** [BORA00002398] [MT6630][Volunteer Patch] P2P Driver Re-Design for Multiple BSS support
-** Add aaa_fsm.c, p2p_ie.c, fix compile warning & error.
-**
-** 02 19 2013 cp.wu
-** [BORA00002227] [MT6630 Wi-Fi][Driver] Update for Makefile and HIFSYS modifications
-** take use of GET_BSS_INFO_BY_INDEX() and MAX_BSS_INDEX macros
-** for correctly indexing of BSS-INFO pointers
-**
-** 02 19 2013 cp.wu
-** [BORA00002227] [MT6630 Wi-Fi][Driver] Update for Makefile and HIFSYS modifications
-** correct typo and fix for compilation pass
-**
-** 02 19 2013 cp.wu
-** [BORA00002227] [MT6630 Wi-Fi][Driver] Update for Makefile and HIFSYS modifications
-** enable AIS related management modules building under Android/Linux
-**
-** 02 18 2013 cm.chang
-** [BORA00002149] [MT6630 Wi-Fi] Initial software development
-** Different argument for staRecFree()
-**
-** 01 22 2013 cp.wu
-** [BORA00002253] [MT6630 Wi-Fi][Driver][Firmware] Add NLO and timeout mechanism to SCN module
-** modification for ucBssIndex migration
-**
-** 09 17 2012 cm.chang
-** [BORA00002149] [MT6630 Wi-Fi] Initial software development
-** Duplicate source from MT6620 v2.3 driver branch
-** (Davinci label: MT6620_WIFI_Driver_V2_3_120913_1942_As_MT6630_Base)
- *
- * 07 17 2012 yuche.tsai
- * NULL
- * Compile no error before trial run.
- *
- * 04 20 2012 cp.wu
- * [WCXRP00000913] [MT6620 Wi-Fi] create repository of source code dedicated for MT6620 E6 ASIC
- * correct macro
- *
- * 11 24 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * Adjust code for DBG and CONFIG_XLOG.
- *
- * 11 11 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * modify the xlog related code.
- *
- * 11 04 2011 cp.wu
- * [WCXRP00001086] [MT6620 Wi-Fi][Driver] On Android, indicate an extra DISCONNECT
- * for REASSOCIATED cases as an explicit trigger for Android framework
- * 1. for DEAUTH/DISASSOC cases, indicate for DISCONNECTION immediately.
- * 2. (Android only) when reassociation-and-non-roaming cases happened,
- * indicate an extra DISCONNECT indication to Android Wi-Fi framework
- *
- * 11 02 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * adding the code for XLOG.
- *
- * 09 30 2011 cm.chang
- * [WCXRP00001020] [MT6620 Wi-Fi][Driver] Handle secondary channel offset of AP in 5GHz band
- * Add debug message about 40MHz bandwidth allowed
- *
- * 05 12 2011 cp.wu
- * [WCXRP00000720] [MT6620 Wi-Fi][Driver] Do not do any further operation in case STA-REC
- * has been invalidated before SAA-FSM starts to roll
- * check for valid STA-REC before SAA-FSM starts to roll.
- *
- * 04 21 2011 terry.wu
- * [WCXRP00000674] [MT6620 Wi-Fi][Driver] Refine AAA authSendAuthFrame
- * Add network type parameter to authSendAuthFrame.
- *
- * 04 15 2011 chinghwa.yu
- * [WCXRP00000065] Update BoW design and settings
- * Add BOW short range mode.
- *
- * 04 14 2011 cm.chang
- * [WCXRP00000634] [MT6620 Wi-Fi][Driver][FW] 2nd BSS will not support 40MHz bandwidth for concurrency
- * .
- *
- * 03 31 2011 puff.wen
- * NULL
- * .
- *
- * 02 10 2011 yuche.tsai
- * [WCXRP00000431] [Volunteer Patch][MT6620][Driver] Add MLME support for deauthentication under AP(Hot-Spot) mode.
- * Add RX deauthentication & disassociation process under Hot-Spot mode.
- *
- * 01 26 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * .
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * Fix compile error of after Station Type Macro modification.
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * Change Station Type in Station Record, Modify MACRO definition for getting station type & network type index & Role.
- *
- * 11 29 2010 cp.wu
- * [WCXRP00000210] [MT6620 Wi-Fi][Driver][FW] Set RCPI value in STA_REC
- * for initial TX rate selection of auto-rate algorithm
- * update ucRcpi of STA_RECORD_T for AIS when
- * 1) Beacons for IBSS merge is received
- * 2) Associate Response for a connecting peer is received
- *
- * 10 18 2010 cp.wu
- * [WCXRP00000053] [MT6620 Wi-Fi][Driver] Reset incomplete
- * and might leads to BSOD when entering RF test with AIS associated
- * 1. remove redundant variables in STA_REC structure
- * 2. add STA-REC uninitialization routine for clearing pending events
- *
- * 09 03 2010 kevin.huang
- * NULL
- * Refine #include sequence and solve recursive/nested #include issue
- *
- * 08 30 2010 cp.wu
- * NULL
- * eliminate klockwork errors
- *
- * 08 24 2010 chinghwa.yu
- * NULL
- * Update for MID_SCN_BOW_SCAN_DONE mboxDummy.
- * Update saa_fsm for BOW.
- *
- * 08 16 2010 cp.wu
- * NULL
- * Replace CFG_SUPPORT_BOW by CFG_ENABLE_BT_OVER_WIFI.
- * There is no CFG_SUPPORT_BOW in driver domain source.
- *
- * 08 02 2010 yuche.tsai
- * NULL
- * Add support for P2P join event start.
- *
- * 07 12 2010 cp.wu
- *
- * SAA will take a record for tracking request sequence number.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 07 01 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * AIS-FSM integration with CNM channel request messages
- *
- * 06 23 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * sync. with main branch for resetting to state 1 when associating with another AP
- *
- * 06 21 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * refine TX-DONE callback.
- *
- * 06 21 2010 wh.su
- * [WPD00003840][MT6620 5931] Security migration
- * remove duplicate variable for migration.
- *
- * 06 18 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * Provide cnmMgtPktAlloc() and alloc/free function of msg/buf
- *
- * 06 18 2010 wh.su
- * [WPD00003840][MT6620 5931] Security migration
- * migration the security related function from firmware.
- *
- * 06 17 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * Fix compile error when enable WiFi Direct function.
- *
- * 06 14 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * saa_fsm.c is migrated.
- *
- * 05 12 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Add Power Management - Legacy PS-POLL support.
- *
- * 04 24 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * g_aprBssInfo[] depends on CFG_SUPPORT_P2P and CFG_SUPPORT_BOW
- *
- * 04 19 2010 kevin.huang
- * [BORA00000714][WIFISYS][New Feature]Beacon Timeout Support
- *
- *  *  * Add Connection Policy - Any and Rx Burst Deauth Support for WHQL
- *
- * 03 10 2010 kevin.huang
- * [BORA00000654][WIFISYS][New Feature] CNM Module - Ch Manager Support
- * Add Channel Manager for arbitration of JOIN and SCAN Req
- *
- * 02 26 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add support of Driver STA_RECORD_T activation
- *
- * 02 04 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add AAA Module Support, Revise Net Type to Net Type Index for array lookup
- *
- * 01 27 2010 wh.su
- * [BORA00000476][Wi-Fi][firmware] Add the security module initialize code
- * add and fixed some security function.
- *
- * 01 12 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Fix compile warning due to declared but not used
- *
- * 01 11 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Add Deauth and Disassoc Handler
- *
- * 01 08 2010 kevin.huang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Refine Debug Label
- *
- * 12 18 2009 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * .
- *
- * Dec 3 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Update comment
- *
- * Dec 1 2009 mtk01088
- * [BORA00000476] [Wi-Fi][firmware] Add the security module initialize code
- * rename the function
- *
- * Nov 24 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- * Revise MGMT Handler with Retain Status
- *
- * Nov 23 2009 mtk01461
- * [BORA00000018] Integrate WIFI part into BORA for the 1st time
- *
 */
 
 /*******************************************************************************
@@ -581,11 +319,15 @@ saaFsmSendEventJoinComplete(IN P_ADAPTER_T prAdapter,
 	if (prStaRec->ucBssIndex < BSS_INFO_NUM) {
 		prBssInfo = GET_BSS_INFO_BY_INDEX(prAdapter, prStaRec->ucBssIndex);
 
-		if (rJoinStatus == WLAN_STATUS_SUCCESS)
+		if (rJoinStatus == WLAN_STATUS_SUCCESS) {
 			prBssInfo->fg40mBwAllowed = prBssInfo->fgAssoc40mBwAllowed;
+			/* When STA join complete is success, then clear flag, it means 1st 4-way
+			 * handshake will be happened.
+			 */
+			prBssInfo->fgUnencryptedEapol = FALSE;
+		}
 		prBssInfo->fgAssoc40mBwAllowed = FALSE;
 	}
-
 	if (prStaRec->ucBssIndex == prAdapter->prAisBssInfo->ucBssIndex) {
 		P_MSG_SAA_FSM_COMP_T prSaaFsmCompMsg;
 
@@ -736,7 +478,7 @@ VOID saaFsmRunEventStart(IN P_ADAPTER_T prAdapter, IN P_MSG_HDR_T prMsgHdr)
 
 		if ((prAdapter->rWifiVar.ucAvailablePhyTypeSet & PHY_TYPE_SET_802_11N)
 		    && (prStaRec->ucPhyTypeSet & PHY_TYPE_SET_802_11N)) {
-			prBssInfo->fgAssoc40mBwAllowed = cnmBss40mBwPermitted(prAdapter, prBssInfo->ucBssIndex);
+			prBssInfo->fgAssoc40mBwAllowed = cnmBss40mBwPermittedForJoin(prAdapter, prBssInfo->ucBssIndex);
 		} else {
 			prBssInfo->fgAssoc40mBwAllowed = FALSE;
 		}
@@ -776,11 +518,12 @@ saaFsmRunEventTxDone(IN P_ADAPTER_T prAdapter, IN P_MSDU_INFO_T prMsduInfo, IN E
 
 	ASSERT(prStaRec);
 
-	DBGLOG(SAA, LOUD, "EVENT-TX DONE: Current Time = %d\n", kalGetTimeTick());
-
 	/* Trigger statistics log if Auth/Assoc Tx failed */
-	if (rTxDoneStatus != TX_RESULT_SUCCESS)
+	if (rTxDoneStatus != TX_RESULT_SUCCESS) {
 		wlanTriggerStatsLog(prAdapter, prAdapter->rWifiVar.u4StatsLogDuration);
+		DBGLOG(SAA, INFO, "EVENT-TX DONE: Current Time = %d status: %d, SeqNo: %d\n",
+			kalGetTimeTick(), rTxDoneStatus, prMsduInfo->ucTxSeqNum);
+	}
 
 	eNextState = prStaRec->eAuthAssocState;
 
@@ -962,6 +705,36 @@ VOID saaFsmRunEventRxRespTimeOut(IN P_ADAPTER_T prAdapter, IN ULONG ulParamPtr)
 
 }				/* end of saaFsmRunEventRxRespTimeOut() */
 
+#if CFG_SUPPORT_RN
+static BOOLEAN saaCheckOverLoadRN(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaRec, IN ENUM_AA_STATE_T eFrmType)
+{
+	static UINT_32 u4OverLoadRN;
+	P_BSS_DESC_T prBssDesc = NULL;
+
+	if (!prAdapter->prAisBssInfo->fgDisConnReassoc) {
+		u4OverLoadRN = 0;
+		return FALSE;
+	}
+	if (prStaRec->u2StatusCode != STATUS_CODE_ASSOC_DENIED_AP_OVERLOAD)
+		return FALSE;
+
+	DBGLOG(SAA, INFO, "<SAA> eFrmType: %d, u4OverLoadRN times: %d\n", eFrmType, u4OverLoadRN);
+	if (u4OverLoadRN >= JOIN_MAX_RETRY_OVERLOAD_RN)
+		return FALSE;
+
+	prBssDesc = scanSearchBssDescByBssid(prAdapter, prStaRec->aucMacAddr);
+	if (prBssDesc) {
+		aisAddBlacklist(prAdapter, prBssDesc);
+		if (prBssDesc->prBlack)
+			prBssDesc->prBlack->u2AuthStatus = prStaRec->u2StatusCode;
+	} else
+		DBGLOG(SAA, INFO, "<drv> prBssDesc is NULL!\n");
+
+	u4OverLoadRN++;
+	aisFsmStateAbort(prAdapter, DISCONNECT_REASON_CODE_RADIO_LOST, TRUE);
+	return TRUE;
+}
+#endif
 /*----------------------------------------------------------------------------*/
 /*!
 * @brief This function will process the Rx Auth Response Frame and then
@@ -980,6 +753,10 @@ VOID saaFsmRunEventRxAuth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRfb)
 
 	ASSERT(prSwRfb);
 	prStaRec = cnmGetStaRecByIndex(prAdapter, prSwRfb->ucStaRecIdx);
+	if (!prStaRec) {
+		nicRxMgmtNoWTBLHandling(prAdapter, prSwRfb);
+		prStaRec = prSwRfb->prStaRec;
+	}
 
 	/* We should have the corresponding Sta Record. */
 	if (!prStaRec)
@@ -987,6 +764,8 @@ VOID saaFsmRunEventRxAuth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRfb)
 
 	if (!IS_AP_STA(prStaRec))
 		return;
+
+	DBGLOG(SAA, TRACE, "Recv Auth, eAuthAssocState: %d\n", prStaRec->eAuthAssocState);
 
 	switch (prStaRec->eAuthAssocState) {
 	case SAA_STATE_SEND_AUTH1:
@@ -1015,9 +794,8 @@ VOID saaFsmRunEventRxAuth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRfb)
 				}
 			} else {
 				DBGLOG(SAA, INFO,
-				       "Auth Req was rejected by [" MACSTR "], Status Code = %d\n",
-					MAC2STR(prStaRec->aucMacAddr),
-					u2StatusCode);
+				       "Auth was rejected by [" MACSTR "], StatusCode: %d\n",
+				       MAC2STR(prStaRec->aucMacAddr), u2StatusCode);
 
 				eNextState = AA_STATE_IDLE;
 			}
@@ -1025,6 +803,10 @@ VOID saaFsmRunEventRxAuth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRfb)
 			/* Reset Send Auth/(Re)Assoc Frame Count */
 			prStaRec->ucTxAuthAssocRetryCount = 0;
 
+#if CFG_SUPPORT_RN
+			if (saaCheckOverLoadRN(prAdapter, prStaRec, SAA_STATE_SEND_AUTH1))
+				break;
+#endif
 			saaFsmSteps(prAdapter, prStaRec, eNextState, (P_SW_RFB_T) NULL);
 		}
 		break;
@@ -1050,9 +832,8 @@ VOID saaFsmRunEventRxAuth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRfb)
 				eNextState = SAA_STATE_SEND_ASSOC1;
 			} else {
 				DBGLOG(SAA, INFO,
-				       "Auth Req was rejected by [" MACSTR "], Status Code = %d\n",
-					MAC2STR(prStaRec->aucMacAddr),
-					u2StatusCode);
+				       "Auth was rejected by [" MACSTR "], StatusCode: %d\n",
+				       MAC2STR(prStaRec->aucMacAddr), u2StatusCode);
 
 				eNextState = AA_STATE_IDLE;
 			}
@@ -1091,15 +872,19 @@ WLAN_STATUS saaFsmRunEventRxAssoc(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRf
 
 	ASSERT(prSwRfb);
 	prStaRec = cnmGetStaRecByIndex(prAdapter, prSwRfb->ucStaRecIdx);
+	if (!prStaRec) {
+		nicRxMgmtNoWTBLHandling(prAdapter, prSwRfb);
+		prStaRec = prSwRfb->prStaRec;
+	}
 
 	/* We should have the corresponding Sta Record. */
-	if (!prStaRec) {
-		/* ASSERT(0); */
+	if (!prStaRec)
 		return rStatus;
-	}
 
 	if (!IS_AP_STA(prStaRec))
 		return rStatus;
+
+	DBGLOG(SAA, TRACE, "Recv (Re)Assoc Resp, eAuthAssocState: %d\n", prStaRec->eAuthAssocState);
 
 	switch (prStaRec->eAuthAssocState) {
 	case SAA_STATE_SEND_ASSOC1:
@@ -1127,8 +912,8 @@ WLAN_STATUS saaFsmRunEventRxAssoc(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRf
 				rStatus = WLAN_STATUS_PENDING;
 			} else {
 				DBGLOG(SAA, INFO,
-				       "Assoc Req was rejected by [" MACSTR
-					"], Status Code = %d\n", MAC2STR(prStaRec->aucMacAddr), u2StatusCode);
+				       "Assoc Req was rejected by [" MACSTR "], StatusCode: %d\n",
+				       MAC2STR(prStaRec->aucMacAddr), u2StatusCode);
 			}
 
 			/* Reset Send Auth/(Re)Assoc Frame Count */
@@ -1140,6 +925,10 @@ WLAN_STATUS saaFsmRunEventRxAssoc(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRf
 
 			eNextState = AA_STATE_IDLE;
 
+#if CFG_SUPPORT_RN
+			if (saaCheckOverLoadRN(prAdapter, prStaRec, SAA_STATE_SEND_ASSOC1))
+				break;
+#endif
 			saaFsmSteps(prAdapter, prStaRec, eNextState, prRetainedSwRfb);
 		}
 		break;
@@ -1152,6 +941,72 @@ WLAN_STATUS saaFsmRunEventRxAssoc(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwRf
 
 }				/* end of saaFsmRunEventRxAssoc() */
 
+#if CFG_SUPPORT_RN
+static VOID saaAutoReConnect(IN P_ADAPTER_T prAdapter, IN P_STA_RECORD_T prStaRec,
+					IN P_BSS_INFO_T prAisBssInfo, IN ENUM_AA_FRM_TYPE_T eFrmType)
+{
+	OS_SYSTIME rCurrentTime;
+	P_CONNECTION_SETTINGS_T prConnSettings;
+
+	prConnSettings = &(prAdapter->rWifiVar.rConnSettings);
+	GET_CURRENT_SYSTIME(&rCurrentTime);
+
+	/*
+		TODO: maybe AP is in DFS channel, it wants to switch channels?
+		Wait for beacon timeout?
+		Need to do partial scan for the AP channel.
+	*/
+
+	if (!CHECK_FOR_TIMEOUT(rCurrentTime, prAisBssInfo->rConnTime,
+				  SEC_TO_SYSTIME(AIS_AUTORN_MIN_INTERVAL)) &&
+		/* maybe some packets are queued in HW, we will get many de-auth */
+		(prAisBssInfo->fgDisConnReassoc == FALSE)) {
+		DBGLOG(SAA, INFO, "<drv> AP deauth ok 0x%x %x %x\n",
+					rCurrentTime, prAisBssInfo->rConnTime,
+					SEC_TO_SYSTIME(AIS_AUTORN_MIN_INTERVAL));
+		saaSendDisconnectMsgHandler(prAdapter, prStaRec, prAisBssInfo, eFrmType);
+	} else {
+		DBGLOG(SAA, INFO, "<drv> reassociate\n");
+
+		if (prAisBssInfo->fgDisConnReassoc == FALSE) {
+			P_BSS_DESC_T prBssDesc;
+
+			/* during reassoc, FW send null then we maybe get deauth again */
+			/* in the case, we will send deauth to supplicant, not here */
+
+			/* avoid re-scan */
+			prAisBssInfo->fgDisConnReassoc = TRUE;
+			prConnSettings->fgIsConnReqIssued = TRUE;
+			prConnSettings->fgIsDisconnectedByNonRequest = FALSE;
+			prAisBssInfo->u2DeauthReason = prStaRec->u2ReasonCode;
+
+			prBssDesc = scanSearchBssDescByBssid(prAdapter, prStaRec->aucMacAddr);
+
+			if (prBssDesc) {
+				if (prStaRec->u2ReasonCode == REASON_CODE_DISASSOC_AP_OVERLOAD) {
+					struct AIS_BLACKLIST_ITEM *prBlackList = aisAddBlacklist(prAdapter, prBssDesc);
+
+					if (prBlackList)
+						prBlackList->u2DeauthReason = prStaRec->u2ReasonCode;
+				}
+				prBssDesc->fgDeauthLastTime = TRUE;
+			} else
+				DBGLOG(SAA, INFO, "<drv> prBssDesc is NULL!\n");
+
+			aisFsmStateAbort(prAdapter, DISCONNECT_REASON_CODE_RADIO_LOST, TRUE);
+		} else if (!CHECK_FOR_TIMEOUT(rCurrentTime, prAisBssInfo->rConnTime,
+				  SEC_TO_SYSTIME(AIS_AUTORN_MIN_INTERVAL + 10))) {
+
+			DBGLOG(SAA, INFO, "<drv> AP deauth ok under reassoc 0x%x %x %x\n",
+				rCurrentTime, prAisBssInfo->rConnTime, SEC_TO_SYSTIME(AIS_AUTORN_MIN_INTERVAL + 10));
+
+			prAisBssInfo->fgDisConnReassoc = FALSE;
+			saaSendDisconnectMsgHandler(prAdapter, prStaRec, prAisBssInfo, eFrmType);
+		}
+		/* else, we are reassociating, skip the deauth */
+	}
+}
+#endif
 /*----------------------------------------------------------------------------*/
 /*!
 * @brief This function will check the incoming Deauth Frame.
@@ -1170,13 +1025,19 @@ WLAN_STATUS saaFsmRunEventRxDeauth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwR
 	prStaRec = cnmGetStaRecByIndex(prAdapter, prSwRfb->ucStaRecIdx);
 	prDeauthFrame = (P_WLAN_DEAUTH_FRAME_T) prSwRfb->pvHeader;
 
-	DBGLOG(SAA, INFO, "Rx Deauth frame ,DA[" MACSTR "] SA[" MACSTR "] BSSID[" MACSTR "] ReasonCode[0x%x]\n",
-			   MAC2STR(prDeauthFrame->aucDestAddr),
-			   MAC2STR(prDeauthFrame->aucSrcAddr),
-			   MAC2STR(prDeauthFrame->aucBSSID),
-			   prDeauthFrame->u2ReasonCode);
+	DBGLOG(SAA, INFO,
+	"Rx Deauth frame ,DA[" MACSTR "] SA[" MACSTR "] BSSID[" MACSTR "] ReasonCode[0x%x] StaRecIdx[0x%x]\n",
+	MAC2STR(prDeauthFrame->aucDestAddr),
+	MAC2STR(prDeauthFrame->aucSrcAddr),
+	MAC2STR(prDeauthFrame->aucBSSID),
+	prDeauthFrame->u2ReasonCode,
+	prSwRfb->ucStaRecIdx);
 
 	do {
+		if (!prStaRec) {
+			nicRxMgmtNoWTBLHandling(prAdapter, prSwRfb);
+			prStaRec = prSwRfb->prStaRec;
+		}
 
 		/* We should have the corresponding Sta Record. */
 		if (!prStaRec)
@@ -1203,7 +1064,7 @@ WLAN_STATUS saaFsmRunEventRxDeauth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwR
 					prAisSpecBssInfo = &(prAdapter->rWifiVar.rAisSpecificBssInfo);
 
 					DBGLOG(RSN, INFO,
-					       "QM RX MGT: Deauth frame, P=%d Sec=%d CM=%d BC=%d fc=%02x\n",
+					       "QM RX MGT: Deauth frame, P=%d Sec=%d CM=%d BC=%d fc=%02hx\n",
 						prAisSpecBssInfo->fgMgmtProtection,
 						HAL_RX_STATUS_GET_SEC_MODE(prSwRfb->prRxStatus),
 						HAL_RX_STATUS_IS_CIPHER_MISMATCH(prSwRfb->prRxStatus),
@@ -1217,7 +1078,11 @@ WLAN_STATUS saaFsmRunEventRxDeauth(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prSwR
 						return WLAN_STATUS_SUCCESS;
 					}
 #endif
+#if CFG_SUPPORT_RN
+					saaAutoReConnect(prAdapter, prStaRec, prAisBssInfo, FRM_DEAUTH);
+#else
 					saaSendDisconnectMsgHandler(prAdapter, prStaRec, prAisBssInfo, FRM_DEAUTH);
+#endif
 				}
 			}
 		}
@@ -1357,6 +1222,10 @@ WLAN_STATUS saaFsmRunEventRxDisassoc(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prS
 		prDisassocFrame->u2ReasonCode);
 
 	do {
+		if (!prStaRec) {
+			nicRxMgmtNoWTBLHandling(prAdapter, prSwRfb);
+			prStaRec = prSwRfb->prStaRec;
+		}
 
 		/* We should have the corresponding Sta Record. */
 		if (!prStaRec)
@@ -1384,7 +1253,7 @@ WLAN_STATUS saaFsmRunEventRxDisassoc(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prS
 					prAisSpecBssInfo = &(prAdapter->rWifiVar.rAisSpecificBssInfo);
 
 					DBGLOG(RSN, INFO,
-					       "QM RX MGT: Disassoc frame, P=%d Sec=%d CM=%d BC=%d fc=%02x\n",
+					       "QM RX MGT: Disassoc frame, P=%d Sec=%d CM=%d BC=%d fc=%02hx\n",
 						prAisSpecBssInfo->fgMgmtProtection,
 						HAL_RX_STATUS_GET_SEC_MODE(prSwRfb->prRxStatus),
 						HAL_RX_STATUS_IS_CIPHER_MISMATCH(prSwRfb->prRxStatus),
@@ -1401,7 +1270,11 @@ WLAN_STATUS saaFsmRunEventRxDisassoc(IN P_ADAPTER_T prAdapter, IN P_SW_RFB_T prS
 						return WLAN_STATUS_SUCCESS;
 					}
 #endif
+#if CFG_SUPPORT_RN
+					saaAutoReConnect(prAdapter, prStaRec, prAisBssInfo, FRM_DISASSOC);
+#else
 					saaSendDisconnectMsgHandler(prAdapter, prStaRec, prAisBssInfo, FRM_DISASSOC);
+#endif
 				}
 			}
 		}

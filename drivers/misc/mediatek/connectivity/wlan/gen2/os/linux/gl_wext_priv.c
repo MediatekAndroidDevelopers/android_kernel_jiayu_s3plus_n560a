@@ -1,206 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/os/linux/gl_wext_priv.c#4
-*/
-
-/*! \file gl_wext_priv.c
-    \brief This file includes private ioctl support.
-*/
-
-/*
-** Log: gl_wext_priv.c
- *
- * 07 17 2012 yuche.tsai
- * NULL
- * Let netdev bring up.
- *
- * 06 13 2012 yuche.tsai
- * NULL
- * Update maintrunk driver.
- * Add support for driver compose assoc request frame.
- *
- * 03 20 2012 wh.su
- * [WCXRP00001153] [MT6620 Wi-Fi][Driver] Adding the get_ch_list and set_tx_power proto type function
- * [WCXRP00001202] [MT6628 Wi-Fi][FW] Adding the New PN init code
- * use return to avoid the ioctl return not supported
- *
- * 03 02 2012 terry.wu
- * NULL
- * Snc CFG80211 modification for ICS migration from branch 2.2.
- *
- * 01 16 2012 wh.su
- * [WCXRP00001170] [MT6620 Wi-Fi][Driver] Adding the related code for set/get band ioctl
- * Adding the template code for set / get band IOCTL (with ICS supplicant_6)..
- *
- * 01 05 2012 wh.su
- * [WCXRP00001153] [MT6620 Wi-Fi][Driver] Adding the get_ch_list and set_tx_power proto type function
- * Adding the related ioctl / wlan oid function to set the Tx power cfg.
- *
- * 01 02 2012 wh.su
- * [WCXRP00001153] [MT6620 Wi-Fi][Driver] Adding the get_ch_list and set_tx_power proto type function
- * Adding the proto type function for set_int set_tx_power and get int get_ch_list.
- *
- * 11 10 2011 cp.wu
- * [WCXRP00001098] [MT6620 Wi-Fi][Driver] Replace printk by DBG LOG macros in linux porting layer
- * 1. eliminaite direct calls to printk in porting layer.
- * 2. replaced by DBGLOG, which would be XLOG on ALPS platforms.
- *
- * 11 02 2011 chinghwa.yu
- * [WCXRP00000063] Update BCM CoEx design and settings
- * Fixed typo.
- *
- * 09 20 2011 chinglan.wang
- * [WCXRP00000989] [WiFi Direct] [Driver] Add a new io control API to start the formation for the sigma test.
- * .
- *
- * 07 28 2011 chinghwa.yu
- * [WCXRP00000063] Update BCM CoEx design and settings
- * Add BWCS cmd and event.
- *
- * 07 18 2011 chinghwa.yu
- * [WCXRP00000063] Update BCM CoEx design and settings[WCXRP00000612] [MT6620 Wi-Fi] [FW] CSD update SWRDD algorithm
- * Add CMD/Event for RDD and BWCS.
- *
- * 03 17 2011 chinglan.wang
- * [WCXRP00000570] [MT6620 Wi-Fi][Driver] Add Wi-Fi Protected Setup v2.0 feature
- * .
- *
- * 03 07 2011 terry.wu
- * [WCXRP00000521] [MT6620 Wi-Fi][Driver] Remove non-standard debug message
- * Toggle non-standard debug messages to comments.
- *
- * 01 27 2011 cm.chang
- * [WCXRP00000402] [MT6620 Wi-Fi][Driver] Enable MCR read/write by iwpriv by default
- * .
- *
- * 01 26 2011 wh.su
- * [WCXRP00000396] [MT6620 Wi-Fi][Driver] Support Sw Ctrl ioctl at linux
- * adding the SW cmd ioctl support, use set/get structure ioctl.
- *
- * 01 20 2011 eddie.chen
- * [WCXRP00000374] [MT6620 Wi-Fi][DRV] SW debug control
- * Adjust OID order.
- *
- * 01 20 2011 eddie.chen
- * [WCXRP00000374] [MT6620 Wi-Fi][DRV] SW debug control
- * Add Oid for sw control debug command
- *
- * 01 07 2011 cm.chang
- * [WCXRP00000336] [MT6620 Wi-Fi][Driver] Add test mode commands in normal phone operation
- * Add a new compiling option to control if MCR read/write is permitted
- *
- * 12 31 2010 cm.chang
- * [WCXRP00000336] [MT6620 Wi-Fi][Driver] Add test mode commands in normal phone operation
- * Add some iwpriv commands to support test mode operation
- *
- * 12 15 2010 george.huang
- * [WCXRP00000152] [MT6620 Wi-Fi] AP mode power saving function
- * Support set PS profile and set WMM-PS related iwpriv.
- *
- * 11 08 2010 wh.su
- * [WCXRP00000171] [MT6620 Wi-Fi][Driver] Add message check code same behavior as mt5921
- * add the message check code from mt5921.
- *
- * 10 18 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * [WCXRP00000086] [MT6620 Wi-Fi][Driver] The mac address is all zero at android
- * complete implementation of Android NVRAM access
- *
- * 09 24 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * correct typo for NVRAM access.
- *
- * 09 23 2010 cp.wu
- * [WCXRP00000056] [MT6620 Wi-Fi][Driver] NVRAM implementation with Version Check
- * add skeleton for NVRAM integration
- *
- * 08 04 2010 cp.wu
- * NULL
- * revert changelist #15371, efuse read/write access will be done by RF test approach
- *
- * 08 04 2010 cp.wu
- * NULL
- * add OID definitions for EFUSE read/write access.
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 06 2010 kevin.huang
- * [WPD00003832][MT6620 5931] Create driver base
- * [MT6620 5931] Create driver base
- *
- * 06 01 2010 cp.wu
- * [WPD00001943]Create WiFi test driver framework on WinXP
- * enable OID_CUSTOM_MTK_WIFI_TEST for RFTest & META tool
- *
- * 05 29 2010 jeffrey.chang
- * [WPD00003826]Initial import for Linux port
- * fix private ioctl for rftest
- *
- * 04 21 2010 jeffrey.chang
- * [WPD00003826]Initial import for Linux port
- * add for private ioctl support
-**  \main\maintrunk.MT5921\32 2009-10-08 10:33:25 GMT mtk01090
-**  Avoid accessing private data of net_device directly. Replace with netdev_priv(). Add more checking for input
-**  parameters and pointers.
-**  \main\maintrunk.MT5921\31 2009-09-29 16:46:21 GMT mtk01090
-**  Remove unused functions
-**  \main\maintrunk.MT5921\30 2009-09-29 14:46:47 GMT mtk01090
-**  Fix compile warning
-**  \main\maintrunk.MT5921\29 2009-09-29 14:28:48 GMT mtk01090
-**  Fix compile warning
-**  \main\maintrunk.MT5921\28 2009-09-28 22:21:38 GMT mtk01090
-**  Refine lines to suppress compile warning
-**  \main\maintrunk.MT5921\27 2009-09-28 20:19:14 GMT mtk01090
-**  Add private ioctl to carry OID structures. Restructure public/private ioctl interfaces to Linux kernel.
-**  \main\maintrunk.MT5921\26 2009-08-18 22:56:53 GMT mtk01090
-**  Add Linux SDIO (with mmc core) support.
-**  Add Linux 2.6.21, 2.6.25, 2.6.26.
-**  Fix compile warning in Linux.
-**  \main\maintrunk.MT5921\25 2009-05-07 22:26:15 GMT mtk01089
-**  Add mandatory and private IO control for Linux BWCS
-**  \main\maintrunk.MT5921\24 2009-04-29 10:07:05 GMT mtk01088
-**  fixed the compiling error at linux
-**  \main\maintrunk.MT5921\23 2009-04-24 09:09:45 GMT mtk01088
-**  mark the code not used at linux supplicant v0.6.7
-**  \main\maintrunk.MT5921\22 2008-11-24 21:03:51 GMT mtk01425
-**  1. Add PTA_ENABLED flag
-**  \main\maintrunk.MT5921\21 2008-08-29 14:55:59 GMT mtk01088
-**  adjust the code for meet the coding style, and add assert check
-**  \main\maintrunk.MT5921\20 2008-07-16 15:23:20 GMT mtk01104
-**  Support GPIO2 mode
-**  \main\maintrunk.MT5921\19 2008-07-15 17:43:11 GMT mtk01084
-**  modify variable name
-**  \main\maintrunk.MT5921\18 2008-07-14 14:37:58 GMT mtk01104
-**  Add exception handle about length in function priv_set_struct()
-**  \main\maintrunk.MT5921\17 2008-07-14 13:55:32 GMT mtk01104
-**  Support PRIV_CMD_BT_COEXIST
-**  \main\maintrunk.MT5921\16 2008-07-09 00:20:15 GMT mtk01461
-**  Add priv oid to support WMM_PS_TEST
-**  \main\maintrunk.MT5921\15 2008-06-02 11:15:22 GMT mtk01461
-**  Update after wlanoidSetPowerMode changed
-**  \main\maintrunk.MT5921\14 2008-05-30 19:31:07 GMT mtk01461
-**  Add IOCTL for Power Mode
-**  \main\maintrunk.MT5921\13 2008-05-30 18:57:15 GMT mtk01461
-**  Not use wlanoidSetCSUMOffloadForLinux()
-**  \main\maintrunk.MT5921\12 2008-05-30 15:13:18 GMT mtk01084
-**  rename wlanoid
-**  \main\maintrunk.MT5921\11 2008-05-29 14:16:31 GMT mtk01084
-**  rename for wlanoidSetBeaconIntervalForLinux
-**  \main\maintrunk.MT5921\10 2008-04-17 23:06:37 GMT mtk01461
-**  Add iwpriv support for AdHocMode setting
-**  \main\maintrunk.MT5921\9 2008-03-31 21:00:55 GMT mtk01461
-**  Add priv IOCTL for VOIP setting
-**  \main\maintrunk.MT5921\8 2008-03-31 13:49:43 GMT mtk01461
-**  Add priv ioctl to turn on / off roaming
-**  \main\maintrunk.MT5921\7 2008-03-26 15:35:14 GMT mtk01461
-**  Add CSUM offload priv ioctl for Linux
-**  \main\maintrunk.MT5921\6 2008-03-11 14:50:59 GMT mtk01461
-**  Unify priv ioctl
-**  \main\maintrunk.MT5921\5 2007-11-06 19:32:30 GMT mtk01088
-**  add WPS code
-**  \main\maintrunk.MT5921\4 2007-10-30 12:01:39 GMT MTK01425
-**  1. Update wlanQueryInformation and wlanSetInformation
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -222,12 +30,15 @@
 #if CFG_ENABLE_WIFI_DIRECT
 #include "gl_p2p_os.h"
 #endif
+#ifdef FW_CFG_SUPPORT
+#include "fwcfg.h"
+#endif
 
 /*******************************************************************************
 *                              C O N S T A N T S
 ********************************************************************************
 */
-#define NUM_SUPPORTED_OIDS      (sizeof(arWlanOidReqTable) / sizeof(WLAN_REQ_ENTRY))
+#define NUM_SUPPORTED_OIDS		(sizeof(arWlanOidReqTable) / sizeof(WLAN_REQ_ENTRY))
 #define CMD_START			"START"
 #define CMD_STOP			"STOP"
 #define CMD_SCAN_ACTIVE			"SCAN-ACTIVE"
@@ -255,6 +66,7 @@
 #define CMD_SETROAMMODE			"SETROAMMODE"
 #define CMD_MIRACAST			"MIRACAST"
 
+#define CMD_ECSA			"P2P_ECSA"
 #define CMD_PNOSSIDCLR_SET	"PNOSSIDCLR"
 #define CMD_PNOSETUP_SET	"PNOSETUP "
 #define CMD_PNOENABLE_SET	"PNOFORCE"
@@ -263,6 +75,9 @@
 
 #define CMD_OKC_SET_PMK		"SET_PMK"
 #define CMD_OKC_ENABLE		"OKC_ENABLE"
+
+#define CMD_ADD_TS          "addts"
+#define CMD_DELETE_TS		"delts"
 
 /* miracast related definition */
 #define MIRACAST_MODE_OFF	0
@@ -281,10 +96,11 @@
 #define MIRACAST_MCHAN_BW       25
 #endif
 
-#define	CMD_BAND_AUTO	0
+#define	CMD_BAND_AUTO		0
 #define	CMD_BAND_5G		1
 #define	CMD_BAND_2G		2
-#define	CMD_BAND_ALL	3
+#define	CMD_BAND_ALL		3
+#define	CMD_OID_BUF_LENGTH	4096
 
 /* Mediatek private command */
 
@@ -296,6 +112,7 @@
 #define CMD_GET_CHIP            "GET_CHIP"
 #define CMD_SET_DBG_LEVEL       "SET_DBG_LEVEL"
 #define CMD_GET_DBG_LEVEL       "GET_DBG_LEVEL"
+#define CMD_SET_FCC_CERT        "SET_FCC_CHANNEL"
 #define PRIV_CMD_SIZE			512
 
 static UINT_32 g_ucMiracastMode = MIRACAST_MODE_OFF;
@@ -317,6 +134,1474 @@ typedef struct priv_driver_cmd_s {
 #define CMD_BATCH_SET           "WLS_BATCHING SET"
 #define CMD_BATCH_GET           "WLS_BATCHING GET"
 #define CMD_BATCH_STOP          "WLS_BATCHING STOP"
+#endif
+
+#if CFG_SUPPORT_NCHO
+/* NCHO related command definition. Setting by supplicant */
+#define CMD_NCHO_ROAM_TRIGGER_GET		"GETROAMTRIGGER"
+#define CMD_NCHO_ROAM_TRIGGER_SET		"SETROAMTRIGGER"
+#define CMD_NCHO_ROAM_DELTA_GET			"GETROAMDELTA"
+#define CMD_NCHO_ROAM_DELTA_SET			"SETROAMDELTA"
+#define CMD_NCHO_ROAM_SCAN_PERIOD_GET		"GETROAMSCANPERIOD"
+#define CMD_NCHO_ROAM_SCAN_PERIOD_SET		"SETROAMSCANPERIOD"
+#define CMD_NCHO_ROAM_SCAN_CHANNELS_GET		"GETROAMSCANCHANNELS"
+#define CMD_NCHO_ROAM_SCAN_CHANNELS_SET		"SETROAMSCANCHANNELS"
+#define CMD_NCHO_ROAM_SCAN_CONTROL_GET		"GETROAMSCANCONTROL"
+#define CMD_NCHO_ROAM_SCAN_CONTROL_SET		"SETROAMSCANCONTROL"
+#define CMD_NCHO_SCAN_CHANNEL_TIME_GET		"GETSCANCHANNELTIME"
+#define CMD_NCHO_SCAN_CHANNEL_TIME_SET		"SETSCANCHANNELTIME"
+#define CMD_NCHO_SCAN_HOME_TIME_GET		"GETSCANHOMETIME"
+#define CMD_NCHO_SCAN_HOME_TIME_SET		"SETSCANHOMETIME"
+#define CMD_NCHO_SCAN_HOME_AWAY_TIME_GET	"GETSCANHOMEAWAYTIME"
+#define CMD_NCHO_SCAN_HOME_AWAY_TIME_SET	"SETSCANHOMEAWAYTIME"
+#define CMD_NCHO_SCAN_NPROBES_GET		"GETSCANNPROBES"
+#define CMD_NCHO_SCAN_NPROBES_SET		"SETSCANNPROBES"
+#define CMD_NCHO_REASSOC_SEND			"REASSOC"
+#define CMD_NCHO_ACTION_FRAME_SEND		"SENDACTIONFRAME"
+#define CMD_NCHO_WES_MODE_GET			"GETWESMODE"
+#define CMD_NCHO_WES_MODE_SET			"SETWESMODE"
+#define CMD_NCHO_BAND_GET			"GETBAND"
+#define CMD_NCHO_BAND_SET			"SETBAND"
+#define CMD_NCHO_DFS_SCAN_MODE_GET		"GETDFSSCANMODE"
+#define CMD_NCHO_DFS_SCAN_MODE_SET		"SETDFSSCANMODE"
+#define CMD_NCHO_DFS_SCAN_MODE_GET		"GETDFSSCANMODE"
+#define CMD_NCHO_DFS_SCAN_MODE_SET		"SETDFSSCANMODE"
+#define CMD_NCHO_ENABLE				"NCHOENABLE"
+#define CMD_NCHO_DISABLE			"NCHODISABLE"
+static int
+priv_driver_enable_ncho(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen);
+static int
+priv_driver_disable_ncho(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen);
+
+int
+priv_driver_set_ncho_roam_trigger(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4Param = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	UINT_32 u4SetInfoLen = 0;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtos32(apcArgv[1], 0, &i4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set roam trigger cmd %d\n", i4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoRoamTrigger,
+				   &i4Param, sizeof(INT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set roam trigger fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set roam trigger successed\n");
+			i4Ret = 0;
+		}
+
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+
+int
+priv_driver_get_ncho_roam_trigger(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	INT_32 i4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	struct _CMD_HEADER_T cmdV1Header;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoRoamTrigger,
+			   &cmdV1Header,
+			   sizeof(cmdV1Header), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoRoamTrigger fail 0x%x\n", rStatus);
+		return i4BytesWritten;
+	}
+
+	DBGLOG(REQ, TRACE, "NCHO query ok and ret is %s\n", cmdV1Header.buffer);
+	i4BytesWritten = kalkStrtou32(cmdV1Header.buffer, 0, &i4Param);
+	if (i4BytesWritten) {
+		DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d!\n", i4BytesWritten);
+		i4BytesWritten = -1;
+	} else {
+		i4Param = RCPI_TO_dBm(i4Param);		/* RCPI to DB */
+		DBGLOG(INIT, TRACE, "NCHO query RoamTrigger is %d\n", i4Param);
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%d", i4Param);
+	}
+
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_roam_delta(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtos32(apcArgv[1], 0, &i4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set roam delta cmd %d\n", i4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoRoamDelta,
+				   &i4Param, sizeof(INT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set roam delta fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set roam delta successed\n");
+			i4Ret = 0;
+		}
+
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int priv_driver_get_ncho_roam_delta(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	INT_32 i4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoRoamDelta,
+			   &i4Param,
+			   sizeof(INT_32), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoRoamDelta fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %d\n", i4Param);
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%d", i4Param);
+	}
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_roam_scn_period(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set roam period cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoRoamScnPeriod,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set roam period fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set roam period successed\n");
+			i4Ret = 0;
+		}
+
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int priv_driver_get_ncho_roam_scn_period(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoRoamScnPeriod,
+			   &u4Param,
+			   sizeof(UINT_32), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoRoamScnPeriod fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %d\n", u4Param);
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+	return i4BytesWritten;
+}
+int priv_driver_set_ncho_roam_scn_chnl(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4ChnlInfo = 0;
+	UINT_8 i = 1;
+	UINT_8 t = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	CFG_NCHO_SCAN_CHNL_T rRoamScnChnl;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, cmd is %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4ChnlInfo);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		rRoamScnChnl.ucChannelListNum = u4ChnlInfo;
+		DBGLOG(REQ, ERROR, "NCHO ChannelListNum is %d\n", u4ChnlInfo);
+		if (i4Argc != u4ChnlInfo + 2) {
+			DBGLOG(REQ, ERROR, "NCHO param mismatch %d\n", u4ChnlInfo);
+			return -1;
+		}
+		for (i = 2; i < i4Argc; i++) {
+			i4Ret = kalkStrtou32(apcArgv[i], 0, &u4ChnlInfo);
+			if (i4Ret) {
+				while (i != 2) {
+					rRoamScnChnl.arChnlInfoList[i].ucChannelNum = 0;
+					i--;
+				}
+				DBGLOG(REQ, ERROR, "NCHO parse chnl num error %d\n", i4Ret);
+				return -1;
+			}
+			if (u4ChnlInfo != 0) {
+				DBGLOG(INIT, TRACE, "NCHO t = %d, channel value=%d\n", t, u4ChnlInfo);
+				if ((u4ChnlInfo >= 1) && (u4ChnlInfo <= 14))
+					rRoamScnChnl.arChnlInfoList[t].eBand = BAND_2G4;
+				else
+					rRoamScnChnl.arChnlInfoList[t].eBand = BAND_5G;
+
+				rRoamScnChnl.arChnlInfoList[t].ucChannelNum = u4ChnlInfo;
+				t++;
+			}
+
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set roam scan channel cmd\n");
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoRoamScnChnl,
+				   &rRoamScnChnl,
+				   sizeof(CFG_NCHO_SCAN_CHNL_T),
+				   FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set roam scan channel fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set roam scan channel successed\n");
+			i4Ret = 0;
+		}
+
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+
+int priv_driver_get_ncho_roam_scn_chnl(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_8 i = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4BytesWritten = -1;
+	INT_32 i4Argc = 0;
+	UINT_32 u4ChnlInfo = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	CFG_NCHO_SCAN_CHNL_T rRoamScnChnl;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoRoamScnChnl,
+			   &rRoamScnChnl,
+			   sizeof(CFG_NCHO_SCAN_CHNL_T), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoRoamScnChnl fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %d\n", rRoamScnChnl.ucChannelListNum);
+		u4ChnlInfo = rRoamScnChnl.ucChannelListNum;
+		i4BytesWritten = 0;
+		i4BytesWritten += snprintf(pcCommand + i4BytesWritten, i4TotalLen - i4BytesWritten, "%u", u4ChnlInfo);
+		for (i = 0; i < rRoamScnChnl.ucChannelListNum; i++) {
+			u4ChnlInfo = rRoamScnChnl.arChnlInfoList[i].ucChannelNum;
+			i4BytesWritten += snprintf(pcCommand + i4BytesWritten,
+						   i4TotalLen - i4BytesWritten, " %u", u4ChnlInfo);
+		}
+	}
+
+	DBGLOG(REQ, TRACE, "NCHO i4BytesWritten is %d and channel list is %s\n", i4BytesWritten, pcCommand);
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_roam_scn_ctrl(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set roam scan control cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoRoamScnCtrl,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set roam scan control fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set roam scan control successed\n");
+			i4Ret = 0;
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int priv_driver_get_ncho_roam_scn_ctrl(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoRoamScnCtrl,
+			   &u4Param,
+			   sizeof(UINT_32), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoRoamScnCtrl fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %d\n", u4Param);
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_scn_chnl_time(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set scan channel time cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoScnChnlTime,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set scan channel time fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set scan channel time successed\n");
+			i4Ret = 0;
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int priv_driver_get_ncho_scn_chnl_time(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	struct _CMD_HEADER_T cmdV1Header;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoScnChnlTime,
+			   &cmdV1Header,
+			   sizeof(cmdV1Header), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoScnChnlTime fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %s\n", cmdV1Header.buffer);
+		i4BytesWritten = kalkStrtou32(cmdV1Header.buffer, 0, &u4Param);
+		if (i4BytesWritten) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d!\n", i4BytesWritten);
+			i4BytesWritten = -1;
+		} else {
+			i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+		}
+	}
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_scn_home_time(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set scan home time cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoScnHomeTime,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set scan home time fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set scan home time successed\n");
+			i4Ret = 0;
+		}
+
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int priv_driver_get_ncho_scn_home_time(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	struct _CMD_HEADER_T cmdV1Header;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoScnHomeTime,
+			   &cmdV1Header,
+			   sizeof(cmdV1Header), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoScnChnlTime fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %s\n", cmdV1Header.buffer);
+		i4BytesWritten = kalkStrtou32(cmdV1Header.buffer, 0, &u4Param);
+		if (i4BytesWritten) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d!\n", i4BytesWritten);
+			i4BytesWritten = -1;
+		} else {
+			i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+		}
+	}
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_scn_home_away_time(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set scan home away time cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoScnHomeAwayTime,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set scan home away time fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set scan home away time successed\n");
+			i4Ret = 0;
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int priv_driver_get_ncho_scn_home_away_time(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	struct _CMD_HEADER_T cmdV1Header;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoScnHomeAwayTime,
+			   &cmdV1Header,
+			   sizeof(cmdV1Header), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoScnHomeAwayTime fail 0x%x\n", rStatus);
+		return i4BytesWritten;
+	}
+
+	DBGLOG(REQ, TRACE, "NCHO query ok and ret is %s\n", cmdV1Header.buffer);
+	i4BytesWritten = kalkStrtou32(cmdV1Header.buffer, 0, &u4Param);
+	if (i4BytesWritten) {
+		DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d!\n", i4BytesWritten);
+		i4BytesWritten = -1;
+	} else {
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_scn_nprobes(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set scan nprobes cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoScnNprobes,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set scan nprobes fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set scan nprobes successed\n");
+			i4Ret = 0;
+		}
+
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+
+int priv_driver_get_ncho_scn_nprobes(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	struct _CMD_HEADER_T cmdV1Header;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoScnNprobes,
+			   &cmdV1Header,
+			   sizeof(cmdV1Header), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoScnNprobes fail 0x%x\n", rStatus);
+		return i4BytesWritten;
+	}
+
+	DBGLOG(REQ, TRACE, "NCHO query ok and ret is %s\n", cmdV1Header.buffer);
+	i4BytesWritten = kalkStrtou32(cmdV1Header.buffer, 0, &u4Param);
+	if (i4BytesWritten) {
+		DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d!\n", i4BytesWritten);
+		i4BytesWritten = -1;
+	} else {
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+
+	return i4BytesWritten;
+}
+
+/* handle this command as framework roaming */
+int priv_driver_send_ncho_reassoc(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4Ret = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	CFG_NCHO_RE_ASSOC_T rReAssoc;
+	PARAM_CONNECT_T rParamConn;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc == 3) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s %s\n", i4Argc, apcArgv[1], apcArgv[2]);
+
+		i4Ret = kalkStrtou32(apcArgv[2], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+		DBGLOG(INIT, TRACE, "NCHO send reassoc cmd %d\n", u4Param);
+		kalMemZero(&rReAssoc, sizeof(CFG_NCHO_RE_ASSOC_T));
+		rReAssoc.u4CenterFreq = nicChannelNum2Freq(u4Param);
+		CmdStringMacParse(apcArgv[1], (UINT_8 **)&apcArgv[1], &u4SetInfoLen, rReAssoc.aucBssid);
+		DBGLOG(INIT, TRACE, "NCHO Bssid %pM to roam\n", rReAssoc.aucBssid);
+		rParamConn.pucBssid = (UINT_8 *)rReAssoc.aucBssid;
+		rParamConn.pucSsid = (UINT_8 *)rReAssoc.aucSsid;
+		rParamConn.u4SsidLen = rReAssoc.u4SsidLen;
+		rParamConn.u4CenterFreq = rReAssoc.u4CenterFreq;
+
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidGetNchoReassocInfo,
+				   &rParamConn,
+				   sizeof(PARAM_CONNECT_T), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO get reassoc information fail 0x%x\n", rStatus);
+			return -1;
+		}
+		DBGLOG(INIT, TRACE, "NCHO ssid %s to roam\n", rParamConn.pucSsid);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetConnect,
+				   &rParamConn,
+				   sizeof(PARAM_CONNECT_T), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO send reassoc fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO send reassoc successed\n");
+			i4Ret = 0;
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+
+int
+nchoRemainOnChannel(IN P_ADAPTER_T prAdapter, IN UINT_8 ucChannelNum, IN UINT_32 u4DewellTime)
+{
+	INT_32 i4Ret = -1;
+	P_MSG_REMAIN_ON_CHANNEL_T prMsgChnlReq = (P_MSG_REMAIN_ON_CHANNEL_T) NULL;
+
+	do {
+		if (!prAdapter)
+			break;
+
+		prMsgChnlReq = cnmMemAlloc(prAdapter, RAM_TYPE_MSG, sizeof(MSG_REMAIN_ON_CHANNEL_T));
+
+		if (prMsgChnlReq == NULL) {
+			ASSERT(FALSE);
+			DBGLOG(REQ, ERROR, "NCHO there is no memory for message channel req\n");
+			return i4Ret;
+		}
+		kalMemZero(prMsgChnlReq, sizeof(MSG_REMAIN_ON_CHANNEL_T));
+
+		prMsgChnlReq->rMsgHdr.eMsgId = MID_MNY_AIS_REMAIN_ON_CHANNEL;
+		prMsgChnlReq->u4DurationMs = u4DewellTime;
+		prMsgChnlReq->u8Cookie = 0;
+		prMsgChnlReq->ucChannelNum = ucChannelNum;
+
+		if ((ucChannelNum >= 1) && (ucChannelNum <= 14))
+			prMsgChnlReq->eBand = BAND_2G4;
+		else
+			prMsgChnlReq->eBand = BAND_5G;
+
+		mboxSendMsg(prAdapter, MBOX_ID_0, (P_MSG_HDR_T) prMsgChnlReq, MSG_SEND_METHOD_BUF);
+
+		i4Ret = 0;
+	} while (FALSE);
+
+	return i4Ret;
+}
+
+int
+nchoSendActionFrame(IN P_ADAPTER_T prAdapter, P_NCHO_ACTION_FRAME_PARAMS prParamActionFrame)
+{
+	INT_32 i4Ret = -1;
+	P_MSG_MGMT_TX_REQUEST_T prMsgTxReq = (P_MSG_MGMT_TX_REQUEST_T) NULL;
+
+	if (!prAdapter || !prParamActionFrame)
+		return i4Ret;
+
+	do {
+		/* Channel & Channel Type & Wait time are ignored. */
+		prMsgTxReq = cnmMemAlloc(prAdapter, RAM_TYPE_MSG, sizeof(MSG_MGMT_TX_REQUEST_T));
+
+		if (prMsgTxReq == NULL) {
+			ASSERT(FALSE);
+			DBGLOG(REQ, ERROR, "NCHO there is no memory for message tx req\n");
+			return i4Ret;
+		}
+
+		prMsgTxReq->fgNoneCckRate = FALSE;
+		prMsgTxReq->fgIsWaitRsp = TRUE;
+
+		prMsgTxReq->u8Cookie = 0;
+		prMsgTxReq->rMsgHdr.eMsgId = MID_MNY_AIS_NCHO_ACTION_FRAME;
+		mboxSendMsg(prAdapter, MBOX_ID_0, (P_MSG_HDR_T) prMsgTxReq, MSG_SEND_METHOD_BUF);
+
+		i4Ret = 0;
+	} while (FALSE);
+
+	if ((i4Ret != 0) && (prMsgTxReq != NULL)) {
+		if (prMsgTxReq->prMgmtMsduInfo != NULL)
+			cnmMgtPktFree(prAdapter, prMsgTxReq->prMgmtMsduInfo);
+
+		cnmMemFree(prAdapter, prMsgTxReq);
+	}
+
+	return i4Ret;
+}
+
+WLAN_STATUS nchoParseActionFrame(IN P_NCHO_ACTION_FRAME_PARAMS prParamActionFrame, IN char *pcCommand)
+{
+	UINT_32 u4SetInfoLen = 0;
+	UINT_32 u4Num = 0;
+	P_NCHO_AF_INFO prAfInfo = NULL;
+
+	if (!prParamActionFrame || !pcCommand)
+		return WLAN_STATUS_FAILURE;
+
+	prAfInfo = (P_NCHO_AF_INFO)(pcCommand + kalStrLen(CMD_NCHO_ACTION_FRAME_SEND) + 1);
+	if (prAfInfo->i4len > CMD_NCHO_AF_DATA_LENGTH) {
+		DBGLOG(INIT, ERROR, "NCHO AF data length is %d\n", prAfInfo->i4len);
+		return WLAN_STATUS_FAILURE;
+	}
+
+	prParamActionFrame->i4len = prAfInfo->i4len;
+	prParamActionFrame->i4channel = prAfInfo->i4channel;
+	prParamActionFrame->i4DwellTime = prAfInfo->i4DwellTime;
+	kalMemZero(prParamActionFrame->aucData, CMD_NCHO_AF_DATA_LENGTH/2);
+	u4SetInfoLen = prAfInfo->i4len;
+	while (u4SetInfoLen > 0 && u4Num < CMD_NCHO_AF_DATA_LENGTH/2) {
+		*(prParamActionFrame->aucData + u4Num) =
+				CmdString2HexParse(prAfInfo->pucData,
+						   (UINT_8 **)&prAfInfo->pucData,
+						   (UINT_8 *)&u4SetInfoLen);
+		u4Num++;
+	}
+	DBGLOG(INIT, TRACE, "NCHO MAC str is %s\n", prAfInfo->aucBssid);
+	CmdStringMacParse(prAfInfo->aucBssid,
+			  (UINT_8 **)&prAfInfo->aucBssid,
+			  &u4SetInfoLen,
+			  prParamActionFrame->aucBssid);
+	return WLAN_STATUS_SUCCESS;
+}
+
+int
+priv_driver_send_ncho_action_frame(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	NCHO_ACTION_FRAME_PARAMS rParamActionFrame;
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4Ret = -1;
+	UINT_32 u4SetInfoLen = 0;
+	ULONG ulTimer = 0;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = nchoParseActionFrame(&rParamActionFrame, pcCommand);
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO action frame parse error\n");
+		return -1;
+	}
+
+	DBGLOG(INIT, TRACE, "NCHO MAC is %pM\n", rParamActionFrame.aucBssid);
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidSendNchoActionFrameStart,
+			   &rParamActionFrame,
+			   sizeof(NCHO_ACTION_FRAME_PARAMS),
+			   FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO send action fail 0x%x\n", rStatus);
+		return -1;
+	}
+
+	reinit_completion(&prGlueInfo->rAisChGrntComp);
+	i4Ret = nchoRemainOnChannel(prGlueInfo->prAdapter,
+				rParamActionFrame.i4channel,
+				rParamActionFrame.i4DwellTime);
+
+	ulTimer = wait_for_completion_timeout(&prGlueInfo->rAisChGrntComp,
+						msecs_to_jiffies(CMD_NCHO_COMP_TIMEOUT));
+	if (ulTimer) {
+		rStatus = kalIoctl(prGlueInfo,
+			   wlanoidSendNchoActionFrameEnd,
+			   NULL, 0, FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO send action fail 0x%x\n", rStatus);
+			return -1;
+		}
+		i4Ret = nchoSendActionFrame(prGlueInfo->prAdapter, &rParamActionFrame);
+	} else {
+		i4Ret = -1;
+		DBGLOG(INIT, ERROR, "NCHO req channel timeout\n");
+	}
+
+	return i4Ret;
+}
+
+int
+priv_driver_set_ncho_wes_mode(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	UINT_8 puCommondBuf[WLAN_CFG_ARGV_MAX];
+
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+		/*If WES mode is 1, enable NCHO*/
+		/*If WES mode is 0, disable NCHO*/
+		if (u4Param == TRUE && prGlueInfo->prAdapter->rNchoInfo.fgECHOEnabled == FALSE) {
+			kalSnprintf(puCommondBuf, WLAN_CFG_ARGV_MAX, "%s %d", CMD_NCHO_ENABLE, 1);
+			priv_driver_enable_ncho(prNetDev, puCommondBuf, sizeof(puCommondBuf));
+		} else if (u4Param == FALSE && prGlueInfo->prAdapter->rNchoInfo.fgECHOEnabled == TRUE) {
+			kalSnprintf(puCommondBuf, WLAN_CFG_ARGV_MAX, "%s", CMD_NCHO_DISABLE);
+			priv_driver_disable_ncho(prNetDev, puCommondBuf, sizeof(puCommondBuf));
+		}
+
+		DBGLOG(INIT, INFO, "NCHO set WES mode cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoWesMode,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set WES mode fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set WES mode successed\n");
+			i4Ret = 0;
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+
+int priv_driver_get_ncho_wes_mode(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return -WLAN_STATUS_FAILURE;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoWesMode,
+			   &u4Param,
+			   sizeof(UINT_32), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoWesMode fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %d\n", u4Param);
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+	DBGLOG(REQ, TRACE, "NCHO get result is %s\n", pcCommand);
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_band(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set band cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoBand,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set band fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set band successed\n");
+			i4Ret = 0;
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int priv_driver_get_ncho_band(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoBand,
+			   &u4Param,
+			   sizeof(UINT_32), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoBand fail 0x%x\n", rStatus);
+	} else {
+		DBGLOG(REQ, TRACE, "NCHO query ok and ret is %d\n", u4Param);
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+	return i4BytesWritten;
+}
+
+int priv_driver_set_ncho_dfs_scn_mode(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	UINT_32 u4SetInfoLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4Ret = -1;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4Ret;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4Ret = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4Ret) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4Ret);
+			return -1;
+		}
+
+		DBGLOG(INIT, TRACE, "NCHO set DFS scan cmd %d\n", u4Param);
+		rStatus = kalIoctl(prGlueInfo,
+				   wlanoidSetNchoDfsScnMode,
+				   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+		if (rStatus != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "NCHO set DFS scan fail 0x%x\n", rStatus);
+			i4Ret = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set DFS scan successed\n");
+			i4Ret = 0;
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4Ret;
+}
+int
+priv_driver_get_ncho_dfs_scn_mode(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	struct _CMD_HEADER_T cmdV1Header;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO Error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoDfsScnMode,
+			   &cmdV1Header,
+			   sizeof(struct _CMD_HEADER_T), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoDfsScnMode fail 0x%x\n", rStatus);
+		return i4BytesWritten;
+	}
+
+	DBGLOG(REQ, TRACE, "NCHO query ok and ret is %s\n", cmdV1Header.buffer);
+	i4BytesWritten = kalkStrtou32(cmdV1Header.buffer, 0, &u4Param);
+	if (i4BytesWritten) {
+		DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d!\n", i4BytesWritten);
+		i4BytesWritten = -1;
+	} else {
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+
+	return i4BytesWritten;
+}
+
+int
+priv_driver_enable_ncho(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4Param = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4SetInfoLen = 0;
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (rStatus == WLAN_STATUS_SUCCESS && i4Argc >= 2) {
+		DBGLOG(REQ, TRACE, "NCHO argc is %i, %s\n", i4Argc, apcArgv[1]);
+		i4BytesWritten = kalkStrtou32(apcArgv[1], 0, &u4Param);
+		if (i4BytesWritten) {
+			DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d\n", i4BytesWritten);
+			i4BytesWritten = -1;
+		} else {
+			DBGLOG(INIT, TRACE, "NCHO set enable cmd %d\n", u4Param);
+			rStatus = kalIoctl(prGlueInfo,
+					   wlanoidSetNchoEnable,
+					   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4SetInfoLen);
+
+			if (rStatus != WLAN_STATUS_SUCCESS) {
+				DBGLOG(INIT, ERROR, "NCHO set enable fail 0x%x\n", rStatus);
+				i4BytesWritten = -1;
+			} else {
+				DBGLOG(INIT, TRACE, "NCHO set enable successed\n");
+				i4BytesWritten = 0;
+			}
+		}
+	} else {
+		DBGLOG(REQ, ERROR, "NCHO set failed\n");
+	}
+	return i4BytesWritten;
+}
+
+int
+priv_driver_disable_ncho(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	INT_32 i4BytesWritten = -1;
+	UINT_32 u4Param = 0;
+	UINT_32 u4BufLen = 0;
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
+	WLAN_STATUS rStatus = WLAN_STATUS_FAILURE;
+	struct _CMD_HEADER_T cmdV1Header;
+
+	DBGLOG(INIT, TRACE, "NCHO command is %s\n", pcCommand);
+	ASSERT(prNetDev);
+	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
+		return i4BytesWritten;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	rStatus = wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+	if (rStatus != WLAN_STATUS_SUCCESS || i4Argc >= 2) {
+		DBGLOG(REQ, ERROR, "NCHO error input parameter %d\n", i4Argc);
+		return i4BytesWritten;
+	}
+	/*<1> Set NCHO Disable to FW*/
+	u4Param = FALSE;
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidSetNchoEnable,
+			   &u4Param, sizeof(UINT_32), FALSE, FALSE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidSetNchoEnable :%d fail 0x%x\n", u4Param, rStatus);
+		return i4BytesWritten;
+	}
+
+	/*<2> Query NCHOEnable Satus*/
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidQueryNchoEnable,
+			   &cmdV1Header,
+			   sizeof(cmdV1Header), TRUE, TRUE, TRUE, FALSE, &u4BufLen);
+
+	if (rStatus != WLAN_STATUS_SUCCESS) {
+		DBGLOG(INIT, ERROR, "NCHO wlanoidQueryNchoEnable fail 0x%x\n", rStatus);
+		return i4BytesWritten;
+	}
+
+	DBGLOG(REQ, TRACE, "NCHO query ok and ret is %s\n", cmdV1Header.buffer);
+
+
+	i4BytesWritten = kalkStrtou32(cmdV1Header.buffer, 0, &u4Param);
+	if (i4BytesWritten) {
+		DBGLOG(REQ, ERROR, "NCHO parse u4Param error %d!\n", i4BytesWritten);
+		i4BytesWritten = -1;
+	} else {
+		i4BytesWritten = snprintf(pcCommand, i4TotalLen, "%u", u4Param);
+	}
+
+	return i4BytesWritten;
+}
+/*Check NCHO is enable or not.*/
+BOOLEAN
+priv_driver_auto_enable_ncho(IN struct net_device *prNetDev)
+{
+	UINT_8 puCommondBuf[WLAN_CFG_ARGV_MAX];
+	P_GLUE_INFO_T prGlueInfo = NULL;
+
+	ASSERT(prNetDev);
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+	ASSERT(prGlueInfo);
+
+	kalSnprintf(puCommondBuf, WLAN_CFG_ARGV_MAX, "%s %d", CMD_NCHO_ENABLE, 1);
+#if CFG_SUPPORT_NCHO_AUTO_ENABLE
+	if (prGlueInfo->prAdapter->rNchoInfo.fgECHOEnabled == FALSE) {
+		DBGLOG(INIT, INFO, "NCHO is unavailable now! Start to NCHO Enable CMD\n");
+		priv_driver_enable_ncho(prNetDev, puCommondBuf, sizeof(puCommondBuf));
+
+	}
+#endif
+	return TRUE;
+}
+
 #endif
 
 /*******************************************************************************
@@ -360,7 +1645,7 @@ reqExtSetAcpiDevicePowerState(IN P_GLUE_INFO_T prGlueInfo,
 *                       P R I V A T E   D A T A
 ********************************************************************************
 */
-static UINT_8 aucOidBuf[4096] = { 0 };
+static UINT_8 aucOidBuf[CMD_OID_BUF_LENGTH] = { 0 };
 
 /* OID processing table */
 /* Order is important here because the OIDs should be in order of
@@ -684,6 +1969,9 @@ int priv_support_ioctl(IN struct net_device *prNetDev, IN OUT struct ifreq *prIf
 	/* Prepare the call */
 	rIwReqInfo.cmd = (__u16) i4Cmd;
 	rIwReqInfo.flags = 0;
+
+	if ((i4Cmd == IOCTL_SET_STRUCT_FOR_EM) && !capable(CAP_NET_ADMIN))
+		return -EPERM;
 
 	switch (i4Cmd) {
 	case IOCTL_SET_INT:
@@ -1507,18 +2795,13 @@ _priv_get_int(IN struct net_device *prNetDev,
 			wlanQueryDebugCode(prGlueInfo->prAdapter);
 
 			kalMemSet(gucBufDbgCode, '.', sizeof(gucBufDbgCode));
-
-		        u4BufLen = prIwReqData->data.length;
-
-		        if (prIwReqData->data.length > sizeof(gucBufDbgCode))
-		                u4BufLen = sizeof(gucBufDbgCode);
-
-		        if (copy_to_user(prIwReqData->data.pointer, gucBufDbgCode, u4BufLen)) {
-		                return -EFAULT;
-		        }
-		        else {
-		                return status;
-		        }
+			u4BufLen = prIwReqData->data.length;
+			if (u4BufLen > sizeof(gucBufDbgCode))
+				u4BufLen = sizeof(gucBufDbgCode);
+			if (copy_to_user(prIwReqData->data.pointer, gucBufDbgCode, u4BufLen))
+				return -EFAULT;
+			else
+				return status;
 		}
 
 	default:
@@ -1547,7 +2830,11 @@ static int
 _priv_set_ints(IN struct net_device *prNetDev,
 	      IN struct iw_request_info *prIwReqInfo, IN union iwreq_data *prIwReqData, IN char *pcExtra)
 {
-	UINT_32 u4SubCmd, u4BufLen;
+	UINT_32 u4SubCmd, u4BufLen, u4CmdLen;
+#if !(CFG_SUPPORT_TX_POWER_BACK_OFF)
+	UINT_16 i = 0;
+	INT_32  setting[4] = {0};
+#endif
 	P_GLUE_INFO_T prGlueInfo;
 	int status = 0;
 	WLAN_STATUS rStatus = WLAN_STATUS_SUCCESS;
@@ -1563,71 +2850,169 @@ _priv_set_ints(IN struct net_device *prNetDev,
 	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
 
 	u4SubCmd = (UINT_32) prIwReqData->data.flags;
+	u4CmdLen = (UINT_32) prIwReqData->data.length;
 
 	switch (u4SubCmd) {
 	case PRIV_CMD_SET_TX_POWER:
-		{
-			INT_32 *setting = prIwReqData->data.pointer;
-			UINT_16 i;
+#if !(CFG_SUPPORT_TX_POWER_BACK_OFF)
+	{
+		if (u4CmdLen > 4)
+			return -EINVAL;
+		if (copy_from_user(setting, prIwReqData->data.pointer, u4CmdLen))
+			return -EFAULT;
+		prTxpwr = &prGlueInfo->rTxPwr;
+		if (setting[0] == 0 && prIwReqData->data.length == 4 /* argc num */) {
+			/* 0 (All networks), 1 (legacy STA), 2 (Hotspot AP), 3 (P2P), 4 (BT over Wi-Fi) */
+			if (setting[1] == 1 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GLegacyStaPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GLegacyStaPwrOffset = setting[3];
+			}
+			if (setting[1] == 2 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GHotspotPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GHotspotPwrOffset = setting[3];
+			}
+			if (setting[1] == 3 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GP2pPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GP2pPwrOffset = setting[3];
+			}
+			if (setting[1] == 4 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GBowPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GBowPwrOffset = setting[3];
+			}
+		} else if (setting[0] == 1 && prIwReqData->data.length == 2) {
+			prTxpwr->ucConcurrencePolicy = setting[1];
+		} else if (setting[0] == 2 && prIwReqData->data.length == 3) {
+			if (setting[1] == 0) {
+				for (i = 0; i < 14; i++)
+					prTxpwr->acTxPwrLimit2G[i] = setting[2];
+			} else if (setting[1] <= 14)
+				prTxpwr->acTxPwrLimit2G[setting[1] - 1] = setting[2];
+		} else if (setting[0] == 3 && prIwReqData->data.length == 3) {
+			if (setting[1] == 0) {
+				for (i = 0; i < 4; i++)
+					prTxpwr->acTxPwrLimit5G[i] = setting[2];
+			} else if (setting[1] <= 4)
+				prTxpwr->acTxPwrLimit5G[setting[1] - 1] = setting[2];
+		} else if (setting[0] == 4 && prIwReqData->data.length == 2) {
+			if (setting[1] == 0)
+				wlanDefTxPowerCfg(prGlueInfo->prAdapter);
+			rStatus = kalIoctl(prGlueInfo,
+					   wlanoidSetTxPower,
+					   prTxpwr,
+					   sizeof(SET_TXPWR_CTRL_T), TRUE, FALSE, FALSE, FALSE, &u4BufLen);
+		} else
+			return -EFAULT;
+	}
+#else
+	{
+		INT_32 *setting = prIwReqData->data.pointer;
+		UINT_16 i, j;
 
 #if 0
-			DBGLOG(REQ, INFO, "Tx power num = %d\n", prIwReqData->data.length);
+		DBGLOG(REQ, INFO, "Tx power num = %d\n", prIwReqData->data.length);
 
-			DBGLOG(REQ, INFO, "Tx power setting = %d %d %d %d\n",
-				setting[0], setting[1], setting[2], setting[3]);
+		DBGLOG(REQ, INFO, "Tx power setting = %d %d %d %d\n",
+			setting[0], setting[1], setting[2], setting[3]);
 #endif
-			prTxpwr = &prGlueInfo->rTxPwr;
-			if (setting[0] == 0 && prIwReqData->data.length == 4 /* argc num */) {
-				/* 0 (All networks), 1 (legacy STA), 2 (Hotspot AP), 3 (P2P), 4 (BT over Wi-Fi) */
-				if (setting[1] == 1 || setting[1] == 0) {
-					if (setting[2] == 0 || setting[2] == 1)
-						prTxpwr->c2GLegacyStaPwrOffset = setting[3];
-					if (setting[2] == 0 || setting[2] == 2)
-						prTxpwr->c5GLegacyStaPwrOffset = setting[3];
+		prTxpwr = &prGlueInfo->rTxPwr;
+		if (setting[0] == 0 && prIwReqData->data.length == 4 /* argc num */) {
+			/* 0 (All networks), 1 (legacy STA), 2 (Hotspot AP), 3 (P2P), 4 (BT over Wi-Fi) */
+			if (setting[1] == 1 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GLegacyStaPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GLegacyStaPwrOffset = setting[3];
+			}
+			if (setting[1] == 2 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GHotspotPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GHotspotPwrOffset = setting[3];
+			}
+			if (setting[1] == 3 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GP2pPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GP2pPwrOffset = setting[3];
+			}
+			if (setting[1] == 4 || setting[1] == 0) {
+				if (setting[2] == 0 || setting[2] == 1)
+					prTxpwr->c2GBowPwrOffset = setting[3];
+				if (setting[2] == 0 || setting[2] == 2)
+					prTxpwr->c5GBowPwrOffset = setting[3];
+			}
+		} else if (setting[0] == 1 && prIwReqData->data.length == 2) {
+			prTxpwr->ucConcurrencePolicy = setting[1];
+		} else if (setting[0] == 2 && prIwReqData->data.length == 3) {
+			if (setting[1] == 0) {
+				for (i = 0; i < 14; i++)
+					prTxpwr->acTxPwrLimit2G[i] = setting[2];
+			} else if (setting[1] <= 14)
+				prTxpwr->acTxPwrLimit2G[setting[1] - 1] = setting[2];
+		} else if (setting[0] == 3 && prIwReqData->data.length == 3) {
+			if (setting[1] == 0) {
+				for (i = 0; i < 4; i++)
+					prTxpwr->acTxPwrLimit5G[i] = setting[2];
+			} else if (setting[1] <= 4)
+				prTxpwr->acTxPwrLimit5G[setting[1] - 1] = setting[2];
+		} else if (setting[0] == 4 && prIwReqData->data.length == 2) {
+			if (setting[1] == 0)
+				wlanDefTxPowerCfg(prGlueInfo->prAdapter);
+			rStatus = kalIoctl(prGlueInfo,
+				wlanoidSetTxPower,
+				prTxpwr,
+				sizeof(SET_TXPWR_CTRL_T), TRUE, FALSE, FALSE, FALSE, &u4BufLen);
+		} else if (setting[0] == 5 && prIwReqData->data.length == 4) {
+			UINT_8 ch = setting[1];
+			UINT_8 modulation = setting[2];
+			INT_8 offset = setting[3];
+			P_MITIGATED_PWR_BY_CH_BY_MODE pOffsetEntry;
+
+			j = 0;
+			do {
+				pOffsetEntry = &(prTxpwr->arRlmMitigatedPwrByChByMode[j++]);
+				if (ch == 0)
+					break;
+
+				if (ch == pOffsetEntry->channel) {
+					switch (modulation) {
+					case 0:
+						pOffsetEntry->mitigatedCckDsss = offset;
+						pOffsetEntry->mitigatedOfdm = offset;
+						pOffsetEntry->mitigatedHt20 = offset;
+						pOffsetEntry->mitigatedHt40 = offset;
+					break;
+					case 1:
+						pOffsetEntry->mitigatedCckDsss = offset;
+					break;
+					case 2:
+						pOffsetEntry->mitigatedOfdm = offset;
+					break;
+					case 3:
+						pOffsetEntry->mitigatedHt20 = offset;
+					break;
+					case 4:
+						pOffsetEntry->mitigatedHt40 = offset;
+					break;
+					default:
+						return -EFAULT;
+					}
 				}
-				if (setting[1] == 2 || setting[1] == 0) {
-					if (setting[2] == 0 || setting[2] == 1)
-						prTxpwr->c2GHotspotPwrOffset = setting[3];
-					if (setting[2] == 0 || setting[2] == 2)
-						prTxpwr->c5GHotspotPwrOffset = setting[3];
-				}
-				if (setting[1] == 3 || setting[1] == 0) {
-					if (setting[2] == 0 || setting[2] == 1)
-						prTxpwr->c2GP2pPwrOffset = setting[3];
-					if (setting[2] == 0 || setting[2] == 2)
-						prTxpwr->c5GP2pPwrOffset = setting[3];
-				}
-				if (setting[1] == 4 || setting[1] == 0) {
-					if (setting[2] == 0 || setting[2] == 1)
-						prTxpwr->c2GBowPwrOffset = setting[3];
-					if (setting[2] == 0 || setting[2] == 2)
-						prTxpwr->c5GBowPwrOffset = setting[3];
-				}
-			} else if (setting[0] == 1 && prIwReqData->data.length == 2) {
-				prTxpwr->ucConcurrencePolicy = setting[1];
-			} else if (setting[0] == 2 && prIwReqData->data.length == 3) {
-				if (setting[1] == 0) {
-					for (i = 0; i < 14; i++)
-						prTxpwr->acTxPwrLimit2G[i] = setting[2];
-				} else if (setting[1] <= 14)
-					prTxpwr->acTxPwrLimit2G[setting[1] - 1] = setting[2];
-			} else if (setting[0] == 3 && prIwReqData->data.length == 3) {
-				if (setting[1] == 0) {
-					for (i = 0; i < 4; i++)
-						prTxpwr->acTxPwrLimit5G[i] = setting[2];
-				} else if (setting[1] <= 4)
-					prTxpwr->acTxPwrLimit5G[setting[1] - 1] = setting[2];
-			} else if (setting[0] == 4 && prIwReqData->data.length == 2) {
-				if (setting[1] == 0)
-					wlanDefTxPowerCfg(prGlueInfo->prAdapter);
-				rStatus = kalIoctl(prGlueInfo,
-						   wlanoidSetTxPower,
-						   prTxpwr,
-						   sizeof(SET_TXPWR_CTRL_T), TRUE, FALSE, FALSE, FALSE, &u4BufLen);
-			} else
-				return -EFAULT;
-		}
-		return status;
+			} while (j < 40);
+		} else
+			return -EFAULT;
+	}
+#endif
+
+	return status;
 	default:
 		break;
 	}
@@ -1732,7 +3117,9 @@ _priv_set_struct(IN struct net_device *prNetDev,
 	/* WLAN_STATUS rStatus = WLAN_STATUS_SUCCESS; */
 	UINT_32 u4CmdLen = 0;
 	P_NDIS_TRANSPORT_STRUCT prNdisReq;
-	PUINT_32 pu4IntBuf = NULL;
+#if CFG_SUPPORT_TX_POWER_BACK_OFF
+	P_PARAM_MTK_WIFI_TEST_STRUCT_T prTestStruct;
+#endif
 
 	P_GLUE_INFO_T prGlueInfo = NULL;
 	UINT_32 u4BufLen = 0;
@@ -1752,7 +3139,7 @@ _priv_set_struct(IN struct net_device *prNetDev,
 
 #if 0
 	DBGLOG(REQ, INFO, "priv_set_struct(): prIwReqInfo->cmd(0x%X), u4SubCmd(%ld)\n",
-	       prIwReqInfo->cmd, u4SubCmd);
+		prIwReqInfo->cmd, u4SubCmd);
 #endif
 
 	switch (u4SubCmd) {
@@ -1818,13 +3205,19 @@ _priv_set_struct(IN struct net_device *prNetDev,
 	case PRIV_CMD_WSC_PROBE_REQ:
 		{
 			/* retrieve IE for Probe Request */
-			if (prIwReqData->data.length > 0) {
-				if (copy_from_user(prGlueInfo->aucWSCIE, prIwReqData->data.pointer,
-						   prIwReqData->data.length)) {
+			u4CmdLen = prIwReqData->data.length;
+			if (u4CmdLen > GLUE_INFO_WSCIE_LENGTH) {
+				DBGLOG(REQ, ERROR, "Input data length is invalid %u\n", u4CmdLen);
+				return -EINVAL;
+			}
+
+			if (u4CmdLen > 0) {
+				if (copy_from_user(prGlueInfo->aucWSCIE, prIwReqData->data.pointer, u4CmdLen)) {
+					DBGLOG(REQ, ERROR, "Copy from user failed\n");
 					status = -EFAULT;
 					break;
 				}
-				prGlueInfo->u2WSCIELen = prIwReqData->data.length;
+				prGlueInfo->u2WSCIELen = u4CmdLen;
 			} else {
 				prGlueInfo->u2WSCIELen = 0;
 			}
@@ -1832,11 +3225,17 @@ _priv_set_struct(IN struct net_device *prNetDev,
 		break;
 #endif
 	case PRIV_CMD_OID:
-		if (copy_from_user(&aucOidBuf[0], prIwReqData->data.pointer, prIwReqData->data.length)) {
+		u4CmdLen = prIwReqData->data.length;
+		if (u4CmdLen > CMD_OID_BUF_LENGTH) {
+			DBGLOG(REQ, ERROR, "Input data length is invalid %u\n", u4CmdLen);
+			return -EINVAL;
+		}
+
+		if (copy_from_user(&aucOidBuf[0], prIwReqData->data.pointer, u4CmdLen)) {
 			status = -EFAULT;
 			break;
 		}
-		if (!kalMemCmp(&aucOidBuf[0], pcExtra, prIwReqData->data.length))
+		if (!kalMemCmp(&aucOidBuf[0], pcExtra, u4CmdLen))
 			DBGLOG(REQ, INFO, "pcExtra buffer is valid\n");
 		else
 			DBGLOG(REQ, INFO, "pcExtra 0x%p\n", pcExtra);
@@ -1854,12 +3253,15 @@ _priv_set_struct(IN struct net_device *prNetDev,
 		break;
 
 	case PRIV_CMD_SW_CTRL:
-		pu4IntBuf = (PUINT_32) prIwReqData->data.pointer;
+		u4CmdLen = prIwReqData->data.length;
 		prNdisReq = (P_NDIS_TRANSPORT_STRUCT) &aucOidBuf[0];
 
-		/* kalMemCopy(&prNdisReq->ndisOidContent[0], prIwReqData->data.pointer, 8); */
-		if (copy_from_user(&prNdisReq->ndisOidContent[0], prIwReqData->data.pointer,
-			prIwReqData->data.length)) {
+		if (u4CmdLen > (sizeof(aucOidBuf) - OFFSET_OF(NDIS_TRANSPORT_STRUCT, ndisOidContent))) {
+			DBGLOG(REQ, ERROR, "Input data length is invalid %u\n", u4CmdLen);
+			return -EINVAL;
+		}
+
+		if (copy_from_user(&prNdisReq->ndisOidContent[0], prIwReqData->data.pointer, u4CmdLen)) {
 			status = -EFAULT;
 			break;
 		}
@@ -1871,6 +3273,64 @@ _priv_set_struct(IN struct net_device *prNetDev,
 		status = priv_set_ndis(prNetDev, prNdisReq, &u4BufLen);
 		break;
 
+#if CFG_SUPPORT_TX_POWER_BACK_OFF
+	case PRIV_CMD_SET_TX_POWER:
+		{
+			P_REG_INFO_T prRegInfo = &prGlueInfo->rRegInfo;
+			WLAN_STATUS rStatus = WLAN_STATUS_SUCCESS;
+			UINT8 cStartTxBackOff = 0;
+			/* TxPwrBackOffParam's 0th byte contains enable/disable TxPowerBackOff for 2G */
+			/* TxPwrBackOffParam's 1st byte contains default TxPowerBackOff value for 2G */
+			/* TxPwrBackOffParam's 2nd byte contains enable/disable TxPowerBackOff for 5G */
+			/* TxPwrBackOffParam's 3rd byte contains default TxPowerBackOff value for 5G */
+
+			ULONG TxPwrBackOffParam = 0;
+
+			u4CmdLen = prIwReqData->data.length;
+			prTestStruct = (P_PARAM_MTK_WIFI_TEST_STRUCT_T)&aucOidBuf[0];
+
+			if (u4CmdLen > sizeof(aucOidBuf)) {
+				DBGLOG(REQ, ERROR, "SET_TX_POWER: Input data length is invalid %u\n", u4CmdLen);
+				return -EINVAL;
+			}
+			if (copy_from_user(prTestStruct, prIwReqData->data.pointer, u4CmdLen)) {
+				DBGLOG(REQ, INFO, "SET_TX_POWER: copy from user failed\n");
+				return -EFAULT;
+			}
+
+			DBGLOG(REQ, INFO, "%s: SET_TX_POWER FuncIndex %u, FuncData %u[0x%x] %d %d %d %d\n",
+				__func__,
+				prTestStruct->u4FuncIndex,
+				prTestStruct->u4FuncData,
+				prTestStruct->u4FuncData,
+				prRegInfo->bTxPowerLimitEnable2G,
+				prRegInfo->cTxBackOffMaxPower2G,
+				prRegInfo->bTxPowerLimitEnable5G,
+				prRegInfo->cTxBackOffMaxPower5G);
+
+			cStartTxBackOff = prTestStruct->u4FuncData;
+
+			if ((prRegInfo->bTxPowerLimitEnable2G == TRUE) || (prRegInfo->bTxPowerLimitEnable5G == TRUE)) {
+				if (cStartTxBackOff == TRUE) {
+					DBGLOG(REQ, INFO, "Start BackOff\n");
+					TxPwrBackOffParam |= prRegInfo->bTxPowerLimitEnable2G;
+					TxPwrBackOffParam |= prRegInfo->cTxBackOffMaxPower2G << 8;
+					TxPwrBackOffParam |= prRegInfo->bTxPowerLimitEnable5G << 16;
+					TxPwrBackOffParam |= prRegInfo->cTxBackOffMaxPower5G << 24;
+					rStatus = nicTxPowerBackOff(prGlueInfo->prAdapter, TxPwrBackOffParam);
+				} else {
+					DBGLOG(REQ, INFO, "Stop BackOff\n");
+					TxPwrBackOffParam = 0; /* First byte is start/stop */
+					rStatus = nicTxPowerBackOff(prGlueInfo->prAdapter, TxPwrBackOffParam);
+				}
+				if (WLAN_STATUS_PENDING == rStatus)
+					status = 0;
+				else
+					status = -EINVAL;
+			}
+		}
+		break;
+#endif
 	default:
 		return -EOPNOTSUPP;
 	}
@@ -1901,7 +3361,6 @@ _priv_get_struct(IN struct net_device *prNetDev,
 
 	P_GLUE_INFO_T prGlueInfo = NULL;
 	UINT_32 u4BufLen = 0;
-	PUINT_32 pu4IntBuf = NULL;
 	int status = 0;
 
 	kalMemZero(&aucOidBuf[0], sizeof(aucOidBuf));
@@ -1929,7 +3388,8 @@ _priv_get_struct(IN struct net_device *prNetDev,
 
 	switch (u4SubCmd) {
 	case PRIV_CMD_OID:
-		if (copy_from_user(&aucOidBuf[0], prIwReqData->data.pointer, sizeof(NDIS_TRANSPORT_STRUCT))) {
+		if (copy_from_user(&aucOidBuf[0], prIwReqData->data.pointer,
+					sizeof(NDIS_TRANSPORT_STRUCT) + sizeof(UINT_8)*16)) {
 			DBGLOG(REQ, INFO, "priv_get_struct() copy_from_user oidBuf fail\n");
 			return -EFAULT;
 		}
@@ -1943,7 +3403,7 @@ _priv_get_struct(IN struct net_device *prNetDev,
 			prNdisReq->outNdisOidLength = u4BufLen;
 			if (copy_to_user(prIwReqData->data.pointer,
 					 &aucOidBuf[0],
-					 u4BufLen + sizeof(NDIS_TRANSPORT_STRUCT) -
+					 u4BufLen + sizeof(NDIS_TRANSPORT_STRUCT) + sizeof(UINT_8)*16 -
 					 sizeof(prNdisReq->ndisOidContent))) {
 				DBGLOG(REQ, INFO, "priv_get_struct() copy_to_user oidBuf fail(1)\n");
 				return -EFAULT;
@@ -1958,7 +3418,6 @@ _priv_get_struct(IN struct net_device *prNetDev,
 		return -EFAULT;
 
 	case PRIV_CMD_SW_CTRL:
-		pu4IntBuf = (PUINT_32) prIwReqData->data.pointer;
 		prNdisReq = (P_NDIS_TRANSPORT_STRUCT) &aucOidBuf[0];
 
 		if (prIwReqData->data.length > (sizeof(aucOidBuf) - OFFSET_OF(NDIS_TRANSPORT_STRUCT, ndisOidContent))) {
@@ -2369,6 +3828,54 @@ UINT_32 CmdStringMacParse(IN UINT_8 *InStr, OUT UINT_8 **OutStr, OUT UINT_32 *Ou
 	*OutLen = TotalLen;	/* skip the character: _ */
 	return Num;
 }
+#if CFG_SUPPORT_NCHO
+/* do not include 0x or x, string to Hexadecimal */
+UINT_8 CmdString2HexParse(IN UINT_8 *InStr, OUT UINT_8 **OutStr, OUT UINT_8 *OutLen)
+{
+	unsigned char Charc, *Buf;
+	unsigned char ucNum;
+	int Maxloop;
+	int ReadId;
+	int TotalLen;
+
+	/* init */
+	ucNum = 0;
+	Maxloop = 0;
+	ReadId = 0;
+	Buf = (unsigned char *)InStr;
+	TotalLen = *OutLen;
+	*OutStr = Buf;
+
+	/* sanity check */
+	if (TotalLen <= 0)
+		return 0;
+	if (Buf[0] == 0x00)
+		return 0;
+	{
+		while (Maxloop++ < 2) {
+			Charc = Buf[ReadId];
+			if ((Charc >= 0x30) && (Charc <= 0x39)) {
+				Charc -= 0x30;
+			} else if ((Charc >= 'a') && (Charc <= 'f')) {
+				Charc -= 'a';
+				Charc += 10;
+			} else if ((Charc >= 'A') && (Charc <= 'F')) {
+				Charc -= 'A';
+				Charc += 10;
+			} else {
+				break;	/* exit the parsing */
+			}
+			ucNum = ucNum * 16 + Charc;
+			ReadId++;
+			TotalLen--;
+		}
+	}
+
+	*OutStr = &Buf[ReadId];
+	*OutLen = TotalLen;
+	return ucNum;
+}
+#endif
 
 /*----------------------------------------------------------------------------*/
 /*!
@@ -2391,10 +3898,10 @@ _priv_set_string(IN struct net_device *prNetDev,
 		IN struct iw_request_info *prIwReqInfo, IN union iwreq_data *prIwReqData, IN char *pcExtra)
 {
 	P_GLUE_INFO_T GlueInfo;
-	INT_32 Status;
-	UINT_32 Subcmd;
-	UINT_8 *InBuf;
-	UINT_32 InBufLen;
+	INT_32 status = 0;
+	UINT_32 subcmd;
+	UINT_8 *pucInBuf = aucOidBuf;
+	UINT_32 u4BufLen;
 
 	/* sanity check */
 	ASSERT(prNetDev);
@@ -2402,44 +3909,119 @@ _priv_set_string(IN struct net_device *prNetDev,
 	ASSERT(prIwReqData);
 	ASSERT(pcExtra);
 
-	/* init */
-	DBGLOG(REQ, INFO, "priv_set_string (%s)(%d)\n",
-			   (UINT8 *) prIwReqData->data.pointer, (INT32) prIwReqData->data.length);
-
 	if (FALSE == GLUE_CHK_PR3(prNetDev, prIwReqData, pcExtra))
 		return -EINVAL;
+
+	u4BufLen = prIwReqData->data.length;
 	GlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
 
-	InBuf = aucOidBuf;
-	InBufLen = prIwReqData->data.length;
-	Status = 0;
+	if (u4BufLen > CMD_OID_BUF_LENGTH) {
+		DBGLOG(REQ, ERROR, "Input data length is invalid %u\n", u4BufLen);
+		return -EINVAL;
+	}
 
-	if (copy_from_user(InBuf, prIwReqData->data.pointer, prIwReqData->data.length))
+	if (copy_from_user(pucInBuf, prIwReqData->data.pointer, u4BufLen))
 		return -EFAULT;
 
-	Subcmd = CmdStringDecParse(prIwReqData->data.pointer, &InBuf, &InBufLen);
-	DBGLOG(REQ, INFO, "priv_set_string> command = %u\n", (UINT32) Subcmd);
+	DBGLOG(REQ, INFO, "orig str cmd %s, %u\n", pucInBuf, u4BufLen);
+
+	subcmd = CmdStringDecParse(pucInBuf, &pucInBuf, &u4BufLen);
+	DBGLOG(REQ, INFO, "priv_set_string> command = %u\n", (UINT32) subcmd);
 
 	/* handle the command */
-	switch (Subcmd) {
+	switch (subcmd) {
 #if (CFG_SUPPORT_TDLS == 1)
 	case PRIV_CMD_OTHER_TDLS:
-		TdlsexCmd(GlueInfo, InBuf, InBufLen);
+		TdlsexCmd(GlueInfo, pucInBuf, u4BufLen);
 		break;
 #endif /* CFG_SUPPORT_TDLS */
 
 #if (CFG_SUPPORT_TXR_ENC == 1)
 	case PRIV_CMD_OTHER_TAR:
 	{
-		rlmCmd(GlueInfo, InBuf, InBufLen);
+		rlmCmd(GlueInfo, pucInBuf, u4BufLen);
 		break;
 	}
 #endif /* CFG_SUPPORT_TXR_ENC */
+	case PRIV_CMD_OTHER:
+	{
+		INT_32 i4BytesWritten;
+
+		if (!strnicmp(pucInBuf, "addts", 5) || !strnicmp(pucInBuf, "delts", 5))
+			kalIoctl(GlueInfo, wlanoidTspecOperation, (PVOID)pucInBuf,
+					 u4BufLen, FALSE, FALSE, FALSE, FALSE, &i4BytesWritten);
+		else if (!strnicmp(pucInBuf, "RM-IT", 5))
+			kalIoctl(GlueInfo, wlanoidRadioMeasurementIT, (PVOID)(pucInBuf+6),
+					 u4BufLen, FALSE, FALSE, FALSE, FALSE, &i4BytesWritten);
+		break;
+	}
 	default:
 		break;
 	}
 
-	return Status;
+	return status;
+}
+
+/*----------------------------------------------------------------------------*/
+/*!
+* \brief The routine handles a get operation for a single OID.
+*
+* \param[in] pDev Net device requested.
+* \param[in] ndisReq Ndis request OID information copy from user.
+* \param[out] outputLen_p If the call is successful, returns the number of
+*                         bytes written into the query buffer. If the
+*                         call failed due to invalid length of the query
+*                         buffer, returns the amount of storage needed..
+*
+* \retval 0 On success.
+* \retval -EOPNOTSUPP If cmd is not supported.
+*
+*/
+/*----------------------------------------------------------------------------*/
+static int
+_priv_get_string(IN struct net_device *prNetDev,
+		IN struct iw_request_info *prIwReqInfo, IN union iwreq_data *prIwReqData, IN char *pcExtra)
+{
+	UINT_32 u4SubCmd = 0;
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	int status = 0;
+
+	if (!prNetDev || !prIwReqData || !pcExtra) {
+		DBGLOG(REQ, INFO, "priv_get_struct(): invalid param(0x%p, 0x%p)\n", prNetDev, prIwReqData);
+		return -EINVAL;
+	}
+
+	u4SubCmd = (UINT_32) prIwReqData->data.flags;
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+	if (!prGlueInfo) {
+		DBGLOG(REQ, INFO, "priv_get_struct(): invalid prGlueInfo(0x%p, 0x%p)\n",
+				   prNetDev, *((P_GLUE_INFO_T *) netdev_priv(prNetDev)));
+		return -EINVAL;
+	}
+	if (copy_from_user(pcExtra, prIwReqData->data.pointer, prIwReqData->data.length)) {
+		DBGLOG(REQ, INFO, "copy from user failed\n");
+		return -EFAULT;
+	}
+	switch (u4SubCmd) {
+	case PRIV_CMD_DUMP_DRIVER:
+	{
+		INT_32 i4BytesWritten = 0;
+
+		if (!strnicmp(pcExtra, "dumpts", 6))
+			kalIoctl(prGlueInfo, wlanoidTspecOperation, (PVOID)pcExtra,
+					 512, FALSE, FALSE, FALSE, FALSE, &i4BytesWritten);
+		else if (!strnicmp(pcExtra, "dumpuapsd", 9))
+			kalIoctl(prGlueInfo, wlanoidDumpUapsdSetting, (PVOID)pcExtra,
+					 512, FALSE, FALSE, FALSE, FALSE, &i4BytesWritten);
+		prIwReqData->data.length = i4BytesWritten;
+		DBGLOG(REQ, INFO, "returned Bytes %d\n", i4BytesWritten);
+		break;
+	}
+	default:
+		DBGLOG(REQ, WARN, "Unknown SubCmd %u with param %s\n", u4SubCmd, pcExtra);
+		break;
+	}
+	return status;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -2746,7 +4328,7 @@ int priv_driver_set_miracast(IN struct net_device *prNetDev, IN char *pcCommand,
 	UINT_32 ucMode = 0;
 	P_WFD_CFG_SETTINGS_T prWfdCfgSettings = (P_WFD_CFG_SETTINGS_T) NULL;
 	P_MSG_WFD_CONFIG_SETTINGS_CHANGED_T prMsgWfdCfgUpdate = (P_MSG_WFD_CONFIG_SETTINGS_CHANGED_T) NULL;
-	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
 	INT_32 u4Ret;
 
 	ASSERT(prNetDev);
@@ -2805,7 +4387,154 @@ int priv_driver_set_miracast(IN struct net_device *prNetDev, IN char *pcCommand,
 	/* i4Argc */
 	return i4BytesWritten;
 }
+#if CFG_SUPPORT_P2P_ECSA
+int priv_driver_set_cs_config(IN struct net_device *prNetDev,
+				IN UINT_8 mode,
+				IN UINT_8 channel,
+				IN UINT_8 op_class,
+				IN UINT_8 count,
+				IN UINT_8 sco)
+{
+	WLAN_STATUS rStatus = WLAN_STATUS_SUCCESS;
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	UINT_32 u4BufLen = 0;
+	PARAM_ECSA_CONFIG_STRUCT_T rECSAConfig;
 
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+
+	kalMemZero(&rECSAConfig, sizeof(rECSAConfig));
+
+	rECSAConfig.channel = channel;
+	rECSAConfig.count = count;
+	rECSAConfig.mode = mode;
+	rECSAConfig.op_class = op_class;
+	rECSAConfig.sco = sco;
+
+	rStatus = kalIoctl(prGlueInfo,
+			   wlanoidSetECSAConfig,
+			   &rECSAConfig,
+			   sizeof(rECSAConfig), FALSE, FALSE, TRUE, TRUE, &u4BufLen);
+	DBGLOG(REQ, INFO, "%s status: %d\n", __func__, rStatus);
+	rStatus = p2pUpdateBeaconEcsaIE(prGlueInfo->prAdapter, NETWORK_TYPE_P2P_INDEX);
+	DBGLOG(REQ, INFO, "%s update beacon status: %d\n", __func__, rStatus);
+	return rStatus;
+}
+
+int priv_driver_ecsa(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
+{
+	UINT_32 channel;
+	UINT_8 op_class;
+	UINT_32 bandwidth;
+	UINT_32 u4Freq;
+	INT_32 sec_channel = 0;
+	UINT_8 ucPreferedChnl;
+	ENUM_BAND_T eBand;
+	P_GLUE_INFO_T prGlueInfo = NULL;
+	P_ADAPTER_T prAdapter = NULL;
+
+	P_MSG_P2P_ECSA_T prMsgECSA = NULL;
+	P_MSG_P2P_ECSA_T prMsgCSA = NULL;
+
+	INT_32 i4Argc = 0;
+	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
+	ENUM_CHNL_EXT_T eSco = CHNL_EXT_SCN;
+
+	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
+	prAdapter = prGlueInfo->prAdapter;
+
+	DBGLOG(REQ, INFO, "command is %s\n", pcCommand);
+	wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
+
+	if (i4Argc != 3) {
+		/*
+		 * cmd format: P2P_ECSA channel bandwidth
+		 * argc should be 3
+		 */
+		DBGLOG(REQ, WARN, "cmd format invalid. argc: %d\n", i4Argc);
+		return -1;
+	}
+	/*
+	 * apcArgv[0] = "P2P_ECSA
+	 * apcArgv[1] = channel
+	 * apcArgv[2] = bandwidth
+	 */
+	if (kalkStrtou32(apcArgv[1], 0, &channel) ||
+		kalkStrtou32(apcArgv[2], 0, &bandwidth)) {
+		DBGLOG(REQ, INFO, "kalkstrtou32 failed\n");
+		return -1;
+	}
+	DBGLOG(REQ, INFO, "ECSA: channel:bandwidth %d:%d\n", channel, bandwidth);
+	u4Freq = nicChannelNum2Freq(channel);
+	prMsgCSA = cnmMemAlloc(prAdapter, RAM_TYPE_MSG, sizeof(MSG_P2P_ECSA_T));
+
+	prMsgECSA = cnmMemAlloc(prAdapter, RAM_TYPE_MSG, sizeof(MSG_P2P_ECSA_T));
+	if (!prMsgECSA || !prMsgCSA) {
+		if (prMsgECSA)
+			cnmMemFree(prAdapter, prMsgECSA);
+		if (prMsgCSA)
+			cnmMemFree(prAdapter, prMsgCSA);
+
+		DBGLOG(REQ, ERROR, "Msg alloc failed\n");
+		return -1;
+	}
+
+	if (bandwidth == 20) {
+		/* no need to get sco */
+	} else if (bandwidth == 40) {
+		/* need get sco */
+		if (cnmPreferredChannel(prAdapter,
+					&eBand,
+					&ucPreferedChnl,
+					&eSco) == FALSE) {
+			eSco = rlmDecideSco(prAdapter, channel, channel > 14 ? BAND_2G4 : BAND_5G);
+		}
+
+	} else {
+		/* failed, we not support 80/160 yet */
+		DBGLOG(REQ, ERROR, "band width %d not support\n", bandwidth);
+		return -2;
+	}
+
+	if (eSco == CHNL_EXT_SCN) {
+		DBGLOG(REQ, INFO, "SCO: No Sco\n");
+		sec_channel = 0;
+	} else if (eSco == CHNL_EXT_SCA) {
+		DBGLOG(REQ, INFO, "SCO: above Sco\n");
+		sec_channel = 1;
+	} else if (eSco == CHNL_EXT_SCB) {
+		DBGLOG(REQ, INFO, "SCO: above Sco\n");
+		sec_channel = -1;
+	}
+	rlmFreqToChannelExt(u4Freq / 1000, sec_channel, &op_class, (PUINT_8)&channel);
+
+	prMsgCSA->rMsgHdr.eMsgId = MID_MNY_P2P_CSA;
+	prMsgCSA->rP2pECSA.channel = channel;
+	prMsgCSA->rP2pECSA.count = 50; /* 50 TBTTs */
+	prMsgCSA->rP2pECSA.mode = 0; /* not reserve transimit */
+	prMsgCSA->rP2pECSA.op_class = op_class;
+	prMsgCSA->rP2pECSA.sco = eSco;
+
+	DBGLOG(REQ, INFO, "freq:channel:mode:count:op_class:sco %d:%d:%d:%d:%d:%d",
+			u4Freq,
+			channel, prMsgCSA->rP2pECSA.mode,
+			prMsgCSA->rP2pECSA.count,
+			prMsgCSA->rP2pECSA.op_class,
+			prMsgCSA->rP2pECSA.sco);
+
+	mboxSendMsg(prAdapter, MBOX_ID_0, (P_MSG_HDR_T) prMsgCSA, MSG_SEND_METHOD_BUF);
+
+	prMsgECSA->rMsgHdr.eMsgId = MID_MNY_P2P_ECSA;
+	prMsgECSA->rP2pECSA.channel = channel;
+	prMsgECSA->rP2pECSA.count = 50; /* 50 TBTTs */
+	prMsgECSA->rP2pECSA.mode = 0; /* not reserve transimit */
+	prMsgECSA->rP2pECSA.op_class = op_class;
+	prMsgECSA->rP2pECSA.sco = eSco;
+	mboxSendMsg(prAdapter, MBOX_ID_0, (P_MSG_HDR_T) prMsgECSA, MSG_SEND_METHOD_BUF);
+
+	priv_driver_set_cs_config(prNetDev, 0, channel, op_class, 50, eSco);
+	return 0;
+}
+#endif
 int priv_support_driver_cmd(IN struct net_device *prNetDev, IN OUT struct ifreq *prReq, IN int i4Cmd)
 {
 	P_GLUE_INFO_T prGlueInfo = NULL;
@@ -2846,7 +4575,7 @@ int priv_support_driver_cmd(IN struct net_device *prNetDev, IN OUT struct ifreq 
 
 	i4TotalLen = priv_cmd->total_len;
 
-	if (i4TotalLen <= 0) {
+	if (i4TotalLen <= 0 || i4TotalLen > PRIV_CMD_SIZE) {
 		ret = -EINVAL;
 		DBGLOG(REQ, INFO, "%s: i4TotalLen invalid\n", __func__);
 		goto exit;
@@ -2895,6 +4624,10 @@ INT_32 priv_driver_cmds(IN struct net_device *prNetDev, IN PCHAR pcCommand, IN I
 
 		if (strnicmp(pcCommand, CMD_MIRACAST, strlen(CMD_MIRACAST)) == 0)
 			i4BytesWritten = priv_driver_set_miracast(prNetDev, pcCommand, i4TotalLen);
+#if CFG_SUPPORT_P2P_ECSA
+		else if (kalStrniCmp(pcCommand, CMD_ECSA, strlen(CMD_ECSA)) == 0)
+			i4BytesWritten = priv_driver_ecsa(prNetDev, pcCommand, i4TotalLen);
+#endif
 #if CFG_SUPPORT_BATCH_SCAN
 		else if (strnicmp(pcCommand, CMD_BATCH_SET, strlen(CMD_BATCH_SET)) == 0) {
 			kalIoctl(prGlueInfo,
@@ -2946,7 +4679,62 @@ INT_32 priv_driver_cmds(IN struct net_device *prNetDev, IN PCHAR pcCommand, IN I
 		else if (strnicmp(pcCommand, CMD_CH_ENV_GET, strlen(CMD_CH_ENV_GET)) == 0)
 			scanEnvResult(prGlueInfo, pcCommand, i4TotalLen, &i4BytesWritten);
 #endif
+		else if (strnicmp(pcCommand, CMD_ADD_TS, strlen(CMD_ADD_TS)) == 0 ||
+			strnicmp(pcCommand, CMD_DELETE_TS, strlen(CMD_DELETE_TS)) == 0) {
+			kalIoctl(prGlueInfo, wlanoidTspecOperation, (PVOID)pcCommand,
+					 i4TotalLen, FALSE, FALSE, FALSE, FALSE, &i4BytesWritten);
+		}
+#if CFG_SUPPORT_FCC_POWER_BACK_OFF
+		else if (kalStrniCmp(pcCommand, CMD_SET_FCC_CERT, strlen(CMD_SET_FCC_CERT)) == 0) {
+			CMD_FCC_TX_PWR_ADJUST rFccTxPwrAdjust;
+			P_FCC_TX_PWR_ADJUST pFccTxPwrAdjust = &prGlueInfo->rRegInfo.rFccTxPwrAdjust;
+			WLAN_STATUS rWlanStatus = WLAN_STATUS_FAILURE;
 
+			if (pFccTxPwrAdjust->fgFccTxPwrAdjust == 0)
+				DBGLOG(RLM, WARN,
+				       "FCC cert control(%d) is disabled in NVRAM\n",
+				       pFccTxPwrAdjust->fgFccTxPwrAdjust);
+			else {
+				pcCommand += (strlen(CMD_SET_FCC_CERT) + 1);
+				if (kalStrniCmp(pcCommand, "-1", strlen("-1")) != 0 && *pcCommand != '0')
+					DBGLOG(RLM, WARN, "control parameter(%s) is not correct(0 or -1)\n",
+					       pcCommand);
+				else {
+					kalMemSet(&rFccTxPwrAdjust, 0, sizeof(rFccTxPwrAdjust));
+#if 0
+					rFccTxPwrAdjust.Offset_CCK = 14;	/* drop 7dB */
+					rFccTxPwrAdjust.Offset_HT20 = 16;	/* drop 8dB */
+					rFccTxPwrAdjust.Offset_HT40 = 14;	/* drop 7dB */
+					rFccTxPwrAdjust.Channel_CCK[0] = 12;	/* start channel */
+					rFccTxPwrAdjust.Channel_CCK[1] = 13;	/* end channel */
+					rFccTxPwrAdjust.Channel_HT20[0] = 12;	/* start channel */
+					rFccTxPwrAdjust.Channel_HT20[1] = 13;	/* end channel */
+					/* start channel, primiary channel 12, HT40, center channel (10) -2 */
+					rFccTxPwrAdjust.Channel_HT40[0] = 8;
+					/* end channel, primiary channel 12, HT40,  center channel (11) -2 */
+					rFccTxPwrAdjust.Channel_HT40[1] = 9;
+#else
+					kalMemCopy(&rFccTxPwrAdjust, pFccTxPwrAdjust, sizeof(FCC_TX_PWR_ADJUST));
+#endif
+					rFccTxPwrAdjust.fgFccTxPwrAdjust = *pcCommand == '0' ? 1 : 0;
+
+					DBGLOG(RLM, INFO, "FCC Cert Control (%d)\n", rFccTxPwrAdjust.fgFccTxPwrAdjust);
+
+					rWlanStatus = kalIoctl(prGlueInfo,
+							       wlanoidSetFccCert,
+							       (PVOID)&rFccTxPwrAdjust,
+							       sizeof(CMD_FCC_TX_PWR_ADJUST),
+							       FALSE,
+							       FALSE,
+							       TRUE,
+							       FALSE,
+							       NULL);
+					if (rWlanStatus == WLAN_STATUS_SUCCESS)
+						i4BytesWritten = i4TotalLen;
+				}
+			}
+		}
+#endif
 #if 0
 
 		else if (strnicmp(pcCommand, CMD_RSSI, strlen(CMD_RSSI)) == 0) {
@@ -3038,6 +4826,120 @@ INT_32 priv_driver_cmds(IN struct net_device *prNetDev, IN PCHAR pcCommand, IN I
 
 #endif
 
+#if CFG_SUPPORT_NCHO
+		else if (kalStrniCmp(pcCommand,
+				  CMD_NCHO_ROAM_TRIGGER_SET,
+				  strlen(CMD_NCHO_ROAM_TRIGGER_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_roam_trigger(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_TRIGGER_GET,
+				    strlen(CMD_NCHO_ROAM_TRIGGER_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_roam_trigger(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_DELTA_SET,
+				    strlen(CMD_NCHO_ROAM_DELTA_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_roam_delta(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_DELTA_GET,
+				    strlen(CMD_NCHO_ROAM_DELTA_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_roam_delta(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_SCAN_PERIOD_SET,
+				    strlen(CMD_NCHO_ROAM_SCAN_PERIOD_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_roam_scn_period(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_SCAN_PERIOD_GET,
+				    strlen(CMD_NCHO_ROAM_SCAN_PERIOD_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_roam_scn_period(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_SCAN_CHANNELS_SET,
+				    strlen(CMD_NCHO_ROAM_SCAN_CHANNELS_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_roam_scn_chnl(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_SCAN_CHANNELS_GET,
+				    strlen(CMD_NCHO_ROAM_SCAN_CHANNELS_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_roam_scn_chnl(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_SCAN_CONTROL_SET,
+				    strlen(CMD_NCHO_ROAM_SCAN_CONTROL_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_roam_scn_ctrl(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ROAM_SCAN_CONTROL_GET,
+				    strlen(CMD_NCHO_ROAM_SCAN_CONTROL_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_roam_scn_ctrl(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_SCAN_CHANNEL_TIME_SET,
+				    strlen(CMD_NCHO_SCAN_CHANNEL_TIME_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_scn_chnl_time(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_SCAN_CHANNEL_TIME_GET,
+				    strlen(CMD_NCHO_SCAN_CHANNEL_TIME_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_scn_chnl_time(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_SCAN_HOME_TIME_SET,
+				    strlen(CMD_NCHO_SCAN_HOME_TIME_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_scn_home_time(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_SCAN_HOME_TIME_GET,
+				    strlen(CMD_NCHO_SCAN_HOME_TIME_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_scn_home_time(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_SCAN_HOME_AWAY_TIME_SET,
+				    strlen(CMD_NCHO_SCAN_HOME_AWAY_TIME_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_scn_home_away_time(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_SCAN_HOME_AWAY_TIME_GET,
+				    strlen(CMD_NCHO_SCAN_HOME_AWAY_TIME_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_scn_home_away_time(prNetDev, pcCommand, i4TotalLen);
+		}  else if (kalStrniCmp(pcCommand,
+				     CMD_NCHO_SCAN_NPROBES_SET,
+				     strlen(CMD_NCHO_SCAN_NPROBES_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_scn_nprobes(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_SCAN_NPROBES_GET,
+				    strlen(CMD_NCHO_SCAN_NPROBES_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_scn_nprobes(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_REASSOC_SEND,
+				    strlen(CMD_NCHO_REASSOC_SEND)) == 0) {
+			i4BytesWritten = priv_driver_send_ncho_reassoc(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ACTION_FRAME_SEND,
+				    strlen(CMD_NCHO_ACTION_FRAME_SEND)) == 0) {
+			i4BytesWritten = priv_driver_send_ncho_action_frame(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_WES_MODE_SET,
+				    strlen(CMD_NCHO_WES_MODE_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_wes_mode(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_WES_MODE_GET, strlen(CMD_NCHO_WES_MODE_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_wes_mode(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_BAND_SET,
+				    strlen(CMD_NCHO_BAND_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_band(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_BAND_GET,
+				    strlen(CMD_NCHO_BAND_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_band(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_DFS_SCAN_MODE_SET,
+				    strlen(CMD_NCHO_DFS_SCAN_MODE_SET)) == 0) {
+			i4BytesWritten = priv_driver_set_ncho_dfs_scn_mode(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_DFS_SCAN_MODE_GET,
+				    strlen(CMD_NCHO_DFS_SCAN_MODE_GET)) == 0) {
+			i4BytesWritten = priv_driver_get_ncho_dfs_scn_mode(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_ENABLE,
+				    strlen(CMD_NCHO_ENABLE)) == 0) {
+			i4BytesWritten = priv_driver_enable_ncho(prNetDev, pcCommand, i4TotalLen);
+		} else if (kalStrniCmp(pcCommand,
+				    CMD_NCHO_DISABLE,
+				    strlen(CMD_NCHO_DISABLE)) == 0) {
+			i4BytesWritten = priv_driver_disable_ncho(prNetDev, pcCommand, i4TotalLen);
+		}
+#endif
 		else
 			i4CmdFound = 0;
 	}
@@ -3151,6 +5053,15 @@ int
 priv_set_string(IN struct net_device *prNetDev,
 		IN struct iw_request_info *prIwReqInfo, IN union iwreq_data *prIwReqData, IN char *pcExtra)
 {
-	return compat_priv(prNetDev, prIwReqInfo, prIwReqData, pcExtra, _priv_set_string);
+	return _priv_set_string(prNetDev, prIwReqInfo, prIwReqData, pcExtra);
+	/*return compat_priv(prNetDev, prIwReqInfo, prIwReqData, pcExtra, _priv_set_string);*/
+}
+
+int
+priv_get_string(IN struct net_device *prNetDev,
+		IN struct iw_request_info *prIwReqInfo, IN union iwreq_data *prIwReqData, IN char *pcExtra)
+{
+	return _priv_get_string(prNetDev, prIwReqInfo, prIwReqData, pcExtra);
+	/*return compat_priv(prNetDev, prIwReqInfo, prIwReqData, pcExtra, _priv_get_string);*/
 }
 

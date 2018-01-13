@@ -1,208 +1,14 @@
 /*
-** Id: //Department/DaVinci/TRUNK/WiFi_P2P_Driver/common/wlan_p2p.c#8
-*/
-
-/*! \file wlan_bow.c
-    \brief This file contains the Wi-Fi Direct commands processing routines for
-	   MediaTek Inc. 802.11 Wireless LAN Adapters.
-*/
-
-/*
-** Log: wlan_p2p.c
- *
- * 07 17 2012 yuche.tsai
- * NULL
- * Compile no error before trial run.
- *
- * 11 24 2011 yuche.tsai
- * NULL
- * Fix P2P IOCTL of multicast address bug, add low power driver stop control.
- *
- * 11 22 2011 yuche.tsai
- * NULL
- * Update RSSI link quality of P2P Network query method. (Bug fix)
- *
- * 11 19 2011 yuche.tsai
- * NULL
- * Add RSSI support for P2P network.
- *
- * 11 08 2011 yuche.tsai
- * [WCXRP00001094] [Volunteer Patch][Driver] Driver version & supplicant version query & set support
- * for service discovery version check.
- * Add support for driver version query & p2p supplicant verseion set.
- * For new service discovery mechanism sync.
- *
- * 10 18 2011 yuche.tsai
- * [WCXRP00001045] [WiFi Direct][Driver] Check 2.1 branch.
- * Support Channel Query.
- *
- * 10 18 2011 yuche.tsai
- * [WCXRP00001045] [WiFi Direct][Driver] Check 2.1 branch.
- * New 2.1 branch
-
- *
- * 08 23 2011 yuche.tsai
- * NULL
- * Fix Multicast Issue of P2P.
- *
- * 04 27 2011 george.huang
- * [WCXRP00000684] [MT6620 Wi-Fi][Driver] Support P2P setting ARP filter
- * Support P2P ARP filter setting on early suspend/ late resume
- *
- * 04 08 2011 george.huang
- * [WCXRP00000621] [MT6620 Wi-Fi][Driver] Support P2P supplicant to set power mode
- * separate settings of P2P and AIS
- *
- * 03 22 2011 george.huang
- * [WCXRP00000504] [MT6620 Wi-Fi][FW] Support Sigma CAPI for power saving related command
- * link with supplicant commands
- *
- * 03 17 2011 wh.su
- * [WCXRP00000571] [MT6620 Wi-Fi] [Driver] Not check the p2p role during set key
- * Skip the p2p role for adding broadcast key issue.
- *
- * 03 16 2011 wh.su
- * [WCXRP00000530] [MT6620 Wi-Fi] [Driver] skip doing p2pRunEventAAAComplete after send assoc response Tx Done
- * fixed compiling error while enable dbg.
- *
- * 03 08 2011 yuche.tsai
- * [WCXRP00000480] [Volunteer Patch][MT6620][Driver] WCS IE format
- * issue[WCXRP00000509] [Volunteer Patch][MT6620][Driver] Kernal panic when remove p2p module.
- * .
- *
- * 03 07 2011 terry.wu
- * [WCXRP00000521] [MT6620 Wi-Fi][Driver] Remove non-standard debug message
- * Toggle non-standard debug messages to comments.
- *
- * 03 07 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * rename the define to anti_pviracy.
- *
- * 03 05 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * add the code to get the check rsponse and indicate to app.
- *
- * 03 02 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * Add Security check related code.
- *
- * 03 02 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Fix SD Request Query Length issue.
- *
- * 03 02 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Service Discovery Request.
- *
- * 03 01 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Update Service Discovery Wlan OID related function.
- *
- * 03 01 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Update Service Discovery Related wlanoid function.
- *
- * 02 09 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Add Service Discovery Indication Related code.
- *
- * 01 26 2011 yuche.tsai
- * [WCXRP00000245] 1. Invitation Request/Response.
-2. Provision Discovery Request/Response
-
- * Add Service Discovery Function.
- *
- * 01 05 2011 cp.wu
- * [WCXRP00000283] [MT6620 Wi-Fi][Driver][Wi-Fi Direct] Implementation of interface
- *  for supporting Wi-Fi Direct Service Discovery ioctl implementations for P2P Service Discovery
- *
- * 01 04 2011 cp.wu
- * [WCXRP00000338] [MT6620 Wi-Fi][Driver] Separate kalMemAlloc into kmalloc and vmalloc implementations to
- * ease physically continuous memory demands separate kalMemAlloc() into virtually-continuous
- * and physically-continuous type to ease slab system pressure
- *
- * 12 22 2010 cp.wu
- * [WCXRP00000283] [MT6620 Wi-Fi][Driver][Wi-Fi Direct] Implementation of interface
- * for supporting Wi-Fi Direct Service Discovery
- * 1. header file restructure for more clear module isolation
- * 2. add function interface definition for implementing Service Discovery callbacks
- *
- * 10 04 2010 cp.wu
- * [WCXRP00000077] [MT6620 Wi-Fi][Driver][FW] Eliminate use of ENUM_NETWORK_TYPE_T
- * and replaced by ENUM_NETWORK_TYPE_INDEX_T only remove ENUM_NETWORK_TYPE_T definitions
- *
- * 09 28 2010 wh.su
- * NULL
- * [WCXRP00000069][MT6620 Wi-Fi][Driver] Fix some code for phase 1 P2P Demo.
- *
- * 09 21 2010 kevin.huang
- * [WCXRP00000054] [MT6620 Wi-Fi][Driver] Restructure driver for second Interface
- * Isolate P2P related function for Hardware Software Bundle
- *
- * 09 03 2010 kevin.huang
- * NULL
- * Refine #include sequence and solve recursive/nested #include issue
- *
- * 08 23 2010 cp.wu
- * NULL
- * revise constant definitions to be matched with implementation (original cmd-event definition is deprecated)
- *
- * 08 16 2010 cp.wu
- * NULL
- * add subroutines for P2P to set multicast list.
- *
- * 08 16 2010 george.huang
- * NULL
- * .
- *
- * 08 16 2010 george.huang
- * NULL
- * support wlanoidSetP2pPowerSaveProfile() in P2P
- *
- * 08 16 2010 george.huang
- * NULL
- * Support wlanoidSetNetworkAddress() for P2P
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 06 25 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * add API in que_mgt to retrieve sta-rec index for security frames.
- *
- * 06 24 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * 802.1x and bluetooth-over-Wi-Fi security frames are now delievered to firmware via command path instead of data path.
- *
- * 06 11 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * 1) migrate assoc.c.
- * 2) add ucTxSeqNum for tracking frames which needs TX-DONE awareness
- * 3) add configuration options for CNM_MEM and RSN modules
- * 4) add data path for management frames
- * 5) eliminate rPacketInfo of MSDU_INFO_T
- *
- * 06 06 2010 kevin.huang
- * [WPD00003832][MT6620 5931] Create driver base
- * [MT6620 5931] Create driver base
- *
- * 05 17 2010 cp.wu
- * [WPD00003831][MT6620 Wi-Fi] Add framework for Wi-Fi Direct support
- * 1) add timeout handler mechanism for pending command packets
- * 2) add p2p add/removal key
- *
-**
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /******************************************************************************
@@ -215,6 +21,7 @@
 *******************************************************************************
 */
 #include "precomp.h"
+#include "gl_p2p_ioctl.h"
 
 /******************************************************************************
 *                              C O N S T A N T S
@@ -422,12 +229,103 @@ wlanoidSetAddP2PKey(IN P_ADAPTER_T prAdapter,
 	rCmdKey.ucKeyId = (UINT_8) (prNewKey->u4KeyIndex & 0xff);
 	rCmdKey.ucKeyLen = (UINT_8) prNewKey->u4KeyLength;
 	kalMemCopy(rCmdKey.aucKeyMaterial, (PUINT_8) prNewKey->aucKeyMaterial, rCmdKey.ucKeyLen);
+#if (CFG_SUPPORT_TDLS == 1)
+	/*
+	 * supplicant will set key before updating station & enabling the link so we need to
+	 * backup the key information and set key when link is enabled
+	 */
+	if (TdlsexKeyHandle(prAdapter, prNewKey, NETWORK_TYPE_P2P_INDEX) == TDLS_STATUS_SUCCESS)
+		return WLAN_STATUS_SUCCESS;
+#endif /* CFG_SUPPORT_TDLS */
 
 	return wlanoidSendSetQueryP2PCmd(prAdapter,
 					 CMD_ID_ADD_REMOVE_KEY,
 					 TRUE,
 					 FALSE,
 					 TRUE,
+					 nicCmdEventSetCommon,
+					 NULL,
+					 sizeof(CMD_802_11_KEY), (PUINT_8) &rCmdKey,
+					 pvSetBuffer, u4SetBufferLen);
+}
+
+
+WLAN_STATUS
+_wlanoidSetAddP2PTDLSKey(IN P_ADAPTER_T prAdapter,
+			 IN PVOID pvSetBuffer, IN UINT_32 u4SetBufferLen, OUT PUINT_32 pu4SetInfoLen)
+{
+	CMD_802_11_KEY rCmdKey;
+	P_PARAM_KEY_T prNewKey;
+
+	DEBUGFUNC("wlanoidSetAddP2PKey");
+	DBGLOG(REQ, INFO, "\n");
+
+	ASSERT(prAdapter);
+	ASSERT(pvSetBuffer);
+	ASSERT(pu4SetInfoLen);
+
+	prNewKey = (P_PARAM_KEY_T) pvSetBuffer;
+
+	/* Verify the key structure length. */
+	if (prNewKey->u4Length > u4SetBufferLen) {
+		DBGLOG(REQ, WARN, "Invalid key structure length (%d) greater than total buffer length (%d)\n",
+		       (UINT_8) prNewKey->u4Length, (UINT_8) u4SetBufferLen);
+
+		*pu4SetInfoLen = u4SetBufferLen;
+		return WLAN_STATUS_INVALID_LENGTH;
+	}
+	/* Verify the key material length for key material buffer */
+	else if (prNewKey->u4KeyLength > prNewKey->u4Length - OFFSET_OF(PARAM_KEY_T, aucKeyMaterial)) {
+		DBGLOG(REQ, WARN, "Invalid key material length (%d)\n", (UINT_8) prNewKey->u4KeyLength);
+		*pu4SetInfoLen = u4SetBufferLen;
+		return WLAN_STATUS_INVALID_DATA;
+	}
+	/* Exception check */
+	else if (prNewKey->u4KeyIndex & 0x0fffff00)
+		return WLAN_STATUS_INVALID_DATA;
+	/* Exception check, pairwise key must with transmit bit enabled */
+	else if ((prNewKey->u4KeyIndex & BITS(30, 31)) == IS_UNICAST_KEY) {
+		return WLAN_STATUS_INVALID_DATA;
+	} else if (!(prNewKey->u4KeyLength == CCMP_KEY_LEN) && !(prNewKey->u4KeyLength == TKIP_KEY_LEN)) {
+		return WLAN_STATUS_INVALID_DATA;
+	}
+	/* Exception check, pairwise key must with transmit bit enabled */
+	else if ((prNewKey->u4KeyIndex & BITS(30, 31)) == BITS(30, 31)) {
+		if (((prNewKey->u4KeyIndex & 0xff) != 0) ||
+		    ((prNewKey->arBSSID[0] == 0xff) && (prNewKey->arBSSID[1] == 0xff) && (prNewKey->arBSSID[2] == 0xff)
+		     && (prNewKey->arBSSID[3] == 0xff) && (prNewKey->arBSSID[4] == 0xff)
+		     && (prNewKey->arBSSID[5] == 0xff))) {
+			return WLAN_STATUS_INVALID_DATA;
+		}
+	}
+
+	*pu4SetInfoLen = u4SetBufferLen;
+
+	/* fill CMD_802_11_KEY */
+	kalMemZero(&rCmdKey, sizeof(CMD_802_11_KEY));
+	rCmdKey.ucAddRemove = 1;	/* add */
+	rCmdKey.ucTxKey = ((prNewKey->u4KeyIndex & IS_TRANSMIT_KEY) == IS_TRANSMIT_KEY) ? 1 : 0;
+	rCmdKey.ucKeyType = ((prNewKey->u4KeyIndex & IS_UNICAST_KEY) == IS_UNICAST_KEY) ? 1 : 0;
+	if (kalP2PGetRole(prAdapter->prGlueInfo) == 1) {	/* group client */
+		rCmdKey.ucIsAuthenticator = 0;
+	} else {		/* group owner */
+		rCmdKey.ucIsAuthenticator = 1;
+	}
+	COPY_MAC_ADDR(rCmdKey.aucPeerAddr, prNewKey->arBSSID);
+	rCmdKey.ucNetType = NETWORK_TYPE_P2P_INDEX;
+	if (prNewKey->u4KeyLength == CCMP_KEY_LEN)
+		rCmdKey.ucAlgorithmId = CIPHER_SUITE_CCMP;	/* AES */
+	else if (prNewKey->u4KeyLength == TKIP_KEY_LEN)
+		rCmdKey.ucAlgorithmId = CIPHER_SUITE_TKIP;	/* TKIP */
+	rCmdKey.ucKeyId = (UINT_8) (prNewKey->u4KeyIndex & 0xff);
+	rCmdKey.ucKeyLen = (UINT_8) prNewKey->u4KeyLength;
+	kalMemCopy(rCmdKey.aucKeyMaterial, (PUINT_8) prNewKey->aucKeyMaterial, rCmdKey.ucKeyLen);
+
+	return wlanoidSendSetQueryP2PCmd(prAdapter,
+					 CMD_ID_ADD_REMOVE_KEY,
+					 TRUE,
+					 FALSE,
+					 FALSE,
 					 nicCmdEventSetCommon,
 					 NULL,
 					 sizeof(CMD_802_11_KEY), (PUINT_8) &rCmdKey, pvSetBuffer, u4SetBufferLen);
@@ -1325,7 +1223,7 @@ wlanoidSetNoaParam(IN P_ADAPTER_T prAdapter,
 					 TRUE,
 					 FALSE,
 					 TRUE,
-					 NULL,
+					 nicCmdEventSetCommon,
 					 nicOidCmdTimeoutCommon,
 					 sizeof(CMD_CUSTOM_NOA_PARAM_STRUCT_T),
 					 (PUINT_8) &rCmdNoaParam, pvSetBuffer, u4SetBufferLen);
@@ -1371,11 +1269,11 @@ wlanoidSetOppPsParam(IN P_ADAPTER_T prAdapter,
 				   (PUINT_8) &rCmdOppPsParam, pvSetBuffer, u4SetBufferLen);
 #else
 	return wlanoidSendSetQueryP2PCmd(prAdapter,
-					 CMD_ID_SET_NOA_PARAM,
+					 CMD_ID_SET_OPPPS_PARAM,
 					 TRUE,
 					 FALSE,
 					 TRUE,
-					 NULL,
+					 nicCmdEventSetCommon,
 					 nicOidCmdTimeoutCommon,
 					 sizeof(CMD_CUSTOM_OPPPS_PARAM_STRUCT_T),
 					 (PUINT_8) &rCmdOppPsParam, pvSetBuffer, u4SetBufferLen);
@@ -1411,7 +1309,7 @@ wlanoidSetUApsdParam(IN P_ADAPTER_T prAdapter,
 
 	prUapsdParam = (P_PARAM_CUSTOM_UAPSD_PARAM_STRUCT_T) pvSetBuffer;
 
-	kalMemZero(&rCmdUapsdParam, sizeof(CMD_CUSTOM_OPPPS_PARAM_STRUCT_T));
+	kalMemZero(&rCmdUapsdParam, sizeof(CMD_CUSTOM_UAPSD_PARAM_STRUCT_T));
 	rCmdUapsdParam.fgEnAPSD = prUapsdParam->fgEnAPSD;
 	prAdapter->rWifiVar.fgSupportUAPSD = prUapsdParam->fgEnAPSD;
 
@@ -1431,6 +1329,10 @@ wlanoidSetUApsdParam(IN P_ADAPTER_T prAdapter,
 	rCmdUapsdParam.ucMaxSpLen = prUapsdParam->ucMaxSpLen;
 	prPmProfSetupInfo->ucUapsdSp = prUapsdParam->ucMaxSpLen;
 
+	DBGLOG(P2P, INFO, "wlanoidSetUApsdParam EnAPSD[%d] Be[%d] Bk[%d] Vo[%d] Vi[%d] SPLen[%d]\n",
+		rCmdUapsdParam.fgEnAPSD, rCmdUapsdParam.fgEnAPSD_AcBe, rCmdUapsdParam.fgEnAPSD_AcBk,
+		rCmdUapsdParam.fgEnAPSD_AcVo, rCmdUapsdParam.fgEnAPSD_AcVi, rCmdUapsdParam.ucMaxSpLen);
+
 #if 0
 	return wlanSendSetQueryCmd(prAdapter,
 				   CMD_ID_SET_UAPSD_PARAM,
@@ -1439,7 +1341,7 @@ wlanoidSetUApsdParam(IN P_ADAPTER_T prAdapter,
 				   TRUE,
 				   nicCmdEventSetCommon,
 				   nicOidCmdTimeoutCommon,
-				   sizeof(CMD_CUSTOM_OPPPS_PARAM_STRUCT_T),
+				   sizeof(CMD_CUSTOM_UAPSD_PARAM_STRUCT_T),
 				   (PUINT_8) &rCmdUapsdParam, pvSetBuffer, u4SetBufferLen);
 #else
 	return wlanoidSendSetQueryP2PCmd(prAdapter,
@@ -1447,9 +1349,9 @@ wlanoidSetUApsdParam(IN P_ADAPTER_T prAdapter,
 					 TRUE,
 					 FALSE,
 					 TRUE,
-					 NULL,
+					 nicCmdEventSetCommon,
 					 nicOidCmdTimeoutCommon,
-					 sizeof(CMD_CUSTOM_OPPPS_PARAM_STRUCT_T),
+					 sizeof(CMD_CUSTOM_UAPSD_PARAM_STRUCT_T),
 					 (PUINT_8) &rCmdUapsdParam, pvSetBuffer, u4SetBufferLen);
 
 #endif

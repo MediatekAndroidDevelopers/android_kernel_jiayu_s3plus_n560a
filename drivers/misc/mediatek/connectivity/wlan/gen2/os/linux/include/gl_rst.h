@@ -1,10 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/os/linux/include/gl_rst.h#1
-*/
-
-/*! \file   gl_rst.h
-    \brief  Declaration of functions and finite state machine for
-	    MT6620 Whole-Chip Reset Mechanism
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 #ifndef _GL_RST_H
@@ -85,8 +89,9 @@ typedef void (*PF_WMT_CB) (ENUM_WMTDRV_TYPE_T,	/* Source driver type */
 			break; \
 		} \
 		DBGLOG(INIT, ERROR, "Do core dump and chip reset in %s line %d\n", __func__, __LINE__); \
-		mtk_wcn_wmt_assert(WMTDRV_TYPE_WIFI, 40); \
+		mtk_wcn_wmt_assert(WMTDRV_TYPE_WIFI, 0x40); \
 	} while (0)
+
 
 #if CFG_CHIP_RESET_SUPPORT
 extern int mtk_wcn_wmt_msgcb_reg(ENUM_WMTDRV_TYPE_T eType, PF_WMT_CB pCb);
@@ -96,6 +101,11 @@ extern int wifi_reset_end(ENUM_RESET_STATUS_T);
 #endif
 extern MTK_WCN_BOOL mtk_wcn_wmt_assert(ENUM_WMTDRV_TYPE_T type, UINT32 reason);
 extern BOOLEAN mtk_wcn_set_connsys_power_off_flag(BOOLEAN value);
+
+/*----------------------------------------------------------------------------*/
+/* WMT Core Dump Support                                                                */
+/*----------------------------------------------------------------------------*/
+extern BOOLEAN mtk_wcn_stp_coredump_start_get(VOID);
 
 /*******************************************************************************
 *                            P U B L I C   D A T A
@@ -129,5 +139,7 @@ VOID glResetUninit(VOID);
 VOID glSendResetRequest(VOID);
 
 BOOLEAN kalIsResetting(VOID);
+
+BOOLEAN glIsWmtCodeDump(VOID);
 
 #endif /* _GL_RST_H */

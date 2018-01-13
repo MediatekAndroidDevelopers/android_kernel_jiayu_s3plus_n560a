@@ -1,21 +1,15 @@
 /*
-** Id: include/tdls.h#1
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
-
-/*! \file   "tdls.h"
-    \brief This file contains the internal used in TDLS modules
-	 for MediaTek Inc. 802.11 Wireless LAN Adapters.
-*/
-
-/*
-** Log: tdls.h
- *
- * 11 18 2013 vend_samp.lin
- * NULL
- * Initial version.
- *
- **
- */
 
 #ifndef _TDLS_H
 #define _TDLS_H
@@ -34,6 +28,7 @@
 ********************************************************************************
 */
 extern int wlanHardStartXmit(struct sk_buff *prSkb, struct net_device *prDev);
+extern int p2pHardStartXmit(struct sk_buff *prSkb, struct net_device *prDev);
 extern BOOLEAN flgTdlsTestExtCapElm;
 extern UINT8 aucTdlsTestExtCapElm[];
 /*******************************************************************************
@@ -138,6 +133,13 @@ typedef struct _IE_LINK_IDENTIFIER_T {
 	UINT_8 aResponder[6];
 } __KAL_ATTRIB_PACKED__ IE_LINK_IDENTIFIER_T;
 
+typedef struct _TDLS_FRAME_HEADER {
+	UINT_8 ucPayLoadType;
+	UINT_8 ucCategory;
+	UINT_8 ucAction;
+} __KAL_ATTRIB_PACKED__ TDLS_FRAME_HEADER_T;
+
+
 #define TDLS_LINK_IDENTIFIER_IE(__ie__)	((IE_LINK_IDENTIFIER_T *)(__ie__))
 
 /* test command use */
@@ -192,6 +194,7 @@ typedef struct _PARAM_CUSTOM_TDLS_CMD_STRUCT_T {
 } PARAM_CUSTOM_TDLS_CMD_STRUCT_T;
 
 typedef struct _TDLS_MGMT_TX_INFO {
+	ENUM_NETWORK_TYPE_INDEX_T eNetworkType;
 	UINT8 aucPeer[6];
 	UINT8 ucActionCode;
 	UINT8 ucDialogToken;
@@ -199,6 +202,59 @@ typedef struct _TDLS_MGMT_TX_INFO {
 	UINT32 u4SecBufLen;
 	UINT8 aucSecBuf[1000];
 } TDLS_MGMT_TX_INFO;
+
+enum MTK_TDLS_STATUS {
+	MTK_TDLS_NOT_SETUP,
+	MTK_TDLS_SETUP_INPROCESS,
+	MTK_TDLS_SETUP_COMPLETE,
+	MTK_TDLS_SETUP_TEARDOWN,
+	MTK_TDLS_LINK_ENABLE,
+	MTK_TDLS_LINK_DOWN,
+	MTK_TDLS_LINK_DISABLE,
+	MTK_TDLS_SETUP_NUM
+};
+
+enum MTK_TDLS_ROLE {
+	MTK_TDLS_ROLE_IDLE,
+	MTK_TDLS_ROLE_RESPONDER,
+	MTK_TDLS_ROLE_INITOR,
+	MTK_TDLS_ROLE_NUM
+};
+
+struct ksta_info {
+	struct ksta_info *pNext; /* next entry in sta list */
+	UCHAR aucAddr[6];
+	ENUM_NETWORK_TYPE_INDEX_T ucNetworkType;
+	UINT_32 u4Throughput;
+	UINT_32 u4RxThroughput;
+	ULONG ulTxBytes;
+	ULONG ulRxBytes;
+	enum MTK_TDLS_STATUS eTdlsStatus;
+	UINT32 u4SetupFailCount;
+	enum MTK_TDLS_ROLE eTdlsRole;
+};
+
+#define SAMPLING_UT (2 * HZ)
+#define TDLS_SETUP_TIMEOUT (4)
+#define TDLS_MONITOR_UT (2)
+/* TDLS setup threshold if TX throughput > the THD */
+#define TDLS_SETUP_THD (1000)
+#define TDLS_SETUP_COUNT (4)
+#define TDLS_TEARDOWN_THD (500)
+#define TDLS_TEARDOWN_RX_THD (100)
+#define TDLS_LINK_ENABLED(prSta) (prSta->eTdlsStatus == MTK_TDLS_LINK_ENABLE)
+
+enum sta_op {
+	STA_OP_FREE,
+	STA_OP_RESET,
+	STA_OP_GET_MAX_TP,
+	STA_OP_UPDATE_TX,
+	STA_OP_NUM
+};
+
+
+#define STA_HASH_SIZE 256
+#define STA_HASH(prSta) (prSta[5])
 
 /*******************************************************************************
 *                            P U B L I C   D A T A
@@ -248,9 +304,13 @@ UINT_32 TdlsFrameGeneralIeAppend(ADAPTER_T *prAdapter, STA_RECORD_T *prStaRec, U
 TDLS_STATUS
 TdlsDataFrameSend(ADAPTER_T *prAdapter,
 		  STA_RECORD_T *prStaRec,
-		  UINT_8 *pPeerMac,
-		  UINT_8 ucActionCode,
-		  UINT_8 ucDialogToken, UINT_16 u2StatusCode, UINT_8 *pAppendIe, UINT_32 AppendIeLen);
+		  TDLS_MGMT_TX_INFO *prMsduInfo);
+INT_32 MTKAutoTdlsP2P(P_GLUE_INFO_T prGlueInfo, P_NATIVE_PACKET prPacket);
+BOOLEAN MTKTdlsEnvP2P(P_ADAPTER_T prAdapter);
+VOID MTKTdlsSetup(P_GLUE_INFO_T prGlueInfo, struct ksta_info *prSta);
+VOID MTKTdlsTearDown(P_GLUE_INFO_T prGlueInfo, struct ksta_info *prSta, CHAR *reason);
+VOID MTKTdlsApStaUpdateTxRxStatus(P_GLUE_INFO_T prGlueInfo, unsigned long tx_bytes,
+				  unsigned long rx_bytes, const u8 *addr);
 
 /*******************************************************************************
 *                              F U N C T I O N S

@@ -1,465 +1,14 @@
 /*
-** Id: //Department/DaVinci/BRANCHES/MT6620_WIFI_DRIVER_V2_3/mgmt/bss.c#3
-*/
-
-/*! \file   "bss.c"
-    \brief  This file contains the functions for creating BSS(AP)/IBSS(AdHoc).
-
-    This file contains the functions for BSS(AP)/IBSS(AdHoc). We may create a BSS/IBSS
-    network, or merge with exist IBSS network and sending Beacon Frame or reply
-    the Probe Response Frame for received Probe Request Frame.
-*/
-
-/*
-** Log: bss.c
-**
-** 09 03 2013 cp.wu
-** add path for reassociation
-**
-** 08 30 2012 chinglan.wang
-** [ALPS00349664] [6577JB][WIFI] Phone can not connect to AP secured with AES via WPS in 802.11n Only
-** .
-**
-** 07 26 2012 yuche.tsai
-** [ALPS00324337] [ALPS.JB][Hot-Spot] Driver update for Hot-Spot
-** Update driver code of ALPS.JB for hot-spot.
- *
- * 07 17 2012 yuche.tsai
- * NULL
- * Let netdev bring up.
- *
- * 07 17 2012 yuche.tsai
- * NULL
- * Compile no error before trial run.
- *
- * 06 14 2012 chinglan.wang
- * NULL
- * Fix the losing of the HT IE in assoc request..
- *
- * 06 13 2012 yuche.tsai
- * NULL
- * Update maintrunk driver.
- * Add support for driver compose assoc request frame.
- *
- * 03 08 2012 yuche.tsai
- * NULL
- * Fix FW assert when start Hot-Spot.
- *
- * 03 02 2012 terry.wu
- * NULL
- * Snc CFG80211 modification for ICS migration from branch 2.2.
- *
- * 01 20 2012 chinglan.wang
- * 03 02 2012 terry.wu
- * NULL
- * Fix the WPA-PSK TKIP and WPA2-PSK AES security mode bug.
- *
- * NULL
- * Sync CFG80211 modification from branch 2,2.
- *
- * 01 15 2012 yuche.tsai
- * NULL
- * Fix wrong basic rate issue.
- *
- * 01 13 2012 yuche.tsai
- * NULL
- * WiFi Hot Spot Tethering for ICS ALPHA testing version.
- *
- * 11 03 2011 cm.chang
- * [WCXRP00000997] [MT6620 Wi-Fi][Driver][FW] Handle change of BSS preamble type and slot time
- * Always set short slot time to TRUE initially in AP mode
- *
- * 11 03 2011 wh.su
- * [WCXRP00001078] [MT6620 Wi-Fi][Driver] Adding the mediatek log improment support : XLOG
- * change the DBGLOG for "\n" and "\r\n". LABEL to LOUD for XLOG
- *
- * 09 14 2011 yuche.tsai
- * NULL
- * Add P2P IE in assoc response.
- *
- * 04 18 2011 terry.wu
- * [WCXRP00000660] [MT6620 Wi-Fi][Driver] Remove flag CFG_WIFI_DIRECT_MOVED
- * Remove flag CFG_WIFI_DIRECT_MOVED.
- *
- * 04 12 2011 eddie.chen
- * [WCXRP00000617] [MT6620 Wi-Fi][DRV/FW] Fix for sigma
- * Fix the sta index in processing security frame
- * Simple flow control for TC4 to avoid mgt frames for PS STA to occupy the TC4
- * Add debug message.
- *
- * 04 08 2011 eddie.chen
- * [WCXRP00000617] [MT6620 Wi-Fi][DRV/FW] Fix for sigma
- * Fix for sigma
- *
- * 03 29 2011 eddie.chen
- * [WCXRP00000608] [MT6620 Wi-Fi][DRV] Change wmm parameters in beacon
- * Change wmm parameters in beacon.
- *
- * 03 29 2011 yuche.tsai
- * [WCXRP00000607] [Volunteer Patch][MT6620][Driver] Coding Style Fix for klocwork scan.
- * Fix klocwork issue.
- *
- * 03 19 2011 yuche.tsai
- * [WCXRP00000581] [Volunteer Patch][MT6620][Driver] P2P IE in Assoc Req Issue
- * Make assoc req to append P2P IE if wifi direct is enabled.
- *
- * 03 11 2011 chinglan.wang
- * [WCXRP00000537] [MT6620 Wi-Fi][Driver] Can not connect to 802.11b/g/n mixed AP with WEP security.
- * .
- *
- * 03 03 2011 george.huang
- * [WCXRP00000508] [MT6620 Wi-Fi][Driver] aware of beacon MSDU will be free, after BSS deactivated
- * .
- *
- * 03 03 2011 george.huang
- * [WCXRP00000508] [MT6620 Wi-Fi][Driver] aware of beacon MSDU will be free, after BSS deactivated
- * modify to handle if beacon MSDU been released when BSS deactivated
- *
- * 03 02 2011 wh.su
- * [WCXRP00000506] [MT6620 Wi-Fi][Driver][FW] Add Security check related code
- * add code to let the beacon and probe response for Auto GO WSC .
- *
- * 03 02 2011 wh.su
- * [WCXRP00000448] [MT6620 Wi-Fi][Driver] Fixed WSC IE not send out at probe request
- * Add code to send beacon and probe response WSC IE at Auto GO.
- *
- * 02 17 2011 eddie.chen
- * [WCXRP00000458] [MT6620 Wi-Fi][Driver] BOW Concurrent - ProbeResp was exist in other channel
- * 1) Change GetFrameAction decision when BSS is absent.
- * 2) Check channel and resource in processing ProbeRequest
- *
- * 02 12 2011 yuche.tsai
- * [WCXRP00000441] [Volunteer Patch][MT6620][Driver] BoW can not create desired station type when Hot Spot is enabled.
- * bss should create station record type according to callers input.
- *
- * 02 11 2011 terry.wu
- * [WCXRP00000383] [MT6620 Wi-Fi][Driver] Separate WiFi and P2P driver into two modules
- * In p2p link function, check networktype before calling p2p function.
- *
- * 02 11 2011 terry.wu
- * [WCXRP00000383] [MT6620 Wi-Fi][Driver] Separate WiFi and P2P driver into two modules
- * Modify p2p link function to avoid assert.
- *
- * 01 26 2011 cm.chang
- * [WCXRP00000395] [MT6620 Wi-Fi][Driver][FW] Search STA_REC with additional net type index argument
- * .
- *
- * 01 25 2011 yuche.tsai
- * [WCXRP00000388] [Volunteer Patch][MT6620][Driver/Fw] change Station Type in station record.
- * Change Station Type in Station Record, Modify MACRO definition for getting station type & network type index & Role.
- *
- * 01 25 2011 eddie.chen
- * [WCXRP00000385] [MT6620 Wi-Fi][DRV] Add destination decision for forwarding packets
- * Fix the compile error in windows.
- *
- * 01 24 2011 eddie.chen
- * [WCXRP00000385] [MT6620 Wi-Fi][DRV] Add destination decision for forwarding packets
- * Add destination decision in AP mode.
- *
- * 01 24 2011 terry.wu
- * [WCXRP00000383] [MT6620 Wi-Fi][Driver] Separate WiFi and P2P driver into two modules
- * .Fix typo and missing entry
- *
- * 12 30 2010 eddie.chen
- * [WCXRP00000322] Add WMM IE in beacon,
-
-Add per station flow control when STA is in PS
-
- * Fix  prBssInfo->aucCWminLog to  prBssInfo->aucCWminLogForBcast
- *
- * 12 29 2010 eddie.chen
- * [WCXRP00000322] Add WMM IE in beacon,
-
-Add per station flow control when STA is in PS
-
- * Add WMM parameter for broadcast.
- *
- * 12 29 2010 eddie.chen
- * [WCXRP00000322] Add WMM IE in beacon,
-Add per station flow control when STA is in PS
-
- * 1) PS flow control event
- *
- * 2) WMM IE in beacon, assoc resp, probe resp
- *
- * 11 29 2010 cp.wu
- * [WCXRP00000210] [MT6620 Wi-Fi][Driver][FW] Set RCPI value in STA_REC
- * for initial TX rate selection of auto-rate algorithm
- * update ucRcpi of STA_RECORD_T for AIS when
- * 1) Beacons for IBSS merge is received
- * 2) Associate Response for a connecting peer is received
- *
- * 10 18 2010 cp.wu
- * [WCXRP00000052] [MT6620 Wi-Fi][Driver] Eliminate Linux Compile Warning
- * use definition macro to replace hard-coded constant
- *
- * 10 08 2010 wh.su
- * [WCXRP00000085] [MT6620 Wif-Fi] [Driver] update the modified p2p state machine
- * update the frog's new p2p state machine.
- *
- * 09 28 2010 wh.su
- * NULL
- * [WCXRP00000069][MT6620 Wi-Fi][Driver] Fix some code for phase 1 P2P Demo.
- *
- * 09 27 2010 chinghwa.yu
- * [WCXRP00000063] Update BCM CoEx design and settings[WCXRP00000065] Update BoW design and settings
- * Update BCM/BoW design and settings.
- *
- * 09 16 2010 cm.chang
- * NULL
- * Change conditional compiling options for BOW
- *
- * 09 10 2010 cm.chang
- * NULL
- * Always update Beacon content if FW sync OBSS info
- *
- * 09 07 2010 wh.su
- * NULL
- * adding the code for beacon/probe req/ probe rsp wsc ie at p2p.
- *
- * 09 03 2010 kevin.huang
- * NULL
- * Refine #include sequence and solve recursive/nested #include issue
- *
- * 08 31 2010 kevin.huang
- * NULL
- * Use LINK LIST operation to process SCAN result
- *
- * 08 30 2010 cp.wu
- * NULL
- * eliminate klockwork errors
- *
- * 08 29 2010 yuche.tsai
- * NULL
- * Finish SLT TX/RX & Rate Changing Support.
- *
- * 08 24 2010 cm.chang
- * NULL
- * Support RLM initail channel of Ad-hoc, P2P and BOW
- *
- * 08 16 2010 yuche.tsai
- * NULL
- * Before composing Beacon IE, assign network type index for msdu info,
- * this information is needed by RLM module while composing some RLM related IE field.
- *
- * 08 16 2010 cp.wu
- * NULL
- * Replace CFG_SUPPORT_BOW by CFG_ENABLE_BT_OVER_WIFI.
- * There is no CFG_SUPPORT_BOW in driver domain source.
- *
- * 08 16 2010 kevin.huang
- * NULL
- * Refine AAA functions
- *
- * 08 12 2010 kevin.huang
- * NULL
- * Fix undefined pucDestAddr in bssUpdateBeaconContent()
- *
- * 08 12 2010 kevin.huang
- * NULL
- * Refine bssProcessProbeRequest() and bssSendBeaconProbeResponse()
- *
- * 08 11 2010 cp.wu
- * NULL
- * 1) do not use in-stack variable for beacon updating. (for MAUI porting)
- * 2) extending scanning result to 64 instead of 48
- *
- * 08 02 2010 yuche.tsai
- * NULL
- * P2P Group Negotiation Code Check in.
- *
- * 08 02 2010 george.huang
- * NULL
- * add WMM-PS test related OID/ CMD handlers
- *
- * 07 26 2010 yuche.tsai
- *
- * Add support to RX probe response for P2P.
- *
- * 07 20 2010 cp.wu
- *
- * 1) bugfix: do not stop timer for join after switched into normal_tr state, for providing chance for DHCP handshasking
- * 2) modify rsnPerformPolicySelection() invoking
- *
- * 07 19 2010 wh.su
- *
- * update for security supporting.
- *
- * 07 19 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration.
- * when IBSS is being merged-in, send command packet to PM for connected indication
- *
- * 07 19 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration.
- * Add Ad-Hoc support to AIS-FSM
- *
- * 07 14 2010 yarco.yang
- *
- * 1. Remove CFG_MQM_MIGRATION
- * 2. Add CMD_UPDATE_WMM_PARMS command
- *
- * 07 08 2010 cp.wu
- *
- * [WPD00003833] [MT6620 and MT5931] Driver migration - move to new repository.
- *
- * 07 06 2010 george.huang
- * [WPD00001556]Basic power managemenet function
- * Update arguments for nicUpdateBeaconIETemplate()
- *
- * 06 29 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * 1) sync to. CMD/EVENT document v0.03
- * 2) simplify DTIM period parsing in scan.c only, bss.c no longer parses it again.
- * 3) send command packet to indicate FW-PM after
- *     a) 1st beacon is received after AIS has connected to an AP
- *     b) IBSS-ALONE has been created
- *     c) IBSS-MERGE has occurred
- *
- * 06 28 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * send MMPDU in basic rate.
- *
- * 06 25 2010 george.huang
- * [WPD00001556]Basic power managemenet function
- * Create beacon update path, with expose bssUpdateBeaconContent()
- *
- * 06 21 2010 yuche.tsai
- * [WPD00003839][MT6620 5931][P2P] Feature migration
- * Fix compile error while enable WIFI_DIRECT support.
- *
- * 06 21 2010 yarco.yang
- * [WPD00003837][MT6620]Data Path Refine
- * Support CFG_MQM_MIGRATION flag
- *
- * 06 21 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * enable RX management frame handling.
- *
- * 06 21 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * specify correct value for management frames.
- *
- * 06 18 2010 cm.chang
- * [WPD00003841][LITE Driver] Migrate RLM/CNM to host driver
- * Provide cnmMgtPktAlloc() and alloc/free function of msg/buf
- *
- * 06 15 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * correct when ADHOC support is turned on.
- *
- * 06 15 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * add scan.c.
- *
- * 06 14 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * add management dispatching function table.
- *
- * 06 11 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * auth.c is migrated.
- *
- * 06 11 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * fix compilation error when WIFI_DIRECT is turned on
- *
- * 06 11 2010 cp.wu
- * [WPD00003833][MT6620 and MT5931] Driver migration
- * add bss.c.
- *
- * 06 04 2010 george.huang
- * [BORA00000678][MT6620]WiFi LP integration
- * [PM] Support U-APSD for STA mode
- *
- * 05 28 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Add ClientList handling API - bssClearClientList, bssAddStaRecToClientList
- *
- * 05 24 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Update bssProcessProbeRequest() to avoid redundant SSID IE {0,0} for IOT.
- *
- * 05 21 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Refine txmInitWtblTxRateTable() - set TX initial rate according to AP's operation rate set
- *
- * 05 18 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * Ad-hoc Beacon should not carry HT OP and OBSS IEs
- *
- * 05 14 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Use TX MGMT Frame API for sending PS NULL frame to avoid the TX Burst Mechanism in TX FW Frame API
- *
- * 05 14 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Separate Beacon and ProbeResp IE array
- *
- * 05 12 2010 kevin.huang
- * [BORA00000794][WIFISYS][New Feature]Power Management Support
- * Add Power Management - Legacy PS-POLL support.
- *
- * 04 28 2010 tehuang.liu
- * [BORA00000605][WIFISYS] Phase3 Integration
- * Removed the use of compiling flag MQM_WMM_PARSING
- *
- * 04 27 2010 kevin.huang
- * [BORA00000663][WIFISYS][New Feature] AdHoc Mode Support
- * Add Set Slot Time and Beacon Timeout Support for AdHoc Mode
- *
- * 04 24 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * g_aprBssInfo[] depends on CFG_SUPPORT_P2P and CFG_SUPPORT_BOW
- *
- * 04 22 2010 cm.chang
- * [BORA00000018]Integrate WIFI part into BORA for the 1st time
- * First draft code to support protection in AP mode
- *
- * 04 20 2010 kevin.huang
- * [BORA00000714][WIFISYS][New Feature]Beacon Timeout Support
- * Fix restart Beacon Timeout Func after connection diagnosis
- *
- * 04 19 2010 kevin.huang
- * [BORA00000714][WIFISYS][New Feature]Beacon Timeout Support
- * Add Beacon Timeout Support and will send Null frame to diagnose connection
- *
- * 04 16 2010 wh.su
- * [BORA00000680][MT6620] Support the statistic for Micxxsoft os query
- * adding the wpa-none for ibss beacon.
- *
- * 04 15 2010 wh.su
- * [BORA00000680][MT6620] Support the statistic for Micxxsoft os query
- * fixed the protected bit at cap info for ad-hoc.
- *
- * 03 18 2010 kevin.huang
- * [BORA00000663][WIFISYS][New Feature] AdHoc Mode Support
- * Rename the CFG flags
- *
- * 03 16 2010 kevin.huang
- * [BORA00000663][WIFISYS][New Feature] AdHoc Mode Support
- * Add AdHoc Mode
- *
- * 02 26 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Update outgoing beacon's TX data rate
- *
- * 02 23 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add DTIM count update while TX Beacon
- *
- * 02 05 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Modify code due to define - BAND_24G and specific BSS_INFO_T was changed
- *
- * 02 05 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Revise data structure to share the same BSS_INFO_T for avoiding coding error
- *
- * 02 04 2010 kevin.huang
- * [BORA00000603][WIFISYS] [New Feature] AAA Module Support
- * Add AAA Module Support, Revise Net Type to Net Type Index for array lookup
+* Copyright (C) 2016 MediaTek Inc.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License version 2 as
+* published by the Free Software Foundation.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+* See http://www.gnu.org/licenses/gpl-2.0.html for more details.
 */
 
 /*******************************************************************************
@@ -509,6 +58,10 @@ APPEND_VAR_IE_ENTRY_T txBcnIETable[] = {
 	{0, p2pFuncCalculateP2P_IE_NoA, p2pFuncGenerateP2P_IE_NoA},	/* 221 */
 #endif
 #endif /* CFG_ENABLE_WIFI_DIRECT */
+#if CFG_SUPPORT_MTK_SYNERGY
+	{(ELEM_HDR_LEN + ELEM_MIN_LEN_MTK_OUI), NULL, rlmGenerateMTKOuiIE}	/* 221 */
+#endif
+
 };
 
 APPEND_VAR_IE_ENTRY_T txProbRspIETable[] = {
@@ -522,7 +75,11 @@ APPEND_VAR_IE_ENTRY_T txProbRspIETable[] = {
 #endif
 	{(ELEM_HDR_LEN + ELEM_MAX_LEN_EXT_CAP), NULL, rlmRspGenerateExtCapIE},	/* 127 */
 	{(ELEM_HDR_LEN + ELEM_MAX_LEN_WPA), NULL, rsnGenerateWpaNoneIE},	/* 221 */
-	{(ELEM_HDR_LEN + ELEM_MAX_LEN_WMM_PARAM), NULL, mqmGenerateWmmParamIE}	/* 221 */
+	{(ELEM_HDR_LEN + ELEM_MAX_LEN_WMM_PARAM), NULL, mqmGenerateWmmParamIE},	/* 221 */
+#if CFG_SUPPORT_MTK_SYNERGY
+	{(ELEM_HDR_LEN + ELEM_MIN_LEN_MTK_OUI), NULL, rlmGenerateMTKOuiIE}	/* 221 */
+#endif
+
 };
 
 #endif /* CFG_SUPPORT_ADHOC || CFG_SUPPORT_AAA */
@@ -608,6 +165,8 @@ bssCreateStaRecFromBssDesc(IN P_ADAPTER_T prAdapter,
 	prStaRec->u2BSSBasicRateSet = prBssDesc->u2BSSBasicRateSet;
 
 	prStaRec->ucPhyTypeSet = prBssDesc->ucPhyTypeSet;
+
+	prStaRec->ucRCPI = prBssDesc->ucRCPI;
 	if (IS_STA_IN_AIS(prStaRec)) {
 		if (!((prAdapter->rWifiVar.rConnSettings.eEncStatus == ENUM_ENCRYPTION3_ENABLED) ||
 		      (prAdapter->rWifiVar.rConnSettings.eEncStatus == ENUM_ENCRYPTION3_KEY_ABSENT) ||
@@ -1070,19 +629,23 @@ bssBuildBeaconProbeRespFrameCommonIEs(IN P_MSDU_INFO_T prMsduInfo, IN P_BSS_INFO
 	pucBuffer = (PUINT_8) ((ULONG) prMsduInfo->prPacket + (UINT_32) prMsduInfo->u2FrameLength);
 	ASSERT(pucBuffer);
 
-	/* Compose the frame body of the Probe Response frame. */
 	/* 4 <1> Fill the SSID element. */
 	SSID_IE(pucBuffer)->ucId = ELEM_ID_SSID;
-	if (prBssInfo->eHiddenSsidType == ENUM_HIDDEN_SSID_LEN) {
-		if ((!pucDestAddr) &&	/* For Beacon only */
-		    (prBssInfo->eCurrentOPMode == OP_MODE_ACCESS_POINT)) {
+	if ((!pucDestAddr) && (prBssInfo->eCurrentOPMode == OP_MODE_ACCESS_POINT)) {
+		/* For Beacon */
+		if (prBssInfo->eHiddenSsidType == ENUM_HIDDEN_SSID_ZERO_CONTENT) {
+			/* clear the data, but keep the correct length of the SSID */
+			SSID_IE(pucBuffer)->ucLength = prBssInfo->ucSSIDLen;
+			kalMemZero(SSID_IE(pucBuffer)->aucSSID, prBssInfo->ucSSIDLen);
+		} else if (prBssInfo->eHiddenSsidType == ENUM_HIDDEN_SSID_ZERO_LEN) {
+			/* empty SSID */
 			SSID_IE(pucBuffer)->ucLength = 0;
-		} else {	/* Probe response */
+		} else {
 			SSID_IE(pucBuffer)->ucLength = prBssInfo->ucSSIDLen;
 			if (prBssInfo->ucSSIDLen)
 				kalMemCopy(SSID_IE(pucBuffer)->aucSSID, prBssInfo->aucSSID, prBssInfo->ucSSIDLen);
 		}
-	} else {
+	} else {	/* Probe response */
 		SSID_IE(pucBuffer)->ucLength = prBssInfo->ucSSIDLen;
 		if (prBssInfo->ucSSIDLen)
 			kalMemCopy(SSID_IE(pucBuffer)->aucSSID, prBssInfo->aucSSID, prBssInfo->ucSSIDLen);
@@ -1286,56 +849,60 @@ bssComposeBeaconProbeRespFrameHeaderAndFF(IN PUINT_8 pucBuffer,
 WLAN_STATUS bssUpdateBeaconContent(IN P_ADAPTER_T prAdapter, IN ENUM_NETWORK_TYPE_INDEX_T eNetTypeIndex)
 {
 	P_BSS_INFO_T prBssInfo;
-	P_MSDU_INFO_T prMsduInfo;
+	P_MSDU_INFO_T prBcnMsduInfo;
 	P_WLAN_BEACON_FRAME_T prBcnFrame;
 	UINT_32 i;
 
-	DEBUGFUNC("bssUpdateBeaconContent");
 	DBGLOG(BSS, LOUD, "\n");
 
 	ASSERT(eNetTypeIndex < NETWORK_TYPE_INDEX_NUM);
 
 	prBssInfo = &(prAdapter->rWifiVar.arBssInfo[eNetTypeIndex]);
 
-	/* 4 <1> Allocate a PKT_INFO_T for Beacon Frame */
-	/* Allocate a MSDU_INFO_T */
-	/* For Beacon */
-	prMsduInfo = prBssInfo->prBeacon;
-
-	/* beacon prMsduInfo will be NULLify once BSS deactivated, so skip if it is */
-	if (prMsduInfo == NULL)
+	/* 4 <1> Retrieve MSDU_INFO_T for Beacon Frame */
+	prBcnMsduInfo = prBssInfo->prBeacon;
+	/* prBcnMsduInfo will be NULL if once BSS deactivated, skip it */
+	if (prBcnMsduInfo == NULL)
 		return WLAN_STATUS_SUCCESS;
-	/* 4 <2> Compose header */
-	bssComposeBeaconProbeRespFrameHeaderAndFF((PUINT_8) ((ULONG) (prMsduInfo->prPacket) + MAC_TX_RESERVED_FIELD),
+
+	prBcnFrame = (P_WLAN_BEACON_FRAME_T) ((ULONG) prBcnMsduInfo->prPacket + MAC_TX_RESERVED_FIELD);
+
+	/* 4 <2> Compose Beacon header */
+	bssComposeBeaconProbeRespFrameHeaderAndFF((PUINT_8) prBcnFrame,
 						  NULL,
 						  prBssInfo->aucOwnMacAddr,
 						  prBssInfo->aucBSSID,
 						  prBssInfo->u2BeaconInterval, prBssInfo->u2CapInfo);
 
-	prMsduInfo->u2FrameLength = (WLAN_MAC_MGMT_HEADER_LEN +
-				     (TIMESTAMP_FIELD_LEN + BEACON_INTERVAL_FIELD_LEN + CAP_INFO_FIELD_LEN));
+	prBcnMsduInfo->u2FrameLength = (WLAN_MAC_MGMT_HEADER_LEN +
+				    (TIMESTAMP_FIELD_LEN + BEACON_INTERVAL_FIELD_LEN + CAP_INFO_FIELD_LEN));
 
-	prMsduInfo->ucNetworkType = eNetTypeIndex;
+	prBcnMsduInfo->ucNetworkType = eNetTypeIndex;
 
-	/* 4 <3> Compose the frame body's Common IEs of the Beacon frame. */
-	bssBuildBeaconProbeRespFrameCommonIEs(prMsduInfo, prBssInfo, NULL);
+	/* 4 <3> Compose Beacon body's common IEs */
+	bssBuildBeaconProbeRespFrameCommonIEs(prBcnMsduInfo, prBssInfo, NULL);
 
-	/* 4 <4> Compose IEs in MSDU_INFO_T */
-
-	/* Append IE for Beacon */
+	/* 4 <4> Append IE for Beacon */
 	for (i = 0; i < sizeof(txBcnIETable) / sizeof(APPEND_VAR_IE_ENTRY_T); i++) {
 		if (txBcnIETable[i].pfnAppendIE)
-			txBcnIETable[i].pfnAppendIE(prAdapter, prMsduInfo);
+			txBcnIETable[i].pfnAppendIE(prAdapter, prBcnMsduInfo);
 	}
 
-	prBcnFrame = (P_WLAN_BEACON_FRAME_T) prMsduInfo->prPacket;
+#if CFG_SUPPORT_P2P_ECSA
+	if (eNetTypeIndex == NETWORK_TYPE_P2P_INDEX && prBssInfo->fgChanSwitching) {
+		/* append CSA/ECSA IE */
+		rlmGenerateCSAIE(prAdapter, prBcnMsduInfo);
+		rlmGenerateECSAIE(prAdapter, prBcnMsduInfo);
+	}
+#endif
+	prBcnFrame = (P_WLAN_BEACON_FRAME_T) prBcnMsduInfo->prPacket;
 
 	return nicUpdateBeaconIETemplate(prAdapter,
 					 IE_UPD_METHOD_UPDATE_ALL,
 					 eNetTypeIndex,
-					 prBssInfo->u2CapInfo,
+					 prBcnFrame->u2CapInfo,
 					 (PUINT_8) prBcnFrame->aucInfoElem,
-					 prMsduInfo->u2FrameLength - OFFSET_OF(WLAN_BEACON_FRAME_T, aucInfoElem));
+					 prBcnMsduInfo->u2FrameLength - OFFSET_OF(WLAN_BEACON_FRAME_T, aucInfoElem));
 
 }				/* end of bssUpdateBeaconContent() */
 
@@ -1827,27 +1394,27 @@ VOID bssClearClientList(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo)
 /*----------------------------------------------------------------------------*/
 VOID bssAddStaRecToClientList(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo, IN P_STA_RECORD_T prStaRec)
 {
-	P_LINK_T prStaRecOfClientList;
+	P_LINK_T prClientList;
 
 	ASSERT(prBssInfo);
 
-	prStaRecOfClientList = &prBssInfo->rStaRecOfClientList;
+	prClientList = &prBssInfo->rStaRecOfClientList;
 
-	if (!LINK_IS_EMPTY(prStaRecOfClientList)) {
+	if (!LINK_IS_EMPTY(prClientList)) {
 		P_STA_RECORD_T prCurrStaRec;
 
-		LINK_FOR_EACH_ENTRY(prCurrStaRec, prStaRecOfClientList, rLinkEntry, STA_RECORD_T) {
+		LINK_FOR_EACH_ENTRY(prCurrStaRec, prClientList, rLinkEntry, STA_RECORD_T) {
 
 			if (prCurrStaRec == prStaRec) {
-				DBGLOG(BSS, WARN,
-				       "Current Client List already contains that STA_RECORD_T[%pM]\n",
-					prStaRec->aucMacAddr);
+				DBGLOG(BSS, INFO, "Current client list already contains that STA_RECORD_T[%pM]\n",
+				       prStaRec->aucMacAddr);
 				return;
 			}
 		}
 	}
 
-	LINK_INSERT_TAIL(prStaRecOfClientList, &prStaRec->rLinkEntry);
+	DBGLOG(BSS, INFO, "Add STA_RECORD_T[%pM] to the client list\n", prStaRec->aucMacAddr);
+	LINK_INSERT_TAIL(prClientList, &prStaRec->rLinkEntry);
 
 }				/* end of bssAddStaRecToClientList() */
 
@@ -1863,41 +1430,43 @@ VOID bssAddStaRecToClientList(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInf
 /*----------------------------------------------------------------------------*/
 VOID bssRemoveStaRecFromClientList(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo, IN P_STA_RECORD_T prStaRec)
 {
-	P_LINK_T prStaRecOfClientList;
+	P_LINK_T prClientList;
 
 	ASSERT(prBssInfo);
 
-	prStaRecOfClientList = &prBssInfo->rStaRecOfClientList;
+	prClientList = &prBssInfo->rStaRecOfClientList;
 
 #if 0
-	if (!LINK_IS_EMPTY(prStaRecOfClientList)) {
+	if (!LINK_IS_EMPTY(prClientList)) {
 		P_STA_RECORD_T prCurrStaRec;
 
-		LINK_FOR_EACH_ENTRY(prCurrStaRec, prStaRecOfClientList, rLinkEntry, STA_RECORD_T) {
+		LINK_FOR_EACH_ENTRY(prCurrStaRec, prClientList, rLinkEntry, STA_RECORD_T) {
 
 			if (prCurrStaRec == prStaRec) {
+				DBGLOG(BSS, INFO, "Remove STA_RECORD_T[%pM] from the client list\n",
+				       prStaRec->aucMacAddr);
+				LINK_REMOVE_KNOWN_ENTRY(prClientList, &prStaRec->rLinkEntry);
+				return;
+			}
+		}
+	}
+#else
+	if (!LINK_IS_EMPTY(prClientList)) {
 
-				LINK_REMOVE_KNOWN_ENTRY(prStaRecOfClientList, &prStaRec->rLinkEntry);
+		P_LINK_ENTRY_T prLinkEntry = (P_LINK_ENTRY_T) NULL;
 
+		LINK_FOR_EACH(prLinkEntry, prClientList) {
+			if ((ULONG) prStaRec == (ULONG) prLinkEntry) {
+				DBGLOG(BSS, INFO, "Remove STA_RECORD_T[%pM] from the client list\n",
+				       prStaRec->aucMacAddr);
+				LINK_REMOVE_KNOWN_ENTRY(prClientList, &prStaRec->rLinkEntry);
 				return;
 			}
 		}
 	}
 #endif
-	if (!LINK_IS_EMPTY(prStaRecOfClientList)) {
-
-		P_LINK_ENTRY_T prLinkEntry = (P_LINK_ENTRY_T) NULL;
-
-		LINK_FOR_EACH(prLinkEntry, prStaRecOfClientList) {
-			if ((ULONG) prStaRec == (ULONG) prLinkEntry) {
-				LINK_REMOVE_KNOWN_ENTRY(prStaRecOfClientList, &prStaRec->rLinkEntry);
-				return;
-			}
-		}
-	}
-
-	DBGLOG(BSS, INFO, "Current Client List didn't contain that STA_RECORD_T[%pM] before removing.\n",
-			   prStaRec->aucMacAddr);
+	DBGLOG(BSS, INFO, "Current client list didn't contain that STA_RECORD_T[%pM] before removing\n",
+	       prStaRec->aucMacAddr);
 
 }				/* end of bssRemoveStaRecFromClientList() */
 #endif /* CFG_SUPPORT_ADHOC || CFG_SUPPORT_AAA */
@@ -2317,17 +1886,10 @@ VOID bssInitForAP(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo, IN BOOLEA
 	UINT_8 auAifs[WMM_AC_INDEX_NUM] = { 3, 7, 1, 1 };
 	UINT_8 auTxop[WMM_AC_INDEX_NUM] = { 0, 0, 94, 47 };	/* If the AP is OFDM */
 
-	DEBUGFUNC("bssInitForAP");
 	DBGLOG(BSS, LOUD, "\n");
 
 	ASSERT(prBssInfo);
 	ASSERT((prBssInfo->eCurrentOPMode == OP_MODE_ACCESS_POINT) || (prBssInfo->eCurrentOPMode == OP_MODE_BOW));
-
-#if 0
-	prAdapter->rWifiVar.rConnSettings.fgRxShortGIDisabled = TRUE;
-	prAdapter->rWifiVar.rConnSettings.uc2G4BandwidthMode = CONFIG_BW_20M;
-	prAdapter->rWifiVar.rConnSettings.uc5GBandwidthMode = CONFIG_BW_20M;
-#endif
 
 	/* 4 <1> Setup PHY Attributes and Basic Rate Set/Operational Rate Set */
 	prBssInfo->ucNonHTBasicPhyType = (UINT_8)
@@ -2344,7 +1906,8 @@ VOID bssInitForAP(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo, IN BOOLEA
 	/* 4 <2> Setup BSSID */
 	COPY_MAC_ADDR(prBssInfo->aucBSSID, prBssInfo->aucOwnMacAddr);
 
-	/* 4 <3> Setup Capability - Short Preamble */
+	/* 4 <3> Compose Capability */
+	/* 4 <3.1> Setup Capability - Short Preamble */
 	if (rNonHTPhyAttributes[prBssInfo->ucNonHTBasicPhyType].fgIsShortPreambleOptionImplemented &&
 	   ((prAdapter->rWifiVar.ePreambleType == PREAMBLE_TYPE_SHORT) || /* Short Preamble Option Enable is TRUE */
 	    (prAdapter->rWifiVar.ePreambleType == PREAMBLE_TYPE_AUTO))) {
@@ -2355,10 +1918,9 @@ VOID bssInitForAP(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo, IN BOOLEA
 		prBssInfo->fgUseShortPreamble = FALSE;
 	}
 
-	/* 4 <4> Setup Capability - Short Slot Time */
+	/* 4 <3.2> Setup Capability - Short Slot Time */
 	prBssInfo->fgUseShortSlotTime = TRUE;
 
-	/* 4 <5> Compoase Capability */
 	prBssInfo->u2CapInfo = CAP_INFO_ESS;
 
 	if (prBssInfo->fgIsProtection)
@@ -2369,12 +1931,12 @@ VOID bssInitForAP(IN P_ADAPTER_T prAdapter, IN P_BSS_INFO_T prBssInfo, IN BOOLEA
 
 	if (prBssInfo->fgUseShortSlotTime)
 		prBssInfo->u2CapInfo |= CAP_INFO_SHORT_SLOT_TIME;
-	/* 4 <6> Find Lowest Basic Rate Index for default TX Rate of MMPDU */
-	rateGetLowestRateIndexFromRateSet(prBssInfo->u2BSSBasicRateSet, &ucLowestBasicRateIndex);
 
+	/* 4 <4> Use lowest basic rate for default TX rate of MMPDU */
+	rateGetLowestRateIndexFromRateSet(prBssInfo->u2BSSBasicRateSet, &ucLowestBasicRateIndex);
 	prBssInfo->ucHwDefaultFixedRateCode = aucRateIndex2RateCode[PREAMBLE_DEFAULT_LONG_NONE][ucLowestBasicRateIndex];
 
-	/* 4 <7> Fill the EDCA */
+	/* 4 <5> Fill the EDCA */
 
 	prACQueParms = prBssInfo->arACQueParmsForBcast;
 
