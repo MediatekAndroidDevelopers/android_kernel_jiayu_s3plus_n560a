@@ -937,7 +937,7 @@ BOOLEAN kalInitBowDevice(IN P_GLUE_INFO_T prGlueInfo, IN const char *prDevName)
 	ASSERT(prHif);
 	if (prGlueInfo->rBowInfo.fgIsNetRegistered == FALSE) {
 		prGlueInfo->rBowInfo.prDevHandler =
-		alloc_netdev_mq(sizeof(P_GLUE_INFO_T), prDevName, NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
+		alloc_netdev_mq(sizeof(P_GLUE_INFO_T), prDevName, ether_setup, CFG_MAX_TXQ_NUM);
 		if (!prGlueInfo->rBowInfo.prDevHandler)
 			return FALSE;
 

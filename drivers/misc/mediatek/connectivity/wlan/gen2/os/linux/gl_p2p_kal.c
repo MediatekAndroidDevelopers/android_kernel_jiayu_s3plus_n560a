@@ -1082,8 +1082,6 @@ kalP2PIndicateCompleteBssInfo(IN P_GLUE_INFO_T prGlueInfo, IN P_BSS_DESC_T prSpe
 	}
 
 	prCfg80211Bss = cfg80211_inform_bss(prGlueP2pInfo->prWdev->wiphy, prChannelEntry,
-						((prSpecificBssDesc->fgSeenProbeResp == TRUE) ?
-							CFG80211_BSS_FTYPE_PRESP : CFG80211_BSS_FTYPE_BEACON),
 						prSpecificBssDesc->aucBSSID, 0,	/* TSF */
 						prSpecificBssDesc->u2CapInfo,
 						prSpecificBssDesc->u2BeaconInterval,	/* beacon interval */

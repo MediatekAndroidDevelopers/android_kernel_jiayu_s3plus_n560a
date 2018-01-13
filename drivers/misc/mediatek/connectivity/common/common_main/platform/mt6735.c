@@ -57,7 +57,7 @@
 #endif
 
 #ifdef CONFIG_MTK_HIBERNATION
-#include <mtk_hibernate_dpm.h>
+#include <mach/mtk_hibernate_dpm.h>
 #endif
 
 #include <linux/of_reserved_mem.h>
@@ -65,6 +65,8 @@
 #if CONSYS_CLOCK_BUF_CTRL
 #include <mt_clkbuf_ctl.h>
 #endif
+
+#include <mach/mt_pm_ldo.h>
 
 /*******************************************************************************
 *                              C O N S T A N T S
@@ -984,7 +986,7 @@ static INT32 consys_read_irq_info_from_dts(INT32 *irq_num, UINT32 *irq_flag)
 
 	INT32 iret = -1;
 
-	node = of_find_compatible_node(NULL, NULL, "mediatek,mt6735-consys");
+	node = of_find_compatible_node(NULL, NULL, "mediatek,CONSYS");
 	if (node) {
 		*irq_num = irq_of_parse_and_map(node, 0);
 		/* get the interrupt line behaviour */
@@ -1009,7 +1011,7 @@ static INT32 consys_read_reg_from_dts(VOID)
 	INT32 iRet = -1;
 	struct device_node *node = NULL;
 
-	node = of_find_compatible_node(NULL, NULL, "mediatek,mt6735-consys");
+	node = of_find_compatible_node(NULL, NULL, "mediatek,CONSYS");
 	if (node) {
 		/* registers base address */
 		conn_reg.mcu_base = (SIZE_T) of_iomap(node, 0);

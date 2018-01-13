@@ -1759,8 +1759,10 @@ int mtk_cfg80211_cancel_remain_on_channel(struct wiphy *wiphy,
 int
 mtk_cfg80211_mgmt_tx(struct wiphy *wiphy,
 		     struct wireless_dev *wdev,
-		     struct cfg80211_mgmt_tx_params *params,
-		     u64 *cookie)
+		     struct ieee80211_channel *channel, bool offscan,
+		     unsigned int wait,
+		     const u8 *buf,
+		     size_t len, bool no_cck, bool dont_wait_for_ack, u64 *cookie)
 {
 	P_GLUE_INFO_T prGlueInfo = NULL;
 	INT_32 i4Rslt = -EINVAL;
@@ -1773,7 +1775,8 @@ mtk_cfg80211_mgmt_tx(struct wiphy *wiphy,
 		DBGLOG(REQ, INFO, "--> %s()\n", __func__);
 #endif
 
-		if ((wiphy == NULL) || (wdev == NULL) || (params == 0) || (cookie == NULL))
+		if ((wiphy == NULL) || (buf == NULL) || (len == 0) ||
+				(wdev == NULL) || (cookie == NULL))
 			break;
 
 		prGlueInfo = (P_GLUE_INFO_T) wiphy_priv(wiphy);
@@ -1793,7 +1796,7 @@ mtk_cfg80211_mgmt_tx(struct wiphy *wiphy,
 		prMsgTxReq->fgNoneCckRate = FALSE;
 		prMsgTxReq->fgIsWaitRsp = TRUE;
 
-		prMgmtFrame = cnmMgtPktAlloc(prGlueInfo->prAdapter, (UINT_32) (params->len + MAC_TX_RESERVED_FIELD));
+		prMgmtFrame = cnmMgtPktAlloc(prGlueInfo->prAdapter, (UINT_32) (len + MAC_TX_RESERVED_FIELD));
 		prMsgTxReq->prMgmtMsduInfo = prMgmtFrame;
 		if (prMsgTxReq->prMgmtMsduInfo == NULL) {
 			ASSERT(FALSE);
@@ -1806,9 +1809,9 @@ mtk_cfg80211_mgmt_tx(struct wiphy *wiphy,
 
 		pucFrameBuf = (PUINT_8) ((ULONG) prMgmtFrame->prPacket + MAC_TX_RESERVED_FIELD);
 
-		kalMemCopy(pucFrameBuf, params->buf, params->len);
+		kalMemCopy(pucFrameBuf, buf, len);
 
-		prMgmtFrame->u2FrameLength = params->len;
+		prMgmtFrame->u2FrameLength = len;
 
 		mboxSendMsg(prGlueInfo->prAdapter, MBOX_ID_0, (P_MSG_HDR_T) prMsgTxReq, MSG_SEND_METHOD_BUF);
 
@@ -3227,4 +3230,3 @@ INT_32 mtk_cfg80211_process_str_cmd(P_GLUE_INFO_T prGlueInfo, PUINT_8 cmd, INT_3
 
 	return -EINVAL;
 }
-

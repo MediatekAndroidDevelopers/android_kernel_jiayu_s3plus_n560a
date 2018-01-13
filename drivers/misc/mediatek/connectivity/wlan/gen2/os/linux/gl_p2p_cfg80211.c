@@ -898,8 +898,9 @@ int mtk_p2p_cfg80211_cancel_remain_on_channel(struct wiphy *wiphy,
 
 int mtk_p2p_cfg80211_mgmt_tx(struct wiphy *wiphy,
 			     struct wireless_dev *wdev,
-			     struct cfg80211_mgmt_tx_params *params,
-			     u64 *cookie)
+			     struct ieee80211_channel *chan, bool offchan,
+			     unsigned int wait, const u8 *buf, size_t len,
+			     bool no_cck, bool dont_wait_for_ack, u64 *cookie)
 {
 	P_GLUE_INFO_T prGlueInfo = (P_GLUE_INFO_T) NULL;
 	P_GL_P2P_INFO_T prGlueP2pInfo = (P_GL_P2P_INFO_T) NULL;
@@ -913,10 +914,11 @@ int mtk_p2p_cfg80211_mgmt_tx(struct wiphy *wiphy,
 	UINT_32 u4NextRegValue = 0;
 
 	DBGLOG(P2P, INFO, "--> %s() ext list,wait :%d\n"
-		, __func__, params->wait);
+		, __func__, wait);
 
 	do {
-		if ((wiphy == NULL) || (wdev == NULL) || (params == 0) || (cookie == NULL))
+		if ((wiphy == NULL) || (buf == NULL) || (len == 0) || 
+				(wdev == NULL) || (cookie == NULL))
 			break;
 		/* DBGLOG(P2P, TRACE, ("mtk_p2p_cfg80211_mgmt_tx\n")); */
 
@@ -939,7 +941,7 @@ int mtk_p2p_cfg80211_mgmt_tx(struct wiphy *wiphy,
 			sizeof(struct _MSG_P2P_EXTEND_LISTEN_INTERVAL_T));
 		if (prMsgExtListenReq) {
 			prMsgExtListenReq->rMsgHdr.eMsgId = MID_MNY_P2P_EXTEND_LISTEN_INTERVAL;
-			prMsgExtListenReq->wait = params->wait;
+			prMsgExtListenReq->wait = wait;
 			DBGLOG(P2P, TRACE, "ext listen, wait: %d\n", prMsgExtListenReq->wait);
 			mboxSendMsg(prGlueInfo->prAdapter, MBOX_ID_0, (P_MSG_HDR_T)prMsgExtListenReq,
 				MSG_SEND_METHOD_BUF);
@@ -948,7 +950,7 @@ int mtk_p2p_cfg80211_mgmt_tx(struct wiphy *wiphy,
 		prMsgTxReq->fgNoneCckRate = FALSE;
 		prMsgTxReq->fgIsWaitRsp = TRUE;
 
-		prMgmtFrame = cnmMgtPktAlloc(prGlueInfo->prAdapter, (UINT_32) (params->len + MAC_TX_RESERVED_FIELD));
+		prMgmtFrame = cnmMgtPktAlloc(prGlueInfo->prAdapter, (UINT_32) (len + MAC_TX_RESERVED_FIELD));
 
 		prMsgTxReq->prMgmtMsduInfo = prMgmtFrame;
 		if (prMsgTxReq->prMgmtMsduInfo == NULL) {
@@ -962,9 +964,9 @@ int mtk_p2p_cfg80211_mgmt_tx(struct wiphy *wiphy,
 
 		pucFrameBuf = (PUINT_8) ((ULONG) prMgmtFrame->prPacket + MAC_TX_RESERVED_FIELD);
 
-		kalMemCopy(pucFrameBuf, params->buf, params->len);
+		kalMemCopy(pucFrameBuf, buf, len);
 
-		prMgmtFrame->u2FrameLength = params->len;
+		prMgmtFrame->u2FrameLength = len;
 		reinit_completion(&prGlueInfo->rP2pReq);
 
 		/*record MailBox2*/

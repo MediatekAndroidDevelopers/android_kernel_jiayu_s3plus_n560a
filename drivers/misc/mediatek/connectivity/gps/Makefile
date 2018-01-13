@@ -16,7 +16,7 @@ ifneq ($(filter "CONSYS_%",$(CONFIG_MTK_COMBO_CHIP)),)
 
 ccflags-y += \
 	-I$(src)/../common/common_main/$(MTK_PLATFORM)/include \
-	-I$(srctree)/drivers/misc/mediatek/include/mt-plat/$(MTK_PLATFORM)/include/mach
+	-I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include/mach
 else
         ccflags-y += -DSOC_CO_CLOCK_FLAG=0
         ccflags-y += -DWMT_CREATE_NODE_DYNAMIC=0

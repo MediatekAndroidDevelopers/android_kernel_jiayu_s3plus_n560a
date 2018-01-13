@@ -251,8 +251,10 @@ int mtk_cfg80211_cancel_remain_on_channel(struct wiphy *wiphy, struct wireless_d
 int
 mtk_cfg80211_mgmt_tx(struct wiphy *wiphy,
 		     struct wireless_dev *wdev,
-		     struct cfg80211_mgmt_tx_params *params,
-		     u64 *cookie);
+		     struct ieee80211_channel *channel, bool offscan,
+		     unsigned int wait,
+		     const u8 *buf,
+		     size_t len, bool no_cck, bool dont_wait_for_ack, u64 *cookie);
 
 void mtk_cfg80211_mgmt_frame_register(IN struct wiphy *wiphy,
 				      IN struct wireless_dev *wdev,

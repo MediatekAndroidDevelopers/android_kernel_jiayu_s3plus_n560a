@@ -1098,7 +1098,7 @@ static int mt3326_gps_resume(struct platform_device *dev)
 /*****************************************************************************/
 #ifdef CONFIG_OF
 static const struct of_device_id apgps_of_ids[] = {
-	{.compatible = "mediatek,gps",},
+	{.compatible = "mediatek,mt3326-gps",},
 	{}
 };
 #endif

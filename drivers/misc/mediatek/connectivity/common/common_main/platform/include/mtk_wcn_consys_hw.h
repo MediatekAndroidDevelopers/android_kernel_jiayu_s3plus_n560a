@@ -229,4 +229,3 @@ INT32 mtk_wcn_consys_set_dbg_mode(UINT32 flag);
 INT32 mtk_wcn_consys_set_dynamic_dump(PUINT32 buf);
 INT32 mtk_wdt_swsysret_config(INT32 bit, INT32 set_value);
 #endif /* _MTK_WCN_CONSYS_HW_H_ */
-

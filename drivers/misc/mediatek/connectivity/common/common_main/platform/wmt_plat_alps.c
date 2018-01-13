@@ -49,7 +49,7 @@
 #include <linux/delay.h>
 
 /* ALPS header files */
-#include <mtk_rtc.h>
+#include <mach/mtk_rtc.h>
 #ifdef CONFIG_MTK_MT6306_SUPPORT
 #include <mach/dcl_sim_gpio.h>
 #endif

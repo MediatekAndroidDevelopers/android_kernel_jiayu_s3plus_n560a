@@ -135,6 +135,22 @@ INT32 __weak mtk_btif_rxd_be_blocked_flag_get(VOID)
 }
 
 /* operation definition */
+static struct genl_ops stp_dbg_gnl_ops_bind = {
+	.cmd = STP_DBG_COMMAND_BIND,
+	.flags = 0,
+	.policy = stp_dbg_genl_policy,
+	.doit = stp_dbg_nl_bind,
+	.dumpit = NULL,
+};
+
+static struct genl_ops stp_dbg_gnl_ops_reset = {
+	.cmd = STP_DBG_COMMAND_RESET,
+	.flags = 0,
+	.policy = stp_dbg_genl_policy,
+	.doit = stp_dbg_nl_reset,
+	.dumpit = NULL,
+};
+#if 0
 static struct genl_ops stp_dbg_gnl_ops_array[] = {
 	{
 		.cmd = STP_DBG_COMMAND_BIND,
@@ -151,6 +167,7 @@ static struct genl_ops stp_dbg_gnl_ops_array[] = {
 		.dumpit = NULL,
 	},
 };
+#endif
 
 /* stp_dbg_core_dump_timeout_handler - handler of coredump timeout
  * @ data - core dump object's pointer
@@ -1430,7 +1447,7 @@ INT32 stp_dbg_log_ctrl(UINT32 on)
 
 static _osal_inline_ VOID stp_dbg_nl_init(VOID)
 {
-#if 0
+
 	if (genl_register_family(&stp_dbg_gnl_family) != 0) {
 		STP_DBG_ERR_FUNC("%s(): GE_NELINK family registration fail\n", __func__);
 	} else {
@@ -1441,9 +1458,10 @@ static _osal_inline_ VOID stp_dbg_nl_init(VOID)
 			STP_DBG_ERR_FUNC("%s(): RESET operation registration fail\n", __func__);
 
 	}
-#endif
+#if 0
 	if (genl_register_family_with_ops(&stp_dbg_gnl_family, stp_dbg_gnl_ops_array) != 0)
 		STP_DBG_ERR_FUNC("%s(): GE_NELINK family registration fail\n", __func__);
+#endif
 }
 
 static _osal_inline_ VOID stp_dbg_nl_deinit(VOID)

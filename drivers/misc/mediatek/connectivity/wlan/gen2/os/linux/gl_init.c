@@ -555,8 +555,7 @@ unsigned int _cfg80211_classify8021d(struct sk_buff *skb)
 
 static const UINT_16 au16Wlan1dToQueueIdx[8] = { 1, 0, 0, 1, 2, 2, 3, 3 };
 
-static UINT_16 wlanSelectQueue(struct net_device *dev, struct sk_buff *skb,
-				void *accel_priv, select_queue_fallback_t fallback)
+static UINT_16 wlanSelectQueue(struct net_device *dev, struct sk_buff *skb)
 {
 	skb->priority = _cfg80211_classify8021d(skb);
 
@@ -1092,10 +1091,11 @@ static void createWirelessDevice(void)
 	prWiphy->signal_type = CFG80211_SIGNAL_TYPE_MBM;
 	prWiphy->cipher_suites = mtk_cipher_suites;
 	prWiphy->n_cipher_suites = ARRAY_SIZE(mtk_cipher_suites);
-	prWiphy->flags = WIPHY_FLAG_SUPPORTS_FW_ROAM
+	prWiphy->flags = WIPHY_FLAG_CUSTOM_REGULATORY
+			| WIPHY_FLAG_SUPPORTS_FW_ROAM
 			| WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL
 			| WIPHY_FLAG_SUPPORTS_SCHED_SCAN;
-	prWiphy->regulatory_flags = REGULATORY_CUSTOM_REG;
+	//prWiphy->regulatory_flags = REGULATORY_CUSTOM_REG;
 #if CFG_SUPPORT_TDLS
 	TDLSEX_WIPHY_FLAGS_INIT(prWiphy->flags);
 #endif /* CFG_SUPPORT_TDLS */
@@ -1108,7 +1108,8 @@ static void createWirelessDevice(void)
 
 	/* <1.4> wowlan support */
 #ifdef CONFIG_PM
-	prWiphy->wowlan = &mtk_wlan_wowlan_support;
+	kalMemCopy(&prWiphy->wowlan, &mtk_wlan_wowlan_support,
+		   sizeof(struct wiphy_wowlan_support));
 #endif
 #ifdef CONFIG_CFG80211_WEXT
 	 /* <1.5> Use wireless extension to replace IOCTL */
@@ -1123,7 +1124,7 @@ static void createWirelessDevice(void)
 
 #if CFG_SUPPORT_PERSIST_NETDEV
 	/* <2> allocate and register net_device */
-	prNetDev = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), NIC_INF_NAME, NET_NAME_PREDICTABLE,
+	prNetDev = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), NIC_INF_NAME,
 				   ether_setup, CFG_MAX_TXQ_NUM);
 	if (!prNetDev) {
 		DBGLOG(INIT, ERROR, "Allocating memory to net_device context failed\n");
@@ -1842,13 +1843,13 @@ static struct wireless_dev *wlanNetCreate(PVOID pvData)
 #if defined(CFG_USE_AOSP_TETHERING_NAME)
 	if (wlan_if_changed)
 		prGlueInfo->prDevHandler = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), NIC_INF_NAME_IN_AP_MODE,
-							   NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
+							   ether_setup, CFG_MAX_TXQ_NUM);
 	else
 		prGlueInfo->prDevHandler = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), NIC_INF_NAME,
-							   NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
+							   ether_setup, CFG_MAX_TXQ_NUM);
 #else
 	prGlueInfo->prDevHandler = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), NIC_INF_NAME,
-						   NET_NAME_PREDICTABLE, ether_setup, CFG_MAX_TXQ_NUM);
+						   ether_setup, CFG_MAX_TXQ_NUM);
 
 	/* Device can help us to save at most 3000 packets, after we stopped queue */
 	if (prGlueInfo->prDevHandler != NULL)

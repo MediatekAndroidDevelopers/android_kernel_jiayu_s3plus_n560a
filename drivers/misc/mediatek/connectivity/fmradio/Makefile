@@ -31,7 +31,8 @@ endif
 	subdir-ccflags-y += -I$(src)/inc \
 					-I$(src)/$(FM_CHIP)/inc \
 					-I$(src)/../common/$(WMT_INCLUDE_PATH)/include \
-					-I$(src)/../common/$(WMT_INCLUDE_PATH)/linux/include
+					-I$(src)/../common/$(WMT_INCLUDE_PATH)/linux/include \
+					-I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include/mach
 
 	obj-$(CONFIG_MTK_FMRADIO) += mtk_fm_drv.o
 	$(FM_CHIP)-objs	:= core/fm_module.o \

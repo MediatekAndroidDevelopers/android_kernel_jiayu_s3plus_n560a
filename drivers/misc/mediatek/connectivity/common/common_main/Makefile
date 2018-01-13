@@ -5,7 +5,7 @@ subdir-ccflags-y += \
 	-I$(src)/core/include \
 	-I$(src)/include \
 	-I$(src)/../common_detect \
-	-I$(srctree)/drivers/misc/mediatek/btif/common/inc
+	-I$(srctree)/drivers/misc/mediatek/btif/inc
 
 subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/eccci/
 subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/eccci/$(MTK_PLATFORM)

@@ -19,7 +19,8 @@ endif
 
 ccflags-y += \
 	-I$(src)/../common/common_main/include \
-	-I$(src)/../common/common_main/linux/include
+	-I$(src)/../common/common_main/linux/include \
+	-I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include/mach
 
 obj-$(CONFIG_MTK_COMBO_WIFI) += wmt_chrdev_wifi.o
 

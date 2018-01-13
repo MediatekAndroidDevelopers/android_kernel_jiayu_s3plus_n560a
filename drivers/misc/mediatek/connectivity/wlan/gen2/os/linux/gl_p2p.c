@@ -365,8 +365,7 @@ unsigned int _p2p_cfg80211_classify8021d(struct sk_buff *skb)
 
 static const UINT_16 au16Wlan1dToQueueIdx[8] = { 1, 0, 0, 1, 2, 2, 3, 3 };
 
-static UINT_16 p2pSelectQueue(struct net_device *dev, struct sk_buff *skb,
-				void *accel_priv, select_queue_fallback_t fallback)
+static UINT_16 p2pSelectQueue(struct net_device *dev, struct sk_buff *skb)
 {
 	skb->priority = _p2p_cfg80211_classify8021d(skb);
 
@@ -678,11 +677,11 @@ BOOLEAN glP2pCreateWirelessDevice(P_GLUE_INFO_T prGlueInfo)
 	prWiphy->max_remain_on_channel_duration = 500;
 	prWiphy->cipher_suites = mtk_cipher_suites;
 	prWiphy->n_cipher_suites = ARRAY_SIZE(mtk_cipher_suites);
-	prWiphy->flags = WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL | WIPHY_FLAG_HAVE_AP_SME;
+	prWiphy->flags = WIPHY_FLAG_CUSTOM_REGULATORY | WIPHY_FLAG_HAS_REMAIN_ON_CHANNEL | WIPHY_FLAG_HAVE_AP_SME;
 #if (CFG_SUPPORT_TDLS == 1)
 	TDLSEX_WIPHY_FLAGS_INIT(prWiphy->flags);
 #endif /* CFG_SUPPORT_TDLS */
-	prWiphy->regulatory_flags = REGULATORY_CUSTOM_REG;
+	//prWiphy->regulatory_flags = REGULATORY_CUSTOM_REG;
 	prWiphy->ap_sme_capa = 1;
 
 	prWiphy->max_scan_ssids = MAX_SCAN_LIST_NUM;
@@ -692,7 +691,8 @@ BOOLEAN glP2pCreateWirelessDevice(P_GLUE_INFO_T prGlueInfo)
 	prWiphy->n_vendor_commands = sizeof(mtk_p2p_vendor_ops) / sizeof(struct wiphy_vendor_command);
 
 #ifdef CONFIG_PM
-	prWiphy->wowlan = &p2p_wowlan_support;
+	kalMemCopy(&prWiphy->wowlan,
+		&p2p_wowlan_support, sizeof(struct wiphy_wowlan_support));
 #endif
 
 	/* 2.1 set priv as pointer to glue structure */
@@ -704,7 +704,7 @@ BOOLEAN glP2pCreateWirelessDevice(P_GLUE_INFO_T prGlueInfo)
 	prWdev->wiphy = prWiphy;
 #if CFG_SUPPORT_PERSIST_NETDEV
 	/* 3. allocate netdev */
-	prNetDev = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), P2P_INF_NAME, NET_NAME_PREDICTABLE,
+	prNetDev = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), P2P_INF_NAME,
 				   ether_setup, CFG_MAX_TXQ_NUM);
 	if (!prNetDev) {
 		DBGLOG(P2P, ERROR, "unable to allocate netdevice for p2p\n");
@@ -855,7 +855,7 @@ BOOLEAN glRegisterP2P(P_GLUE_INFO_T prGlueInfo, const char *prDevName, BOOLEAN f
 		prP2PInfo->prDevHandler = gprP2pWdev->netdev;
 #else /* CFG_SUPPORT_PERSIST_NETDEV */
 	/* 3. allocate netdev */
-	prDevHandler = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), prDevName, NET_NAME_PREDICTABLE,
+	prDevHandler = alloc_netdev_mq(sizeof(P_GLUE_INFO_T), prDevName,
 				       ether_setup, CFG_MAX_TXQ_NUM);
 	if (!prDevHandler) {
 		DBGLOG(P2P, ERROR, "unable to allocate netdevice for p2p\n");

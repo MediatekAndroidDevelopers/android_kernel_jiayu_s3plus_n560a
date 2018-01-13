@@ -39,6 +39,11 @@
 #include "osal_typedef.h"
 #include "mtk_wcn_consys_hw.h"
 #include <linux/of_reserved_mem.h>
+#include <linux/pinctrl/consumer.h>
+
+#ifdef CONFIG_MTK_HIBERNATION
+#include <mach/mtk_hibernate_dpm.h>
+#endif
 
 /*******************************************************************************
 *                              C O N S T A N T S
@@ -68,13 +73,7 @@ P_WMT_CONSYS_IC_OPS wmt_consys_ic_ops;
 
 #ifdef CONFIG_OF
 const struct of_device_id apwmt_of_ids[] = {
-	{.compatible = "mediatek,mt6580-consys",},
-	{.compatible = "mediatek,mt6735-consys",},
-	{.compatible = "mediatek,mt6755-consys",},
-	{.compatible = "mediatek,mt6757-consys",},
-	{.compatible = "mediatek,mt6797-consys",},
-	{.compatible = "mediatek,mt8127-consys",},
-	{.compatible = "mediatek,mt8163-consys",},
+	{.compatible = "mediatek,CONSYS",},
 	{}
 };
 struct CONSYS_BASE_ADDRESS conn_reg;
@@ -443,7 +442,7 @@ int reserve_memory_consys_fn(struct reserved_mem *rmem)
 	return 0;
 }
 
-RESERVEDMEM_OF_DECLARE(reserve_memory_test, "mediatek,consys-reserve-memory", reserve_memory_consys_fn);
+RESERVEDMEM_OF_DECLARE(reserve_memory_test, "consys-reserve-memory", reserve_memory_consys_fn);
 
 
 INT32 mtk_wcn_consys_hw_init(void)

@@ -12,7 +12,7 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <mtk_rtc.h>
+#include <mach/mtk_rtc.h>
 
 #ifdef DFT_TAG
 #undef DFT_TAG

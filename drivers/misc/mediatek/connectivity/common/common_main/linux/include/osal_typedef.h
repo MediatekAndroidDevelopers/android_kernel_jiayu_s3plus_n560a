@@ -43,7 +43,7 @@
 #include <linux/jiffies.h>
 #include <linux/slab.h>
 #if defined(WMT_PLAT_ALPS) && WMT_PLAT_ALPS
-#include <aee.h>
+#include <linux/aee.h>
 #endif
 #include <linux/kfifo.h>
 #include <linux/wakelock.h>

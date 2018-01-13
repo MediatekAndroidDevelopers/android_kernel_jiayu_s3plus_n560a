@@ -30,8 +30,9 @@
 #include <net/netlink.h>
 #endif
 #if CFG_SUPPORT_WAKEUP_REASON_DEBUG
-#include <mt_sleep.h>
+#include <mach/mt_sleep.h>
 #endif
+#include <linux/sched/rt.h>
 
 /*******************************************************************************
 *                              C O N S T A N T S
@@ -142,9 +143,9 @@ WLAN_STATUS kalFirmwareOpen(IN P_GLUE_INFO_T prGlueInfo)
 	 * set user and group to 0(root) */
 	struct cred *cred = (struct cred *)get_current_cred();
 
-	orgfsuid = cred->fsuid.val;
-	orgfsgid = cred->fsgid.val;
-	cred->fsuid.val = cred->fsgid.val = 0;
+	orgfsuid = cred->fsuid;
+	orgfsgid = cred->fsgid;
+	cred->fsuid = cred->fsgid = 0;
 
 	ASSERT(prGlueInfo);
 
@@ -202,8 +203,8 @@ open_success:
 error_open:
 	/* restore */
 	set_fs(orgfs);
-	cred->fsuid.val = orgfsuid;
-	cred->fsgid.val = orgfsgid;
+	cred->fsuid = orgfsuid;
+	cred->fsgid = orgfsgid;
 	put_cred(cred);
 	return WLAN_STATUS_FAILURE;
 }
@@ -233,8 +234,8 @@ WLAN_STATUS kalFirmwareClose(IN P_GLUE_INFO_T prGlueInfo)
 		{
 			struct cred *cred = (struct cred *)get_current_cred();
 
-			cred->fsuid.val = orgfsuid;
-			cred->fsgid.val = orgfsgid;
+			cred->fsuid = orgfsuid;
+			cred->fsgid = orgfsgid;
 			put_cred(cred);
 		}
 		filp = NULL;
@@ -1063,7 +1064,6 @@ kalIndicateStatusAndComplete(IN P_GLUE_INFO_T prGlueInfo, IN WLAN_STATUS eStatus
 
 				if ((prBssDesc != NULL) && (prChannel != NULL)) {
 					bss = cfg80211_inform_bss(priv_to_wiphy(prGlueInfo), prChannel,
-								CFG80211_BSS_FTYPE_PRESP,
 								arBssid, 0,	/* TSF */
 								WLAN_CAPABILITY_ESS,
 								prBssDesc->u2BeaconInterval,	/* beacon interval */
