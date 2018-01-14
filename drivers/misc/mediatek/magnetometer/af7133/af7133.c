@@ -57,7 +57,7 @@
 #define POWER_NONE_MACRO MT65XX_POWER_NONE
 
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 #define AF7133_DEV_NAME         "af7133"
 #define DRIVER_VERSION          "1.0.1"
 /*----------------------------------------------------------------------------*/

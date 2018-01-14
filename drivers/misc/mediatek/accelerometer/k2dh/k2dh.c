@@ -100,7 +100,7 @@
 #include <linux/hwmsen_helper.h>
 
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 /*----------------------------------------------------------------------------*/
 //#define CONFIG_K2DH_LOWPASS   /*apply low pass filter on output*/
 

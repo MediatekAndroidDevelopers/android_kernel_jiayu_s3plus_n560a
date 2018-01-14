@@ -40,7 +40,7 @@
 #define POWER_NONE_MACRO MT65XX_POWER_NONE
 
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 /*----------------------------------------------------------------------------*/
 #define CONFIG_MPU6050_LOWPASS   /*apply low pass filter on output*/       
 #define SW_CALIBRATION

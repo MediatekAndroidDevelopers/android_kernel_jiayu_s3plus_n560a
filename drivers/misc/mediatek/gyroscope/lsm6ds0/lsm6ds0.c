@@ -50,7 +50,7 @@
 //#define LSM6DS0_DEFAULT_FS		LSM6DS0_FS_1000
 //#define LSM6DS0_DEFAULT_LSB		LSM6DS0_FS_250_LSB
 /*---------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 /*----------------------------------------------------------------------------*/
 #define CONFIG_LSM6DS0_LOWPASS   /*apply low pass filter on output*/       
 /*----------------------------------------------------------------------------*/

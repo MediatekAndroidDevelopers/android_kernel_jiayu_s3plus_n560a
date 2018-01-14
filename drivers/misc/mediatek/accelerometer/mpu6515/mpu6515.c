@@ -45,7 +45,7 @@
 #define POWER_NONE_MACRO MT65XX_POWER_NONE
 
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 //#define GSENSOR_UT
 /*----------------------------------------------------------------------------*/
 #define CONFIG_MPU6515_LOWPASS   /*apply low pass filter on output*/       

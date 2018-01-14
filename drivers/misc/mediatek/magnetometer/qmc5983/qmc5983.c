@@ -65,7 +65,7 @@
 #include "qmc5983.h"
 #include <linux/hwmsen_helper.h>
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 #define QMC5983_DEV_NAME         "qmc5983"
 #define DRIVER_VERSION          "1.0.0"
 /*----------------------------------------------------------------------------*/

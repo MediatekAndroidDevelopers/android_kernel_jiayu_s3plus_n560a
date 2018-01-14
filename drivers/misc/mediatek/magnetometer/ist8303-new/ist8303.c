@@ -58,7 +58,7 @@
 
 /*----------------------------------------------------------------------------*/
 #define I2C_DRIVERID_IST8303 304
-#define DEBUG 1
+//#define DEBUG 1
 #define IST8303_DEV_NAME          "ist8303"
 #define DRIVER_VERSION            "1.0.0.0"
 #define ODR_DELAY_TIME_MS         20  /*ODR delayms for each loop*/ 

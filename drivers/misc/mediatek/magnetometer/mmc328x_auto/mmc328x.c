@@ -42,7 +42,7 @@
 #include "mmc328x.h"
 #include <linux/hwmsen_helper.h>
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 #define MMC328x_DEV_NAME         "mmc328x"
 #define DRIVER_VERSION          "1.0.0"
 /*----------------------------------------------------------------------------*/

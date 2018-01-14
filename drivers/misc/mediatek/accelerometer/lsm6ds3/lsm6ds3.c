@@ -79,7 +79,7 @@
 #define CUST_EINT_LSM6DS3_TYPE CUST_EINT_ALS_TYPE	//eint trigger type
 #endif
 /*---------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 /*----------------------------------------------------------------------------*/
 #define CONFIG_LSM6DS3_LOWPASS   /*apply low pass filter on output*/       
 /*----------------------------------------------------------------------------*/

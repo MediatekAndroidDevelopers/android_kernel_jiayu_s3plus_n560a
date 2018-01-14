@@ -49,7 +49,7 @@ static DEFINE_MUTEX(akm8963_i2c_mutex);
 static DEFINE_MUTEX(akm8963_op_mutex);
 
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 #define AKM8963_DEV_NAME         "akm8963"
 #define DRIVER_VERSION          "1.0.1"
 /*----------------------------------------------------------------------------*/

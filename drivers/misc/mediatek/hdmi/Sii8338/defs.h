@@ -1,7 +1,7 @@
 #if defined(__KERNEL__)
 #include <linux/kernel.h>
 
-#define DEBUG 1
+//#define DEBUG 1
 #if defined(DEBUG)
 extern bool gMhlDbgPrintEnable;
 #endif

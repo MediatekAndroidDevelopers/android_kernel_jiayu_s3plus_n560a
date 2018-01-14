@@ -48,7 +48,7 @@
 #include "mmc3416x.h"
 #include <linux/hwmsen_helper.h>
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 #define MMC3416X_DEV_NAME         "mmc3416x"
 #define DRIVER_VERSION          "1.0.0"
 /*----------------------------------------------------------------------------*/

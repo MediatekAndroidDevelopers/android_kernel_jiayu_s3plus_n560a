@@ -43,7 +43,7 @@
 #include "akm8975.h"
 #include <linux/hwmsen_helper.h>
 /*----------------------------------------------------------------------------*/
-#define DEBUG 1
+//#define DEBUG 1
 #define AKM8975_DEV_NAME         "akm8975"
 #define DRIVER_VERSION          "1.0.1"
 /*----------------------------------------------------------------------------*/
