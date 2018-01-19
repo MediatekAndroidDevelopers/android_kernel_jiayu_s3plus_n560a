@@ -863,6 +863,8 @@ int mmdvfs_set_step_with_mmsys_clk_low_low(MTK_SMI_BWC_SCEN smi_scenario, mmdvfs
 	return 0;
 }
 
+#define MMDVFS_IOCTL_CMD_STEP_FIELD_MASK (0xFF)
+
 void mmdvfs_handle_cmd(MTK_MMDVFS_CMD *cmd)
 {
 	if (is_mmdvfs_disabled()) {
@@ -910,9 +912,25 @@ void mmdvfs_handle_cmd(MTK_MMDVFS_CMD *cmd)
 		break;
 	}
 
+	case MTK_MMDVFS_CMD_TYPE_STEP_SET:
+		{
+			s32 mmdvfs_step_request = cmd->step & MMDVFS_IOCTL_CMD_STEP_FIELD_MASK;
+			MTK_SMI_BWC_SCEN scen = SMI_BWC_SCEN_FORCE_MMDVFS;
+
+			if (mmdvfs_step_request == 0)
+				mmdvfs_set_step_with_mmsys_clk(scen, MMDVFS_VOLTAGE_HIGH,
+					MMSYS_CLK_HIGH);
+			else if (mmdvfs_step_request == MMDVFS_IOCTL_CMD_STEP_FIELD_MASK)
+				mmdvfs_set_step_with_mmsys_clk(scen, mmdvfs_get_default_step(),
+					MMSYS_CLK_MEDIUM);
+			else
+				mmdvfs_set_step_with_mmsys_clk(scen, MMDVFS_VOLTAGE_HIGH,
+					MMSYS_CLK_MEDIUM);
+		}
+		break;
+
 	default:
 		MMDVFSMSG("invalid mmdvfs cmd\n");
-		BUG();
 		break;
 	}
 }
@@ -1263,9 +1281,8 @@ int venc_resolution, mmdvfs_context_struct *mmdvfs_mgr_cntx, int is_ui_idle){
 
 	/* Only allowd VP, VR or UI idle*/
 	/* Return if vp or vr are not selected and it is not in UI idle mode*/
-	if (((current_scenarios & ((1 << SMI_BWC_SCEN_VP) | (1 << SMI_BWC_SCEN_VR))) == 0)
-			&& !(current_scenarios == 0 && is_ui_idle == 1)) {
-		MMDVFSMSG("Didn't enter low low step, only allow VP, VR and UI idle: 0x%x, %d\n",
+	if ((current_scenarios & ((1 << SMI_BWC_SCEN_VP) | (1 << SMI_BWC_SCEN_VR))) == 0) {
+		MMDVFSMSG("Didn't enter low low step, only allow VP, VR: 0x%x, %d\n",
 		current_scenarios, is_ui_idle);
 		return 0;
 	}
@@ -1286,7 +1303,8 @@ int venc_resolution, mmdvfs_context_struct *mmdvfs_mgr_cntx, int is_ui_idle){
 			venc_resolution);
 			return 0;
 		} else {
-			return 1;
+			if (low_low_request == 1)
+				return 1;
 		}
 	}
 
@@ -1295,14 +1313,6 @@ int venc_resolution, mmdvfs_context_struct *mmdvfs_mgr_cntx, int is_ui_idle){
 		if (low_low_request == 1)
 			return 1;
 		MMDVFSMSG("No low low requested from DISP in VP\n");
-		return 0;
-	}
-
-	/* If it is UI idle, check the low_low_request only */
-	if ((current_scenarios == 0) && (is_ui_idle == 1)) {
-		if (low_low_request == 1)
-			return 1;
-		MMDVFSMSG("No low low requested from DISP in idle mode\n");
 		return 0;
 	}
 
