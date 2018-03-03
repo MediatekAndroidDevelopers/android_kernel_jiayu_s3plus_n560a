@@ -121,6 +121,11 @@ extern int sysctl_nr_trim_pages;
 extern int blk_iopoll_enabled;
 #endif
 
+#if defined(CONFIG_USB)
+int deny_new_usb __read_mostly = 0;
+EXPORT_SYMBOL(deny_new_usb);
+#endif
+
 /* Constants used for minimum and  maximum */
 #ifdef CONFIG_LOCKUP_DETECTOR
 static int sixty = 60;
@@ -1109,6 +1114,19 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= wmark_high_kbytes_sysctl_handler,
 		.extra1		= &wmark_low_kbytes,
 	},
+
+#if defined(CONFIG_USB)
+	{
+		.procname	= "deny_new_usb",
+		.data		= &deny_new_usb,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= proc_dointvec_minmax_sysadmin,
+		.extra1		= &zero,
+		.extra2		= &one,
+	},
+#endif
+
 	{ }
 };
 
