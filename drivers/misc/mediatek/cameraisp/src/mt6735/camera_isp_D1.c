@@ -752,7 +752,6 @@ typedef struct {
 	volatile MUINT32 processID;	/* caller process ID */
 	volatile MUINT32 callerID;	/* caller thread     ID */
 	volatile MINT32 p2dupCQIdx;	/* p2 duplicate CQ index(for recognize belong to     which package) */
-	volatile MINT32 frameNum;
 	volatile MINT32 dequedNum;	/* number of dequed buffer no matter deque success or fail */
 } ISP_EDBUF_MGR_STRUCT;
 static volatile MINT32 P2_EDBUF_MList_FirstBufIdx;
@@ -1265,7 +1264,7 @@ static inline MUINT32 ISP_GetEDBufQueWaitFrameState(MINT32 idx)
 	MUINT32 ret = MFALSE;
 	/*      */
 	spin_lock(&(SpinLockEDBufQueList));
-	if (P2_EDBUF_MgrList[idx].dequedNum == P2_EDBUF_MgrList[idx].frameNum)
+	if (P2_EDBUF_MgrList[idx].dequedNum == P2_Support_BurstQNum)
 		ret = MTRUE;
 
 	spin_unlock(&(SpinLockEDBufQueList));
@@ -7312,7 +7311,6 @@ static MINT32 ISP_ED_BufQue_Erase(MINT32 idx, int listTag)
 		P2_EDBUF_MgrList[idx].processID = 0x0;
 		P2_EDBUF_MgrList[idx].callerID = 0x0;
 		P2_EDBUF_MgrList[idx].p2dupCQIdx = -1;
-		P2_EDBUF_MgrList[idx].frameNum = 0;
 		P2_EDBUF_MgrList[idx].dequedNum = 0;
 		/* [2] update first     index */
 		if (P2_EDBUF_MgrList[tmpIdx].p2dupCQIdx == -1) {
@@ -7443,7 +7441,7 @@ static MINT32 ISP_ED_BufQue_Get_FirstMatBuf(ISP_ED_BUFQUE_STRUCT param, int List
 					    && (P2_EDBUF_MgrList[i].callerID == param.callerID)
 					    && (P2_EDBUF_MgrList[i].p2dupCQIdx == param.p2dupCQIdx)
 					    && (P2_EDBUF_MgrList[i].dequedNum <
-						P2_EDBUF_MgrList[i].frameNum)) {
+						P2_Support_BurstQNum)) {
 						/* avoid race that dupCQ_1 of buffer2 enqued while dupCQ_1 of buffer1 have beend deque done     but     not     been erased     yet     */
 						idx = i;
 						break;
@@ -7456,7 +7454,7 @@ static MINT32 ISP_ED_BufQue_Get_FirstMatBuf(ISP_ED_BUFQUE_STRUCT param, int List
 					    && (P2_EDBUF_MgrList[i].callerID == param.callerID)
 					    && (P2_EDBUF_MgrList[i].p2dupCQIdx == param.p2dupCQIdx)
 					    && (P2_EDBUF_MgrList[i].dequedNum <
-						P2_EDBUF_MgrList[i].frameNum)) {
+						P2_Support_BurstQNum)) {
 						idx = i;
 						break;
 					}
@@ -7471,7 +7469,7 @@ static MINT32 ISP_ED_BufQue_Get_FirstMatBuf(ISP_ED_BUFQUE_STRUCT param, int List
 						    && (P2_EDBUF_MgrList[i].p2dupCQIdx ==
 							param.p2dupCQIdx)
 						    && (P2_EDBUF_MgrList[i].dequedNum <
-							P2_EDBUF_MgrList[i].frameNum)) {
+							P2_Support_BurstQNum)) {
 							idx = i;
 							break;
 						}
@@ -7535,8 +7533,8 @@ static MINT32 ISP_ED_BufQue_CTRL_FUNC(ISP_ED_BUFQUE_STRUCT param)
 		spin_lock(&(SpinLockEDBufQueList));
 		if (((P2_EDBUF_MList_LastBufIdx + 1) % _MAX_SUPPORT_P2_PACKAGE_NUM_) ==
 		    P2_EDBUF_MList_FirstBufIdx && (P2_EDBUF_MList_LastBufIdx != -1)) {
-			LOG_ERR("F/L(%d,%d),(%d_%d,%d), RF/C/L(%d,%d,%d),(%d,%d,%d)",
-				P2_EDBUF_MList_FirstBufIdx, P2_EDBUF_MList_LastBufIdx, param.frameNum,
+			LOG_ERR("F/L(%d,%d),(%d,%d), RF/C/L(%d,%d,%d),(%d,%d,%d)",
+				P2_EDBUF_MList_FirstBufIdx, P2_EDBUF_MList_LastBufIdx,
 				P2_EDBUF_MgrList[P2_EDBUF_MList_FirstBufIdx].p2dupCQIdx,
 				P2_EDBUF_MgrList[P2_EDBUF_MList_LastBufIdx].p2dupCQIdx,
 				P2_EDBUF_RList_FirstBufIdx, P2_EDBUF_RList_CurBufIdx,
@@ -7613,8 +7611,6 @@ static MINT32 ISP_ED_BufQue_CTRL_FUNC(ISP_ED_BUFQUE_STRUCT param)
 				    param.callerID;
 				P2_EDBUF_MgrList[P2_EDBUF_MList_LastBufIdx].p2dupCQIdx =
 				    param.p2dupCQIdx;
-				P2_EDBUF_MgrList[P2_EDBUF_MList_LastBufIdx].frameNum =
-					param.frameNum;
 				P2_EDBUF_MgrList[P2_EDBUF_MList_LastBufIdx].dequedNum = 0;
 			}
 		}
@@ -7748,7 +7744,7 @@ static MINT32 ISP_ED_BufQue_CTRL_FUNC(ISP_ED_BUFQUE_STRUCT param)
 			return ret;
 		}
 		/* [2]check the buffer is dequeued or not */
-		if (P2_EDBUF_MgrList[idx].dequedNum == P2_EDBUF_MgrList[idx].frameNum) {
+		if (P2_EDBUF_MgrList[idx].dequedNum == P2_Support_BurstQNum) {
 			ISP_ED_BufQue_Erase(idx, P2_EDBUF_MLIST_TAG);
 			spin_unlock(&(SpinLockEDBufQueList));
 			ret = 0;
@@ -7802,7 +7798,6 @@ static MINT32 ISP_ED_BufQue_CTRL_FUNC(ISP_ED_BUFQUE_STRUCT param)
 			P2_EDBUF_MgrList[i].processID = 0x0;
 			P2_EDBUF_MgrList[i].callerID = 0x0;
 			P2_EDBUF_MgrList[i].p2dupCQIdx = -1;
-			P2_EDBUF_MgrList[i].frameNum = 0;
 			P2_EDBUF_MgrList[i].dequedNum = 0;
 		}
 		P2_EDBUF_MList_FirstBufIdx = 0;
@@ -11192,7 +11187,6 @@ static MINT32 ISP_open(struct inode *pInode, struct file *pFile)
 	MUINT32 i;
 	int q = 0, p = 0;
 	ISP_USER_INFO_STRUCT *pUserInfo;
-	char mode = 0;
 
 	LOG_INF("- E. UserCount: %d.", IspInfo.UserCount);
 	/*      */
@@ -11224,10 +11218,6 @@ static MINT32 ISP_open(struct inode *pInode, struct file *pFile)
 		LOG_DBG("Curr UserCount(%d), (process, pid, tgid)=(%s, %d, %d),	first user",
 			IspInfo.UserCount, current->comm, current->pid, current->tgid);
 	}
-	mode = 1;
-	LOG_DBG("before exec_ccci_kern_func_by_md_id enable");
-	exec_ccci_kern_func_by_md_id(0, ID_MD_RF_DESENSE, &mode, sizeof(int));
-	LOG_DBG("after exec_ccci_kern_func_by_md_id enable");
 
 	/* kernel log */
 #if (LOG_CONSTRAINT_ADJ == 1)
@@ -11279,7 +11269,6 @@ static MINT32 ISP_open(struct inode *pInode, struct file *pFile)
 		P2_EDBUF_MgrList[i].processID = 0x0;
 		P2_EDBUF_MgrList[i].callerID = 0x0;
 		P2_EDBUF_MgrList[i].p2dupCQIdx = -1;
-		P2_EDBUF_MgrList[i].frameNum = 0;
 		P2_EDBUF_MgrList[i].dequedNum = 0;
 	}
 	P2_EDBUF_MList_FirstBufIdx = 0;
@@ -11382,7 +11371,6 @@ static MINT32 ISP_release(struct inode *pInode, struct file *pFile)
 	ISP_USER_INFO_STRUCT *pUserInfo;
 	MUINT32 Reg;
 	MUINT32 i = 0;
-	char mode = 0;
 
 	LOG_INF("- E. UserCount: %d.", IspInfo.UserCount);
 	/*      */
@@ -11452,10 +11440,6 @@ static MINT32 ISP_release(struct inode *pInode, struct file *pFile)
 	ISP_WR32(ISP_ADDR + 0x4a00, 0x00000001);
 	LOG_DBG("ISP_MCLK1_EN Release");
 	ISP_BufWrite_Free();
-	mode = 0;
-	LOG_DBG("before exec_ccci_kern_func_by_md_id disable");
-	exec_ccci_kern_func_by_md_id(0, ID_MD_RF_DESENSE, &mode, sizeof(int));
-	LOG_DBG("after exec_ccci_kern_func_by_md_id disable");
 
 #if (LOG_CONSTRAINT_ADJ == 1)
 	set_detect_count(g_log_def_constraint);
