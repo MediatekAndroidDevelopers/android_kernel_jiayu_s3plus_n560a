@@ -11,13 +11,19 @@
 # GNU General Public License for more details.
 #
 
-# common driver code for CMDQ
-# 72/82/92 does not use this common code
+# drivers/cmdq
 
-ifeq ($(CONFIG_MTK_CMDQ_MT2701), y)
-  obj-$(CONFIG_MTK_CMDQ_MT2701) += mt2701/
-else
-  # use common driver
-  obj-y += v2/
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2 \
+             -I$(srctree)/drivers/misc/mediatek/m4u/$(MTK_PLATFORM)
+
+# Enable MET
+ccflags-y += -DMET_USER_EVENT_SUPPORT
+
+# Common Clock Framework
+ifneq ($(CONFIG_MTK_CLKMGR),y)
+ifeq ($(CONFIG_ARCH_MT6735),y)
+ccflags-y += -DCMDQ_USE_CCF
 endif
-# EOF
+endif
+
+obj-y += cmdq_mdp.o
