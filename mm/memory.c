@@ -2823,11 +2823,7 @@ gotten:
 		if (!new_page)
 			goto oom;
 	} else {
-#if !defined(CONFIG_CMA) || !defined(CONFIG_MTK_SVP)
-		new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma, address);
-#else
-		new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE | __GFP_NOZONECMA, vma, address);
-#endif
+		new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE | __GFP_CMA, vma, address);
 		if (!new_page)
 			goto oom;
 		cow_user_page(new_page, old_page, address, vma);

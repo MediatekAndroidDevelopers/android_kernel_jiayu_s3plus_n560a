@@ -37,9 +37,7 @@ struct vm_area_struct;
 #define ___GFP_WRITE		0x1000000u
 #define ___GFP_SLOWHIGHMEM	0x2000000u
 #define ___GFP_NOMTKPASR	0x4000000u
-#if defined(CONFIG_CMA) && defined(CONFIG_MTK_SVP)
-#define ___GFP_NOZONECMA	0x8000000u
-#endif
+#define ___GFP_CMA		0x8000000u
 /* If the above are modified, __GFP_BITS_SHIFT may need updating */
 
 /*
@@ -99,9 +97,7 @@ struct vm_area_struct;
 #define __GFP_WRITE	((__force gfp_t)___GFP_WRITE)	/* Allocator intends to dirty page */
 #define __GFP_SLOWHIGHMEM  ((__force gfp_t)___GFP_SLOWHIGHMEM)	/* use highmem only in slowpath */
 #define __GFP_NOMTKPASR	((__force gfp_t)___GFP_NOMTKPASR) /* Memory allocation can't be extended to MTKPASR-imposed range */
-#if defined(CONFIG_CMA) && defined(CONFIG_MTK_SVP)
-#define __GFP_NOZONECMA	((__force gfp_t)___GFP_NOZONECMA) /* Memory allocation can't be extended to ZONE CMA */
-#endif
+#define __GFP_CMA	((__force gfp_t)___GFP_CMA)	/* ZONE_MOVABLE need this flag to allocate in */
 
 /*
  * This may seem redundant, but it's a way of annotating false positives vs.
@@ -109,11 +105,7 @@ struct vm_area_struct;
  */
 #define __GFP_NOTRACK_FALSE_POSITIVE (__GFP_NOTRACK)
 
-#if !defined(CONFIG_CMA) || !defined(CONFIG_MTK_SVP)
-#define __GFP_BITS_SHIFT 27	/* Room for N __GFP_FOO bits */
-#else
 #define __GFP_BITS_SHIFT 28	/* Room for N __GFP_FOO bits */
-#endif
 #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
 
 /* This equals 0, but use constants in case they ever change */
@@ -298,10 +290,12 @@ static inline enum zone_type gfp_zone(gfp_t flags)
 					 ((1 << ZONES_SHIFT) - 1);
 	VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
 
-#if defined(CONFIG_CMA) && defined(CONFIG_MTK_SVP)
-	if ((flags & __GFP_NOZONECMA) && is_zone_cma_idx(z))
-		z = ZONE_MOVABLE;
-#endif
+	/* used for limit - only the flags with __GFP_CMA can go into ZONE_MOVABLE */
+
+	/* do not allocate at ZONE_MOVABLE without __GFP_CMA */
+	if (IS_ENABLED(CONFIG_ZONE_MOVABLE_CMA))
+		if (z == ZONE_MOVABLE && !(flags & __GFP_CMA))
+			z -= 1;
 
 	return z;
 }
