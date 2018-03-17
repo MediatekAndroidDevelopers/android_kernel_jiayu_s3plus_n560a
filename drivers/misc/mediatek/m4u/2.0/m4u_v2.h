@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #ifndef __M4U_V2_H__
 #define __M4U_V2_H__
 #include <linux/ioctl.h>
@@ -60,6 +73,7 @@ typedef enum {
 typedef enum {
 	M4U_DMA_MAP_AREA,
 	M4U_DMA_UNMAP_AREA,
+	M4U_DMA_FLUSH_BY_RANGE,
 } M4U_DMA_TYPE;
 
 typedef enum {
@@ -157,5 +171,9 @@ extern void smp_inner_dcache_flush_all(void);
 #endif
 /* m4u driver internal use --------------------------------------------------- */
 /*  */
+
+#ifdef CONFIG_MTK_CACHE_FLUSH_RANGE_PARALLEL
+int mt_smp_cache_flush_m4u(const void *va, const unsigned long size);
+#endif
 
 #endif

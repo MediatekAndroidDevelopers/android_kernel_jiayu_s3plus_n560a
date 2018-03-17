@@ -1,8 +1,21 @@
+/*
+ * Copyright (C) 2015 MediaTek Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ */
+
 #ifndef __M4U_PRIV_H__
 #define __M4U_PRIV_H__
 #include <linux/ioctl.h>
 #include <linux/fs.h>
-#include <linux/aee.h>
+#include <aee.h>
 #include <linux/debugfs.h>
 #include <linux/platform_device.h>
 #include <linux/miscdevice.h>
@@ -32,7 +45,7 @@
 #define MMProfileStart(...)
 #define MMP_Event unsigned int
 #else
-#include <linux/mmprofile.h>
+#include <mmprofile.h>
 
 extern void MMProfileEnable(int enable);
 extern void MMProfileStart(int start);
@@ -68,13 +81,13 @@ extern void MMProfileStart(int start);
 #endif
 
 
-#ifdef CONFIG_MTK_LEGACY
+#ifdef CONFIG_MTK_CLKMGR
 #include <mach/mt_clkmgr.h>
 #else
 #include <linux/clk.h>
 #endif
 
-#if !defined(CONFIG_MTK_LEGACY)
+#if !defined(CONFIG_MTK_CLKMGR)
 
 enum {
 	SMI_COMMON_CLK,
@@ -84,10 +97,14 @@ enum {
 	LARB2_SMI_CLK,
 	VENC_VENC_CLK,
 	VENC_LARB_CLK,
+	MTCMOS_LARB0,
+	MTCMOS_LARB1,
+	MTCMOS_LARB2,
+	MTCMOS_LARB3,
 	SMI_CLK_NUM,
 };
 
-#endif /* !defined(CONFIG_MTK_LEGACY) */
+#endif /* !defined(CONFIG_MTK_CLKMGR) */
 
 struct m4u_device {
 	struct miscdevice dev;
@@ -96,7 +113,7 @@ struct m4u_device {
 	struct dentry *debug_root;
 	unsigned long m4u_base[TOTAL_M4U_NUM];
 	unsigned int irq_num[TOTAL_M4U_NUM];
-#if !defined(CONFIG_MTK_LEGACY)
+#if !defined(CONFIG_MTK_CLKMGR)
 	struct clk *infra_m4u;
 	struct clk *smi_clk[SMI_CLK_NUM];
 #endif
@@ -158,10 +175,9 @@ int m4u_do_mva_free(unsigned int mva, unsigned int size);
 /* ==== define in m4u_pgtable.c===== */
 void m4u_dump_pgtable(m4u_domain_t *domain, struct seq_file *seq);
 void m4u_dump_pte_nolock(m4u_domain_t *domain, unsigned int mva);
-int m4u_pte_invalid(m4u_domain_t *domain, unsigned int mva);
 void m4u_dump_pte(m4u_domain_t *domain, unsigned int mva);
 int m4u_pgtable_init(struct m4u_device *m4u_dev, m4u_domain_t *m4u_domain);
-int m4u_map_4K(m4u_domain_t *m4u_domain, unsigned int mva, unsigned long pa, unsigned int prot);
+int m4u_map_4K(m4u_domain_t *m4u_domain, unsigned int mva, phys_addr_t pa, unsigned int prot);
 int m4u_clean_pte(m4u_domain_t *domain, unsigned int mva, unsigned int size);
 
 unsigned long m4u_get_pte(m4u_domain_t *domain, unsigned int mva);
@@ -186,7 +202,7 @@ int m4u_dump_main_tlb(int m4u_id, int m4u_slave_id);
 int m4u_dump_pfh_tlb(int m4u_id);
 int m4u_domain_init(struct m4u_device *m4u_dev, void *priv_reserve);
 
-int config_mau(M4U_MAU_STRUCT mau);
+/*int config_mau(M4U_MAU_STRUCT mau);*/
 int m4u_enable_tf(int port, bool fgenable);
 
 extern int gM4U_4G_DRAM_Mode;
@@ -257,7 +273,7 @@ extern int gM4U_log_to_uart;
 		if (seq_file)\
 			seq_printf(seq_file, fmt, ##args);\
 		else\
-			pr_warn(fmt, ##args);\
+			pr_debug(fmt, ##args);\
 	} while (0)
 
 /* ======================================= */
@@ -346,7 +362,7 @@ int m4u_sec_init(void);
 /* #include <mmprofile.h> */
 extern MMP_Event M4U_MMP_Events[M4U_MMP_MAX];
 
-#if !defined(CONFIG_MTK_LEGACY)
+#if !defined(CONFIG_MTK_CLKMGR)
 extern const char *smi_clk_name[];
 #endif
 
