@@ -80,7 +80,13 @@ static DEFINE_SPINLOCK(g_aal_irq_en_lock);
 
 static DISP_AAL_HIST g_aal_hist = {
 	.serviceFlags = 0,
-	.backlight = -1
+	.backlight = -1,
+#ifdef AAL_SUPPORT_KERNEL_API
+	.essStrengthIndex = ESS_LEVEL_BY_CUSTOM_LIB,
+	.ess_enable = ESS_EN_BY_CUSTOM_LIB,
+	.dre_enable = DRE_EN_BY_CUSTOM_LIB
+#endif
+
 };
 static DISP_AAL_HIST g_aal_hist_db;
 static ddp_module_notify g_ddp_notify;
@@ -94,7 +100,9 @@ static volatile int g_led_mode = MT65XX_LED_MODE_NONE;
 static volatile int g_aal_need_lock;
 static atomic_t g_aal_force_enable_irq = ATOMIC_INIT(0);
 
+#ifdef AAL_SUPPORT_KERNEL_API
 static volatile unsigned int g_aal_panel_type = CONFIG_BY_CUSTOM_LIB;
+#endif
 
 static int disp_aal_get_cust_led(void)
 {
@@ -158,8 +166,8 @@ static int disp_aal_get_latency_lowerbound(void)
 
 	bwc_scen = smi_get_current_profile();
 	if (bwc_scen == SMI_BWC_SCEN_VR || bwc_scen == SMI_BWC_SCEN_SWDEC_VP ||
-		bwc_scen == SMI_BWC_SCEN_SWDEC_VP || bwc_scen == SMI_BWC_SCEN_VP ||
-		bwc_scen == SMI_BWC_SCEN_VR_SLOW)
+		bwc_scen == SMI_BWC_SCEN_VP || bwc_scen == SMI_BWC_SCEN_VR_SLOW ||
+		bwc_scen == SMI_BWC_SCEN_VP_HIGH_FPS || bwc_scen == SMI_BWC_SCEN_VP_HIGH_RESOLUTION)
 
 		aalrefresh = AAL_REFRESH_33MS;
 	else
@@ -430,6 +438,7 @@ void disp_aal_notify_backlight_changed(int bl_1024)
 
 void disp_aal_set_lcm_type(unsigned int panel_type)
 {
+#ifdef AAL_SUPPORT_KERNEL_API
 	unsigned long flags;
 
 	spin_lock_irqsave(&g_aal_hist_lock, flags);
@@ -437,6 +446,9 @@ void disp_aal_set_lcm_type(unsigned int panel_type)
 	spin_unlock_irqrestore(&g_aal_hist_lock, flags);
 
 	AAL_DBG("disp_aal_set_lcm_type: %d", g_aal_panel_type);
+#else
+	AAL_ERR("disp_aal_set_lcm_type not support");
+#endif
 }
 
 static int disp_aal_copy_hist_to_user(DISP_AAL_HIST __user *hist)

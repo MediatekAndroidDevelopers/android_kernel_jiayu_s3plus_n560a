@@ -40,6 +40,11 @@
 /************************Feature options****************************/
 
 /**
+ * Disable capture framebuffer
+ */
+#define MTK_NO_CAPTURE_SUPPORT
+
+/**
  * SODI enable.
  */
 #define MTK_FB_SODI_SUPPORT
@@ -77,7 +82,7 @@
 /**
  * Enable Ovl time-sharing.
  */
-#define OVL_TIME_SHARING
+/* #define OVL_TIME_SHARING */
 
 /**
  * Build CMDQ command in trigger stage.

@@ -35,6 +35,7 @@
 #include <mach/dma.h>
 #include <linux/compat.h>
 #include <linux/dma-mapping.h>
+#include <linux/string.h>
 #if defined(COMMON_DISP_LOG)
 #include "disp_log.h"
 #include "disp_recorder.h"
@@ -224,53 +225,6 @@ static int mtkfb_release(struct fb_info *info, int user)
 	MSG_FUNC_ENTER();
 	MSG_FUNC_LEAVE();
 	return 0;
-}
-
-/* Store a single color palette entry into a pseudo palette or the hardware
- * palette if one is available. For now we support only 16bpp and thus store
- * the entry only to the pseudo palette.
- */
-static int mtkfb_setcolreg(u_int regno, u_int red, u_int green,
-			   u_int blue, u_int transp, struct fb_info *info)
-{
-	int r = 0;
-	unsigned bpp, m;
-
-	/* NOT_REFERENCED(transp); */
-
-	MSG_FUNC_ENTER();
-
-	bpp = info->var.bits_per_pixel;
-	if (bpp < 32) {
-		m = 1 << bpp;
-		if (regno >= m) {
-			r = -EINVAL;
-			goto exit;
-		}
-	}
-
-	switch (bpp) {
-	case 16:
-		/* RGB 565 */
-		((u32 *) (info->pseudo_palette))[regno] =
-		    ((red & 0xF800) | ((green & 0xFC00) >> 5) | ((blue & 0xF800) >> 11));
-		break;
-	case 32:
-		/* ARGB8888 */
-		((u32 *) (info->pseudo_palette))[regno] =
-		    (0xff000000) |
-		    ((red & 0xFF00) << 8) | ((green & 0xFF00)) | ((blue & 0xFF00) >> 8);
-		break;
-
-		/* TODO: RGB888, BGR888, ABGR8888 */
-
-	default:
-		DISPERR("set color info fail,bpp=%d\n", bpp);
-	}
-
-exit:
-	MSG_FUNC_LEAVE();
-	return r;
 }
 
 int mtkfb_set_backlight_level(unsigned int level)
@@ -696,17 +650,18 @@ static int mtkfb_check_var(struct fb_var_screeninfo *var, struct fb_info *fbi)
 
 		/* Check if format is RGB565 or BGR565 */
 
-		ASSERT(8 == var->green.offset);
-		ASSERT(16 == var->red.offset + var->blue.offset);
-		ASSERT(16 == var->red.offset || 0 == var->red.offset);
+		if (8 != var->green.offset ||
+			16 != var->red.offset + var->blue.offset ||
+			(16 != var->red.offset && 0 != var->red.offset))
+			return -EINVAL;
 	} else if (32 == bpp) {
 		var->red.length = var->green.length = var->blue.length = var->transp.length = 8;
 
 		/* Check if format is ARGB565 or ABGR565 */
-
-		ASSERT(8 == var->green.offset && 24 == var->transp.offset);
-		ASSERT(16 == var->red.offset + var->blue.offset);
-		ASSERT(16 == var->red.offset || 0 == var->red.offset);
+		if ((8 != var->green.offset || 24 != var->transp.offset) ||
+			(16 != var->red.offset + var->blue.offset) ||
+			(16 != var->red.offset && 0 != var->red.offset))
+			return -EINVAL;
 	}
 
 	var->red.msb_right = 0;
@@ -756,8 +711,6 @@ static int mtkfb_set_par(struct fb_info *fbi)
 	disp_input_config *input;
 
 	/* DISPFUNC(); */
-	if (mtkfb_fbi)
-		fbdev->fb_info = mtkfb_fbi;
 	memset(&fb_layer, 0, sizeof(struct fb_overlay_layer));
 	switch (bpp) {
 	case 16:
@@ -965,6 +918,11 @@ static int mtkfb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg
 
 	case MTKFB_CAPTURE_FRAMEBUFFER:
 	{
+#if defined(MTK_NO_CAPTURE_SUPPORT)
+		DISPERR("[FB] no support capture frame buffer\n");
+		return 0;
+#else
+#if defined(CONFIG_MT_ENG_BUILD)
 		unsigned long dst_pbuf = 0;
 		unsigned long *src_pbuf = 0;
 		unsigned int pixel_bpp = info->var.bits_per_pixel / 8;
@@ -990,12 +948,17 @@ static int mtkfb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg
 				vfree(src_pbuf);
 			}
 		}
-
+#endif
 		return r;
+#endif
 	}
 
 	case MTKFB_SLT_AUTO_CAPTURE:
 	{
+#if defined(MTK_NO_CAPTURE_SUPPORT)
+		DISPERR("[FB] no support capture frame buffer\n");
+		return 0;
+#else
 		struct fb_slt_catpure capConfig;
 		char *dst_buffer;
 		unsigned int fb_size;
@@ -1012,6 +975,10 @@ static int mtkfb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg
 				r = -EFAULT;
 			} else {
 				capConfig.outputBuffer = vmalloc(fb_size);
+				if (!capConfig.outputBuffer) {
+					DISPERR("[FB]: allocate memory fail:%d\n", __LINE__);
+					return -ENOMEM;
+				}
 				primary_display_capture_framebuffer_ovl((unsigned long)capConfig.outputBuffer,
 					capConfig.format);
 				if (copy_to_user(dst_buffer, (char *)capConfig.outputBuffer, fb_size)) {
@@ -1023,6 +990,7 @@ static int mtkfb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg
 		}
 
 		return r;
+#endif
 	}
 
 	case MTKFB_GET_OVERLAY_LAYER_INFO:
@@ -1073,8 +1041,14 @@ static int mtkfb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg
 				kfree(layerInfo);
 				return -EFAULT;
 			} else {
+				int ret;
+
 				input = &session_input.config[session_input.config_layer_num++];
-				_convert_fb_layer_to_disp_input(layerInfo, input);
+				ret = _convert_fb_layer_to_disp_input(layerInfo, input);
+				if (ret < 0) {
+					kfree(layerInfo);
+					return -EINVAL;
+				}
 			}
 
 
@@ -1248,7 +1222,8 @@ static int mtkfb_ioctl(struct fb_info *info, unsigned int cmd, unsigned long arg
 				input->tgt_width = MTK_FB_XRES;
 				input->tgt_height = MTK_FB_YRES;
 
-				input->src_pitch = ALIGN_TO(MTK_FB_XRES, MTK_FB_ALIGNMENT) * 4;
+				/* ovl pitch = src_pitch * Bpp in _convert_disp_input_to_ovl */
+				input->src_pitch = ALIGN_TO(MTK_FB_XRES, MTK_FB_ALIGNMENT);
 				input->alpha_enable = 1;
 				input->alpha = 0xff;
 				input->next_buff_idx = -1;
@@ -1399,6 +1374,11 @@ static int mtkfb_compat_ioctl(struct fb_info *info, unsigned int cmd, unsigned l
 	}
 	case COMPAT_MTKFB_CAPTURE_FRAMEBUFFER:
 	{
+#if defined(MTK_NO_CAPTURE_SUPPORT)
+		DISPERR("[FB] no support capture frame buffer\n");
+		return 0;
+#else
+#if defined(CONFIG_MT_ENG_BUILD)
 		compat_ulong_t __user *data32;
 		unsigned long *pbuf;
 		unsigned int pixel_bpp = info->var.bits_per_pixel / 8;
@@ -1415,12 +1395,17 @@ static int mtkfb_compat_ioctl(struct fb_info *info, unsigned int cmd, unsigned l
 			dprec_logger_start(DPREC_LOGGER_WDMA_DUMP, 0, 0);
 			primary_display_capture_framebuffer_ovl((unsigned long)pbuf, MTK_FB_FORMAT_BGRA8888);
 			dprec_logger_done(DPREC_LOGGER_WDMA_DUMP, 0, 0);
-			ret = get_user(dest, data32);
+			if (get_user(dest, data32)) {
+				DISPERR("[FB]: get_user failed! line:%d\n", __LINE__);
+				return -EFAULT;
+			}
 			if (copy_in_user((unsigned long *)dest, pbuf, fbsize/2)) {
 				DISPERR("[FB]: copy_to_user failed! line:%d\n", __LINE__);
 				ret  = -EFAULT;
 			}
 		}
+#endif
+#endif
 		break;
 	}
 	case COMPAT_MTKFB_TRIG_OVERLAY_OUT:
@@ -1466,8 +1451,14 @@ static int mtkfb_compat_ioctl(struct fb_info *info, unsigned int cmd, unsigned l
 					("COMPAT_MTKFB_SET_OVERLAY_LAYER, layer_id invalid=%d\n",
 					 layerInfo.layer_id);
 			} else {
+				int ret;
+
 				input = &session_input.config[session_input.config_layer_num++];
-				_convert_fb_layer_to_disp_input(&layerInfo, input);
+				ret = _convert_fb_layer_to_disp_input(&layerInfo, input);
+				if (ret < 0) {
+					kfree(compat_layerInfo);
+					return -EINVAL;
+				}
 			}
 			primary_display_config_input_multiple(&session_input);
 			/* primary_display_trigger(1, NULL, 0); */
@@ -1603,7 +1594,6 @@ static struct fb_ops mtkfb_ops = {
 	.owner = THIS_MODULE,
 	.fb_open = mtkfb_open,
 	.fb_release = mtkfb_release,
-	.fb_setcolreg = mtkfb_setcolreg,
 	.fb_pan_display = mtkfb_pan_display_proxy,
 	.fb_fillrect = cfb_fillrect,
 	.fb_copyarea = cfb_copyarea,
@@ -1889,12 +1879,14 @@ static int __parse_tag_videolfb(struct device_node *node)
 {
 	struct tag_videolfb *videolfb_tag = NULL;
 	unsigned long size = 0;
+	int ret;
 
 	videolfb_tag = (struct tag_videolfb *)of_get_property(node, "atag,videolfb", (int *)&size);
 	if (videolfb_tag) {
-		strncpy(mtkfb_lcm_name, videolfb_tag->lcmname, sizeof(mtkfb_lcm_name) - 1);
-		mtkfb_lcm_name[sizeof(mtkfb_lcm_name) - 1] = '\0';
-		mtkfb_lcm_name[strlen(videolfb_tag->lcmname)] = '\0';
+		ret = strscpy(mtkfb_lcm_name, videolfb_tag->lcmname,
+			sizeof(mtkfb_lcm_name));
+		if (ret < 0)
+			return -EINVAL;
 
 		lcd_fps = videolfb_tag->fps;
 		if (0 == lcd_fps)

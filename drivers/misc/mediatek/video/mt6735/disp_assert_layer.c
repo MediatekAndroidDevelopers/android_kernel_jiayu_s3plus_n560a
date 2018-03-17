@@ -376,16 +376,20 @@ DAL_STATUS DAL_Printf(const char *fmt, ...)
 		return r;
 	}
 
-	flush_cache_all();
+	__inner_flush_dcache_all();
 
 	if (!dal_shown)
 		dal_shown = true;
 
 	mutex_lock(&disp_trigger_lock);
 	/* Since the output buffer may not exsit, so skip frame trigger update. */
+	/* add path lock to prevent race condition for pgc->session_mode */
+	primary_display_manual_lock();
 	if (primary_display_get_session_mode() != DISP_SESSION_DECOUPLE_MIRROR_MODE &&
 		primary_display_get_session_mode() != DISP_SESSION_DECOUPLE_MODE)
-		ret = primary_display_trigger(0, NULL, 0);
+		ret = primary_display_trigger_nolock(0, NULL, 0);
+	primary_display_manual_unlock();
+
 	mutex_unlock(&disp_trigger_lock);
 
 	up(&dal_sem);

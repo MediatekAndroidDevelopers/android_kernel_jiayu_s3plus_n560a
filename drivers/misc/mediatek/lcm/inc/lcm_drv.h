@@ -603,6 +603,7 @@ typedef struct
     /* common parameters */
     unsigned int width;
     unsigned int height;
+    unsigned int density;
     unsigned int io_select_mode; //DBI or DPI should select IO mode according to chip spec
 
     /* particular parameters */

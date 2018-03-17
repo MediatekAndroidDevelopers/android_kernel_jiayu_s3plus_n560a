@@ -38,7 +38,7 @@ extern disp_session_input_config *cached_session_input;
 extern disp_mem_output_config *captured_session_output;
 extern disp_mem_output_config *cached_session_output;
 extern unsigned int ext_session_id;
-#ifdef CONFIG_SINGLE_PANEL_OUTPUT
+#if defined(HDMI_MT8193_SUPPORT) || defined(CONFIG_SINGLE_PANEL_OUTPUT)
 extern struct SWITCH_MODE_INFO_STRUCT path_info;
 #endif
 

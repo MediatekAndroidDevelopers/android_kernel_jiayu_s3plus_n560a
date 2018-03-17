@@ -181,7 +181,7 @@ typedef struct {
 	void *va;
 	uint32_t fence_id;
 	uint32_t mva;
-	uint32_t size;
+	size_t size;
 	uint32_t output_fence_id;
 	uint32_t interface_fence_id;
 	unsigned long long timestamp;
@@ -292,6 +292,7 @@ unsigned int primary_display_get_ticket(void);
 int primary_display_config_input(primary_disp_input_config *input);
 int primary_display_user_cmd(unsigned int cmd, unsigned long arg);
 int primary_display_trigger(int blocking, void *callback, unsigned int userdata);
+int primary_display_trigger_nolock(int blocking, void *callback, unsigned int userdata);
 int primary_display_ext_trigger(int blocking, void *callback, unsigned int userdata);
 void primary_display_trigger_and_merge(disp_session_config *config, int session_id);
 int primary_display_config_output(disp_mem_output_config *output, unsigned int session_id);
@@ -313,6 +314,7 @@ uint32_t DISP_GetActiveHeight(void);
 uint32_t DISP_GetActiveWidth(void);
 uint32_t DISP_GetActiveHeightUm(void);
 uint32_t DISP_GetActiveWidthUm(void);
+uint32_t DISP_GetDensity(void);
 int disp_hal_allocate_framebuffer(phys_addr_t pa_start, phys_addr_t pa_end, unsigned long *va,
 				  unsigned long *mva);
 int primary_display_is_video_mode(void);
@@ -387,14 +389,13 @@ extern void disp_exit_idle_ex(const char *caller);
 
 
 int primary_display_set_secondary_display(int add, DISP_SESSION_TYPE type);
-int init_ext_decouple_buffers(void);
-int deinit_ext_decouple_buffers(void);
 
 int primary_display_get_session_mode(void);
 int display_freeze_mode(int enable, int need_lock);
 #if defined(OVL_TIME_SHARING)
 int primary_display_disable_ovl2mem(void);
 #endif
+int primary_display_get_init_status(void);
 
 void set_needs_apply_rgb(bool needed);
 ssize_t mtk_disp_ld_get_rgb(struct device *dev, struct device_attribute *attr, char *buf);

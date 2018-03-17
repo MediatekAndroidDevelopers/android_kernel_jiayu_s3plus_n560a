@@ -380,27 +380,61 @@ void rdma_set_ultra(unsigned int idx, unsigned int width, unsigned int height, u
 			 idx*DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_FIFO_CON, 512);
 		DISP_REG_SET(handle, idx*DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_MEM_GMC_SETTING_1, 0xFF);
 
-		if (width > 800) {/* FHD */
-			DISP_REG_SET(handle, idx * DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_MEM_GMC_SETTING_0,
-				     0x1c013770);
+		if (width > 800) {
+			if (height < 2100) { /* FHD */
+				DISP_REG_SET(handle, idx * DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_MEM_GMC_SETTING_0,
+					     0x1c013770);
 
-			if (mode == RDMA_MODE_DIRECT_LINK) {
-				sodi_threshold = 168 | (475 << 10);	/* low:168   high:475 (direct link in FHD) */
-				fifo_valid_size = 0x70 + 1;
-			} else {
-				sodi_threshold = 168 | (236 << 10);	/* low:168       high:236 (decouple in FHD) */
-				fifo_valid_size = 0x70 + 1;
+				if (mode == RDMA_MODE_DIRECT_LINK) {
+					/* low:168   high:475 (direct link in FHD) */
+					sodi_threshold = 168 | (475 << 10);
+					fifo_valid_size = 0x70 + 1;
+				} else {
+					/* low:168       high:236 (decouple in FHD) */
+					sodi_threshold = 168 | (236 << 10);
+					fifo_valid_size = 0x70 + 1;
+				}
+			} else { /* FHD+ @50fps */
+				DISP_REG_SET(handle, idx * DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_MEM_GMC_SETTING_0,
+					     0x1c013870);
+
+				if (mode == RDMA_MODE_DIRECT_LINK) {
+					/* low:202   high:507 (direct link in FHD+ 50fps) */
+					sodi_threshold = 202 | (507 << 10);
+					fifo_valid_size = 168;
+				} else {
+					/* low:202       high:339 (decouple in FHD+ 50fps) */
+					sodi_threshold = 202 | (339 << 10);
+					fifo_valid_size = 168;
+				}
 			}
-		} else {/* HD */
-			DISP_REG_SET(handle, idx * DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_MEM_GMC_SETTING_0,
-				     0x0c011832);
+		} else {
+			if (height < 1400) { /* HD */
+				DISP_REG_SET(handle, idx * DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_MEM_GMC_SETTING_0,
+					     0x0c011832);
 
-			if (mode == RDMA_MODE_DIRECT_LINK) {
-				sodi_threshold = 75 | (455 << 10);	/* low:75     high:455 (direct link in HD) */
-				fifo_valid_size = 0x32 + 1;
-			} else {
-				sodi_threshold = 75 | (216 << 10);	/* low:75     high:216 (decouple in HD) */
-				fifo_valid_size = 0x32 + 1;
+				if (mode == RDMA_MODE_DIRECT_LINK) {
+					/* low:75     high:455 (direct link in HD) */
+					sodi_threshold = 75 | (455 << 10);
+					fifo_valid_size = 0x32 + 1;
+				} else {
+					/* low:75     high:216 (decouple in HD) */
+					sodi_threshold = 75 | (216 << 10);
+					fifo_valid_size = 0x32 + 1;
+				}
+			} else { /* HD plus */
+				DISP_REG_SET(handle, idx * DISP_RDMA_INDEX_OFFSET + DISP_REG_RDMA_MEM_GMC_SETTING_0,
+					     0x0f011e3c);
+
+				if (mode == RDMA_MODE_DIRECT_LINK) {
+					/* low:108     high:492 (direct link in HD+) */
+					sodi_threshold = 108 | (492 << 10);
+					fifo_valid_size = 90;
+				} else {
+					/* low:108     high:323 (decouple in HD+) */
+					sodi_threshold = 108 | (323 << 10);
+					fifo_valid_size = 90;
+				}
 			}
 		}
 

@@ -40,6 +40,11 @@
 /************************Feature options****************************/
 
 /**
+ * Disable capture framebuffer
+ */
+#define MTK_NO_CAPTURE_SUPPORT
+
+/**
  * SODI enable.
  */
 #define MTK_FB_SODI_SUPPORT
@@ -198,7 +203,7 @@ typedef enum {
 	#ifdef OVL_TIME_SHARING
 	#undef OVL_TIME_SHARING
 	#endif
-	#define DISP_INTERNAL_BUFFER_COUNT 3
+	#define DISP_INTERNAL_BUFFER_COUNT 1
 #else
 	#define DISP_HW_MODE_CAP DISP_OUTPUT_CAP_SWITCHABLE
 	#ifdef OVL_MULTIPASS_SUPPORT

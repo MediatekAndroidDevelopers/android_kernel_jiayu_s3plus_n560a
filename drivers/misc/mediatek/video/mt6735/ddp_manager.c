@@ -1805,6 +1805,8 @@ int dpmgr_path_user_cmd(disp_path_handle dp_handle, int msg, unsigned long arg, 
 
 		break;
 	case DISP_IOCTL_SET_CCORR:
+	case DISP_IOCTL_CCORR_EVENTCTL:
+	case DISP_IOCTL_CCORR_GET_IRQ:
 		if (ddp_modules_driver[DISP_MODULE_CCORR]->cmd != NULL)
 			ret = ddp_modules_driver[DISP_MODULE_CCORR]->cmd(DISP_MODULE_CCORR, msg, arg, cmdqhandle);
 
@@ -2027,9 +2029,9 @@ int dpmgr_check_status(disp_path_handle dp_handle)
 	{
 		DISPMSG("path:");
 		for (i = 0; i < module_num; i++)
-			pr_debug("%s-", ddp_get_module_name(modules[i]));
+			DISPMSG("%s-", ddp_get_module_name(modules[i]));
 
-		pr_debug("\n");
+		DISPMSG("\n");
 	}
 	ddp_dump_analysis(DISP_MODULE_MUTEX);
 
@@ -2041,8 +2043,6 @@ int dpmgr_check_status(disp_path_handle dp_handle)
 
 	ddp_dump_reg(DISP_MODULE_CONFIG);
 	ddp_dump_reg(DISP_MODULE_MUTEX);
-
-	dump_stack();
 
 	return 0;
 }
