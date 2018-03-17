@@ -1,5 +1,5 @@
 /*
- * drivers/gpu/ion/ion_priv.h
+ * drivers/staging/android/ion/ion_priv.h
  *
  * Copyright (C) 2011 Google, Inc.
  *
@@ -28,7 +28,8 @@
 #include <linux/types.h>
 #include <linux/miscdevice.h>
 #include <linux/idr.h>
-#include <linux/ion_drv.h>
+#include "mtk/ion_drv.h"
+#include "ion.h"
 
 struct ion_buffer *ion_handle_buffer(struct ion_handle *handle);
 
@@ -47,7 +48,7 @@ struct ion_device {
 	struct mutex buffer_lock;
 	struct rw_semaphore lock;
 	struct plist_head heaps;
-	long (*custom_ioctl) (struct ion_client *client, unsigned int cmd,
+	long (*custom_ioctl)(struct ion_client *client, unsigned int cmd,
 			      unsigned long arg);
 	struct rb_root clients;
 	struct dentry *debug_root;
@@ -83,14 +84,12 @@ struct ion_client {
 	struct task_struct *task;
 	pid_t pid;
 	struct dentry *debug_root;
-    char dbg_name[ION_MM_DBG_NAME_LEN]; //add by K for debug!
+	char dbg_name[ION_MM_DBG_NAME_LEN]; /* add by K for debug! */
 };
 
 struct ion_handle_debug {
-    pid_t pid;
-    pid_t tgid;
-    unsigned int backtrace[BACKTRACE_SIZE];
-    unsigned int backtrace_num;
+	int fd;
+	unsigned long long user_ts; /* alloc or import timestamp */
 };
 
 /**
@@ -113,9 +112,7 @@ struct ion_handle {
 	struct rb_node node;
 	unsigned int kmap_cnt;
 	int id;
-#if ION_RUNTIME_DEBUGGER
-        struct ion_handle_debug dbg; //add by K for debug
-#endif
+	struct ion_handle_debug dbg; /*add by K for debug */
 };
 
 
@@ -172,8 +169,8 @@ struct ion_buffer {
 	int handle_count;
 	char task_comm[TASK_COMM_LEN];
 	pid_t pid;
+	char alloc_dbg[ION_MM_DBG_NAME_LEN];
 };
-
 void ion_buffer_destroy(struct ion_buffer *buffer);
 
 /**
@@ -196,22 +193,20 @@ void ion_buffer_destroy(struct ion_buffer *buffer);
  * system, not put in a page pool or otherwise cached.
  */
 struct ion_heap_ops {
-	int (*allocate) (struct ion_heap *heap,
-			 struct ion_buffer *buffer, unsigned long len,
-			 unsigned long align, unsigned long flags);
-	void (*free) (struct ion_buffer *buffer);
-	int (*phys) (struct ion_heap *heap, struct ion_buffer *buffer,
-		     ion_phys_addr_t *addr, size_t *len);
-	struct sg_table *(*map_dma) (struct ion_heap *heap,
-					struct ion_buffer *buffer);
-	void (*unmap_dma) (struct ion_heap *heap, struct ion_buffer *buffer);
-	void * (*map_kernel) (struct ion_heap *heap, struct ion_buffer *buffer);
-	void (*unmap_kernel) (struct ion_heap *heap, struct ion_buffer *buffer);
-	int (*map_user) (struct ion_heap *mapper, struct ion_buffer *buffer,
-			 struct vm_area_struct *vma);
+	int (*allocate)(struct ion_heap *heap,
+			struct ion_buffer *buffer, unsigned long len,
+			unsigned long align, unsigned long flags);
+	void (*free)(struct ion_buffer *buffer);
+	int (*phys)(struct ion_heap *heap, struct ion_buffer *buffer,
+		    ion_phys_addr_t *addr, size_t *len);
+	struct sg_table * (*map_dma)(struct ion_heap *heap,
+				     struct ion_buffer *buffer);
+	void (*unmap_dma)(struct ion_heap *heap, struct ion_buffer *buffer);
+	void * (*map_kernel)(struct ion_heap *heap, struct ion_buffer *buffer);
+	void (*unmap_kernel)(struct ion_heap *heap, struct ion_buffer *buffer);
+	int (*map_user)(struct ion_heap *mapper, struct ion_buffer *buffer,
+			struct vm_area_struct *vma);
 	int (*shrink)(struct ion_heap *heap, gfp_t gfp_mask, int nr_to_scan);
-	void (*add_freelist) (struct ion_buffer *buffer);
-	int (*page_pool_total)(struct ion_heap *heap);
 };
 
 /**
@@ -348,7 +343,7 @@ int ion_heap_init_deferred_free(struct ion_heap *heap);
 /**
  * ion_heap_freelist_add - add a buffer to the deferred free list
  * @heap:		the heap
- * @buffer: 		the buffer
+ * @buffer:		the buffer
  *
  * Adds an item to the deferred freelist.
  */
@@ -416,14 +411,9 @@ void ion_carveout_heap_destroy(struct ion_heap *);
 struct ion_heap *ion_chunk_heap_create(struct ion_platform_heap *);
 void ion_chunk_heap_destroy(struct ion_heap *);
 
-struct ion_heap *ion_mm_heap_create(struct ion_platform_heap *);
-void ion_mm_heap_destroy(struct ion_heap *);
-
 struct ion_heap *ion_cma_heap_create(struct ion_platform_heap *);
 void ion_cma_heap_destroy(struct ion_heap *);
 
-struct ion_heap *ion_fb_heap_create(struct ion_platform_heap *);
-void ion_fb_heap_destroy(struct ion_heap *);
 /**
  * kernel api to allocate/free from carveout -- used when carveout is
  * used to back an architecture specific custom heap
@@ -432,8 +422,6 @@ ion_phys_addr_t ion_carveout_allocate(struct ion_heap *heap, unsigned long size,
 				      unsigned long align);
 void ion_carveout_free(struct ion_heap *heap, ion_phys_addr_t addr,
 		       unsigned long size);
-
-int ion_device_destory_heaps(struct ion_device *dev, int need_lock);
 /**
  * The carveout heap returns physical addresses, since 0 may be a valid
  * physical address, this is used to indicate allocation failed
@@ -444,7 +432,7 @@ int ion_device_destory_heaps(struct ion_device *dev, int need_lock);
  * functions for creating and destroying a heap pool -- allows you
  * to keep a pool of pre allocated memory to use from your heap.  Keeping
  * a pool of memory that is ready for dma, ie any cached mapping have been
- * invalidated from the cache, provides a significant peformance benefit on
+ * invalidated from the cache, provides a significant performance benefit on
  * many systems */
 
 /**
@@ -461,7 +449,7 @@ int ion_device_destory_heaps(struct ion_device *dev, int need_lock);
  *
  * Allows you to keep a pool of pre allocated pages to use from your heap.
  * Keeping a pool of pages that is ready for dma, ie any cached mapping have
- * been invalidated from the cache, provides a significant peformance benefit
+ * been invalidated from the cache, provides a significant performance benefit
  * on many systems
  */
 struct ion_page_pool {
@@ -477,7 +465,7 @@ struct ion_page_pool {
 
 struct ion_page_pool *ion_page_pool_create(gfp_t gfp_mask, unsigned int order);
 void ion_page_pool_destroy(struct ion_page_pool *);
-void *ion_page_pool_alloc(struct ion_page_pool *);
+struct page *ion_page_pool_alloc(struct ion_page_pool *);
 void ion_page_pool_free(struct ion_page_pool *, struct page *);
 
 /** ion_page_pool_shrink - shrinks the size of the memory cached in the pool
@@ -500,5 +488,7 @@ int ion_page_pool_shrink(struct ion_page_pool *pool, gfp_t gfp_mask,
  */
 void ion_pages_sync_for_device(struct device *dev, struct page *page,
 		size_t size, enum dma_data_direction dir);
+
+extern struct ion_device *g_ion_device;
 
 #endif /* _ION_PRIV_H */

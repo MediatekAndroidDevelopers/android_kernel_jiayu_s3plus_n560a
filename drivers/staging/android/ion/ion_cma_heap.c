@@ -1,5 +1,5 @@
 /*
- * drivers/gpu/ion/ion_cma_heap.c
+ * drivers/staging/android/ion/ion_cma_heap.c
  *
  * Copyright (C) Linaro 2012
  * Author: <benjamin.gaignard@linaro.org> for ST-Ericsson.
@@ -21,7 +21,7 @@
 #include <linux/err.h>
 #include <linux/dma-mapping.h>
 
-/* for ion_heap_ops structure */
+#include "ion.h"
 #include "ion_priv.h"
 
 #define ION_CMA_ALLOCATE_FAILED -1
@@ -77,7 +77,7 @@ static int ion_cma_allocate(struct ion_heap *heap, struct ion_buffer *buffer,
 
 	info = kzalloc(sizeof(struct ion_cma_buffer_info), GFP_KERNEL);
 	if (!info) {
-		dev_err(dev, "Can't allocate buffer info\n");
+		/*dev_err(dev, "Can't allocate buffer info\n");*/
 		return ION_CMA_ALLOCATE_FAILED;
 	}
 
@@ -91,7 +91,7 @@ static int ion_cma_allocate(struct ion_heap *heap, struct ion_buffer *buffer,
 
 	info->table = kmalloc(sizeof(struct sg_table), GFP_KERNEL);
 	if (!info->table) {
-		dev_err(dev, "Fail to allocate sg table\n");
+		/*dev_err(dev, "Fail to allocate sg table\n");*/
 		goto free_mem;
 	}
 
@@ -155,7 +155,6 @@ static struct sg_table *ion_cma_heap_map_dma(struct ion_heap *heap,
 static void ion_cma_heap_unmap_dma(struct ion_heap *heap,
 				   struct ion_buffer *buffer)
 {
-	return;
 }
 
 static int ion_cma_mmap(struct ion_heap *mapper, struct ion_buffer *buffer,
