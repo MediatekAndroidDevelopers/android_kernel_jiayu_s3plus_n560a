@@ -39,8 +39,8 @@
 #include "inc/camera_isp_D1.h"
 #include <mach/irqs.h>
 #include <mach/mt_clkmgr.h>	/* For clock mgr APIS. enable_clock()/disable_clock(). */
-#include <mt-plat/sync_write.h>	/* For mt65xx_reg_sync_writel(). */
-#include <mt-plat/mt_ccci_common.h>
+#include <mach/sync_write.h>	/* For mt65xx_reg_sync_writel(). */
+#include <mach/mt_ccci_common.h>
 #include <linux/of_platform.h>
 #include <linux/of_irq.h>
 #include <linux/of_address.h>
@@ -63,7 +63,7 @@
 
 /* #define ISP_DEBUG */
 
-#define LOG_CONSTRAINT_ADJ		(1)
+#define LOG_CONSTRAINT_ADJ		(0)
 #if (LOG_CONSTRAINT_ADJ == 1)
 /* for kernel log reduction */
 #include <linux/printk.h>
@@ -12136,7 +12136,7 @@ int ISP_pm_restore_noirq(struct device *device)
 
 #ifdef CONFIG_OF
 static const struct of_device_id isp_of_ids[] = {
-	{.compatible = "mediatek,mt6735-ispsys",},
+	{.compatible = "mediatek,ISPSYS",},
 	{}
 };
 #endif

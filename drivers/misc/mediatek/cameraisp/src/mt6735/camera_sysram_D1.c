@@ -28,7 +28,7 @@
 #include <linux/ioctl.h>
 #include "inc/mt_typedefs.h"
 #include <mach/mt_clkmgr.h>
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 #include "inc/camera_sysram_D1.h"
 #include "inc/camera_sysram_imp_D1.h"
 

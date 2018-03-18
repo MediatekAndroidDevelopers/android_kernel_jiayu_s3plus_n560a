@@ -32,7 +32,7 @@
 #include <mach/irqs.h>
 #include <linux/wait.h>
 #include <linux/slab.h>
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 
 #include <linux/of_platform.h>
 #include <linux/of_irq.h>
@@ -1114,7 +1114,7 @@ static int FDVT_resume(struct platform_device *dev)
 
 #ifdef CONFIG_OF
 static const struct of_device_id fdvt_of_ids[] = {
-	{ .compatible = "mediatek,fdvt", },
+	{ .compatible = "mediatek,FDVT", },
 	{}
 };
 #endif
@@ -1211,4 +1211,3 @@ module_exit(FDVT_driver_exit);
 MODULE_AUTHOR("WCD/OSS9/ME3");
 MODULE_DESCRIPTION("FDVT Driver");
 MODULE_LICENSE("GPL");
-
