@@ -39,7 +39,7 @@
 #include <linux/memory.h>
 #include <linux/ftrace.h>
 #ifdef CMDQ_MET_READY
-#include <mt-plat/met_drv.h>
+#include <linux/met_drv.h>
 #endif
 #include <linux/seq_file.h>
 #include <linux/kthread.h>
@@ -50,12 +50,14 @@
 #include <mach/mt_irq.h>
 #include "ddp_reg.h"
 #endif
-#include <mt-plat/mt_lpae.h>
+#include <mach/mt_lpae.h>
 
 /* #define CMDQ_PROFILE_COMMAND_TRIGGER_LOOP */
 /* #define CMDQ_APPEND_WITHOUT_SUSPEND */
 /* #define CMDQ_ENABLE_BUS_ULTRA */
 
+#define list_last_entry(ptr, type, member) \
+        list_entry((ptr)->prev, type, member)
 
 #define CMDQ_GET_COOKIE_CNT(thread) (CMDQ_REG_GET32(CMDQ_THR_EXEC_CNT(thread)) & CMDQ_MAX_COOKIE_VALUE)
 #define CMDQ_SYNC_TOKEN_APPEND_THR(id)     (CMDQ_SYNC_TOKEN_APPEND_THR0 + id)
@@ -8969,4 +8971,3 @@ ContextStruct *cmdq_core_get_cmdqcontext(void)
 {
 	return &gCmdqContext;
 }
-

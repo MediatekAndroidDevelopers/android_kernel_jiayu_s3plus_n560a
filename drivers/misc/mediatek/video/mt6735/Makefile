@@ -94,9 +94,8 @@ ccflags-y += -I$(srctree)/drivers/misc/mediatek/video/include/     \
              -I$(srctree)/drivers/misc/mediatek/video/common/wdma10/ \
              -I$(srctree)/drivers/misc/mediatek/video/common/color20/ \
              -I$(srctree)/drivers/misc/mediatek/sync/      \
-             -I$(srctree)/drivers/misc/mediatek/cmdq/ \
-             -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/ \
-             -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6753/ \
+             -I$(srctree)/drivers/misc/mediatek/cmdq/v2 \
+             -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)/ \
              -I$(srctree)/drivers/misc/mediatek/ext_disp/ \
              -I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include/mach/ \
              -I$(srctree)/drivers/misc/mediatek/base/power/$(MTK_PLATFORM) \

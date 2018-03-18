@@ -1883,8 +1883,10 @@ static int __parse_tag_videolfb(struct device_node *node)
 
 	videolfb_tag = (struct tag_videolfb *)of_get_property(node, "atag,videolfb", (int *)&size);
 	if (videolfb_tag) {
-		ret = strscpy(mtkfb_lcm_name, videolfb_tag->lcmname,
-			sizeof(mtkfb_lcm_name));
+		ret = strncpy(mtkfb_lcm_name, videolfb_tag->lcmname,
+			sizeof(mtkfb_lcm_name) - 1);
+		mtkfb_lcm_name[sizeof(mtkfb_lcm_name) - 1] = '\0';
+		mtkfb_lcm_name[strlen(videolfb_tag->lcmname)] = '\0';
 		if (ret < 0)
 			return -EINVAL;
 

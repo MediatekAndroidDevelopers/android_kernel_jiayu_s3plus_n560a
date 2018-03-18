@@ -33,7 +33,7 @@
 #include <linux/of_address.h>
 #include <linux/io.h>
 #include <linux/dma-mapping.h>
-#include <mt-plat/mt_lpae.h>
+#include <mach/mt_lpae.h>
 
 typedef struct CmdqDeviceStruct {
 	struct device *pDev;
@@ -607,11 +607,11 @@ void cmdq_dev_init(struct platform_device *pDevice)
 		     gCmdqDev.irqSecId);
 	} while (0);
 
-	if (!enable_4G()) {
+	//if (!enable_4G()) {
 		/* Not special 4GB case, use dma_mask to restrict dma memory to low 4GB address */
 		gCmdqDev.dma_mask_result = dma_set_coherent_mask(&pDevice->dev, DMA_BIT_MASK(32));
 		CMDQ_LOG("set dma mask result: %d\n", gCmdqDev.dma_mask_result);
-	}
+	//}
 
 	/* init module VA */
 	cmdq_dev_init_module_base_VA();

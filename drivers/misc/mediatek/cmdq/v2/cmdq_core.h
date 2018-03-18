@@ -17,7 +17,7 @@
 #include <linux/list.h>
 #include <linux/time.h>
 #ifdef CMDQ_AEE_READY
-#include <mt-plat/aee.h>
+#include <linux/aee.h>
 #endif
 #include <linux/device.h>
 #include <linux/printk.h>
@@ -43,9 +43,6 @@
 #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
 #define CMDQ_GET_HIGH_ADDR(addr, highAddr) \
 {									\
-if (enable_4G())					\
-	highAddr = 0x1;					\
-else								\
 	highAddr = ((addr >> 32) & 0xffff);\
 }
 #else

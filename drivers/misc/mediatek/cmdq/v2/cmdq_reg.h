@@ -14,7 +14,7 @@
 #ifndef __CMDQ_REG_H__
 #define __CMDQ_REG_H__
 
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 #include <asm/io.h>
 
 #include "cmdq_core.h"

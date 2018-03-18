@@ -15,7 +15,7 @@
 #include <linux/vmalloc.h>
 #include <linux/errno.h>
 #include <linux/memory.h>
-#include <mt-plat/mt_lpae.h>
+#include <mach/mt_lpae.h>
 
 #include "cmdq_record.h"
 #include "cmdq_core.h"

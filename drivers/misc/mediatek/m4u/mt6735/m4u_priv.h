@@ -15,7 +15,7 @@
 #define __M4U_PRIV_H__
 #include <linux/ioctl.h>
 #include <linux/fs.h>
-#include <aee.h>
+#include <linux/aee.h>
 #include <linux/debugfs.h>
 #include <linux/platform_device.h>
 #include <linux/miscdevice.h>
@@ -45,7 +45,7 @@
 #define MMProfileStart(...)
 #define MMP_Event unsigned int
 #else
-#include <mmprofile.h>
+#include <linux/mmprofile.h>
 
 extern void MMProfileEnable(int enable);
 extern void MMProfileStart(int start);

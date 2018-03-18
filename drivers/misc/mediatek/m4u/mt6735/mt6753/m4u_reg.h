@@ -330,7 +330,7 @@
     #define F_PERI_MMU_EN(port, en)       ((en)<<((port)))
 
 
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 
 static inline unsigned int COM_ReadReg32(unsigned long addr)
 {

@@ -14,7 +14,7 @@
 #ifndef __CMDQ_MMP_H__
 #define __CMDQ_MMP_H__
 
-#include "mmprofile.h"
+#include <linux/mmprofile.h>
 #include "cmdq_core.h"
 
 typedef struct {

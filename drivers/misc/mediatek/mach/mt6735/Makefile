@@ -6,17 +6,9 @@
 include $(srctree)/drivers/misc/mediatek/Makefile.custom
 
 
-ifeq ($(CONFIG_ARCH_MT6735),y)
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6735/
-endif
 ifeq ($(CONFIG_ARCH_MT6735M),y)
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6735m/
 EXTRA_CFLAGS += -I$(srctree)/sound/soc/mediatek/mt_soc_audio_v3
 endif
-ifeq ($(CONFIG_ARCH_MT6753),y)
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6753/
-endif
-
 
 ifneq ($(CONFIG_ARM64), y)
 # For arm32
@@ -55,12 +47,14 @@ obj-y += mt_freqhopping.o
 #obj-y += emi_bwl.o
 #obj-y += emi_mpu.o
 ifeq ($(strip $(CONFIG_ARCH_MT6735M)),y)
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
 obj-y += camera_isp_D2.o
 obj-y += camera_sysram_D2.o
 obj-y += camera_pipe_mgr_D2.o
 else
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
 obj-y += camera_isp_D1.o
 obj-y += camera_sysram_D1.o
 obj-y += camera_fdvt_D1.o
@@ -241,12 +235,14 @@ obj-y += mt_ptp2_64.o
 endif
 obj-y += mt_pbm.o
 ifeq ($(strip $(CONFIG_ARCH_MT6735M)),y)
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
 obj-y += camera_isp_D2.o
 obj-y += camera_sysram_D2.o
 obj-y += camera_pipe_mgr_D2.o
 else
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
+ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
 obj-y += camera_isp_D1.o
 obj-y += camera_sysram_D1.o
 obj-y += camera_fdvt_D1.o

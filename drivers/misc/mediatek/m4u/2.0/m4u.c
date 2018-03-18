@@ -29,7 +29,7 @@
 #include <linux/vmalloc.h>
 #include <linux/slab.h>
 #include <linux/timer.h>
-#include <mt-plat/sync_write.h>
+#include <mach/sync_write.h>
 #include <mach/mt_clkmgr.h>
 #include <mach/irqs.h>
 #include <asm/cacheflush.h>

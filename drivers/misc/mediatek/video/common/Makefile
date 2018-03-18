@@ -81,10 +81,8 @@ ccflags-y += \
 				-I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/dispsys  \
 				-I$(srctree)/drivers/misc/mediatek/video/$(MTK_PLATFORM)/videox   \
 				-I$(srctree)/drivers/misc/mediatek/sync/                          \
-				-I$(srctree)/drivers/misc/mediatek/cmdq/                          \
-				-I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/          \
-				-I$(srctree)/drivers/misc/mediatek/cmdq/$(MTK_PLATFORM)/mt6753/
-
+				-I$(srctree)/drivers/misc/mediatek/cmdq/v2                        \
+				-I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)/
 
 ifneq ($(CONFIG_MTK_FB), y)
 obj-y += mtkfb_dummy.o
@@ -128,4 +126,3 @@ endif
 ifeq (y, $(filter y, $(CONFIG_ARCH_MT6755)))
 obj-y += layering_rule_base/v1/
 endif
-
