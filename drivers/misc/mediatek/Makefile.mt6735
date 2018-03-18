@@ -203,3 +203,5 @@ endif
 ifeq ($(VANZO_FEATURE_FP_GF318M),yes)
 obj-y	+= fingerprinter/gf318m/
 endif
+
+obj-y += cameraisp/src/
