@@ -46,19 +46,6 @@ obj-y += mt_freqhopping.o
 #obj-$(CONFIG_MT65XX_TRACER) += pmu_v7.o mon_interface.o mt_mon.o mt_emi_bm.o
 #obj-y += emi_bwl.o
 #obj-y += emi_mpu.o
-ifeq ($(strip $(CONFIG_ARCH_MT6735M)),y)
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
-obj-y += camera_isp_D2.o
-obj-y += camera_sysram_D2.o
-obj-y += camera_pipe_mgr_D2.o
-else
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
-obj-y += camera_isp_D1.o
-obj-y += camera_sysram_D1.o
-obj-y += camera_fdvt_D1.o
-endif
 #obj-y += mt_pm_ldo.o
 #obj-y += innercache.o
 #obj-y += mt_l2c.o
@@ -234,19 +221,6 @@ ifeq (,$(filter $(CONFIG_ARCH_MT6735M), y))
 obj-y += mt_ptp2_64.o
 endif
 obj-y += mt_pbm.o
-ifeq ($(strip $(CONFIG_ARCH_MT6735M)),y)
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
-obj-y += camera_isp_D2.o
-obj-y += camera_sysram_D2.o
-obj-y += camera_pipe_mgr_D2.o
-else
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2
-ccflags-y += -I$(srctree)/drivers/misc/mediatek/cmdq/v2/$(MTK_PLATFORM)
-obj-y += camera_isp_D1.o
-obj-y += camera_sysram_D1.o
-obj-y += camera_fdvt_D1.o
-endif
 # Module project related part
 obj-y += $(ARCH_MTK_PROJECT)/
 obj-y += innercache.o
