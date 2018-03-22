@@ -192,7 +192,7 @@ typedef struct ion_mm_data {
 } ion_mm_data_t;
 
 #ifdef __KERNEL__
-#include <aee.h>
+#include <linux/aee.h>
 #define ION_LOG_TAG "ion_dbg"
 #define IONMSG(string, args...)	pr_err("[ION]"string, ##args)
 #define ion_aee_print(string, args...) do {\

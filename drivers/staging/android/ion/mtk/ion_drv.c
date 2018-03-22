@@ -23,7 +23,7 @@
 #include <linux/dma-mapping.h>
 #include <linux/err.h>
 #include <linux/export.h>
-#include <mmprofile.h>
+#include <linux/mmprofile.h>
 #include <linux/vmalloc.h>
 #include "ion_profile.h"
 #include <linux/debugfs.h>
@@ -107,7 +107,7 @@ static void *ion_cache_map_page_va(struct page *page)
 	int ret;
 	struct page **ppPage = &page;
 
-	ret = map_vm_area(cache_map_vm_struct, PAGE_KERNEL, ppPage);
+	ret = map_vm_area(cache_map_vm_struct, PAGE_KERNEL, &ppPage);
 	if (ret) {
 		IONMSG("error to map page\n");
 		return NULL;

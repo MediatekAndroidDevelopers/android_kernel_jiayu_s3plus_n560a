@@ -30,7 +30,7 @@ typedef enum {
 #define MMP_Event unsigned int
 #define MMP_RootEvent 1
 #else
-#include <mmprofile.h>
+#include <linux/mmprofile.h>
 
 extern void MMProfileEnable(int enable);
 extern void MMProfileStart(int start);

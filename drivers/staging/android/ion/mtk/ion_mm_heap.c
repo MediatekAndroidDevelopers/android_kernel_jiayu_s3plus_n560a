@@ -22,7 +22,7 @@
 #include <linux/vmalloc.h>
 #include <linux/slab.h>
 #include <linux/mutex.h>
-#include <mmprofile.h>
+#include <linux/mmprofile.h>
 #include <linux/debugfs.h>
 #include <linux/kthread.h>
 #include <linux/fdtable.h>
