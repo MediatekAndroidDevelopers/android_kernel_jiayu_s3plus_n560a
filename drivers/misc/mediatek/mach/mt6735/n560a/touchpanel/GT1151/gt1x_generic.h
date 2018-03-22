@@ -59,7 +59,7 @@
 #define GTP_GESTURE_WAKEUP    0	// gesture wakeup module
 #define KEY_GESTURE           KEY_F24	// customize gesture-key
 
-#define GTP_HOTKNOT           1	// hotknot module
+#define GTP_HOTKNOT           0	// hotknot module
 #define HOTKNOT_TYPE          0	// 0: hotknot in flash; 1: hotknot in driver
 #define HOTKNOT_BLOCK_RW      0
 
@@ -74,14 +74,14 @@
 
 #define GTP_POWER_CTRL_SLEEP  1       //turn off power on suspend
 #define GTP_ICS_SLOT_REPORT   0
-#define GTP_CREATE_WR_NODE    1	// create the interface to support gtp_tools
+#define GTP_CREATE_WR_NODE    0	// create the interface to support gtp_tools
 
 #define GTP_ESD_PROTECT       0	// esd-protection module (with a cycle of 2 seconds)
 #define GTP_CHARGER_SWITCH    0	// charger plugin & plugout detect
 
-#define GTP_DEBUG_ON          1	// enable log printed by GTP_DEBUG(...)
-#define GTP_DEBUG_ARRAY_ON    1
-#define GTP_DEBUG_FUNC_ON     1
+#define GTP_DEBUG_ON          0	// enable log printed by GTP_DEBUG(...)
+#define GTP_DEBUG_ARRAY_ON    0
+#define GTP_DEBUG_FUNC_ON     0
 
 extern int tpd_em_log;
 #define CFG_GROUP_LEN(p_cfg_grp)  (sizeof(p_cfg_grp) / sizeof(p_cfg_grp[0]))
