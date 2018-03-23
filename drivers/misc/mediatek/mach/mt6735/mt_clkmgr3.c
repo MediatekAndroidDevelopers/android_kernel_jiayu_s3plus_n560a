@@ -4754,7 +4754,7 @@ void iomap(void)
     if (!clk_mfgcfg_base)
         printk("[CLK_G3D_CONFIG] base failed\n");
 //mmsys_config
-    node = of_find_compatible_node(NULL, NULL, "mediatek,MMSYS_CONFIG");
+    node = of_find_compatible_node(NULL, NULL, "mediatek,mmsys_config");
     if (!node) {
         printk("[CLK_MMSYS_CONFIG] find node failed\n");
     }
