@@ -304,7 +304,7 @@ void hal_rtc_set_pwron_alarm(void)
 	rtc_write_trigger();
 }
 
-#ifndef USER_BUILD_KERNEL
+#if 0 // #ifndef USER_BUILD_KERNEL
 static void rtc_lp_exception(void)
 {
 	u16 bbpu, irqsta, irqen, osc32;
@@ -344,7 +344,7 @@ bool hal_rtc_is_lp_irq(void)
 
 	irqsta = rtc_read(RTC_IRQ_STA);		/* read clear */
 	if (unlikely(!(irqsta & RTC_IRQ_STA_AL))) {
-#ifndef USER_BUILD_KERNEL
+#if 0 // #ifndef USER_BUILD_KERNEL
 		if (irqsta & RTC_IRQ_STA_LP)
 			rtc_lp_exception();
 #endif
@@ -482,7 +482,7 @@ void hal_rtc_set_lp_irq(void) {
 	u16 irqen;
 
 	rtc_writeif_unlock();
-#ifndef USER_BUILD_KERNEL
+#if 0 // #ifndef USER_BUILD_KERNEL
 	irqen = rtc_read(RTC_IRQ_EN) | RTC_IRQ_EN_LP;
 #else
 	irqen = rtc_read(RTC_IRQ_EN) & ~RTC_IRQ_EN_LP;

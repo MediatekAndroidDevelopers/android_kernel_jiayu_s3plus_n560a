@@ -1816,7 +1816,7 @@ static int __init emi_mpu_mod_init(void)
     emi_axi_vio_timer.data = ((unsigned long) 0 );
 #endif //#ifdef ENABLE_EMI_CHKER
  
-#if !defined(USER_BUILD_KERNEL)
+#if 0 // !defined(USER_BUILD_KERNEL)
 #ifdef ENABLE_EMI_CHKER
     /* Enable AXI 4KB boundary violation monitor timer */
     //emi_axi_set_chker(1 << AXI_ADR_CHK_EN);
