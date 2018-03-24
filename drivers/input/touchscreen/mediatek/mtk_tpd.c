@@ -27,6 +27,7 @@
 #include <linux/device.h>
 #include <linux/slab.h>
 #include <asm/uaccess.h>
+#include <linux/fb.h>
 
 #ifdef CONFIG_COMPAT
 #include <linux/compat.h>
@@ -178,6 +179,8 @@ static long tpd_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned lon
 	return err;
 }
 
+static struct work_struct touch_resume_work;
+static struct workqueue_struct *touch_resume_workqueue;
 
 static struct file_operations tpd_fops = {
 /* .owner = THIS_MODULE, */
@@ -206,10 +209,9 @@ static void __exit tpd_device_exit(void);
 static int tpd_probe(struct platform_device *pdev);
 static int tpd_remove(struct platform_device *pdev);
 
-extern void tpd_suspend(struct early_suspend *h);
-extern void tpd_resume(struct early_suspend *h);
 extern void tpd_button_init(void);
 
+static int tpd_suspend_flag;
 /* int tpd_load_status = 0; //0: failed, 1: sucess */
 int tpd_register_flag = 0;
 /* global variable definitions */
@@ -218,36 +220,74 @@ static struct tpd_driver_t tpd_driver_list[TP_DRV_MAX_COUNT];	/* = {0}; */
 
 #ifdef CONFIG_OF
 struct platform_device tpd_device = {
-    .name   	= TPD_DEVICE,
-    .id        	= -1,
+	.name   	= TPD_DEVICE,
+	.id        	= -1,
 };
 #endif
-
+const struct dev_pm_ops tpd_pm_ops = {
+	.suspend = NULL,
+	.resume = NULL,
+};
 static struct platform_driver tpd_driver = {
 	.remove = tpd_remove,
 	.shutdown = NULL,
 	.probe = tpd_probe,
-#ifndef CONFIG_HAS_EARLYSUSPEND
-	.suspend = NULL,
-	.resume = NULL,
-#endif
 	.driver = {
-		   .name = TPD_DEVICE,
-		   },
+		.name = TPD_DEVICE,
+		.pm = &tpd_pm_ops,
+	},
 };
-
-/*20091105, Kelvin, re-locate touch screen driver to earlysuspend*/
-#ifdef CONFIG_HAS_EARLYSUSPEND
-#ifndef CONFIG_MTK_FPGA
-static struct early_suspend MTK_TS_early_suspend_handler = {
-	.level = EARLY_SUSPEND_LEVEL_STOP_DRAWING - 1,
-	.suspend = NULL,
-	.resume = NULL,
-};
-#endif
-#endif
 
 static struct tpd_driver_t *g_tpd_drv;
+/* hh: use fb_notifier */
+static struct notifier_block tpd_fb_notifier;
+/* use fb_notifier */
+static void touch_resume_workqueue_callback(struct work_struct *work)
+{
+	TPD_DEBUG("GTP touch_resume_workqueue_callback\n");
+	g_tpd_drv->resume(NULL);
+	tpd_suspend_flag = 0;
+}
+static int tpd_fb_notifier_callback(struct notifier_block *self, unsigned long event, void *data)
+{
+	struct fb_event *evdata = NULL;
+	int blank;
+	int err = 0;
+
+	TPD_DEBUG("tpd_fb_notifier_callback\n");
+
+	evdata = data;
+	/* If we aren't interested in this event, skip it immediately ... */
+	if (event != FB_EVENT_BLANK)
+		return 0;
+
+	blank = *(int *)evdata->data;
+	TPD_DMESG("fb_notify(blank=%d)\n", blank);
+	switch (blank) {
+	case FB_BLANK_UNBLANK:
+		TPD_DMESG("LCD ON Notify\n");
+		if (g_tpd_drv && tpd_suspend_flag) {
+			err = queue_work(touch_resume_workqueue, &touch_resume_work);
+			if (!err) {
+				TPD_DMESG("start touch_resume_workqueue failed\n");
+				return err;
+			}
+		}
+		break;
+	case FB_BLANK_POWERDOWN:
+		TPD_DMESG("LCD OFF Notify\n");
+		if (g_tpd_drv)
+			err = cancel_work_sync(&touch_resume_work);
+			if (!err)
+				TPD_DMESG("cancel touch_resume_workqueue err = %d\n", err);
+			g_tpd_drv->suspend(NULL);
+		tpd_suspend_flag = 1;
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
 /* Add driver: if find TPD_TYPE_CAPACITIVE driver sucessfully, loading it */
 int tpd_driver_add(struct tpd_driver_t *tpd_drv)
 {
@@ -351,11 +391,6 @@ static int tpd_probe(struct platform_device *pdev)
 		touch_type = 0;
 		TPD_DMESG("Generic touch panel driver\n");
 	}
-#ifdef CONFIG_HAS_EARLYSUSPEND
-	MTK_TS_early_suspend_handler.suspend = g_tpd_drv->suspend;
-	MTK_TS_early_suspend_handler.resume = g_tpd_drv->resume;
-	register_early_suspend(&MTK_TS_early_suspend_handler);
-#endif
 #endif
 
 	if (misc_register(&tpd_misc_device)) {
@@ -455,16 +490,13 @@ static int tpd_probe(struct platform_device *pdev)
 			return 0;
 		}
 	}
-#ifdef CONFIG_HAS_EARLYSUSPEND
-#ifndef CONFIG_MTK_FPGA
-	MTK_TS_early_suspend_handler.suspend = g_tpd_drv->suspend;
-	MTK_TS_early_suspend_handler.resume = g_tpd_drv->resume;
-#ifdef CONFIG_EARLYSUSPEND
-	register_early_suspend(&MTK_TS_early_suspend_handler);
 #endif
-#endif
-#endif
-#endif
+	touch_resume_workqueue = create_singlethread_workqueue("touch_resume");
+	INIT_WORK(&touch_resume_work, touch_resume_workqueue_callback);
+	/* use fb_notifier */
+	tpd_fb_notifier.notifier_call = tpd_fb_notifier_callback;
+	if (fb_register_client(&tpd_fb_notifier))
+		TPD_DMESG("register fb_notifier fail!\n");
 /* #ifdef TPD_TYPE_CAPACITIVE */
 	/* TPD_TYPE_CAPACITIVE handle */
 	if (touch_type == 1) {
@@ -537,13 +569,7 @@ static int tpd_probe(struct platform_device *pdev)
 static int tpd_remove(struct platform_device *pdev)
 {
 	input_unregister_device(tpd->dev);
-#ifdef CONFIG_HAS_EARLYSUSPEND
-#ifndef CONFIG_MTK_FPGA
-#ifdef CONFIG_EARLYSUSPEND
-	unregister_early_suspend(&MTK_TS_early_suspend_handler);
-#endif
-#endif
-#endif
+	fb_unregister_client(&tpd_fb_notifier);
 	return 0;
 }
 
@@ -572,13 +598,6 @@ static void __exit tpd_device_exit(void)
 	TPD_DMESG("MediaTek touch panel driver exit\n");
 	/* input_unregister_device(tpd->dev); */
 	platform_driver_unregister(&tpd_driver);
-#ifdef CONFIG_HAS_EARLYSUSPEND
-#ifndef CONFIG_MTK_FPGA
-#ifdef CONFIG_EARLYSUSPEND
-	unregister_early_suspend(&MTK_TS_early_suspend_handler);
-#endif
-#endif
-#endif
 }
 
 late_initcall(tpd_device_init);

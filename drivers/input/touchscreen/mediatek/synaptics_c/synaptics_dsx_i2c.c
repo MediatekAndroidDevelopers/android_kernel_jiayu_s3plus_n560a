@@ -401,7 +401,7 @@ static ssize_t gtp_gesture_wakeup_store(struct device *dev,struct device_attribu
 {
     u8 wr_buf[2];
 
-    if(count == 0)
+    if(count != 1)
         return;
 
     mt_eint_mask(CUST_EINT_TOUCH_PANEL_NUM);
@@ -500,7 +500,7 @@ static int synaptics_rmi4_i2c_read(struct synaptics_rmi4_data *rmi4_data,
     gprDMABuf_va = (u8 *)dma_alloc_coherent(&tpd->dev->dev, 4096, &gprDMABuf_pa, GFP_KERNEL);
 // End of Vanzo: songlixin
     if(!gprDMABuf_va){
-        printk("[Error] Allocate DMA I2C Buffer failed!\n");
+        TPD_DMESG("[Error] Allocate DMA I2C Buffer failed!\n");
     }
 
     buf_va = gprDMABuf_va;
@@ -605,7 +605,7 @@ static int synaptics_rmi4_i2c_write(struct synaptics_rmi4_data *rmi4_data,
     gpwDMABuf_va = (u8 *)dma_alloc_coherent(&tpd->dev->dev, 1024, &gpwDMABuf_pa, GFP_KERNEL);
 // End of Vanzo: songlixin
     if(!gpwDMABuf_va){
-        printk("[Error] Allocate DMA I2C Buffer failed!\n");
+        TPD_DMESG("[Error] Allocate DMA I2C Buffer failed!\n");
     }
     buf_va = gpwDMABuf_va;
 
@@ -706,9 +706,8 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 
     if(_is_gestures_wakup_enable && _is_enter_gestures_mode)
     {   
-        printk("dddddddd");
         synaptics_rmi4_i2c_read(rmi4_data, 0x4b, &data6, 1);
-        printk("%s data6=[%x]\n", __func__,data6);
+        TPD_DEBUG("%s data6=[%x]\n", __func__,data6);
         switch(data6)
         {
             case 0x01:
@@ -723,9 +722,9 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
             case 0x40:
 
                 synaptics_rmi4_i2c_read(rmi4_data, 0x4c, data7, 8);
-                printk("%s data7[]=[%s]\n", __func__,data7);
+                TPD_DEBUG("%s data7[]=[%s]\n", __func__,data7);
                 data9=data7[6];
-                printk("%s data9=[%x]\n", __func__,data9);
+                TPD_DEBUG("%s data9=[%x]\n", __func__,data9);
                 switch (data9)
                 {
                     case 0x63 :
@@ -750,9 +749,9 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
                 break;
             case 0x02 :
                 synaptics_rmi4_i2c_read(rmi4_data, 0x0400, &data8, 1);
-                printk("%s data8=[%x]\n", __func__,data8);
+                TPD_DEBUG("%s data8=[%x]\n", __func__,data8);
                 data11=data8&0x0f;
-                printk("%s data11=[%x]\n", __func__,data11);
+                TPD_DEBUG("%s data11=[%x]\n", __func__,data11);
                 switch(data11)
                 {
                     case 0x01:
@@ -833,11 +832,11 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
             y = (data[1] << 4) | ((data[2] >> 4) & MASK_4BIT);
             wx = (data[3] & MASK_4BIT);
             wy = (data[3] >> 4) & MASK_4BIT;
-            printk("syna, x:%d, y:%d\n", x, y);
+            TPD_DEBUG("syna, x:%d, y:%d\n", x, y);
             if(y>1280)
             {
                 is_insivible_area = 1;
-                printk("[syna],enter invisible area,is_insivible_area:%d, x:%d, y:%d\n", is_insivible_area,x, y);
+                TPD_DEBUG("[syna],enter invisible area,is_insivible_area:%d, x:%d, y:%d\n", is_insivible_area,x, y);
                 input_report_key(tpd->dev,BTN_TOUCH, 1);
                 //input_report_key(rmi4_data->input_dev,
                 //		BTN_TOOL_FINGER, status);
@@ -852,7 +851,7 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
             }
             else{
                 is_insivible_area = 0;
-                printk("[syna],enter visible area,is_insivible_area:%d, x:%d, y:%d\n", is_insivible_area,x, y);
+                TPD_DEBUG("[syna],enter visible area,is_insivible_area:%d, x:%d, y:%d\n", is_insivible_area,x, y);
                 input_report_key(rmi4_data->input_dev,
                         BTN_TOUCH, 1);
                 input_report_key(rmi4_data->input_dev,
@@ -914,7 +913,7 @@ static int synaptics_rmi4_f11_abs_report(struct synaptics_rmi4_data *rmi4_data,
 #endif
         }
         // mtk-tpd 
-        printk("[syna],is_insivible_area:%d,invisible area up\n",is_insivible_area);
+        TPD_DEBUG("[syna],is_insivible_area:%d,invisible area up\n",is_insivible_area);
         input_report_key(tpd->dev,BTN_TOUCH, 0);
         input_mt_sync(tpd->dev);
 
@@ -963,11 +962,9 @@ static int synaptics_rmi4_f12_abs_report(struct synaptics_rmi4_data *rmi4_data,
 	unsigned char data6[5]={0};
 
 	if(_is_gestures_wakup_enable && _is_enter_gestures_mode)
-    {   
-	
-        printk("dddddddd");
+    {
         synaptics_rmi4_i2c_read(rmi4_data, 0x07, data6, 5);
-        printk("%s data6=[%x][%x][%x][%x][%x]\n", __func__,data6[0],data6[1],data6[2],data6[3],data6[4]);
+        TPD_DEBUG("%s data6=[%x][%x][%x][%x][%x]\n", __func__,data6[0],data6[1],data6[2],data6[3],data6[4]);
        if(data6[0] == 0x03)
        	{
         input_report_key(rmi4_data->input_dev, KEY_U, 1);
@@ -1355,7 +1352,6 @@ static void synaptics_rmi4_sensor_report(struct synaptics_rmi4_data *rmi4_data)
 
 static void tpd_eint_handler(void)
 {
-    TPD_DEBUG_PRINT_INT;
     tpd_flag=1;
     wake_up_interruptible(&waiter);
 }
@@ -1376,7 +1372,6 @@ static int touch_event_handler(void *data)
 
         wait_event_interruptible(waiter, tpd_flag != 0);
         tpd_flag = 0;
-        TPD_DEBUG_SET_TIME;
         set_current_state(TASK_RUNNING);
 
         if (!rmi4_data->touch_stopped)
@@ -1533,10 +1528,10 @@ static int synaptics_rmi4_f11_init(struct synaptics_rmi4_data *rmi4_data,
     rmi4_data->sensor_max_y = ((control[8] & MASK_8BIT) << 0) |
         ((control[9] & MASK_4BIT) << 8);
     if(data20==0x32)
-    {   printk("use_0d_button111");
+    {   TPD_DEBUG("use_0d_button111");
 #ifdef TPD_HAVE_BUTTON
         rmi4_data->sensor_max_y = 1280;
-        printk("use_0d");
+        TPD_DEBUG("use_0d");
         //rmi4_data->sensor_max_y = rmi4_data->sensor_max_y * TPD_DISPLAY_HEIGH_RATIO / TPD_TOUCH_HEIGH_RATIO;
 #endif
     }
@@ -2787,7 +2782,7 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
             msecs_to_jiffies(EXP_FN_WORK_DELAY_MS));
 
     synaptics_rmi4_i2c_read(rmi4_data, rmi4_data->f01_query_base_addr+12, &data20, 1);
-    printk("%s data20=[%x]\n", __func__,data20);
+    TPD_DEBUG("%s data20=[%x]\n", __func__,data20);
 #ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
     input_set_capability(rmi4_data->input_dev, EV_KEY, KEY_POWER);
 
@@ -2797,7 +2792,7 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
     }
     retval = sysfs_create_file(&client->dev.kobj, &dev_attr_gesture.attr); 
     if(retval < 0){
-        printk("Failed to create sysfs attr");
+        TPD_DMESG("Failed to create sysfs attr");
     }
 #endif
 #ifdef VANZO_DEVICE_NAME_SUPPORT
@@ -3082,10 +3077,10 @@ static int synaptics_rmi4_suspend(struct device *dev)
     if(data20==0x33)
     {
         if(_is_gestures_wakup_enable)
-        {   printk("llllllll");
+        {
             synaptics_rmi4_i2c_write(rmi4_data, 0x57, &data1,1);
             synaptics_rmi4_i2c_read(rmi4_data, 0x57, &data2, 1);
-            printk("%s data10=[%x]\n", __func__,data2);
+            TPD_DEBUG("%s data10=[%x]\n", __func__,data2);
             TPD_DEBUG("TPD enter sleep\n");
             _is_enter_gestures_mode = true;
             return;
@@ -3097,7 +3092,7 @@ static int synaptics_rmi4_suspend(struct device *dev)
 		if(_is_gestures_wakup_enable)
 		{   
 			synaptics_rmi4_i2c_read(rmi4_data, 0x19, data, 3);
-			printk("%s data10=[%x][%x][%x]\n", __func__,data[0],data[1],data[2]);
+			TPD_DEBUG("%s data10=[%x][%x][%x]\n", __func__,data[0],data[1],data[2]);
 			data[2] = 0x02;
 			synaptics_rmi4_i2c_write(rmi4_data, 0x19, data,3);
 
@@ -3153,13 +3148,13 @@ static int synaptics_rmi4_resume(struct device *dev)
 	if(data20==0x33)
 	{
 		if(_is_gestures_wakup_enable)
-		{	printk("bbbbbbbb");
+		{
 			synaptics_rmi4_i2c_read(rmi4_data, 0x57, &data3, 1);
-			printk("%s data3=[%x]\n", __func__,data3);
+			TPD_DEBUG("%s data3=[%x]\n", __func__,data3);
 			data4 = data3 & 0xF8;
 			TPD_DEBUG("TPD wake up\n");
 			synaptics_rmi4_i2c_write(rmi4_data, 0x57, &data4, 1);
-			printk("%s data4=[%x]\n", __func__,data4);
+			TPD_DEBUG("%s data4=[%x]\n", __func__,data4);
 			synaptics_rmi4_i2c_write(rmi4_data,0x88,&data5,1);
 			_is_enter_gestures_mode = false;
 			return;

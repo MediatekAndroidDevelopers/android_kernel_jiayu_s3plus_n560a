@@ -25,14 +25,13 @@
 #include <linux/platform_device.h>
 #include <generated/autoconf.h>
 #include <linux/kobject.h>
-#include <linux/earlysuspend.h>
 #include <linux/regulator/consumer.h>
 /* #include "tpd_custom.h" */
 #include <vibrator_hal.h>
 
 /* debug macros */
 /* //#define TPD_DEBUG */
-#define TPD_DEBUG_CODE
+//#define TPD_DEBUG_CODE
 /* #define TPD_DEBUG_TRACK */
 #define TPD_DMESG(a, arg...) printk(TPD_DEVICE ": " a, ##arg)
 #if defined(TPD_DEBUG)
@@ -101,8 +100,8 @@ struct tpd_attrs {
 struct tpd_driver_t {
 	char *tpd_device_name;
 	int (*tpd_local_init) (void);
-	void (*suspend) (struct early_suspend *h);
-	void (*resume) (struct early_suspend *h);
+	void (*suspend)(struct device *h);
+	void (*resume) (struct device *h);
 	int tpd_have_button;
 	struct tpd_attrs attrs;
 /* Vanzo:songlixin on: Tue, 13 Jan 2015 17:46:42 +0800
