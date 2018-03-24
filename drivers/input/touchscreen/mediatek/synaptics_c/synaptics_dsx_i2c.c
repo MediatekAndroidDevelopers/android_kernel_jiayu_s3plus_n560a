@@ -172,12 +172,6 @@ static int synaptics_rmi4_reinit_device(struct synaptics_rmi4_data *rmi4_data);
 static int synaptics_rmi4_reset_device(struct synaptics_rmi4_data *rmi4_data);
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
-static ssize_t synaptics_rmi4_full_pm_cycle_show(struct device *dev,
-        struct device_attribute *attr, char *buf);
-
-static ssize_t synaptics_rmi4_full_pm_cycle_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count);
-
 static void synaptics_rmi4_early_suspend(struct early_suspend *h);
 
 static void synaptics_rmi4_late_resume(struct early_suspend *h);
@@ -186,29 +180,6 @@ static void synaptics_rmi4_late_resume(struct early_suspend *h);
 static int synaptics_rmi4_suspend(struct device *dev);
 
 static int synaptics_rmi4_resume(struct device *dev);
-
-static ssize_t synaptics_rmi4_f01_reset_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count);
-
-static ssize_t synaptics_rmi4_f01_productinfo_show(struct device *dev,
-        struct device_attribute *attr, char *buf);
-static ssize_t synaptics_rmi4_fwversion_show(struct device *dev,
-                                                struct device_attribute *attr, char *buf);
-
-static ssize_t synaptics_rmi4_f01_buildid_show(struct device *dev,
-        struct device_attribute *attr, char *buf);
-
-static ssize_t synaptics_rmi4_f01_flashprog_show(struct device *dev,
-        struct device_attribute *attr, char *buf);
-
-static ssize_t synaptics_rmi4_0dbutton_show(struct device *dev,
-        struct device_attribute *attr, char *buf);
-
-static ssize_t synaptics_rmi4_0dbutton_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count);
-
-static ssize_t synaptics_rmi4_suspend_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count);
 
 struct synaptics_rmi4_f01_device_status {
     union {
@@ -455,232 +426,6 @@ static DEVICE_ATTR(gesture, (S_IWUGO| S_IRUGO), gtp_gesture_wakeup_show, gtp_ges
 #endif
 // End of Vanzo: songlixin
 #endif
-
-static struct device_attribute attrs[] = {
-#ifdef CONFIG_HAS_EARLYSUSPEND
-    __ATTR(full_pm_cycle, (S_IRUGO | S_IWUGO),
-            synaptics_rmi4_full_pm_cycle_show,
-            synaptics_rmi4_full_pm_cycle_store),
-#endif
-    __ATTR(reset, S_IWUGO,
-            synaptics_rmi4_show_error,
-            synaptics_rmi4_f01_reset_store),
-    __ATTR(productinfo, S_IRUGO,
-            synaptics_rmi4_f01_productinfo_show,
-            synaptics_rmi4_store_error),
-    __ATTR(fwversion, S_IRUGO,
-           synaptics_rmi4_fwversion_show,
-           synaptics_rmi4_store_error),
-    __ATTR(buildid, S_IRUGO,
-            synaptics_rmi4_f01_buildid_show,
-            synaptics_rmi4_store_error),
-    __ATTR(flashprog, S_IRUGO,
-            synaptics_rmi4_f01_flashprog_show,
-            synaptics_rmi4_store_error),
-    __ATTR(0dbutton, (S_IRUGO | S_IWUGO),
-            synaptics_rmi4_0dbutton_show,
-            synaptics_rmi4_0dbutton_store),
-    __ATTR(suspend, S_IWUGO,
-            synaptics_rmi4_show_error,
-            synaptics_rmi4_suspend_store),
-#if 0 //def CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
-    __ATTR(gesture, (S_IWUGO| S_IRUGO),
-            gtp_gesture_wakeup_show,
-            gtp_gesture_wakeup_store),
-#endif
-};
-
-#ifdef CONFIG_HAS_EARLYSUSPEND
-static ssize_t synaptics_rmi4_full_pm_cycle_show(struct device *dev,
-        struct device_attribute *attr, char *buf)
-{
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-
-    return snprintf(buf, PAGE_SIZE, "%u\n",
-            rmi4_data->full_pm_cycle);
-}
-
-static ssize_t synaptics_rmi4_full_pm_cycle_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count)
-{
-    unsigned int input;
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-
-    if (sscanf(buf, "%u", &input) != 1)
-        return -EINVAL;
-
-    rmi4_data->full_pm_cycle = input > 0 ? 1 : 0;
-
-    return count;
-}
-#endif
-
-static ssize_t synaptics_rmi4_f01_reset_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count)
-{
-    int retval;
-    unsigned int reset;
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-
-    if (sscanf(buf, "%u", &reset) != 1)
-        return -EINVAL;
-
-    if (reset != 1)
-        return -EINVAL;
-
-    retval = synaptics_rmi4_reset_device(rmi4_data);
-    if (retval < 0) {
-        dev_err(dev,
-                "%s: Failed to issue reset command, error = %d\n",
-                __func__, retval);
-        return retval;
-    }
-
-    return count;
-}
-
-static ssize_t synaptics_rmi4_f01_productinfo_show(struct device *dev,
-        struct device_attribute *attr, char *buf)
-{
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-
-    return snprintf(buf, PAGE_SIZE, "0x%02x 0x%02x\n",
-            (rmi4_data->rmi4_mod_info.product_info[0]),
-            (rmi4_data->rmi4_mod_info.product_info[1]));
-}
-
-static ssize_t synaptics_rmi4_fwversion_show(struct device *dev,
-                                                struct device_attribute *attr, char *buf)
-{
-    int retval;
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-    unsigned char fwversion[4] = {0};
-
-    retval = synaptics_rmi4_i2c_read(rmi4_data,
-                                     0x08, /* page 0, addr 0x08 */
-                                     fwversion,
-                                     0x04);
-    if (retval < 0) {
-        dev_err(dev,
-                "%s: Failed to read fwversion, error = %d\n",
-                __func__, retval);
-    }
-
-    return snprintf(buf, PAGE_SIZE, "S3310-%04x-0000\n",
-                    fwversion[0] << 24 | fwversion[1] << 16 | fwversion[2] << 8 | fwversion[3]);
-}
-
-static ssize_t synaptics_rmi4_f01_buildid_show(struct device *dev,
-        struct device_attribute *attr, char *buf)
-{
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-
-    return snprintf(buf, PAGE_SIZE, "%u\n",
-            rmi4_data->firmware_id);
-}
-
-static ssize_t synaptics_rmi4_f01_flashprog_show(struct device *dev,
-        struct device_attribute *attr, char *buf)
-{
-    int retval;
-    struct synaptics_rmi4_f01_device_status device_status;
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-
-    retval = synaptics_rmi4_i2c_read(rmi4_data,
-            rmi4_data->f01_data_base_addr,
-            device_status.data,
-            sizeof(device_status.data));
-    if (retval < 0) {
-        dev_err(dev,
-                "%s: Failed to read device status, error = %d\n",
-                __func__, retval);
-        return retval;
-    }
-
-    return snprintf(buf, PAGE_SIZE, "%u\n",
-            device_status.flash_prog);
-}
-
-static ssize_t synaptics_rmi4_0dbutton_show(struct device *dev,
-        struct device_attribute *attr, char *buf)
-{
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-
-    return snprintf(buf, PAGE_SIZE, "%u\n",
-            rmi4_data->button_0d_enabled);
-}
-
-static ssize_t synaptics_rmi4_0dbutton_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count)
-{
-    int retval;
-    unsigned int input;
-    unsigned char ii;
-    unsigned char intr_enable;
-    struct synaptics_rmi4_fn *fhandler;
-    struct synaptics_rmi4_data *rmi4_data = dev_get_drvdata(dev);
-    struct synaptics_rmi4_device_info *rmi;
-
-    rmi = &(rmi4_data->rmi4_mod_info);
-
-    if (sscanf(buf, "%u", &input) != 1)
-        return -EINVAL;
-
-    input = input > 0 ? 1 : 0;
-
-    if (rmi4_data->button_0d_enabled == input)
-        return count;
-
-    if (list_empty(&rmi->support_fn_list))
-        return -ENODEV;
-
-    list_for_each_entry(fhandler, &rmi->support_fn_list, link) {
-        if (fhandler->fn_number == SYNAPTICS_RMI4_F1A) {
-            ii = fhandler->intr_reg_num;
-
-            retval = synaptics_rmi4_i2c_read(rmi4_data,
-                    rmi4_data->f01_ctrl_base_addr + 1 + ii,
-                    &intr_enable,
-                    sizeof(intr_enable));
-            if (retval < 0)
-                return retval;
-
-            if (input == 1)
-                intr_enable |= fhandler->intr_mask;
-            else
-                intr_enable &= ~fhandler->intr_mask;
-
-            retval = synaptics_rmi4_i2c_write(rmi4_data,
-                    rmi4_data->f01_ctrl_base_addr + 1 + ii,
-                    &intr_enable,
-                    sizeof(intr_enable));
-            if (retval < 0)
-                return retval;
-        }
-    }
-
-    rmi4_data->button_0d_enabled = input;
-
-    return count;
-}
-
-static ssize_t synaptics_rmi4_suspend_store(struct device *dev,
-        struct device_attribute *attr, const char *buf, size_t count)
-{
-    unsigned int input;
-
-    if (sscanf(buf, "%u", &input) != 1)
-        return -EINVAL;
-
-    if (input == 1)
-        synaptics_rmi4_suspend(dev);
-    else if (input == 0)
-        synaptics_rmi4_resume(dev);
-    else
-        return -EINVAL;
-
-    return count;
-}
 
 /**
  * synaptics_rmi4_set_page()
@@ -3041,16 +2786,6 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
             &exp_data.work,
             msecs_to_jiffies(EXP_FN_WORK_DELAY_MS));
 
-    for (attr_count = 0; attr_count < ARRAY_SIZE(attrs); attr_count++) {
-        retval = sysfs_create_file(&rmi4_data->input_dev->dev.kobj,
-                &attrs[attr_count].attr);
-        if (retval < 0) {
-            dev_err(&client->dev,
-                    "%s: Failed to create sysfs attributes\n",
-                    __func__);
-            goto err_sysfs;
-        }
-    }
     synaptics_rmi4_i2c_read(rmi4_data, rmi4_data->f01_query_base_addr+12, &data20, 1);
     printk("%s data20=[%x]\n", __func__,data20);
 #ifdef CONFIG_VANZO_TOUCHPANEL_GESTURES_SUPPORT
@@ -3076,11 +2811,6 @@ static int synaptics_rmi4_probe(struct i2c_client *client,
     return retval;
 
 err_sysfs:
-    for (attr_count--; attr_count >= 0; attr_count--) {
-        sysfs_remove_file(&rmi4_data->input_dev->dev.kobj,
-                &attrs[attr_count].attr);
-    }
-
     cancel_delayed_work_sync(&exp_data.work);
     flush_workqueue(exp_data.workqueue);
     destroy_workqueue(exp_data.workqueue);
@@ -3116,11 +2846,6 @@ static int synaptics_rmi4_remove(struct i2c_client *client)
 {
     unsigned char attr_count;
     struct synaptics_rmi4_data *rmi4_data = i2c_get_clientdata(client);
-
-    for (attr_count = 0; attr_count < ARRAY_SIZE(attrs); attr_count++) {
-        sysfs_remove_file(&rmi4_data->input_dev->dev.kobj,
-                &attrs[attr_count].attr);
-    }
 
     cancel_delayed_work_sync(&exp_data.work);
     flush_workqueue(exp_data.workqueue);
