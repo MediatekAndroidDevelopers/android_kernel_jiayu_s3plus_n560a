@@ -595,7 +595,7 @@ void buf_modify(struct super_block *sb, sector_t sec)
 	sm_V(&b_sem);
 } /* end of buf_modify */
 
-void buf_lock(struct super_block *sb, sector_t sec)
+void exfat_buf_lock(struct super_block *sb, sector_t sec)
 {
 	BUF_CACHE_T *bp;
 
@@ -609,7 +609,7 @@ void buf_lock(struct super_block *sb, sector_t sec)
 	     (unsigned long long)sec);
 
 	sm_V(&b_sem);
-} /* end of buf_lock */
+} /* end of exfat_buf_lock */
 
 void buf_unlock(struct super_block *sb, sector_t sec)
 {
