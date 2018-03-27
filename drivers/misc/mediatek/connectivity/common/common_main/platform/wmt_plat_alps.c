@@ -53,6 +53,7 @@
 #ifdef CONFIG_MTK_MT6306_SUPPORT
 #include <mach/dcl_sim_gpio.h>
 #endif
+#include <mach/mt_gpio.h>
 
 /* ALPS and COMBO header files */
 #include <mtk_wcn_cmb_stub.h>
@@ -64,7 +65,6 @@
 #include "mtk_wcn_consys_hw.h"
 #include "stp_dbg.h"
 #include "osal.h"
-#include "wmt_gpio.h"
 #include "wmt_detect.h"
 
 #include <linux/of.h>
@@ -103,7 +103,7 @@ static INT32 wmt_plat_gps_sync_ctrl(ENUM_PIN_STATE state);
 static INT32 wmt_plat_gps_lna_ctrl(ENUM_PIN_STATE state);
 static INT32 wmt_plat_uart_rx_ctrl(ENUM_PIN_STATE state);
 
-static INT32 wmt_plat_dump_pin_conf(VOID);
+//static INT32 wmt_plat_dump_pin_conf(VOID);
 
 
 /*******************************************************************************
@@ -406,6 +406,7 @@ INT32 wmt_plat_irq_ctrl(ENUM_FUNC_STATE state)
 	return -1;
 }
 
+#if 0
 static INT32 wmt_plat_dump_pin_conf(VOID)
 {
 	WMT_DBG_FUNC("[WMT-PLAT]=>dump wmt pin configuration start<=\n");
@@ -532,6 +533,7 @@ static INT32 wmt_plat_dump_pin_conf(VOID)
 
 	return 0;
 }
+#endif
 
 INT32 wmt_plat_pwr_ctrl(ENUM_FUNC_STATE state)
 {
@@ -543,7 +545,7 @@ INT32 wmt_plat_pwr_ctrl(ENUM_FUNC_STATE state)
 		if (wmt_detect_get_chip_type() == WMT_CHIP_TYPE_SOC)
 			ret = mtk_wcn_consys_hw_pwr_on(gCoClockFlag);
 		else {
-			wmt_plat_dump_pin_conf();
+			//wmt_plat_dump_pin_conf();
 			ret = mtk_wcn_cmb_hw_pwr_on();
 		}
 		break;
@@ -664,6 +666,7 @@ INT32 wmt_plat_eirq_ctrl(ENUM_PIN_ID id, ENUM_PIN_STATE state)
 		iret = 0;
 		break;
 	case PIN_ALL_EINT:
+#if 0
 		if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_ALL_EINT_PIN].gpio_num != DEFAULT_PIN_ID) {
 			if (state == PIN_STA_INIT) {
 				disable_irq_nosync(gpio_to_irq(gpio_ctrl_info.
@@ -685,6 +688,7 @@ INT32 wmt_plat_eirq_ctrl(ENUM_PIN_ID id, ENUM_PIN_STATE state)
 			}
 		} else
 			WMT_INFO_FUNC("WMT-PLAT:ALL EINT not defined\n");
+#endif
 
 		iret = 0;
 		break;
@@ -717,6 +721,7 @@ INT32 wmt_plat_gpio_ctrl(ENUM_PIN_ID id, ENUM_PIN_STATE state)
 
 static INT32 wmt_plat_ldo_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_LDO_EN_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_DBG_FUNC("WMT-PLAT:LDO is not used\n");
 		return 0;
@@ -749,12 +754,14 @@ static INT32 wmt_plat_ldo_ctrl(ENUM_PIN_STATE state)
 		WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on LDO\n", state);
 		break;
 	}
+#endif
 
 	return 0;
 }
 
 static INT32 wmt_plat_pmu_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_PMU_EN_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_ERR_FUNC("WMT-PLAT:PMU not define\n");
 		return -1;
@@ -817,6 +824,7 @@ static INT32 wmt_plat_pmu_ctrl(ENUM_PIN_STATE state)
 		WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on PMU\n", state);
 		break;
 	}
+#endif
 
 	return 0;
 }
@@ -843,6 +851,7 @@ static INT32 wmt_plat_rtc_ctrl(ENUM_PIN_STATE state)
 
 static INT32 wmt_plat_rst_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_RST_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_ERR_FUNC("WMT-PLAT:RST not define\n");
 		return -1;
@@ -887,12 +896,14 @@ static INT32 wmt_plat_rst_ctrl(ENUM_PIN_STATE state)
 		WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on RST\n", state);
 		break;
 	}
+#endif
 
 	return 0;
 }
 
 static INT32 wmt_plat_bgf_eint_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_BGF_EINT_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_INFO_FUNC("WMT-PLAT:BGF EINT not defined\n");
 		return 0;
@@ -921,6 +932,7 @@ static INT32 wmt_plat_bgf_eint_ctrl(ENUM_PIN_STATE state)
 		WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on BGF EINT\n", state);
 		break;
 	}
+#endif
 
 	return 0;
 }
@@ -970,6 +982,7 @@ static INT32 wmt_plat_wifi_eint_ctrl(ENUM_PIN_STATE state)
 
 static INT32 wmt_plat_all_eint_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_ALL_EINT_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_DBG_FUNC("WMT-PLAT:ALL EINT not defined\n");
 		return 0;
@@ -995,12 +1008,14 @@ static INT32 wmt_plat_all_eint_ctrl(ENUM_PIN_STATE state)
 		WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on ALL EINT\n", state);
 		break;
 	}
+#endif
 
 	return 0;
 }
 
 static INT32 wmt_plat_uart_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_UTXD_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_DBG_FUNC("WMT-PLAT:UART TX not defined\n");
 		return 0;
@@ -1033,12 +1048,14 @@ static INT32 wmt_plat_uart_ctrl(ENUM_PIN_STATE state)
 		WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on UART Group\n", state);
 		break;
 	}
+#endif
 
 	return 0;
 }
 
 static INT32 wmt_plat_pcm_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	UINT32 normalPCMFlag = 0;
 
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_PCM_DAICLK_PIN].gpio_num == DEFAULT_PIN_ID) {
@@ -1145,12 +1162,14 @@ static INT32 wmt_plat_pcm_ctrl(ENUM_PIN_STATE state)
 			break;
 		}
 	}
+#endif
 
 	return 0;
 }
 
 static INT32 wmt_plat_cmb_i2s_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	UINT32 normalI2SFlag = 0;
 
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_I2S_CK_PIN].gpio_num == DEFAULT_PIN_ID) {
@@ -1251,6 +1270,7 @@ static INT32 wmt_plat_cmb_i2s_ctrl(ENUM_PIN_STATE state)
 		WMT_INFO_FUNC("no I2S GPIO settings should be modified by combo driver\n");
 #endif
 	}
+#endif
 
 	return 0;
 }
@@ -1281,6 +1301,7 @@ static INT32 wmt_plat_sdio_pin_ctrl(ENUM_PIN_STATE state)
 
 static INT32 wmt_plat_cmb_gps_sync_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_GPS_SYNC_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_INFO_FUNC("WMT-PLAT:GPS SYNC not defined\n");
 		return 0;
@@ -1300,6 +1321,7 @@ static INT32 wmt_plat_cmb_gps_sync_ctrl(ENUM_PIN_STATE state)
 	default:
 		break;
 	}
+#endif
 
 	return 0;
 }
@@ -1325,109 +1347,26 @@ static INT32 wmt_plat_gps_sync_ctrl(ENUM_PIN_STATE state)
 
 static INT32 wmt_plat_soc_gps_lna_ctrl(ENUM_PIN_STATE state)
 {
-	struct pinctrl_state *gps_lna_init;
-	struct pinctrl_state *gps_lna_oh;
-	struct pinctrl_state *gps_lna_ol;
-	struct pinctrl *consys_pinctrl;
-
-	WMT_PLAT_DBG_FUNC("ENTER++\n");
-	consys_pinctrl = mtk_wcn_consys_get_pinctrl();
-	if (consys_pinctrl == NULL) {
-		WMT_PLAT_ERR_FUNC("get consys pinctrl fail\n");
-		return -1;
-	}
-
-	gps_lna_init = pinctrl_lookup_state(consys_pinctrl, "gps_lna_state_init");
-	if (gps_lna_init == NULL) {
-		WMT_PLAT_ERR_FUNC("Cannot find gps lna pin init state!\n");
-		return -2;
-	}
-
-	gps_lna_oh = pinctrl_lookup_state(consys_pinctrl, "gps_lna_state_oh");
-	if (gps_lna_oh == NULL) {
-		WMT_PLAT_ERR_FUNC("Cannot find gps lna pin oh state!\n");
-		return -3;
-	}
-
-	gps_lna_ol = pinctrl_lookup_state(consys_pinctrl, "gps_lna_state_ol");
-	if (gps_lna_ol == NULL) {
-		WMT_PLAT_ERR_FUNC("Cannot find gps lna pin ol state!\n");
-		return -4;
-	}
-
 	switch (state) {
-	case PIN_STA_INIT:
-	case PIN_STA_DEINIT:
-		pinctrl_select_state(consys_pinctrl, gps_lna_init);
-		WMT_PLAT_DBG_FUNC("set gps lna to init\n");
-		break;
-	case PIN_STA_OUT_H:
-		pinctrl_select_state(consys_pinctrl, gps_lna_oh);
-		WMT_PLAT_DBG_FUNC("set gps lna to oh\n");
-		break;
-	case PIN_STA_OUT_L:
-		pinctrl_select_state(consys_pinctrl, gps_lna_ol);
-		WMT_PLAT_DBG_FUNC("set gps lna to ol\n");
-		break;
-	default:
-		WMT_PLAT_WARN_FUNC("%d mode not defined for  gps lna pin !!!\n", state);
-		break;
-	}
+    case PIN_STA_INIT:
+    case PIN_STA_DEINIT:
+        mt_set_gpio_pull_enable(GPIO_GPS_LNA_PIN, GPIO_PULL_DISABLE);
+        mt_set_gpio_dir(GPIO_GPS_LNA_PIN, GPIO_DIR_OUT);
+        mt_set_gpio_mode(GPIO_GPS_LNA_PIN, GPIO_GPS_LNA_PIN_M_GPIO);
+        mt_set_gpio_out(GPIO_GPS_LNA_PIN, GPIO_OUT_ZERO);
+        break;
+    case PIN_STA_OUT_H:
+        mt_set_gpio_out(GPIO_GPS_LNA_PIN, GPIO_OUT_ONE);
+        break;
+    case PIN_STA_OUT_L:
+        mt_set_gpio_out(GPIO_GPS_LNA_PIN, GPIO_OUT_ZERO);
+        break;
 
-	return 0;
-}
-
-static INT32 wmt_plat_cmb_gps_lna_ctrl(ENUM_PIN_STATE state)
-{
-	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_GPS_LNA_PIN].gpio_num != DEFAULT_PIN_ID) {
-		switch (state) {
-		case PIN_STA_INIT:
-		case PIN_STA_DEINIT:
-			pinctrl_select_state(gpio_ctrl_info.pinctrl_info,
-					gpio_ctrl_info.gpio_ctrl_state[GPIO_GPS_LNA_PIN].gpio_state[GPIO_PULL_DIS]);
-			gpio_direction_output(gpio_ctrl_info.gpio_ctrl_state[GPIO_GPS_LNA_PIN].gpio_num, 0);
-			break;
-		case PIN_STA_OUT_H:
-			gpio_direction_output(gpio_ctrl_info.gpio_ctrl_state[GPIO_GPS_LNA_PIN].gpio_num, 1);
-			break;
-		case PIN_STA_OUT_L:
-			gpio_direction_output(gpio_ctrl_info.gpio_ctrl_state[GPIO_GPS_LNA_PIN].gpio_num, 0);
-			break;
-		default:
-			WMT_WARN_FUNC("%d mode not defined for  gps lna pin !!!\n", state);
-			break;
-		}
-	} else {
-#ifdef CONFIG_MTK_MT6306_SUPPORT
-		WMT_WARN_FUNC("/******************************************************************/\n");
-		WMT_WARN_FUNC("use MT6306 GPIO7 for  gps lna pin.\n this HARD CODE may hurt other\n");
-		WMT_WARN_FUNC("system module, if GPIO7 of MT6306 is not defined as GPS_LNA function\n");
-		WMT_WARN_FUNC("/******************************************************************/\n");
-
-		switch (state) {
-		case PIN_STA_INIT:
-		case PIN_STA_DEINIT:
-			mt6306_set_gpio_dir(GPIO7, GPIO_DIR_OUT);
-			mt6306_set_gpio_out(GPIO7, GPIO_OUT_ZERO);
-			break;
-		case PIN_STA_OUT_H:
-			mt6306_set_gpio_out(GPIO7, GPIO_OUT_ONE);
-			break;
-		case PIN_STA_OUT_L:
-			mt6306_set_gpio_out(GPIO7, GPIO_OUT_ZERO);
-			break;
-		default:
-			WMT_WARN_FUNC("%d mode not defined for  gps lna pin !!!\n", state);
-			break;
-		}
-#else
-		WMT_WARN_FUNC("host gps lna pin not defined!!!\n");
-		WMT_WARN_FUNC("if you donot use eighter AP or MT6306's pin as GPS_LNA\n");
-		WMT_WARN_FUNC("please customize your own GPS_LNA related code here\n");
-#endif
-	}
-
-	return 0;
+    default:
+        WMT_PLAT_WARN_FUNC("%d mode not defined for  gps lna pin !!!\n", state);
+        break;
+    }
+    return 0;
 }
 
 static INT32 wmt_plat_gps_lna_ctrl(ENUM_PIN_STATE state)
@@ -1436,14 +1375,13 @@ static INT32 wmt_plat_gps_lna_ctrl(ENUM_PIN_STATE state)
 
 	if (wmt_detect_get_chip_type() == WMT_CHIP_TYPE_SOC)
 		ret = wmt_plat_soc_gps_lna_ctrl(state);
-	else
-		ret = wmt_plat_cmb_gps_lna_ctrl(state);
 
 	return ret;
 }
 
 static INT32 wmt_plat_uart_rx_ctrl(ENUM_PIN_STATE state)
 {
+#if 0
 	if (gpio_ctrl_info.gpio_ctrl_state[GPIO_COMBO_URXD_PIN].gpio_num == DEFAULT_PIN_ID) {
 		WMT_DBG_FUNC("WMT-PLAT:UART RX not defined\n");
 		return 0;
@@ -1485,6 +1423,7 @@ static INT32 wmt_plat_uart_rx_ctrl(ENUM_PIN_STATE state)
 		WMT_WARN_FUNC("WMT-PLAT:Warnning, invalid state(%d) on UART Rx\n", state);
 		break;
 	}
+#endif
 
 	return 0;
 }
