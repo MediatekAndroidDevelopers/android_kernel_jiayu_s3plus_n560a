@@ -42,7 +42,7 @@ int m4u_invalid_tlb(int m4u_id, int L2_en, int isInvAll, unsigned int mva_start,
 	unsigned int reg = 0;
 	unsigned long m4u_base;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -220,7 +220,7 @@ int mau_start_monitor(int m4u_id, int m4u_slave_id, int mau_set,
 {
 	unsigned long m4u_base;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -336,7 +336,7 @@ int __mau_dump_status(int m4u_id, int m4u_slave_id, int mau)
 	int larb, port;
 	struct mau_config_info mau_cfg;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -406,7 +406,7 @@ unsigned int m4u_get_main_descriptor(int m4u_id, int m4u_slave_id, int idx)
 	unsigned int regValue = 0;
 	unsigned long m4u_base;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -427,7 +427,7 @@ unsigned int m4u_get_main_tag(int m4u_id, int m4u_slave_id, int idx)
 {
 	unsigned long m4u_base;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -576,7 +576,7 @@ int m4u_get_pfh_tlb_all(int m4u_id, mmu_pfh_tlb_t *pfh_buf)
 	int valid;
 	int pfh_id = 0;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -1475,7 +1475,7 @@ int m4u_monitor_start(int m4u_id)
 {
 	unsigned long m4u_base;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -1505,7 +1505,7 @@ int m4u_monitor_stop(int m4u_id)
 	int m4u_index;
 	unsigned long m4u_base;
 
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
@@ -2256,7 +2256,7 @@ int m4u_hw_init(struct m4u_device *m4u_dev, int m4u_id)
 #if !defined(CONFIG_MTK_CLKMGR)
 	int i;
 #endif
-	if (m4u_id < 0 && m4u_id > TOTAL_M4U_NUM) {
+	if (m4u_id < 0 || m4u_id > TOTAL_M4U_NUM) {
 		M4UMSG("error m4u id, error id is %d\n", m4u_id);
 		return -1;
 	}
