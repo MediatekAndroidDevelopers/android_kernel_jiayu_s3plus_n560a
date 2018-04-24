@@ -172,6 +172,11 @@ static struct timed_output_dev mtk_vibrator = {
 	.enable = vibrator_enable,
 };
 
+void set_vibrate(int value)
+{
+	vibrator_enable(&mtk_vibrator, value);
+}
+
 static int vib_probe(struct platform_device *pdev)
 {
 	return 0;
