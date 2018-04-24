@@ -1021,5 +1021,11 @@ config TOUCHSCREEN_SYNAPTICS
 	depends on I2C
 	help
 	  This enables support for Synaptics over I2C based touchscreens.
+
+config SWEEP2SLEEP
+        tristate "Sweep to put device to sleep"
+        default y
+        help
+          Say Y here to support sweep2sleep
 	  
 endif
